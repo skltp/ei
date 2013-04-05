@@ -1,12 +1,4 @@
 <?xml version="1.0"?>
-<!--
-This is the Schema-composite that produces a jar of JAX-WS interfaces (SEI) -
-and JAXB2 binding classes for the contained schemas.
-
-
-Template version: 1.4
-Generation time : 2012-01-16 16:05:26 CET
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
