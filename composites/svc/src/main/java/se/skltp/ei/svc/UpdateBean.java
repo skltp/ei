@@ -7,9 +7,9 @@ import riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInte
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 
-public class UpdateWSImpl implements UpdateResponderInterface {
+public class UpdateBean implements UpdateResponderInterface {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateWSImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdateBean.class);
 
 
     /**
