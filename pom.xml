@@ -23,6 +23,7 @@
     
 	<modules>
 		<module>composites/schema</module>
+		<module>composites/svc</module>
 	</modules>
 		
 </project>
