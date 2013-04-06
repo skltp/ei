@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>se.skltp.ei</groupId>
+        <artifactId>skltp-ei-parent</artifactId>
+        <version>1.0.0-RC1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath> 
+    </parent>
+
+    <artifactId>skltp-ei-module-intsvc</artifactId>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+
+    <properties>
+    </properties>
+    
+	<dependencies>	
+    
+		<dependency>
+		    <groupId>se.skltp.ei</groupId>
+			<artifactId>skltp-ei-composite-svc</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+       <dependency>
+          <groupId>org.soitoolkit.commons.components</groupId>
+            <artifactId>soitoolkit-commons-mule</artifactId>
+            <version>${soitoolkit.version}</version>
+        </dependency>
+
+<!-- 
+		<dependency>
+		  <groupId>org.soitoolkit.commons.components</groupId>
+			<artifactId>soitoolkit-studio-components</artifactId>
+			<version>${soitoolkit.version}</version>
+		</dependency>
+ -->
+
+		<dependency>
+			<groupId>org.soitoolkit.commons.poms.mule-dependencies</groupId>
+			<artifactId>soitoolkit-mule-3.3.1-dependencies</artifactId>
+			<version>${soitoolkit.version}</version>
+			<type>pom</type>
+		</dependency>
+		
+        <!-- TEST DEPENDENCIES -->
+
+        <dependency>
+            <groupId>org.soitoolkit.commons.poms</groupId>
+            <artifactId>soitoolkit-test-dependencies</artifactId>
+            <version>${soitoolkit.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+
+		<!-- Mockito -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+			<version>1.8.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+			<version>1.8.5</version>
+		</dependency>
+
+  </dependencies> 
+
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <!-- To get mule-config files from the Mule Studio defined resource-folder in the classpath... -->
+                <directory>${basedir}/src/main/app</directory>
+            </resource>
+        </resources>
+
+		<plugins>   
+            <plugin>
+                <!-- Add mule-nature to the eclipse-.project-file -->
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <configuration>
+                    <additionalBuildcommands>
+                        <buildcommand>org.mule.tooling.core.muleBuilder</buildcommand>
+                    </additionalBuildcommands>
+                    <additionalProjectnatures>
+                        <projectnature>org.mule.tooling.core.muleNature</projectnature>
+                    </additionalProjectnatures>
+                </configuration>
+            </plugin>
+
+            <plugin>
+              <artifactId>maven-jar-plugin</artifactId>
+              <configuration>
+                <!-- 
+                 if no classifier is declared, then a mvn install results in a file in
+                 the local repo: ic2-1.0.0-SNAPSHOT.mule
+                 which is a jar-file - only strangely named and with a bad extension
+                -->
+                <classifier>core</classifier>
+                <excludes>
+                  <exclude>log4j.xml</exclude>
+                </excludes>
+              </configuration>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>jar</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+            
+			<plugin>
+			    <artifactId>maven-resources-plugin</artifactId>
+			    <executions>
+			        <execution>
+			            <id>copy-log4j-resource</id>
+			            <phase>prepare-package</phase>
+			            <goals>
+			                <goal>copy-resources</goal>
+			            </goals>
+			            <configuration>
+			                <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+			                <resources>
+			                    <resource>
+			                        <directory>src/environment</directory>
+			                        <includes>
+			                            <include>log4j.xml</include>
+			                            <include>log4j.dtd</include>
+			                        </includes>
+			                    </resource>
+			                </resources>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+
+      </plugins>
+
+    </build>
+
+    <profiles>
+        <profile>
+            <id>muleServer</id>
+            <!-- Start mule server with the command "mvn -PmuleServer" or "mvn -PmuleServer -Dexec.args="${artifaceId}-config.xml"" if you want to override the default config-file -->
+            <build>
+                <defaultGoal>test</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>se.skltp.agp.MuleServer</mainClass>
+                                    <classpathScope>test</classpathScope>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

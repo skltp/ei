@@ -9,6 +9,7 @@
         <version>1.0.0-RC1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath> 
     </parent>
+
     <artifactId>skltp-ei-composite-svc</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
