@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mule 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:management="http://www.mulesoft.org/schema/mule/management"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:rest-router="http://www.mulesoft.org/schema/mule/rest-router"
+	xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-current.xsd
+		http://www.mulesoft.org/schema/mule/core       http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/jms        http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+		http://www.mulesoft.org/schema/mule/management http://www.mulesoft.org/schema/mule/management/current/mule-management.xsd
+		http://www.mulesoft.org/schema/mule/json       http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+		http://www.mulesoft.org/schema/mule/scripting  http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+		http://www.mulesoft.org/schema/mule/rest-router       http://www.mulesoft.org/schema/mule/rest-router/current/mule-rest-router.xsd
+		http://www.mulesoft.org/schema/mule/xml        http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
+	">
+
+  <!-- Load property files in three steps... -->
+  
+  <!-- 1. Support for decrypting encrypted properties.
+       The encryption password will be read from an environment variable
+       called "SOITOOLKIT_ENCRYPTION_PASSWORD" which, once
+       the application has been started, could be safely unset. -->
+  <spring:bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+    <spring:property name="algorithm" value="PBEWithMD5AndDES"/>
+    <spring:property name="passwordEnvName" value="SOITOOLKIT_ENCRYPTION_PASSWORD"/>
+  </spring:bean>
+  
+  
+  <!-- 2. Support for decrypting encrypted properties -->
+  <spring:bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+    <spring:property name="config" ref="environmentVariablesConfiguration"/>
+  </spring:bean>
+  
+  
+  <!-- 3. Replacement for org.springframework.beans.factory.config.PropertyPlaceholderConfigurer
+       that supports decrypting encrypted property values -->
+  <spring:bean id="propertyConfigurer" class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+    <spring:constructor-arg ref="configurationEncryptor"/>
+    <spring:property name="ignoreResourceNotFound" value="true"/>
+    <spring:property name="locations">
+      <spring:list>
+        <spring:value>classpath:ei-config.properties</spring:value>
+        <spring:value>classpath:ei-config-override.properties</spring:value>
+      </spring:list>
+    </spring:property>
+  </spring:bean>
+
+<!-- 
+    <management:jmx-default-config port="${JMX_PORT}" registerMx4jAdapter="false" >
+        <management:credentials>
+            <spring:entry key="${JMX_USER}" value="${JMX_PWD}"/>
+        </management:credentials>
+    </management:jmx-default-config> 
+ -->
+
+  
+
+	<!-- The default profile used by normal usage of mule-app, either deployed in mule or started using st-muleServer-helper-class. Not used by integration tests -->
+    <spring:beans profile="default">
+        <!-- Connectors et al that are specific for different environment specific config-files (local unit-test, integration-test or production environments) -->
+
+        <!-- TODO: Add import of environment specific configuration files here as required -->
+        
+        <!-- Import the JMS-provider used in production here, embedded JMS providers used for integration tests are loaded by the *IntegratIonTest.java classes directly -->  
+        <spring:import resource="classpath:soitoolkit-mule-jms-connector-activemq-external.xml"/>
+
+
+    </spring:beans>
+
+
+	<!-- Used by integration tests only -->
+    <spring:beans profile="soitoolkit-integrationtests">
+        <mule>
+            <!--  Allow integration tests to register dynamic listeners by specifying dynamic="true" -->
+            <notifications dynamic="true">
+                <notification event="ENDPOINT-MESSAGE"/>
+                <notification event="COMPONENT-MESSAGE"/>
+            </notifications>
+        </mule>
+    </spring:beans>
+
+
+	<!-- Used by st-muleServer-helper-class only -->
+    <spring:beans profile="soitoolkit-teststubs">
+        <!-- Load all teststub services -->
+        <spring:import resource="classpath:teststub-services/*-teststub-service.xml"/>
+    </spring:beans>
+
+    <!-- Common connectors and endpoints, i.e. that not needs to be changed for different config-files (local unit-test, integration-test or production environments) -->
+  
+
+  
+
+  
+
+  
+
+    <rest-router:config />
+
+    <spring:beans>
+  
+    </spring:beans>
+
+    <message-properties-transformer name="setJsonContentType" scope="outbound">
+        <add-message-property key="Content-Type" value="application/json;charset=UTF-8"/>
+    </message-properties-transformer>
+ 
+    <json:object-to-json-transformer name="jaxbToJson" />
+
+    <!-- The common single jaxb-context for this mule-app -->
+    <!-- Don't create additional jaxb-contexts to avoid problems with implicit jaxb transformations that can't resolve what jaxb-context to use! -->
+    <!-- Use ":" as a separator if jaxb-objects from more than one java package will be used by the jaxb-transformers  -->
+    <mulexml:jaxb-context name="jaxbContext" packageNames="org.soitoolkit.commons.logentry.schema.v1"/>
+	
+	<custom-transformer name="objToStr" class="org.soitoolkit.commons.mule.core.ObjectToStringTransformer"/>
+
+	<custom-transformer name="createCorrId"  class="org.soitoolkit.commons.mule.log.correlationid.CreateCorrelationIdTransformer" />
+	<custom-transformer name="saveCorrId"    class="org.soitoolkit.commons.mule.log.correlationid.SaveCorrelationIdTransformer" />
+	<custom-transformer name="restoreCorrId" class="org.soitoolkit.commons.mule.log.correlationid.RestoreCorrelationIdTransformer" />
+
+    <custom-transformer name="createSoapFaultIfException" class="org.soitoolkit.commons.mule.soap.CreateSoapFaultIfExceptionTransformer"/>
+
+	<custom-transformer name="mimeToStr" class="org.soitoolkit.commons.mule.mime.MimeToStringTransformer" />
+
+    <custom-transformer name="logMsgIn" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="msg-in"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+    </custom-transformer>
+
+    <custom-transformer name="logMsgOut" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="msg-out"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+    </custom-transformer>
+
+    <custom-transformer name="logReqIn" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="req-in"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+    </custom-transformer>
+
+    <custom-transformer name="logReqOut" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="req-out"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+    </custom-transformer>
+
+    <custom-transformer name="logRespIn" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="resp-in"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+    </custom-transformer>
+
+    <custom-transformer name="logRespOut" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="resp-out"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+    </custom-transformer>  
+
+    <!-- TODO: Add global definitions here -->
+
+</mule>

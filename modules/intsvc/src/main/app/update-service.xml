@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mule 
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.mulesoft.org/schema/mule/core    http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/cxf     http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
+		http://www.mulesoft.org/schema/mule/jms     http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+	">
+
+    <!-- Bean with business logic -->
+    <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.UpdateBean">
+    </spring:bean>
+
+    <!-- Bean that expose a Web Service -->
+    <spring:bean name="update-ws-bean" class="se.skltp.ei.svc.UpdateBean">
+        <spring:property name="bl" ref="update-bl-bean" />
+    </spring:bean>
+
+
+	<!-- Update Web Service -->
+	<simple-service 
+		name="update-web-service"
+        address="${UPDATE_WEB_SERVICE_URL}?connector=soitoolkit-http-connector" 
+        transformer-refs="req-in"
+        response-transformer-refs="resp-out"
+        type="jax-ws">
+        <component>
+            <spring-object bean="update-ws-bean"/>
+        </component>
+    </simple-service>
+
+</mule>
