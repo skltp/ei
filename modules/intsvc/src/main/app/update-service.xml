@@ -27,8 +27,8 @@
 	<simple-service 
 		name="update-web-service"
         address="${UPDATE_WEB_SERVICE_URL}?connector=soitoolkit-http-connector" 
-        transformer-refs="req-in"
-        response-transformer-refs="resp-out"
+        transformer-refs="logReqIn"
+        responseTransformer-refs="logRespOut"
         type="jax-ws">
         <component>
             <spring-object bean="update-ws-bean"/>
