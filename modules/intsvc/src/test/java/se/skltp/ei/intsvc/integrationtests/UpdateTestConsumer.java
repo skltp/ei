@@ -1,52 +1,42 @@
 package se.skltp.ei.intsvc.integrationtests;
 
-import static se.skltp.agp.test.producer.TestProducerDb.TEST_RR_ID_ONE_HIT;
-
-import javax.xml.ws.Holder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.riv.crm.requeststatus.getrequestactivities.v1.rivtabp21.GetRequestActivitiesResponderInterface;
-import se.riv.crm.requeststatus.getrequestactivitiesresponder.v1.GetRequestActivitiesResponseType;
-import se.riv.crm.requeststatus.getrequestactivitiesresponder.v1.GetRequestActivitiesType;
-import se.skltp.aggregatingservices.riv.crm.requeststatus.RequestActivitiesMuleServer;
-import se.skltp.agp.test.consumer.AbstractTestConsumer;
-import se.skltp.agp.test.consumer.SoapHeaderCxfInterceptor;
-import se.skltp.agp.riv.interoperability.headers.v1.ProcessingStatusType;
+import se.skltp.ei.intsvc.EiMuleServer;
 
-public class RequestActivitiesTestConsumer extends AbstractTestConsumer<GetRequestActivitiesResponderInterface> {
+import riv.itintegration.engagementindex._1.ResultCodeEnum;
+import riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInterface;
+import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
+import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 
-	private static final Logger log = LoggerFactory.getLogger(RequestActivitiesTestConsumer.class);
+public class UpdateTestConsumer extends AbstractTestConsumer<UpdateResponderInterface> {
+
+	private static final Logger log = LoggerFactory.getLogger(UpdateTestConsumer.class);
 
 	public static void main(String[] args) {
-		String serviceAddress = RequestActivitiesMuleServer.getAddress("SERVICE_INBOUND_URL");
-		String personnummer = TEST_RR_ID_ONE_HIT;
+		String serviceAddress = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
 
-		RequestActivitiesTestConsumer consumer = new RequestActivitiesTestConsumer(serviceAddress, SAMPLE_ORIGINAL_CONSUMER_HSAID);
-		Holder<GetRequestActivitiesResponseType> responseHolder = new Holder<GetRequestActivitiesResponseType>();
-		Holder<ProcessingStatusType> processingStatusHolder = new Holder<ProcessingStatusType>();
+		UpdateTestConsumer consumer = new UpdateTestConsumer(serviceAddress);
 
-		consumer.callService("logical-adress", personnummer, processingStatusHolder, responseHolder);
-		log.info("Returned #timeslots = " + responseHolder.value.getRequestActivity().size());
+		UpdateType request = new UpdateType();
+		UpdateResponseType response = consumer.callService("logical-adress", request);
+        
+		log.info("Returned status = " + response.getResultCode());
 	}
 
-	public RequestActivitiesTestConsumer(String serviceAddress, String originalConsumerHsaId) {
+	public UpdateTestConsumer(String serviceAddress) {
 	    
 		// Setup a web service proxy for communication using HTTPS with Mutual Authentication
-		super(GetRequestActivitiesResponderInterface.class, serviceAddress, originalConsumerHsaId);
+		super(UpdateResponderInterface.class, serviceAddress);
 	}
 
-	public void callService(String logicalAddress, String registeredResidentId, Holder<ProcessingStatusType> processingStatusHolder, Holder<GetRequestActivitiesResponseType> responseHolder) {
+	public UpdateResponseType callService(String logicalAddress, UpdateType request) {
 
-		log.debug("Calling GetRequestActivities-soap-service with Registered Resident Id = {}", registeredResidentId);
+		log.debug("Calling Update-soap-service ");
 		
-		GetRequestActivitiesType request = new GetRequestActivitiesType();
-		request.setSubjectOfCareId(registeredResidentId);
 
-		GetRequestActivitiesResponseType response = _service.getRequestActivities(logicalAddress, request);
-		responseHolder.value = response;
-		
-		processingStatusHolder.value = SoapHeaderCxfInterceptor.getLastFoundProcessingStatus();
+		UpdateResponseType response = _service.update(logicalAddress, request);
+        return response;
 	}
 }
