@@ -14,12 +14,12 @@
 	">
 
     <!-- Bean with business logic -->
-    <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.UpdateBean">
+    <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.impl.UpdateBean">
     </spring:bean>
 
     <!-- Bean that expose a Web Service -->
-    <spring:bean name="update-ws-bean" class="se.skltp.ei.svc.UpdateBean">
-        <spring:property name="bl" ref="update-bl-bean" />
+    <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.UpdateWSBean">
+        <spring:property name="blBean" ref="update-bl-bean" />
     </spring:bean>
 
 
