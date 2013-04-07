@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="update-service">
+    <global-element type="http://www.springframework.org/schema/beans/bean" name="Bean" entity-id="Bean#1">
+        <properties>
+            <property name="id"/>
+            <property value="update-bl-bean" name="name"/>
+            <property value="se.skltp.ei.svc.impl.UpdateBean" name="class"/>
+            <property name="parent"/>
+            <property name="scope"/>
+            <property name="children"/>
+            <property value="1" name="auxiliary;index"/>
+            <property value="1" name="auxiliary;index"/>
+            <property name="abstract"/>
+            <property name="lazy-init"/>
+            <property name="autowire"/>
+            <property name="depends-on"/>
+            <property name="autowire-candidate"/>
+            <property name="primary"/>
+            <property name="init-method"/>
+            <property name="destroy-method"/>
+            <property name="factory-method"/>
+            <property name="factory-bean"/>
+            <property value="1" name="auxiliary;index"/>
+            <property value="1" name="auxiliary;index"/>
+            <property value="1" name="auxiliary;index"/>
+        </properties>
+    </global-element>
+    <global-element type="http://www.springframework.org/schema/beans/bean" name="Bean" entity-id="Bean#2">
+        <properties>
+            <property name="id"/>
+            <property value="update-ws-bean" name="name"/>
+            <property value="se.skltp.ei.intsvc.UpdateWSBean" name="class"/>
+            <property name="parent"/>
+            <property name="scope"/>
+            <property name="children"/>
+            <property value="2" name="auxiliary;index"/>
+            <property value="2" name="auxiliary;index"/>
+            <property name="abstract"/>
+            <property name="lazy-init"/>
+            <property name="autowire"/>
+            <property name="depends-on"/>
+            <property name="autowire-candidate"/>
+            <property name="primary"/>
+            <property name="init-method"/>
+            <property name="destroy-method"/>
+            <property name="factory-method"/>
+            <property name="factory-bean"/>
+            <property value="2" name="auxiliary;index"/>
+            <property value="2" name="auxiliary;index"/>
+            <property value="2" name="auxiliary;index"/>
+            <property-collection name="@http://www.springframework.org/schema/beans/property;0">
+                <property value="update-bl-bean" name="ref"/>
+                <property value="blBean" name="name"/>
+                <property value="3" name="auxiliary;wrapIn"/>
+                <property value="3" name="auxiliary;index"/>
+            </property-collection>
+        </properties>
+    </global-element>
+    <global-unknown index="4" unknownName="update-web-service" description="false" entity-id="global-unknown#1">
+        <content>&lt;simple-service xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; name=&quot;update-web-service&quot; address=&quot;${UPDATE_WEB_SERVICE_URL}?connector=soitoolkit-http-connector&quot; transformer-refs=&quot;logReqIn&quot; responseTransformer-refs=&quot;logRespOut&quot; type=&quot;jax-ws&quot;&gt;
+        &lt;component&gt;
+            &lt;spring-object bean=&quot;update-ws-bean&quot;/&gt;
+        &lt;/component&gt;
+    &lt;/simple-service&gt;</content>
+    </global-unknown>
+</mule-configuration>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<mule 
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:spring="http://www.springframework.org/schema/beans"
@@ -11,6 +12,7 @@
 	xmlns:rest-router="http://www.mulesoft.org/schema/mule/rest-router"
 	xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
 	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 		http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-current.xsd
 		http://www.mulesoft.org/schema/mule/core       http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/jms        http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
@@ -96,11 +98,10 @@
     <!-- Common connectors and endpoints, i.e. that not needs to be changed for different config-files (local unit-test, integration-test or production environments) -->
   
 
-  
-
-  
-
-  
+    <!-- FIXME: The NullSessionHandler should be part of soi-toolkits standard http connector -->
+    <http:connector name="soitoolkit-http-connector" sendTcpNoDelay="true" >
+        <service-overrides sessionHandler="org.mule.session.NullSessionHandler" />
+    </http:connector>  
 
     <rest-router:config />
 

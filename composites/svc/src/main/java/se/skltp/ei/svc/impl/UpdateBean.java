@@ -13,7 +13,6 @@ public class UpdateBean implements UpdateInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateBean.class);
 
-
     /**
      *
      * @param header
@@ -22,6 +21,8 @@ public class UpdateBean implements UpdateInterface {
      */
     @Override
     public UpdateResponseType update(Header header, UpdateType parameters) {
+    	LOG.debug("The svc.update service is called");
+    	
         UpdateResponseType response = new UpdateResponseType();
         response.setComment(null);
         response.setResultCode(ResultCodeEnum.OK);

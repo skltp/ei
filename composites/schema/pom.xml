@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <properties>
-        <apache.cxf.version>2.2.2</apache.cxf.version>
+        <apache.cxf.version>2.5.1</apache.cxf.version>
     </properties>
 
     <build>
