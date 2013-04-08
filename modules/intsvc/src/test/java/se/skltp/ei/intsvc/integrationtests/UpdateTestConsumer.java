@@ -3,12 +3,10 @@ package se.skltp.ei.intsvc.integrationtests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import se.skltp.ei.intsvc.EiMuleServer;
-
-import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInterface;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import se.skltp.ei.intsvc.EiMuleServer;
 
 public class UpdateTestConsumer extends AbstractTestConsumer<UpdateResponderInterface> {
 

@@ -2,6 +2,7 @@ package se.skltp.ei.intsvc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInterface;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;

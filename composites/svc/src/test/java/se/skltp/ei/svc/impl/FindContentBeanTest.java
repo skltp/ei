@@ -8,10 +8,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import riv.itintegration.engagementindex._1.ResultCodeEnum;
-import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
+import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 
-public class UpdateBeanTest {
+public class FindContentBeanTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -33,11 +32,11 @@ public class UpdateBeanTest {
      * R1 test with n engagements
      */
     @Test
-    public void r1_update_positive() throws Exception {
-        UpdateBean u = new UpdateBean();
+    public void r1_findContent_positive() throws Exception {
+    	FindContentBean b = new FindContentBean();
 
-        UpdateResponseType r = u.update(null, null);
-        assertEquals(ResultCodeEnum.OK, r.getResultCode());
+        FindContentResponseType r = b.findContent(null, null);
+        assertEquals(0, r.getEngagement().size());
     }
 
 }
