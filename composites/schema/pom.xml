@@ -67,6 +67,7 @@
         </plugins>
     </build>
 
+<!-- 
     <dependencies>  
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -81,4 +82,5 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+ -->
 </project>
