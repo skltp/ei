@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import riv.itintegration.engagementindex.findcontent._1.rivtabp21.FindContentResponderInterface;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
-import se.skltp.ei.svc.api.FindContentInterface;
+import se.skltp.ei.svc.service.api.FindContentInterface;
 
 public class FindContentWSBean implements FindContentResponderInterface {
 

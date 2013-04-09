@@ -44,6 +44,12 @@
 			<artifactId>soitoolkit-mule-3.3.1-dependencies</artifactId>
 			<version>${soitoolkit.version}</version>
 			<type>pom</type>
+			<exclusions>
+			 <exclusion>
+			    <groupId>javax.validation</groupId>
+			    <artifactId>validation-api</artifactId>
+			 </exclusion>
+			</exclusions>
 		</dependency>
 		
         <!-- TEST DEPENDENCIES -->

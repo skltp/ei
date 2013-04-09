@@ -1,4 +1,4 @@
-package se.skltp.ei.svc.impl;
+package se.skltp.ei.svc.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
-import se.skltp.ei.svc.api.Header;
-import se.skltp.ei.svc.api.UpdateInterface;
+import se.skltp.ei.svc.service.api.Header;
+import se.skltp.ei.svc.service.api.UpdateInterface;
 
 public class UpdateBean implements UpdateInterface {
 

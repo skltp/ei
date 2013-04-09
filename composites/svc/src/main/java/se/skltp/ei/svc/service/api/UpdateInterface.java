@@ -1,4 +1,4 @@
-package se.skltp.ei.svc.api;
+package se.skltp.ei.svc.service.api;
 
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;

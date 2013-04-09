@@ -1,4 +1,4 @@
-package se.skltp.ei.svc.impl;
+package se.skltp.ei.svc.service;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
+import se.skltp.ei.svc.service.impl.UpdateBean;
 
 public class UpdateBeanTest {
 

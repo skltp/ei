@@ -1,4 +1,4 @@
-package se.skltp.ei.svc.api;
+package se.skltp.ei.svc.service.api;
 
 /**
   Header with fields primarley used for tracability in logging.

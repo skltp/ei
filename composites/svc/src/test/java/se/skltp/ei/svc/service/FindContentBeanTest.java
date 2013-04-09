@@ -1,4 +1,4 @@
-package se.skltp.ei.svc.impl;
+package se.skltp.ei.svc.service;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,6 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
+import se.skltp.ei.svc.service.impl.FindContentBean;
 
 public class FindContentBeanTest {
 

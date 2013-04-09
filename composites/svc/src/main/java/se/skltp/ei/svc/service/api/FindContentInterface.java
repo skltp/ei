@@ -1,4 +1,4 @@
-package se.skltp.ei.svc.api;
+package se.skltp.ei.svc.service.api;
 
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;

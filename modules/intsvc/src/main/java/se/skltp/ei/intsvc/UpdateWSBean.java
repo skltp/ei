@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInterface;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
-import se.skltp.ei.svc.api.UpdateInterface;
+import se.skltp.ei.svc.service.api.UpdateInterface;
 
 public class UpdateWSBean implements UpdateResponderInterface {
 

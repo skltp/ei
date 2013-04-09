@@ -14,7 +14,7 @@
 	">
 
     <!-- Bean with business logic -->
-    <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.impl.UpdateBean">
+    <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.service.impl.UpdateBean">
     </spring:bean>
 
     <!-- Bean that expose a Web Service -->
