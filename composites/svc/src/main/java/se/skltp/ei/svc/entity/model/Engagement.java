@@ -27,7 +27,6 @@ public class Engagement {
     private String sourceSystem;
     private Timestamp creationTime;
     private String owner;
-    
     private Timestamp updateTime;
     private String clinicalProcessInterestId;
 
