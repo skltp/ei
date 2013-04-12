@@ -19,16 +19,19 @@ public class Engagement {
     @GeneratedValue
     private Long id;
 
+    // Fields that are part of the business key
     private String registeredResidentIdentification;
     private String serviceDomain;
     private String categorization;
     private String logicalAddress;
     private String businessObjectInstanceIdentifier;
     private String sourceSystem;
-    private Timestamp creationTime;
     private String owner;
-    private Timestamp updateTime;
     private String clinicalProcessInterestId;
+
+    // Other non business key fields
+    private Timestamp creationTime;
+    private Timestamp updateTime;
 
     public Long getId() {
 		return id;
@@ -74,28 +77,29 @@ public class Engagement {
 	public void setSourceSystem(String sourceSystem) {
 		this.sourceSystem = sourceSystem;
 	}
-	public Timestamp getCreationTime() {
-		return creationTime;
-	}
-	public void setCreationTime(Timestamp creationTime) {
-		this.creationTime = creationTime;
-	}
 	public String getOwner() {
 		return owner;
 	}
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-	public Timestamp getUpdateTime() {
-		return updateTime;
-	}
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
 	public String getClinicalProcessInterestId() {
 		return clinicalProcessInterestId;
 	}
 	public void setClinicalProcessInterestId(String clinicalProcessInterestId) {
 		this.clinicalProcessInterestId = clinicalProcessInterestId;
+	}
+	
+	public Timestamp getCreationTime() {
+		return creationTime;
+	}
+	public void setCreationTime(Timestamp creationTime) {
+		this.creationTime = creationTime;
+	}
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
 	}
 }
