@@ -13,7 +13,6 @@ import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.impl.FindContentBean;
 import se.skltp.ei.svc.service.impl.UpdateBean;
 
 public class UpdateBeanTest {

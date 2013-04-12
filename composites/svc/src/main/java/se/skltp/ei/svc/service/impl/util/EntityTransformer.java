@@ -14,17 +14,19 @@ public class EntityTransformer {
 	public static Engagement toEntity(EngagementType eIn) {
 		
 		Engagement eOut = new Engagement();
+		Engagement.Key key = Engagement.createKey();
 	    
-		eOut.setRegisteredResidentIdentification(eIn.getRegisteredResidentIdentification());
-	    eOut.setServiceDomain(eIn.getServiceDomain());
-	    eOut.setCategorization(eIn.getCategorization());
-	    eOut.setLogicalAddress(eIn.getLogicalAddress());
-	    eOut.setBusinessObjectInstanceIdentifier(eIn.getBusinessObjectInstanceIdentifier());
-	    eOut.setSourceSystem(eIn.getSourceSystem());
+		key.setRegisteredResidentIdentification(eIn.getRegisteredResidentIdentification());
+	    key.setServiceDomain(eIn.getServiceDomain());
+	    key.setCategorization(eIn.getCategorization());
+	    key.setLogicalAddress(eIn.getLogicalAddress());
+	    key.setBusinessObjectInstanceIdentifier(eIn.getBusinessObjectInstanceIdentifier());
+	    key.setSourceSystem(eIn.getSourceSystem());
 // FIXME	    eOut.setCreationTime(eIn.getCreationTime());
-	    eOut.setOwner(eIn.getOwner());
+	    key.setOwner(eIn.getOwner());
 // FIXME	    eOut.setUpdateTime(eIn.getUpdateTime());
-	    eOut.setClinicalProcessInterestId(eIn.getClinicalProcessInterestId());
+	    key.setClinicalProcessInterestId(eIn.getClinicalProcessInterestId());
+		eOut.setKey(key);
 		
 	    return eOut;
 	}
@@ -38,17 +40,17 @@ public class EntityTransformer {
 	public static EngagementType fromEntity(Engagement eIn) {
 		
 		EngagementType eOut = new EngagementType();
-		
-	    eOut.setRegisteredResidentIdentification(eIn.getRegisteredResidentIdentification());
-	    eOut.setServiceDomain(eIn.getServiceDomain());
-	    eOut.setCategorization(eIn.getCategorization());
-	    eOut.setLogicalAddress(eIn.getLogicalAddress());
-	    eOut.setBusinessObjectInstanceIdentifier(eIn.getBusinessObjectInstanceIdentifier());
-	    eOut.setSourceSystem(eIn.getSourceSystem());
+		Engagement.Key key = eIn.getKey();
+	    eOut.setRegisteredResidentIdentification(key.getRegisteredResidentIdentification());
+	    eOut.setServiceDomain(key.getServiceDomain());
+	    eOut.setCategorization(key.getCategorization());
+	    eOut.setLogicalAddress(key.getLogicalAddress());
+	    eOut.setBusinessObjectInstanceIdentifier(key.getBusinessObjectInstanceIdentifier());
+	    eOut.setSourceSystem(key.getSourceSystem());
 // FIXME	    eOut.setCreationTime(eIn.getCreationTime());
-	    eOut.setOwner(eIn.getOwner());
+	    eOut.setOwner(key.getOwner());
 // FIXME	    eOut.setUpdateTime(eIn.getUpdateTime());
-	    eOut.setClinicalProcessInterestId(eIn.getClinicalProcessInterestId());
+	    eOut.setClinicalProcessInterestId(key.getClinicalProcessInterestId());
 		
 	    return eOut;
 	}
