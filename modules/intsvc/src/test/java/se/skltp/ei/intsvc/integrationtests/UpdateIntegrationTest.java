@@ -2,14 +2,18 @@ package se.skltp.ei.intsvc.integrationtests;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
+import riv.itintegration.engagementindex._1.EngagementTransactionType;
+import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
 public class UpdateIntegrationTest extends AbstractTestCase {
 
@@ -37,18 +41,49 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	        "update-service.xml";
     }
 
+    // FIXME. Move to a common test-util in svc
+    private EngagementRepository engagementRepository;
+
+    static private String businessObjectInstanceIdentifier = "boi";
+    static private String categorization = "categorization";
+    static private String logicalAddress = "logicalAddress";
+
+    @Before
+    public void setUp() throws Exception {
+
+    	// Lookup the entity repository if not already done
+    	if (engagementRepository == null) {
+    		engagementRepository = muleContext.getRegistry().lookupObject(EngagementRepository.class);
+    	}
+
+    	// Clean the storage
+    	engagementRepository.deleteAll();
+	}
+
 	/**
 	 * Perform a test that is expected to return zero hits
 	 */
     @Test
     public void test_ok() {
+		
+		EngagementType engagement = new EngagementType();
+        engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
+    	engagement.setCategorization(categorization);
+    	engagement.setLogicalAddress(logicalAddress);
+    	
+    	EngagementTransactionType et = new EngagementTransactionType();
+    	et.setDeleteFlag(false);
+    	et.setEngagement(engagement);
+    	
+		UpdateType request = new UpdateType();
+		request.getEngagementTransaction().add(et);
 
 		UpdateTestConsumer consumer = new UpdateTestConsumer(SERVICE_ADDRESS);
 
-		UpdateType request = new UpdateType();
 		UpdateResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
         
-		System.out.println("Returned status = " + response.getResultCode());
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
+        
+        assertEquals(1, engagementRepository.count());
     }
 }

@@ -2,13 +2,17 @@ package se.skltp.ei.intsvc.integrationtests;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mule.api.registry.RegistrationException;
 import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.svc.entity.model.Engagement;
+import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
 public class FindContentIntegrationTest extends AbstractTestCase {
 
@@ -36,18 +40,43 @@ public class FindContentIntegrationTest extends AbstractTestCase {
 	        "find-content-service.xml";
     }
 
+    // FIXME. Move to a common test-util in svc
+    private EngagementRepository engagementRepository;
+    static private String businessObjectInstanceIdentifier = "boi";
+    static private String categorization = "categorization";
+    static private String logicalAddress = "logicalAddress";
+
+    @Before
+    public void setUp() throws Exception {
+
+    	// Lookup the entity repository if not already done
+    	if (engagementRepository == null) {
+    		engagementRepository = muleContext.getRegistry().lookupObject(EngagementRepository.class);
+    	}
+
+    	// Clean the storage
+    	engagementRepository.deleteAll();
+    	
+    	// Insert one entity
+		Engagement engagement = new Engagement();
+        engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
+    	engagement.setCategorization(categorization);
+    	engagement.setLogicalAddress(logicalAddress);
+    	engagementRepository.save(engagement);
+	}
+
 	/**
-	 * Perform a test that is expected to return zero hits
+	 * Perform a test that is expected to return one hit
+	 * @throws RegistrationException 
 	 */
     @Test
-    public void test_ok() {
-
-		FindContentTestConsumer consumer = new FindContentTestConsumer(SERVICE_ADDRESS);
+    public void test_ok() throws RegistrationException {
+        
+        FindContentTestConsumer consumer = new FindContentTestConsumer(SERVICE_ADDRESS);
 
 		FindContentType request = new FindContentType();
 		FindContentResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
         
-		System.out.println("Returned status = " + response.getEngagement().size());
-        assertEquals(0, response.getEngagement().size());
+        assertEquals(1, response.getEngagement().size());
     }
 }
