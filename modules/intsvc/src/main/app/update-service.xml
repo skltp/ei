@@ -88,7 +88,7 @@ http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
             queue="${UPDATE_QUEUE}" 
             transformer-refs="logMsgIn" 
             doc:name="JMS">
-<!--            <jms:transaction action="ALWAYS_BEGIN"/>-->
+            <jms:transaction action="ALWAYS_BEGIN"/>
         </jms:inbound-endpoint>
 
         <component doc:name="Java">
@@ -100,7 +100,7 @@ http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
             topic="${NOTIFICATION_TOPIC}" 
             transformer-refs="logMsgOut" 
             doc:name="JMS Topic">
-<!--            <jms:transaction action="ALWAYS_JOIN"/>-->
+            <jms:transaction action="ALWAYS_JOIN"/>
         </jms:outbound-endpoint>
         
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
