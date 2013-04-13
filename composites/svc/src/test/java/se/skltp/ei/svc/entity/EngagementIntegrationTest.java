@@ -46,7 +46,7 @@ public class EngagementIntegrationTest {
     
     
     @Test
-    public void keyTest() {
+    public void keyComparisonTest() {
     	Engagement e1 = new Engagement();
     	Engagement e2 = new Engagement();
     	Engagement e3 = new Engagement();

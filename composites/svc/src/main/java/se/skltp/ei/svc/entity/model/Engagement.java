@@ -16,6 +16,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Table;
+
 import se.skltp.ei.svc.entity.model.util.Hash;
 
 /**
@@ -26,6 +29,8 @@ import se.skltp.ei.svc.entity.model.util.Hash;
  * Also see: http://code.google.com/p/rivta/
  */
 @Entity(name="engagement_index_table")
+@Table(appliesTo="engagement_index_table",
+	indexes={ @Index(name="engagement_search_index", columnNames="registered_resident_identification") })
 public class Engagement {
 	
 	private static final String EMPTY = "";
