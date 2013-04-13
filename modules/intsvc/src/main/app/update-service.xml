@@ -106,6 +106,7 @@ http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
     </flow>
 
+
     <flow name="notification-service" doc:name="notification-service">
         <jms:inbound-endpoint 
             connector-ref="skltp-ei-jms-topic-connector"
@@ -113,68 +114,16 @@ http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
             durableName="HSA-ID-1" 
             transformer-refs="logMsgIn" 
             doc:name="JMS Topic">
-            <jms:transaction action="ALWAYS_BEGIN"/>
+<!-- FIXME            <jms:transaction action="ALWAYS_BEGIN"/>-->
         </jms:inbound-endpoint>
 
         <scripting:component doc:name="Groovy">
             <scripting:script engine="Groovy">
-                <scripting:text><![CDATA[println payload]]></scripting:text>
+                <scripting:text><![CDATA[println "### Send to subscriber: " + payload]]></scripting:text>
             </scripting:script>
         </scripting:component>
         
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
     </flow>
-
-    <!-- 
-
-    <flow name="PingForConfiguration-rivtabp21-flow" >
-
-        <https:inbound-endpoint
-            name="PingForConfigurationResponderRivtabp21Service"
-            address="https://${TP_HOST}:${PINGFORCONFIGURATIONSERVICE_RIVTABP21_PORT}/${TP_BASE_URI}/${PINGFORCONFIGURATIONSERVICE_RIVTABP21_INBOUND_URI}"
-            connector-ref="VPProducerConnector"
-            exchange-pattern="request-response"
-            responseTransformer-refs="logRespOut" 
-            transformer-refs="createCorrId rivExtractor logReqIn"/>
- 
-        <cxf:jaxws-service
-            namespace="urn:riv:itintegration:monitoring:PingForConfiguration:1:rivtabp21"
-            serviceClass="se.skl.tp.vp.pingforconfiguration.PingForConfigurationProducerRivTa21"
-            wsdlLocation="classpath:/schemas/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl" />
-  
-       <component>
-            <singleton-object class="se.skl.tp.vp.pingforconfiguration.PingForConfigurationProducerRivTa21" />
-        </component>
-    </flow>
-    
-@WebService(
-        serviceName = "PingForConfigurationResponderService", 
-        endpointInterface="se.riv.itintegration.monitoring.v1.rivtabp21.PingForConfigurationResponderInterface", 
-        portName = "PingForConfigurationResponderPort", 
-        targetNamespace = "urn:riv:itintegration:monitoring:PingForConfiguration:1:rivtabp21",
-        wsdlLocation = "schemas/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl")
-public class PingForConfigurationProducerRivTa21 implements PingForConfigurationResponderInterface {
-
-
-
-
-
-                <http:inbound-endpoint
-            doc:name="Inbound"
-            connector-ref="soitoolkit-http-connector"
-            address="${SERVICE_INBOUND_URL}"
-            exchange-pattern="request-response"
-            transformer-refs="objToStr logReqIn"
-            responseTransformer-refs="createSoapFaultIfException logRespOut">
-        </http:inbound-endpoint>
-
-        <cxf:proxy-service 
-            wsdlLocation="${SERVICE_INBOUND_WSDL}"
-            service="${SERVICE_INBOUND_NAME}"
-            namespace="${SERVICE_INBOUND_NAMESPACE}"
-            payload="envelope">
-        </cxf:proxy-service>
-        
- -->        
 
 </mule>

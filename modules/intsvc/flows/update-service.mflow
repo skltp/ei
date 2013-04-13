@@ -140,7 +140,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="update-web-service" entity-id="8b3c4466-93e1-4407-852d-5401f92c1395">
+    <flow SubFlow="false" name="update-web-service" entity-id="115f7da3-2a65-43aa-8284-75959e4be980">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -326,7 +326,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="false" name="update-process-service" entity-id="60183dbe-ac05-479d-ab24-e66afc115130">
+    <flow SubFlow="false" name="update-process-service" entity-id="a2122eb5-09cf-4307-84c1-f8cf9495060f">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -431,7 +431,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="false" name="notification-service" entity-id="1ec3db8d-0b65-4284-9309-066de7de0651">
+    <flow SubFlow="false" name="notification-service" entity-id="63516c96-d5b5-41b9-8f26-ccc7cee7d8e7">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -472,36 +472,31 @@
                     <property value="28" name="auxiliary;index"/>
                     <property value="28" name="auxiliary;index"/>
                     <property value="28" name="auxiliary;index"/>
-                    <property-collection name="@http://www.mulesoft.org/schema/mule/jms/transaction;0">
-                        <property value="ALWAYS_BEGIN" name="action"/>
-                        <property value="29" name="auxiliary;wrapIn"/>
-                        <property value="29" name="auxiliary;index"/>
-                    </property-collection>
                 </properties>
             </endpoint>
             <pattern type="http://www.mulesoft.org/schema/mule/scripting/groovyComponent" name="Groovy" entity-id="Groovy#1">
                 <properties>
-                    <property value="30" name="auxiliary;index"/>
-                    <property value="30" name="auxiliary;index"/>
-                    <property value="30" name="auxiliary;index"/>
-                    <property value="30" name="auxiliary;index"/>
-                    <property value="30" name="auxiliary;index"/>
-                    <property value="30" name="auxiliary;index"/>
+                    <property value="29" name="auxiliary;index"/>
+                    <property value="29" name="auxiliary;index"/>
+                    <property value="29" name="auxiliary;index"/>
+                    <property value="29" name="auxiliary;index"/>
+                    <property value="29" name="auxiliary;index"/>
+                    <property value="29" name="auxiliary;index"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/scripting/script-for-properties;0">
-                        <property value="println payload" name="text"/>
+                        <property value="println &quot;### Send to subscriber: &quot; + payload" name="text"/>
                         <property value="Groovy" name="engine"/>
-                        <property value="31" name="auxiliary;wrapIn"/>
-                        <property value="31" name="auxiliary;index"/>
+                        <property value="30" name="auxiliary;wrapIn"/>
+                        <property value="30" name="auxiliary;index"/>
                     </property-collection>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/scripting/script;0">
-                        <property value="println payload" name="text"/>
+                        <property value="println &quot;### Send to subscriber: &quot; + payload" name="text"/>
                         <property value="Groovy" name="engine"/>
-                        <property value="31" name="auxiliary;wrapIn"/>
-                        <property value="31" name="auxiliary;index"/>
+                        <property value="30" name="auxiliary;wrapIn"/>
+                        <property value="30" name="auxiliary;index"/>
                     </property-collection>
                 </properties>
             </pattern>
-            <unknown index="33" description="false" entity-id="unknown#3">
+            <unknown index="32" description="false" entity-id="unknown#3">
                 <content>&lt;custom-exception-strategy xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; class=&quot;org.soitoolkit.commons.mule.error.ServiceExceptionStrategy&quot;/&gt;</content>
             </unknown>
         </lane>

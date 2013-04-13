@@ -9,7 +9,6 @@ import se.skltp.ei.svc.service.api.UpdateInterface;
 
 public class UpdateDbBean {
 
-    @SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(UpdateDbBean.class);
 
 	private static JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
@@ -27,7 +26,7 @@ public class UpdateDbBean {
      */
     public String update(String requestStr) {
     	
-    	System.err.println("### Req: " + requestStr);
+    	LOG.debug("Received the request: {}", requestStr);
 
 		UpdateType requestJaxb = (UpdateType)jabxUtil.unmarshal(requestStr);
     	

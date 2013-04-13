@@ -2,14 +2,23 @@ package se.skltp.ei.intsvc.integrationtests;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.mule.api.MuleMessage;
+import org.mule.context.notification.EndpointMessageNotification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
+import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
@@ -17,11 +26,16 @@ import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
 public class UpdateIntegrationTest extends AbstractTestCase {
 
-//	@SuppressWarnings("unused")
-//	private static final Logger log = LoggerFactory.getLogger(RequestActivitiesIntegrationTest.class);
+	@SuppressWarnings("unused")
+	private static final Logger LOG = LoggerFactory.getLogger(UpdateIntegrationTest.class);
 	 
+	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
+	private static final ObjectFactory of = new ObjectFactory();
+	
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 
+    
+    private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
     private static final String LOGICAL_ADDRESS = "logical-address";
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
@@ -66,9 +80,10 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
 	/**
 	 * Perform a test that is expected to return zero hits
+	 * @throws JMSException 
 	 */
     @Test
-    public void test_ok() {
+    public void test_ok() throws JMSException {
 		
 		EngagementType engagement = new EngagementType();
         engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
@@ -94,13 +109,17 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
         
-        try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+        // FIXME: Create a version of dispatchAndWaitForDelivery in soi-toolkit where no message is required to be sent like the existing method waitForServiceComponent()
+        MuleMessage r = dispatchAndWaitForDelivery("jms://foo?connector=soitoolkit-jms-connector", "", null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 3000);
+
+        // Compare the notified message with the request message, they shouls be the same
+        TextMessage jmsMsg = (TextMessage)r.getPayload();
+        String notificationXml = jmsMsg.getText();
+		String requestXml = jabxUtil.marshal(of.createUpdate(request));
+		assertEquals(requestXml, notificationXml);
+
+		// Verify that we got something in the database as well
         assertEquals(1, engagementRepository.count());
     }
+
 }
