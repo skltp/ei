@@ -8,6 +8,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
@@ -30,12 +32,18 @@ public class UpdateBean implements UpdateInterface {
     }
 
     /**
-     *
-     * @param header
-     * @param request
-     * @return
+     * Performs an index update transaction. <p>
+     * 
+     * Due to the fact that no underlying XA resources is in use, this transaction will 
+     * be completely standalone and not to be confused with other transactions, i.e. already 
+     * started JMS transactions in modules/insvc.
+     * 
+     * @param header the header
+     * @param request the request
+     * @return the update response
      */
     @Override
+	@Transactional(isolation=Isolation.READ_UNCOMMITTED)
     public UpdateResponseType update(Header header, UpdateType request) {
     	LOG.debug("The svc.update service is called");
 

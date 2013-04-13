@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
@@ -34,6 +35,7 @@ public class FindContentBean implements FindContentInterface {
      * @return
      */
     @Override
+	@Transactional(readOnly=true)
     public FindContentResponseType findContent(Header header, FindContentType parameters) {
     	LOG.debug("The svc.findContent service is called");
     	

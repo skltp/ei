@@ -7,9 +7,17 @@ import static org.junit.Assert.assertEquals;
 
 import se.skltp.ei.svc.entity.model.util.MurmurHash;
 
+/**
+ * Tests the hash algorithm.
+ * 
+ * @author Peter
+ */
 public class MurmurHashTest {
 	public static String prefix = "TestingHashWithAPrettyLongPrefixKeyJustAddedByASimpleNumberAndAlsoSomeInternationalCharactersSuchAsåäöÅÄÖ";
 
+	/**
+	 * Generates a hash for a bunch of very similar strings, and check uniqueness.
+	 */
 	@Test
 	public void hashTest() {
 		final int num = 10000;

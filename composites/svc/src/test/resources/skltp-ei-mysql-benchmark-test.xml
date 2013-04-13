@@ -15,8 +15,8 @@
 
     <context:property-placeholder ignore-resource-not-found="true" 
     	location="
-            classpath:database-default.properties,
-            file:${user.home}/.ei/database-becnhmark.properties"
+            classpath:benchmark-default.properties,
+            file:${user.home}/.ei/becnhmark.properties"
             />
 
     <!--  pl.mjedynak -->

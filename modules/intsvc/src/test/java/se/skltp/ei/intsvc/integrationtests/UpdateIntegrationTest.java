@@ -94,6 +94,13 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
         
-        assertEquals(0, engagementRepository.count());
+        try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        assertEquals(1, engagementRepository.count());
     }
 }

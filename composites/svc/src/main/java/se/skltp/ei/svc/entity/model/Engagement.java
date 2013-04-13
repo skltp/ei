@@ -22,7 +22,7 @@ import se.skltp.ei.svc.entity.model.util.MurmurHash;
  * 
  * Also see: http://code.google.com/p/rivta/
  */
-@Entity
+@Entity(name="engagement_index_table")
 public class Engagement {
 	
 	private static final String NA = "NA";
@@ -123,7 +123,7 @@ public class Engagement {
 	    private String sourceSystem;
 	    @Column(name="owner")
 	    private String owner = INERA;
-	    @Column(name="clinical_process_interestId")    
+	    @Column(name="clinical_process_interest_id")    
 	    private String clinicalProcessInterestId = NA;
 		
 	    //
@@ -162,7 +162,7 @@ public class Engagement {
 	     * @return true if equal, otherwise false.
 	     */
 	    private static boolean eq(String l, String r) {
-	    	return nvl(l, NA).equals(nvl(r, NA));
+	    	return nvl(l, "").equals(nvl(r, ""));
 	    }
 	    
 	    public String getRegisteredResidentIdentification() {

@@ -17,6 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
+/**
+ * Performs a simple benchmark inserting and updating EI records. <p>
+ * 
+ * The default configuration is just a few records, and this can be overrided in a
+ * local properties file, see context configuration below.
+ * 
+ * @author Peter
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:skltp-ei-mysql-benchmark-test.xml")
 public class BenchmarkTest {
@@ -78,12 +86,25 @@ public class BenchmarkTest {
 	private int batchSize;
 	
 	
+	/**
+	 * The transactional batch update part.
+	 * 
+	 * @param start the start number.
+	 * @param size the batch size.
+	 * @return
+	 */
 	@Transactional
 	public int upsertBatch(int start, int size) {
 		engagementRepository.save(genEngagements(start, size));
 		return size;
 	}
 
+	/**
+	 * Saves records.
+	 * 
+	 * @param name name of operation for sampling timing statistics.
+	 * @return the number of records saved.
+	 */
 	public int saveTest(String name) {
 		int total = 0;
 		Timer t = new Timer(name);
@@ -97,6 +118,11 @@ public class BenchmarkTest {
 	}
 
 
+	/**
+	 * The test method. <p>
+	 * 
+	 * First create records, and then update all of them.
+	 */
 	@Test
 	public void benchmark() {
 		logger.info("benchmark rows: " + rows);
@@ -113,6 +139,13 @@ public class BenchmarkTest {
 	}
 	
 	
+	/**
+	 * Generates test data.
+	 * 
+	 * @param start start id.
+	 * @param size batch size.
+	 * @return list of test engagements.
+	 */
 	static List<Engagement> genEngagements(int start, int size) {
 		List<Engagement> list = new ArrayList<Engagement>();
 		for (long i = 0; i < size; i++) {
@@ -127,26 +160,26 @@ public class BenchmarkTest {
 	}
 
 	   
-    //
-    static Engagement.Key genKey(long residentIdentification) {	
+    /**
+     * Generates a key, which is completely derived from the value of residentIdentification (repeatable).
+     * 
+     * @param residentIdentification
+     * @return the key.
+     */
+    static Engagement.Key genKey(long residentIdentification) {
+    	final String[] domains = { "urn:riv:scheduling:timebooking", "urn:riv:clinicalprocess:dummy", "urn:riv:another:test:doamin", "urn:riv:yet:another:dummy:domain" };
+    	final String[] categories = { "booking", "dummy", "one.two.three", "andsoforth" };
+    	final String[] logicalAdresses = { "SE100200400-600", "SE100200400-700", "SE100200400-800", "SE100200400-900" };
+    	final String[] sourceSystems = { "XXX100200400-600", "XXX100200400-700", "XXX100200400-800", "XXX100200400-900" };
+    	
     	Engagement.Key key = Engagement.createKey();
     	key.setRegisteredResidentIdentification(String.valueOf("19" + residentIdentification));
-    	key.setServiceDomain("urn:riv:scheduling:timebooking");
+    	int n = (int)(residentIdentification % 4L);
+    	key.setServiceDomain(domains[n]);
     	key.setBusinessObjectInstanceIdentifier(String.valueOf(residentIdentification));
-    	key.setCategorization("booking");
-    	key.setLogicalAddress("SE100200400-600");
-    	key.setSourceSystem("SE300200-300");
+    	key.setCategorization(categories[n]);
+    	key.setLogicalAddress(logicalAdresses[n]);
+    	key.setSourceSystem(sourceSystems[n]);
     	return key;    	
     }
-
-
-	/**
-	 * Main.
-	 * 
-	 * @param args node.
-	 */
-	public static void main(String[] args) {
-
-	}
-
 }
