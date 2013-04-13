@@ -5,29 +5,27 @@ import java.util.HashSet;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-import se.skltp.ei.svc.entity.model.util.MurmurHash;
+import se.skltp.ei.svc.entity.model.util.Hash;
 
 /**
  * Tests the hash algorithm.
  * 
  * @author Peter
  */
-public class MurmurHashTest {
+public class HashTest {
 	public static String prefix = "TestingHashWithAPrettyLongPrefixKeyJustAddedByASimpleNumberAndAlsoSomeInternationalCharactersSuchAsåäöÅÄÖ";
 
-	/**
-	 * Generates a hash for a bunch of very similar strings, and check uniqueness.
-	 */
+	
 	@Test
-	public void hashTest() {
-		final int num = 10000;
-		HashSet<Long> set = new HashSet<Long>(num);
+	public void sha() {
+		final int num = 1000;
+		HashSet<String> set = new HashSet<String>(num);
 		for (int i = 0; i < num; i++) {
-			long hash1 = MurmurHash.hash64(prefix, String.valueOf(i));
-			long hash2 = MurmurHash.hash64(prefix + i);
+			String hash1 = Hash.shaHash(prefix, String.valueOf(i));
+			String hash2 = Hash.shaHash(prefix + i);
 			assertEquals(hash1, hash2);
 			set.add(hash1);
 		}
-		assertEquals(num, set.size());
+		assertEquals(num, set.size());		
 	}
 }

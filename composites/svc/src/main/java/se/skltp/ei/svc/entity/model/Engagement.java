@@ -9,13 +9,14 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import se.skltp.ei.svc.entity.model.util.MurmurHash;
+import se.skltp.ei.svc.entity.model.util.Hash;
 
 /**
  * Entity modeled after the service contract itintegration:engagementindex (r901) <p>
@@ -28,13 +29,14 @@ public class Engagement {
 	private static final String NA = "NA";
 	private static final String INERA = "Inera";
 
-	
-	@EmbeddedId
-	private Key key;
-	
-	// Tech key
-	@Column(name="hash_key")
-    private long hashKey = 0L;
+	// Tech id.
+	@Column(name="id", length=36)
+	@Id
+    private String id = null;
+
+	// Buisness key.
+	@Embedded
+	private Key key;	
 	
     // Other non business key fields
 	@Column(name="most_recent_content")
@@ -55,7 +57,7 @@ public class Engagement {
     }
     
     /**
-     * Creates a key instance.
+     * Creates a business key instance.
      * 
      * @return the empty key.
      */
@@ -63,17 +65,27 @@ public class Engagement {
     	return new Key();
     }
 
+    /**
+     * Returns the business key.
+     * 
+     * @return the e-index key.
+     */
 	public Key getKey() {
 		return key;
 	}
 	
+	/**
+	 * Sets the business key.
+	 * 
+	 * @param key the key, must exists in order to persist entity.
+	 */
 	public void setKey(final Key key) {
 		this.key = key;
-		this.hashKey = key.generateHashKey();
+		this.id = key.generateHashKey();
 	}
 	
-	public long getHashKey() {
-		return hashKey;
+	public String getId() {
+		return id;
 	}
 	
 	public void setMostRecentContent(Date mostRecentContent) {
@@ -151,7 +163,7 @@ public class Engagement {
 	    
 	    @Override
 	    public int hashCode() {
-	    	return (int)generateHashKey();
+	    	return generateHashKey().hashCode();
 	    }
 	    	   
 	    /**
@@ -245,8 +257,8 @@ public class Engagement {
 		/**
 		 * Generates a hash key for this post.
 		 */
-		private long generateHashKey() {
-			long hash = MurmurHash.hash64(registeredResidentIdentification,
+		private String generateHashKey() {
+			String hash = Hash.shaHash(registeredResidentIdentification,
 					serviceDomain,
 					categorization,
 					logicalAddress,

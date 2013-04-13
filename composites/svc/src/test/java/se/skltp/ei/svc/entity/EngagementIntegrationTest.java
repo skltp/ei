@@ -69,9 +69,9 @@ public class EngagementIntegrationTest {
     
     @Test
     public void keyTest() {
-    	Engagement.Key key1 = genKey(1);
-    	Engagement.Key key2 = genKey(1);
-    	Engagement.Key key3 = genKey(-1);
+    	Engagement.Key key1 = BenchmarkTest.genKey(1);
+    	Engagement.Key key2 = BenchmarkTest.genKey(1);
+    	Engagement.Key key3 = BenchmarkTest.genKey(2);
     	
     	assertTrue(key1.equals(key2));
     	assertEquals(key1.hashCode(), key2.hashCode());
@@ -81,62 +81,18 @@ public class EngagementIntegrationTest {
     
     @Test
     public void findByMultipleKeys() {
-        String businessObjectInstanceIdentifier = "boi";
-        String categorization = "categorization";
-        String logicalAddress = "logicalAddress";
-        String residentId = "191212121212";
-        String owner = "HSA-001";
-        String serviceDomain = "urn:riv:healthprocess:test";
-        String sourceSystem = "sourceSystem";
-
-        LinkedList<Engagement.Key> keys = new LinkedList<Engagement.Key>();
-        
     	// given
-        Engagement e1 = new Engagement();
-        Engagement.Key key1 = Engagement.createKey();
-        keys.add(key1);
-        key1.setRegisteredResidentIdentification(residentId);
-        key1.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-		key1.setCategorization(categorization);
-		key1.setLogicalAddress(logicalAddress);
-		key1.setOwner(owner);
-		key1.setServiceDomain(serviceDomain);
-		key1.setSourceSystem(sourceSystem);
-		e1.setKey(key1);
-        
-    	// given
-        Engagement e2 = new Engagement();
-        Engagement.Key key2 = Engagement.createKey();
-        keys.add(key2);       
-        key2.setRegisteredResidentIdentification("191313131313");
-        key2.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-		key2.setCategorization(categorization);
-		key2.setLogicalAddress(logicalAddress);
-		key2.setOwner(owner);
-		key2.setServiceDomain(serviceDomain);
-		key2.setSourceSystem(sourceSystem);
-		e2.setKey(key2);
-        
-        LinkedList<Engagement> list = new LinkedList<Engagement>();
-        list.add(e1);
-        list.add(e2);
-        
+    	final int num = 1000;
+        List<Engagement> list = BenchmarkTest.genEngagements(0, num);
         engagementRepository.save(list);
         
-        List<Engagement> result = engagementRepository.findByKeyIn(keys);
+        List<String> ids = new LinkedList<String>();
+        for (Engagement e : list) {
+        	ids.add(e.getId());
+        }
         
-        assertEquals(2, result.size());
-    }
-    
-    //
-    static Engagement.Key genKey(long residentIdentification) {	
-    	Engagement.Key key = Engagement.createKey();
-    	key.setRegisteredResidentIdentification(String.valueOf("19" + residentIdentification));
-    	key.setServiceDomain("urn:riv:scheduling:timebooking");
-    	key.setBusinessObjectInstanceIdentifier(String.valueOf(residentIdentification));
-    	key.setCategorization("booking");
-    	key.setLogicalAddress("SE100200400-600");
-    	key.setSourceSystem("SE300200-300");
-    	return key;    	
+        List<Engagement> result = engagementRepository.findByIdIn(ids);
+        
+        assertEquals(num, result.size());
     }
 }
