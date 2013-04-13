@@ -47,6 +47,10 @@ public class UpdateIntegrationTest extends AbstractTestCase {
     static private String businessObjectInstanceIdentifier = "boi";
     static private String categorization = "categorization";
     static private String logicalAddress = "logicalAddress";
+    static String residentId = "191212121212";
+    static String owner = "HSA-001";
+    static String serviceDomain = "urn:riv:healthprocess:test";
+    static String sourceSystem = "sourceSystem";
 
     @Before
     public void setUp() throws Exception {
@@ -70,6 +74,12 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
     	engagement.setCategorization(categorization);
     	engagement.setLogicalAddress(logicalAddress);
+        engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
+        engagement.setRegisteredResidentIdentification(residentId);
+        engagement.setServiceDomain(serviceDomain);
+        engagement.setSourceSystem(sourceSystem);
+        engagement.setOwner(owner);
+
     	
     	EngagementTransactionType et = new EngagementTransactionType();
     	et.setDeleteFlag(false);

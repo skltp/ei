@@ -45,6 +45,10 @@ public class FindContentIntegrationTest extends AbstractTestCase {
     static private String businessObjectInstanceIdentifier = "boi";
     static private String categorization = "categorization";
     static private String logicalAddress = "logicalAddress";
+    static String residentId = "191212121212";
+    static String owner = "HSA-001";
+    static String serviceDomain = "urn:riv:healthprocess:test";
+    static String sourceSystem = "sourceSystem";
 
     @Before
     public void setUp() throws Exception {
@@ -59,9 +63,15 @@ public class FindContentIntegrationTest extends AbstractTestCase {
     	
     	// Insert one entity
 		Engagement engagement = new Engagement();
-        engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-    	engagement.setCategorization(categorization);
-    	engagement.setLogicalAddress(logicalAddress);
+		Engagement.Key key = Engagement.createKey();
+		engagement.setKey(key);
+        key.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
+    	key.setCategorization(categorization);
+    	key.setLogicalAddress(logicalAddress);
+    	key.setRegisteredResidentIdentification(residentId);
+    	key.setServiceDomain(serviceDomain);
+    	key.setSourceSystem(sourceSystem);
+    	key.setOwner(owner);
     	engagementRepository.save(engagement);
 	}
 
@@ -75,6 +85,14 @@ public class FindContentIntegrationTest extends AbstractTestCase {
         FindContentTestConsumer consumer = new FindContentTestConsumer(SERVICE_ADDRESS);
 
 		FindContentType request = new FindContentType();
+		request.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
+		request.setCategorization(categorization);
+		request.setLogicalAddress(logicalAddress);
+		request.setRegisteredResidentIdentification(residentId);
+		request.setServiceDomain(serviceDomain);
+		request.setSourceSystem(sourceSystem);
+		request.setOwner(owner);
+
 		FindContentResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
         
         assertEquals(1, response.getEngagement().size());
