@@ -78,9 +78,13 @@
 
     <!-- Message logging using soi-toolkit LogTransformer class -->
 	<logger name="org.soitoolkit.commons.mule.messageLogger">
-		<level value="INFO" />
+		<level value="DEBUG" />
 	</logger>
 	
+    <logger name="org.hibernate.SQL">
+        <level value="DEBUG" />
+    </logger>
+    
 	<root>
 		<priority value="WARN" />
 

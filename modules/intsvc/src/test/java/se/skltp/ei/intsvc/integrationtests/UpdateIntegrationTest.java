@@ -94,6 +94,6 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
         
-        assertEquals(1, engagementRepository.count());
+        assertEquals(0, engagementRepository.count());
     }
 }

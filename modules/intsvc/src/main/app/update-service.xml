@@ -1,38 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<mule 
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:spring="http://www.springframework.org/schema/beans"
 	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-		http://www.mulesoft.org/schema/mule/core    http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-		http://www.mulesoft.org/schema/mule/cxf     http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
-		http://www.mulesoft.org/schema/mule/jms     http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
-	">
+http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd 
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd 
+http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
 
-    <!-- Bean with business logic -->
-    <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.service.impl.UpdateBean">
-    </spring:bean>
+    <!-- JMS Connector for the durable topic subscribers -->
+    <jms:connector 
+        name="skltp-ei-jms-topic-connector"
+        connectionFactory-ref="soitoolkit-jms-connection-factory"
+        clientId="SKLTP-EI"
+        durable="true" 
+        persistentDelivery="true"
+        specification="1.1" 
+        disableTemporaryReplyToDestinations="true" 
+        validateConnections="true"
+        doc:name="JMS Topic Connector" 
+    />
+        
+    <spring:beans>
+        <!-- Bean that expose a Web Service -->
+        <spring:bean id="" name="update-ws-bean" class="se.skltp.ei.intsvc.UpdateWSBean"/>
 
-    <!-- Bean that expose a Web Service -->
-    <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.UpdateWSBean">
-        <spring:property name="blBean" ref="update-bl-bean" />
-    </spring:bean>
+        <!-- Bean with business logic -->
+        <spring:bean id="" name="update-bl-bean" class="se.skltp.ei.svc.service.impl.UpdateBean"/>
+
+        <!-- Bean that process the update -->
+        <spring:bean id="" name="update-process-bean" class="se.skltp.ei.intsvc.UpdateDbBean">
+            <spring:property name="blBean" ref="update-bl-bean"/>
+        </spring:bean>
+    </spring:beans>
 
 
-	<!-- Update Web Service -->
-	<simple-service 
-		name="update-web-service"
-        address="${UPDATE_WEB_SERVICE_URL}?connector=soitoolkit-http-connector" 
-        transformer-refs="logReqIn"
-        responseTransformer-refs="logRespOut"
-        type="jax-ws">
-        <component>
+    <flow name="update-web-service" doc:name="update-web-service">
+
+        <inbound-endpoint 
+            address="${UPDATE_WEB_SERVICE_URL}"  
+            connector-ref="soitoolkit-http-connector"
+            exchange-pattern="request-response"
+            transformer-refs="logReqIn"
+            responseTransformer-refs="logRespOut" doc:name="Generic"/>
+
+        <cxf:jaxws-service
+            namespace="urn:riv:itintegration:engagementindex:Update:1:rivtabp21"
+            serviceClass="se.skltp.ei.intsvc.UpdateWSBean"
+            wsdlLocation="classpath:/META-INF/wsdl/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
+
+        <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
+ 
+        <component doc:name="Java">
             <spring-object bean="update-ws-bean"/>
         </component>
-    </simple-service>
+
+        <set-variable variableName="response" value="#[payload]" doc:name="Variable"/>
+
+        <set-payload value="#[variable:request]" doc:name="Set Payload"/>        
+
+        <custom-transformer class="se.skltp.ei.intsvc.UpdateRequestToJmsMsgTransformer" doc:name="Java"/>
+
+        <jms:outbound-endpoint 
+            connector-ref="soitoolkit-jms-connector"
+            queue="${UPDATE_QUEUE}" 
+            transformer-refs="logMsgOut" 
+            doc:name="JMS"/>
+ 
+        <set-payload value="#[variable:response]" doc:name="Set Payload"/>        
+
+        <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
+    </flow>        
+
+
+    <flow name="update-process-service" doc:name="update-process-service">
+        <jms:inbound-endpoint 
+            connector-ref="soitoolkit-jms-connector"
+            queue="${UPDATE_QUEUE}" 
+            transformer-refs="logMsgIn" 
+            doc:name="JMS">
+<!--            <jms:transaction action="ALWAYS_BEGIN"/>-->
+        </jms:inbound-endpoint>
+
+        <component doc:name="Java">
+            <spring-object bean="update-process-bean"/>
+        </component>
+
+        <jms:outbound-endpoint 
+            connector-ref="soitoolkit-jms-connector"
+            topic="${NOTIFICATION_TOPIC}" 
+            transformer-refs="logMsgOut" 
+            doc:name="JMS Topic">
+<!--            <jms:transaction action="ALWAYS_JOIN"/>-->
+        </jms:outbound-endpoint>
+        
+        <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
+    </flow>
+
+    <flow name="notification-service" doc:name="notification-service">
+        <jms:inbound-endpoint 
+            connector-ref="skltp-ei-jms-topic-connector"
+            topic="${NOTIFICATION_TOPIC}" 
+            durableName="HSA-ID-1" 
+            transformer-refs="logMsgIn" 
+            doc:name="JMS Topic">
+            <jms:transaction action="ALWAYS_BEGIN"/>
+        </jms:inbound-endpoint>
+
+        <scripting:component doc:name="Groovy">
+            <scripting:script engine="Groovy">
+                <scripting:text><![CDATA[println payload]]></scripting:text>
+            </scripting:script>
+        </scripting:component>
+        
+        <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
+    </flow>
+
+    <!-- 
+
+    <flow name="PingForConfiguration-rivtabp21-flow" >
+
+        <https:inbound-endpoint
+            name="PingForConfigurationResponderRivtabp21Service"
+            address="https://${TP_HOST}:${PINGFORCONFIGURATIONSERVICE_RIVTABP21_PORT}/${TP_BASE_URI}/${PINGFORCONFIGURATIONSERVICE_RIVTABP21_INBOUND_URI}"
+            connector-ref="VPProducerConnector"
+            exchange-pattern="request-response"
+            responseTransformer-refs="logRespOut" 
+            transformer-refs="createCorrId rivExtractor logReqIn"/>
+ 
+        <cxf:jaxws-service
+            namespace="urn:riv:itintegration:monitoring:PingForConfiguration:1:rivtabp21"
+            serviceClass="se.skl.tp.vp.pingforconfiguration.PingForConfigurationProducerRivTa21"
+            wsdlLocation="classpath:/schemas/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl" />
+  
+       <component>
+            <singleton-object class="se.skl.tp.vp.pingforconfiguration.PingForConfigurationProducerRivTa21" />
+        </component>
+    </flow>
+    
+@WebService(
+        serviceName = "PingForConfigurationResponderService", 
+        endpointInterface="se.riv.itintegration.monitoring.v1.rivtabp21.PingForConfigurationResponderInterface", 
+        portName = "PingForConfigurationResponderPort", 
+        targetNamespace = "urn:riv:itintegration:monitoring:PingForConfiguration:1:rivtabp21",
+        wsdlLocation = "schemas/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl")
+public class PingForConfigurationProducerRivTa21 implements PingForConfigurationResponderInterface {
+
+
+
+
+
+                <http:inbound-endpoint
+            doc:name="Inbound"
+            connector-ref="soitoolkit-http-connector"
+            address="${SERVICE_INBOUND_URL}"
+            exchange-pattern="request-response"
+            transformer-refs="objToStr logReqIn"
+            responseTransformer-refs="createSoapFaultIfException logRespOut">
+        </http:inbound-endpoint>
+
+        <cxf:proxy-service 
+            wsdlLocation="${SERVICE_INBOUND_WSDL}"
+            service="${SERVICE_INBOUND_NAME}"
+            namespace="${SERVICE_INBOUND_NAMESPACE}"
+            payload="envelope">
+        </cxf:proxy-service>
+        
+ -->        
 
 </mule>

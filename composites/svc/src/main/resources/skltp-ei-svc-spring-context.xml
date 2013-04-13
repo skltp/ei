@@ -10,10 +10,8 @@
     http://www.springframework.org/schema/data/jpa
     http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <!--  pl.mjedynak -->
     <context:component-scan base-package="se.skltp.ei.entity.model"/>
 
-    <!-- pl.mjedynak.repository -->
     <jpa:repositories base-package="se.skltp.ei.svc.entity.repository"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
