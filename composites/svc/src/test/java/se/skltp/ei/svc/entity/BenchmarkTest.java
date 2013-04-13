@@ -36,6 +36,7 @@ public class BenchmarkTest {
 		void stop(int rows) {
 			this.elapsed = (int)(System.currentTimeMillis() - t0);
 			this.rows = rows;
+			logger.info(this);
 		}
 		
 		int elapsed() {
@@ -65,7 +66,7 @@ public class BenchmarkTest {
 	}
 	
 	
-	Logger logger = Logger.getLogger(BenchmarkTest.class);
+	static Logger logger = Logger.getLogger(BenchmarkTest.class);
 		
 	@Autowired
 	private EngagementRepository engagementRepository;
@@ -78,8 +79,8 @@ public class BenchmarkTest {
 	
 	
 	@Transactional
-	public int upsertBatch(int size) {
-		engagementRepository.save(genEngagements(size));
+	public int upsertBatch(int start, int size) {
+		engagementRepository.save(genEngagements(start, size));
 		return size;
 	}
 
@@ -88,7 +89,7 @@ public class BenchmarkTest {
 		Timer t = new Timer(name);
 		for (; total < rows;) {
 			Timer tb = new Timer(name + "Batch");
-			total += upsertBatch(batchSize);
+			total += upsertBatch(total, batchSize);
 			tb.stop(batchSize);
 		}
 		t.stop(total);
@@ -108,20 +109,15 @@ public class BenchmarkTest {
 		
 		total += saveTest("Update");
 		
-		t.stop(total);
-		
-		for (Timer timer : Timer.getTimers()) {
-			logger.info(timer);
-		}
-		
+		t.stop(total);		
 	}
 	
 	
-	static List<Engagement> genEngagements(int n) {
+	static List<Engagement> genEngagements(int start, int size) {
 		List<Engagement> list = new ArrayList<Engagement>();
-		for (long i = 0; i < n; i++) {
+		for (long i = 0; i < size; i++) {
 			Engagement e = new Engagement();
-			e.setKey(genKey(i));
+			e.setKey(genKey(start + i));
 			Date now = new Date();
 			e.setMostRecentContent(now);
 			e.setCreationTime(now);
