@@ -150,7 +150,7 @@ public class BenchmarkTest {
 		List<Engagement> list = new ArrayList<Engagement>();
 		for (long i = 0; i < size; i++) {
 			Engagement e = new Engagement();
-			e.setKey(genKey(start + i));
+			genKey(e, start + i);
 			Date now = new Date();
 			e.setMostRecentContent(now);
 			e.setCreationTime(now);
@@ -166,20 +166,22 @@ public class BenchmarkTest {
      * @param residentIdentification
      * @return the key.
      */
-    static Engagement.Key genKey(long residentIdentification) {
+    static Engagement genKey(Engagement e, long residentIdentification) {
     	final String[] domains = { "urn:riv:scheduling:timebooking", "urn:riv:clinicalprocess:dummy", "urn:riv:another:test:doamin", "urn:riv:yet:another:dummy:domain" };
     	final String[] categories = { "booking", "dummy", "one.two.three", "andsoforth" };
     	final String[] logicalAdresses = { "SE100200400-600", "SE100200400-700", "SE100200400-800", "SE100200400-900" };
     	final String[] sourceSystems = { "XXX100200400-600", "XXX100200400-700", "XXX100200400-800", "XXX100200400-900" };
     	
-    	Engagement.Key key = Engagement.createKey();
-    	key.setRegisteredResidentIdentification(String.valueOf("19" + residentIdentification));
-    	int n = (int)(residentIdentification % 4L);
-    	key.setServiceDomain(domains[n]);
-    	key.setBusinessObjectInstanceIdentifier(String.valueOf(residentIdentification));
-    	key.setCategorization(categories[n]);
-    	key.setLogicalAddress(logicalAdresses[n]);
-    	key.setSourceSystem(sourceSystems[n]);
-    	return key;    	
+       	int n = (int)(residentIdentification % 4L);
+       	e.setBusinessKey(String.valueOf("19" + residentIdentification),
+			domains[n],
+			categories[n],
+			String.valueOf(residentIdentification),
+			logicalAdresses[n],
+			sourceSystems[n],
+			"Inera",
+			"NA");
+       	
+       	return e;    	
     }
 }

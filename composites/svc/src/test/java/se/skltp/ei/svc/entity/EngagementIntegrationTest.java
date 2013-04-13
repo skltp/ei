@@ -29,25 +29,9 @@ public class EngagementIntegrationTest {
     @Test
     public void shouldFindPreviouslySavedPerson() {
 
-        String businessObjectInstanceIdentifier = "boi";
-        String categorization = "categorization";
-        String logicalAddress = "logicalAddress";
-        String residentId = "191212121212";
-        String owner = "HSA-001";
-        String serviceDomain = "urn:riv:healthprocess:test";
-        String sourceSystem = "sourceSystem";
-
-    	// given
+     	// given
         Engagement engagement = new Engagement();
-        Engagement.Key key = Engagement.createKey();
-        key.setRegisteredResidentIdentification(residentId);
-        key.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-		key.setCategorization(categorization);
-		key.setLogicalAddress(logicalAddress);
-		key.setOwner(owner);
-		key.setServiceDomain(serviceDomain);
-		key.setSourceSystem(sourceSystem);
-		engagement.setKey(key);
+        BenchmarkTest.genKey(engagement, 1212121212L);
         engagementRepository.save(engagement);
 
         // when
@@ -57,22 +41,23 @@ public class EngagementIntegrationTest {
         assertThat(result, hasSize(1));
 
         Engagement foundEngagement = result.get(0);
-        assertThat(foundEngagement.getKey().getRegisteredResidentIdentification(), is(residentId));
-        assertThat(foundEngagement.getKey().getBusinessObjectInstanceIdentifier(), is(businessObjectInstanceIdentifier));
-        assertThat(foundEngagement.getKey().getCategorization(), is(categorization));
-        assertThat(foundEngagement.getKey().getLogicalAddress(), is(logicalAddress));
-        assertThat(foundEngagement.getKey().getServiceDomain(), is(serviceDomain));
-        assertThat(foundEngagement.getKey().getSourceSystem(), is(sourceSystem));
-        assertThat(foundEngagement.getKey().getOwner(), is(owner));
+        assertThat(foundEngagement.getBusinessKey(),is(engagement.getBusinessKey()));
     }
     
     
     @Test
     public void keyTest() {
-    	Engagement.Key key1 = BenchmarkTest.genKey(1);
-    	Engagement.Key key2 = BenchmarkTest.genKey(1);
-    	Engagement.Key key3 = BenchmarkTest.genKey(2);
+    	Engagement e1 = new Engagement();
+    	Engagement e2 = new Engagement();
+    	Engagement e3 = new Engagement();
+    	BenchmarkTest.genKey(e1, 1);
+    	BenchmarkTest.genKey(e2, 1);
+    	BenchmarkTest.genKey(e3, 2);
     	
+    	Engagement.BusinessKey key1 = e1.getBusinessKey();
+    	Engagement.BusinessKey key2 = e2.getBusinessKey();
+    	Engagement.BusinessKey key3 = e3.getBusinessKey();
+
     	assertTrue(key1.equals(key2));
     	assertEquals(key1.hashCode(), key2.hashCode());
     	assertTrue(key1.hashCode() != key3.hashCode());

@@ -63,15 +63,14 @@ public class FindContentIntegrationTest extends AbstractTestCase {
     	
     	// Insert one entity
 		Engagement engagement = new Engagement();
-		Engagement.Key key = Engagement.createKey();
-		engagement.setKey(key);
-        key.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-    	key.setCategorization(categorization);
-    	key.setLogicalAddress(logicalAddress);
-    	key.setRegisteredResidentIdentification(residentId);
-    	key.setServiceDomain(serviceDomain);
-    	key.setSourceSystem(sourceSystem);
-    	key.setOwner(owner);
+		engagement.setBusinessKey(residentId,
+				serviceDomain,
+				categorization,
+				logicalAddress,
+				businessObjectInstanceIdentifier,
+    			sourceSystem,
+    			owner, 
+    			null);
     	engagementRepository.save(engagement);
 	}
 

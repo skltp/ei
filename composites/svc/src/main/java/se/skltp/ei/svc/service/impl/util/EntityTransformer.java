@@ -14,19 +14,18 @@ public class EntityTransformer {
 	public static Engagement toEntity(EngagementType eIn) {
 		
 		Engagement eOut = new Engagement();
-		Engagement.Key key = Engagement.createKey();
-	    
-		key.setRegisteredResidentIdentification(eIn.getRegisteredResidentIdentification());
-	    key.setServiceDomain(eIn.getServiceDomain());
-	    key.setCategorization(eIn.getCategorization());
-	    key.setLogicalAddress(eIn.getLogicalAddress());
-	    key.setBusinessObjectInstanceIdentifier(eIn.getBusinessObjectInstanceIdentifier());
-	    key.setSourceSystem(eIn.getSourceSystem());
+		
+		eOut.setBusinessKey(eIn.getRegisteredResidentIdentification(),
+				eIn.getServiceDomain(),
+				eIn.getCategorization(),
+				eIn.getLogicalAddress(),
+				eIn.getBusinessObjectInstanceIdentifier(),
+				eIn.getSourceSystem(),
+				eIn.getOwner(),
+				eIn.getClinicalProcessInterestId());
+				
 // FIXME	    eOut.setCreationTime(eIn.getCreationTime());
-	    key.setOwner(eIn.getOwner());
 // FIXME	    eOut.setUpdateTime(eIn.getUpdateTime());
-	    key.setClinicalProcessInterestId(eIn.getClinicalProcessInterestId());
-		eOut.setKey(key);
 		
 	    return eOut;
 	}
@@ -40,7 +39,7 @@ public class EntityTransformer {
 	public static EngagementType fromEntity(Engagement eIn) {
 		
 		EngagementType eOut = new EngagementType();
-		Engagement.Key key = eIn.getKey();
+		Engagement.BusinessKey key = eIn.getBusinessKey();
 	    eOut.setRegisteredResidentIdentification(key.getRegisteredResidentIdentification());
 	    eOut.setServiceDomain(key.getServiceDomain());
 	    eOut.setCategorization(key.getCategorization());

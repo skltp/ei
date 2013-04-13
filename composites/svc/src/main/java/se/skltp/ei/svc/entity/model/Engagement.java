@@ -21,11 +21,14 @@ import se.skltp.ei.svc.entity.model.util.Hash;
 /**
  * Entity modeled after the service contract itintegration:engagementindex (r901) <p>
  * 
+ * Uses a SHA-256 generated hash-key in UUID (3) format as an unique id.
+ * 
  * Also see: http://code.google.com/p/rivta/
  */
 @Entity(name="engagement_index_table")
 public class Engagement {
 	
+	private static final String EMPTY = "";
 	private static final String NA = "NA";
 	private static final String INERA = "Inera";
 
@@ -36,7 +39,7 @@ public class Engagement {
 
 	// Buisness key.
 	@Embedded
-	private Key key;	
+	private BusinessKey key;	
 	
     // Other non business key fields
 	@Column(name="most_recent_content")
@@ -57,12 +60,25 @@ public class Engagement {
     }
     
     /**
-     * Creates a business key instance.
-     * 
-     * @return the empty key.
+     * Sets the business key.
      */
-    public static Key createKey() {
-    	return new Key();
+    public void setBusinessKey(String registeredResidentIdentification,
+			String serviceDomain,
+			String categorization,
+			String logicalAddress,
+			String businessObjectInstanceIdentifier,
+			String sourceSystem,
+			String owner,
+			String clinicalProcessInterestId) {
+    	key = new BusinessKey(registeredResidentIdentification,
+    			serviceDomain,
+    			categorization,
+    			logicalAddress,
+    			businessObjectInstanceIdentifier,
+    			sourceSystem,
+    			owner,
+    			clinicalProcessInterestId);
+    	id = key.getHashId();
     }
 
     /**
@@ -70,20 +86,10 @@ public class Engagement {
      * 
      * @return the e-index key.
      */
-	public Key getKey() {
+	public BusinessKey getBusinessKey() {
 		return key;
 	}
-	
-	/**
-	 * Sets the business key.
-	 * 
-	 * @param key the key, must exists in order to persist entity.
-	 */
-	public void setKey(final Key key) {
-		this.key = key;
-		this.id = key.generateHashKey();
-	}
-	
+		
 	public String getId() {
 		return id;
 	}
@@ -114,32 +120,54 @@ public class Engagement {
 	
 	
 	/**
-	 * Realizes the business key.
+	 * Implements the business key.
 	 */
 	@Embeddable
-	public static class Key implements Serializable {
+	public static class BusinessKey implements Serializable {
 		//
 		private static final long serialVersionUID = 1L;
 		// Fields that are part of the business key
-		@Column(name="registered_resident_identification")
+		@Column(name="registered_resident_identification", nullable=false, length=32)
 	    private String registeredResidentIdentification;
-		@Column(name="service_domain")
+		@Column(name="service_domain", nullable=false, length=256)
 	    private String serviceDomain;
-		@Column(name="categorization")
+		@Column(name="categorization", nullable=false, length=256)
 	    private String categorization = NA;
-	    @Column(name="logical_address")
+	    @Column(name="logical_address", nullable=false, length=64)
 	    private String logicalAddress;
-	    @Column(name="business_object_instance_identifier")
+	    @Column(name="business_object_instance_identifier", nullable=false, length=128)
 	    private String businessObjectInstanceIdentifier = NA;
-	    @Column(name="source_system")
+	    @Column(name="source_system", nullable=false, length=64)
 	    private String sourceSystem;
-	    @Column(name="owner")
+	    @Column(name="owner", nullable=false, length=64)
 	    private String owner = INERA;
-	    @Column(name="clinical_process_interest_id")    
+	    @Column(name="clinical_process_interest_id", nullable=false, length=128)    
 	    private String clinicalProcessInterestId = NA;
+	    //
+	    private transient String hashId;
 		
 	    //
-	    private Key() {}
+	    protected BusinessKey() {}
+	    
+	    //
+	    protected BusinessKey(String registeredResidentIdentification,
+				String serviceDomain,
+				String categorization,
+				String logicalAddress,
+				String businessObjectInstanceIdentifier,
+				String sourceSystem,
+				String owner,
+				String clinicalProcessInterestId) {
+	    	this.registeredResidentIdentification = registeredResidentIdentification;
+	    	this.serviceDomain = serviceDomain;
+	    	this.categorization = nvl(categorization, NA);
+	    	this.logicalAddress = logicalAddress;
+	    	this.businessObjectInstanceIdentifier = nvl(businessObjectInstanceIdentifier, NA);
+	    	this.sourceSystem = sourceSystem;
+	    	this.owner = nvl(owner, INERA);
+	    	this.clinicalProcessInterestId = nvl(clinicalProcessInterestId, NA);
+	    	this.hashId = null;
+	    }
 	    
 	    @Override
 	    public boolean equals(Object r) {
@@ -147,8 +175,8 @@ public class Engagement {
 	    		return false;
 	    	} else if (this == r) {
 	    		return true;
-	    	} else if (r instanceof Key) {
-	    		Key other = (Key)r;
+	    	} else if (r instanceof BusinessKey) {
+	    		BusinessKey other = (BusinessKey)r;
 	    		return eq(registeredResidentIdentification, other.registeredResidentIdentification)
 	    				&& eq(serviceDomain, other.serviceDomain)
 	    				&& eq(categorization, other.categorization)
@@ -163,7 +191,7 @@ public class Engagement {
 	    
 	    @Override
 	    public int hashCode() {
-	    	return generateHashKey().hashCode();
+	    	return getHashId().hashCode();
 	    }
 	    	   
 	    /**
@@ -174,75 +202,50 @@ public class Engagement {
 	     * @return true if equal, otherwise false.
 	     */
 	    private static boolean eq(String l, String r) {
-	    	return nvl(l, "").equals(nvl(r, ""));
+	    	return nvl(l, EMPTY).equals(nvl(r, EMPTY));
+	    }
+	    
+	    //
+	    protected String getHashId() {
+	    	if (hashId == null) {
+	    		hashId = generateHashId();
+	    	}
+	    	return hashId;
 	    }
 	    
 	    public String getRegisteredResidentIdentification() {
 			return registeredResidentIdentification;
 		}
 		
-		public void setRegisteredResidentIdentification(
-				String registeredResidentIdentification) {
-			this.registeredResidentIdentification = registeredResidentIdentification;
-		}
-		
 		public String getServiceDomain() {
 			return serviceDomain;
 		}
-		
-		public void setServiceDomain(String serviceDomain) {
-			this.serviceDomain = serviceDomain;
-		}
-		
+				
 		public String getCategorization() {
 			return categorization;
 		}
 		
-		public void setCategorization(String categorization) {
-			this.categorization = nvl(categorization, NA);
-		}
 		
 		public String getLogicalAddress() {
 			return logicalAddress;
 		}
 		
-		public void setLogicalAddress(String logicalAddress) {
-			this.logicalAddress = logicalAddress;
-		}
-		
 		public String getBusinessObjectInstanceIdentifier() {
 			return businessObjectInstanceIdentifier;
 		}
-		
-		public void setBusinessObjectInstanceIdentifier(
-				String businessObjectInstanceIdentifier) {
-			this.businessObjectInstanceIdentifier = nvl(businessObjectInstanceIdentifier, NA);
-		}
-		
+			
 		public String getSourceSystem() {
 			return sourceSystem;
-		}
-		
-		public void setSourceSystem(String sourceSystem) {
-			this.sourceSystem = sourceSystem;
 		}
 		
 		public String getOwner() {
 			return owner;
 		}
 		
-		public void setOwner(String owner) {
-			this.owner = nvl(owner, INERA);
-		}
-		
 		public String getClinicalProcessInterestId() {
 			return clinicalProcessInterestId;
 		}
 		
-		public void setClinicalProcessInterestId(String clinicalProcessInterestId) {
-			this.clinicalProcessInterestId = nvl(clinicalProcessInterestId, NA);
-		}
-
 		/**
 		 * Returns NA constant for empty strings.
 		 * 
@@ -257,7 +260,7 @@ public class Engagement {
 		/**
 		 * Generates a hash key for this post.
 		 */
-		private String generateHashKey() {
+		private String generateHashId() {
 			String hash = Hash.shaHash(registeredResidentIdentification,
 					serviceDomain,
 					categorization,
