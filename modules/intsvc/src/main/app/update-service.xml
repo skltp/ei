@@ -24,6 +24,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
         clientId="SKLTP-EI"
         durable="true" 
         persistentDelivery="true"
+        maxRedelivery="-1"
         specification="1.1" 
         disableTemporaryReplyToDestinations="true" 
         validateConnections="true"
@@ -118,7 +119,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
             durableName="HSA-ID-1" 
             transformer-refs="logMsgIn" 
             doc:name="JMS Topic">
-<!-- FIXME            <jms:transaction action="ALWAYS_BEGIN"/>-->
+            <jms:transaction action="ALWAYS_BEGIN"/>
         </jms:inbound-endpoint>
 
         <component doc:name="Java">
@@ -139,6 +140,9 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
                 clientClass="riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderService"
                 wsdlLocation="classpath:/META-INF/wsdl/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl"
             />
+
+            <jms:transaction action="ALWAYS_JOIN"/>
+
         </http:outbound-endpoint>
         
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>

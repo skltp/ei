@@ -23,7 +23,7 @@
             <property value="1" name="auxiliary;index"/>
             <property name="acknowledgementMode"/>
             <property value="SKLTP-EI" name="clientId"/>
-            <property name="maxRedelivery"/>
+            <property value="-1" name="maxRedelivery"/>
             <property name="redeliveryHandlerFactory-ref"/>
             <property name="numberOfConsumers"/>
             <property value="true" name="durable"/>
@@ -176,7 +176,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="update-web-service" entity-id="9c745ceb-ca86-4ee5-b527-d597ca79a1cc">
+    <flow SubFlow="false" name="update-web-service" entity-id="7f538ce3-c39b-41c2-a6e0-30d25689635f">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -362,7 +362,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="false" name="update-process-service" entity-id="22192c35-5255-435d-a142-f4927cd2d4ef">
+    <flow SubFlow="false" name="update-process-service" entity-id="b0a98d83-b3c8-499c-be49-ab63c43afb25">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -467,7 +467,7 @@
             </unknown>
         </lane>
     </flow>
-    <flow SubFlow="false" name="notification-service" entity-id="1a602825-b89a-41f2-a960-8a7cbf6ff776">
+    <flow SubFlow="false" name="notification-service" entity-id="540786b7-b3d2-4e8a-a72c-3251ea1ce2a2">
         <properties>
             <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
@@ -508,21 +508,26 @@
                     <property value="30" name="auxiliary;index"/>
                     <property value="30" name="auxiliary;index"/>
                     <property value="30" name="auxiliary;index"/>
+                    <property-collection name="@http://www.mulesoft.org/schema/mule/jms/transaction;0">
+                        <property value="ALWAYS_BEGIN" name="action"/>
+                        <property value="31" name="auxiliary;wrapIn"/>
+                        <property value="31" name="auxiliary;index"/>
+                    </property-collection>
                 </properties>
             </endpoint>
             <pattern type="http://www.mulesoft.org/schema/mule/core/component" name="Java" entity-id="Java#4">
                 <properties>
-                    <property value="31" name="auxiliary;index"/>
-                    <property value="31" name="auxiliary;index"/>
-                    <property value="31" name="auxiliary;index"/>
+                    <property value="32" name="auxiliary;index"/>
+                    <property value="32" name="auxiliary;index"/>
+                    <property value="32" name="auxiliary;index"/>
                     <property name="class"/>
-                    <property value="31" name="auxiliary;index"/>
-                    <property value="31" name="auxiliary;index"/>
-                    <property value="31" name="auxiliary;index"/>
+                    <property value="32" name="auxiliary;index"/>
+                    <property value="32" name="auxiliary;index"/>
+                    <property value="32" name="auxiliary;index"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/core/spring-object;0">
                         <property value="create-process-notification-request-bean" name="bean"/>
-                        <property value="32" name="auxiliary;wrapIn"/>
-                        <property value="32" name="auxiliary;index"/>
+                        <property value="33" name="auxiliary;wrapIn"/>
+                        <property value="33" name="auxiliary;index"/>
                     </property-collection>
                 </properties>
             </pattern>
@@ -530,45 +535,45 @@
                 <properties>
                     <property value="one-way" name="exchange-pattern"/>
                     <property value="request-response" name="exchange-pattern"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                     <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                     <property name="httpLabel"/>
                     <property name="host"/>
                     <property name="port"/>
                     <property name="path"/>
                     <property name="method"/>
-                    <property value="33" name="auxiliary;index"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                     <property name="businessEventsLabel"/>
                     <property name="tracking:enable-default-events"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                     <property value="${NOTIFICATION_OUTBOUND_URL}" name="address"/>
                     <property name="encoding"/>
                     <property name="disableTransportTransformer"/>
                     <property name="mimeType"/>
                     <property value="${SERVICE_TIMEOUT_MS}" name="responseTimeout"/>
                     <property name="followRedirects"/>
-                    <property value="33" name="auxiliary;index"/>
-                    <property value="33" name="auxiliary;index"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                     <property value="soitoolkit-http-connector" name="connector-ref"/>
                     <property name="ref"/>
                     <property value="logReqOut" name="transformer-refs"/>
                     <property value="logRespIn" name="responseTransformer-refs"/>
-                    <property value="33" name="auxiliary;index"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                     <property name="user"/>
                     <property name="password"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                     <property name="contentType"/>
                     <property name="keep-alive"/>
-                    <property value="33" name="auxiliary;index"/>
-                    <property value="33" name="auxiliary;index"/>
-                    <property value="33" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
+                    <property value="34" name="auxiliary;index"/>
                 </properties>
             </endpoint>
-            <unknown index="35" description="false" entity-id="unknown#3">
+            <unknown index="37" description="false" entity-id="unknown#3">
                 <content>&lt;custom-exception-strategy xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; class=&quot;org.soitoolkit.commons.mule.error.ServiceExceptionStrategy&quot;/&gt;</content>
             </unknown>
         </lane>

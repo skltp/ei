@@ -80,23 +80,45 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	}
 
 	/**
-	 * Perform a test that is expected to return zero hits
+	 * Perform a test that is expected to return one hit
 	 * @throws JMSException 
 	 */
     @Test
-    public void test_ok() throws JMSException {
+    public void test_ok_one_tx() throws JMSException {
 		
+		doOneTest(residentId);
+    }
+
+	/**
+	 * Perform a test that is expected to create a timeout
+	 * @throws JMSException 
+	 */
+    @Test
+    public void test_error_timeout() throws JMSException {
+		
+		doOneTest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
+
+		System.err.println("### WAIT FOR RETRY HANDLING");
+        try {
+			Thread.sleep(50000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    
+    }
+
+	private void doOneTest(String in_residentId) throws JMSException {
 		EngagementType engagement = new EngagementType();
         engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
     	engagement.setCategorization(categorization);
     	engagement.setLogicalAddress(logicalAddress);
         engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-        engagement.setRegisteredResidentIdentification(residentId);
+        engagement.setRegisteredResidentIdentification(in_residentId);
         engagement.setServiceDomain(serviceDomain);
         engagement.setSourceSystem(sourceSystem);
         engagement.setOwner(owner);
 
-    	
     	EngagementTransactionType et = new EngagementTransactionType();
     	et.setDeleteFlag(false);
     	et.setEngagement(engagement);
@@ -113,7 +135,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         // FIXME: Create a version of dispatchAndWaitForDelivery in soi-toolkit where no message is required to be sent like the existing method waitForServiceComponent()
         MuleMessage r = dispatchAndWaitForDelivery("jms://foo?connector=soitoolkit-jms-connector", "", null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 3000);
 
-        // Compare the notified message with the request message, they shouls be the same
+        // Compare the notified message with the request message, they should be the same
         TextMessage jmsMsg = (TextMessage)r.getPayload();
         String notificationXml = jmsMsg.getText();
 		String requestXml = jabxUtil.marshal(of.createUpdate(request));
@@ -122,13 +144,13 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		// Verify that we got something in the database as well
         assertEquals(1, engagementRepository.count());
         
-        // FIXME: Split tests so that bothe separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
+        // FIXME: Split tests so that both separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
         try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
+	}
 
 }
