@@ -42,7 +42,7 @@ public class Hash {
 	 * @return 64 bit hash of the given string
 	 */
 	public static String sha2(final String... text) {
-		final StringBuilder buf = new StringBuilder();
+		final StringBuilder buf = new StringBuilder(1024);
 		for (String s : text) {
 			buf.append((s == null) ? "" : s);
 		}
@@ -64,7 +64,7 @@ public class Hash {
 	 * @return the string representation.
 	 */
 	private static String asString(final byte[] bytes) {
-		final StringBuilder buf = new StringBuilder();		
+		final StringBuilder buf = new StringBuilder(bytes.length * 2);		
 		for (byte b : bytes) {
 			buf.append(digits[(b & 0xf0) >> 4]);
 			buf.append(digits[b & 0x0f]);
