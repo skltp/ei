@@ -17,7 +17,7 @@ public class Hash {
 	/**
 	 * Digest.
 	 */
-	private static MessageDigest messageDigest;
+	private static MessageDigest messageDigestSHA2;
 	/**
 	 * Hex digits.
 	 */
@@ -25,7 +25,7 @@ public class Hash {
 
 	static {
 		try {
-			messageDigest = MessageDigest.getInstance("SHA-256");
+			messageDigestSHA2 = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException(e);
 		}
@@ -42,13 +42,13 @@ public class Hash {
 	 * @return 64 bit hash of the given string
 	 */
 	public static String sha2(final String... text) {
-		final StringBuffer buf = new StringBuffer();
+		final StringBuilder buf = new StringBuilder();
 		for (String s : text) {
 			buf.append((s == null) ? "" : s);
 		}
 		final byte[] hash;		
 		try {
-			hash = messageDigest.digest(buf.toString().getBytes("UTF-8"));
+			hash = messageDigestSHA2.digest(buf.toString().getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
