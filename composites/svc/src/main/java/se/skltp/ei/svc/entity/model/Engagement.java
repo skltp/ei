@@ -134,9 +134,9 @@ public class Engagement {
 		// Fields that are part of the business key
 		@Column(name="registered_resident_identification", nullable=false, length=32)
 	    private String registeredResidentIdentification;
-		@Column(name="service_domain", nullable=false, length=256)
+		@Column(name="service_domain", nullable=false, length=255)
 	    private String serviceDomain;
-		@Column(name="categorization", nullable=false, length=256)
+		@Column(name="categorization", nullable=false, length=255)
 	    private String categorization = NA;
 	    @Column(name="logical_address", nullable=false, length=64)
 	    private String logicalAddress;
