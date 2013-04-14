@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:https="http://www.mulesoft.org/schema/mule/https"
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+    xmlns:https="http://www.mulesoft.org/schema/mule/https"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:spring="http://www.springframework.org/schema/beans"
-	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+    xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
 	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/cxf http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
-http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd 
+http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+http://www.mulesoft.org/schema/mule/cxf       http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
+http://www.mulesoft.org/schema/mule/jms       http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd 
 http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd 
-http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
-http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd 
-http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
+http://www.mulesoft.org/schema/mule/core      http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+http://www.mulesoft.org/schema/mule/https     http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd 
+http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <!-- JMS Connector for the durable topic subscribers -->
     <jms:connector 
@@ -29,7 +29,7 @@ http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
         validateConnections="true"
         doc:name="JMS Topic Connector" 
     />
-        
+
     <spring:beans>
         <!-- Bean that expose a Web Service -->
         <spring:bean id="" name="update-ws-bean" class="se.skltp.ei.intsvc.UpdateWSBean"/>
@@ -41,8 +41,12 @@ http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
         <spring:bean id="" name="update-process-bean" class="se.skltp.ei.intsvc.UpdateDbBean">
             <spring:property name="blBean" ref="update-bl-bean"/>
         </spring:bean>
-    </spring:beans>
 
+        <!-- Bean that creates a ProcessNotification request -->
+        <spring:bean id="" name="create-process-notification-request-bean" class="se.skltp.ei.intsvc.CreateProcessNotificationRequest">
+            <spring:property name="logicalAddress" value="HSA-ID-1"/>
+        </spring:bean>
+    </spring:beans>
 
     <flow name="update-web-service" doc:name="update-web-service">
 
@@ -117,11 +121,25 @@ http://www.mulesoft.org/schema/mule/http s " version="EE-3.3.2">
 <!-- FIXME            <jms:transaction action="ALWAYS_BEGIN"/>-->
         </jms:inbound-endpoint>
 
-        <scripting:component doc:name="Groovy">
-            <scripting:script engine="Groovy">
-                <scripting:text><![CDATA[println "### Send to subscriber: " + payload]]></scripting:text>
-            </scripting:script>
-        </scripting:component>
+        <component doc:name="Java">
+            <spring-object bean="create-process-notification-request-bean"/>
+        </component>
+
+        <http:outbound-endpoint 
+            connector-ref="soitoolkit-http-connector"
+            address="${NOTIFICATION_OUTBOUND_URL}" 
+            exchange-pattern="request-response"
+            responseTimeout="${SERVICE_TIMEOUT_MS}"
+            transformer-refs="logReqOut"
+            responseTransformer-refs="logRespIn">
+
+            <cxf:jaxws-client 
+                port="ProcessNotificationResponderPort" 
+                operation="ProcessNotification" 
+                clientClass="riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderService"
+                wsdlLocation="classpath:/META-INF/wsdl/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl"
+            />
+        </http:outbound-endpoint>
         
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
     </flow>

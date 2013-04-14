@@ -52,7 +52,8 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
 	  		"skltp-ei-svc-spring-context.xml," +
-	        "update-service.xml";
+	        "update-service.xml," + 
+	        "teststub-services/process-notification-teststub-service.xml";
     }
 
     // FIXME. Move to a common test-util in svc
@@ -120,6 +121,14 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
 		// Verify that we got something in the database as well
         assertEquals(1, engagementRepository.count());
+        
+        // FIXME: Split tests so that bothe separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
+        try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }
