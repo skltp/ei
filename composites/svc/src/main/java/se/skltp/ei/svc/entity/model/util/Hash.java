@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Hash functions. <p>
  * 
- * Use SHA-2 to create one-way hash keys and represent them has hex encoded strings. <p>
+ * Use SHA-2 to create one-way hash keys and represent them as hex encoded strings. <p>
  * 
  * For further information see http://en.wikipedia.org/wiki/SHA-2 <br>
  * All attempts to find collisions has failed (so far), typical performance 
