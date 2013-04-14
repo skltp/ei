@@ -38,13 +38,13 @@ public class Engagement {
 	private static final String INERA = "Inera";
 
 	// Tech id.
-	@Column(name="id", length=36)
+	@Column(name="id", length=64)
 	@Id
     private String id = null;
 
 	// Buisness key.
 	@Embedded
-	private BusinessKey key;	
+	private BusinessKey businessKey;	
 	
     // Other non business key fields
 	@Column(name="most_recent_content")
@@ -75,7 +75,7 @@ public class Engagement {
 			String sourceSystem,
 			String owner,
 			String clinicalProcessInterestId) {
-    	key = new BusinessKey(registeredResidentIdentification,
+    	businessKey = new BusinessKey(registeredResidentIdentification,
     			serviceDomain,
     			categorization,
     			logicalAddress,
@@ -83,7 +83,7 @@ public class Engagement {
     			sourceSystem,
     			owner,
     			clinicalProcessInterestId);
-    	id = key.getHashId();
+    	id = businessKey.getHashId();
     }
 
     /**
@@ -92,7 +92,7 @@ public class Engagement {
      * @return the e-index key.
      */
 	public BusinessKey getBusinessKey() {
-		return key;
+		return businessKey;
 	}
 		
 	public String getId() {
@@ -266,7 +266,7 @@ public class Engagement {
 		 * Generates a hash key for this post.
 		 */
 		private String generateHashId() {
-			String hash = Hash.shaHash(registeredResidentIdentification,
+			String hash = Hash.sha2(registeredResidentIdentification,
 					serviceDomain,
 					categorization,
 					logicalAddress,

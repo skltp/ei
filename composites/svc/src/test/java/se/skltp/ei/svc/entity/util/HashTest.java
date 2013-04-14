@@ -21,8 +21,8 @@ public class HashTest {
 		final int num = 1000;
 		HashSet<String> set = new HashSet<String>(num);
 		for (int i = 0; i < num; i++) {
-			String hash1 = Hash.shaHash(prefix, String.valueOf(i));
-			String hash2 = Hash.shaHash(prefix + i);
+			String hash1 = Hash.sha2(prefix, String.valueOf(i));
+			String hash2 = Hash.sha2(prefix + i);
 			assertEquals(hash1, hash2);
 			set.add(hash1);
 		}
