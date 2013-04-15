@@ -28,8 +28,7 @@ public class EngagementIntegrationTest {
     public void shouldFindPreviouslySavedPerson() {
 
      	// given
-        Engagement engagement = new Engagement();
-        BenchmarkTest.genKey(engagement, 1212121212L);
+        Engagement engagement  = BenchmarkTest.genEngagement(1212121212L);
         engagementRepository.deleteAll();
         engagementRepository.save(engagement);
 
@@ -71,8 +70,7 @@ public class EngagementIntegrationTest {
         engagementRepository.deleteAll();      
         engagementRepository.save(list);
         
-        Engagement e = new Engagement();
-    	BenchmarkTest.genKey(e, 1);
+        Engagement e = BenchmarkTest.genEngagement(1);
     	Engagement.BusinessKey key = e.getBusinessKey();
         List<Engagement> result = engagementRepository.findByBusinessKey_RegisteredResidentIdentification(key.getRegisteredResidentIdentification());
         

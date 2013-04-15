@@ -122,6 +122,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         engagement.setServiceDomain(serviceDomain);
         engagement.setSourceSystem(sourceSystem);
         engagement.setOwner(owner);
+        engagement.setCreationTime("20130101130101");
 
     	EngagementTransactionType et = new EngagementTransactionType();
     	et.setDeleteFlag(false);

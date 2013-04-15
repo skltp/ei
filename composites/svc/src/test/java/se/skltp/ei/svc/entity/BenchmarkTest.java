@@ -149,7 +149,7 @@ public class BenchmarkTest {
 	static List<Engagement> genEngagements(int start, int size) {
 		List<Engagement> list = new ArrayList<Engagement>();
 		for (long i = 0; i < size; i++) {
-			Engagement e = genKey(new Engagement(), start + i);
+			Engagement e = genEngagement(start + i);
 			Date now = new Date();
 			e.setMostRecentContent(now);
 			e.setCreationTime(now);
@@ -163,16 +163,16 @@ public class BenchmarkTest {
      * Generates a key, which is completely derived from the value of residentIdentification (repeatable).
      * 
      * @param e the engagement
-     * @param residentIdentification a positive number.
-     * @return the engagement with an updated key
+     * @return the generated engagement with an updated key
      */
-    static Engagement genKey(Engagement e, long residentIdentification) {
+    static Engagement genEngagement(long residentIdentification) {
     	final String[] domains = { "urn:riv:scheduling:timebooking", "urn:riv:clinicalprocess:dummy", "urn:riv:another:test:doamin", "urn:riv:yet:another:dummy:domain" };
     	final String[] categories = { "booking", "dummy", "one.two.three", "andsoforth" };
     	final String[] logicalAdresses = { "SE100200400-600", "SE100200400-700", "SE100200400-800", "SE100200400-900" };
     	final String[] sourceSystems = { "XXX100200400-600", "XXX100200400-700", "XXX100200400-800", "XXX100200400-900" };
     	
        	int n = (int)(residentIdentification % 4L);
+       	Engagement e = new Engagement();
        	e.setBusinessKey(String.valueOf("19" + residentIdentification),
 			domains[n],
 			categories[n],
@@ -181,6 +181,8 @@ public class BenchmarkTest {
 			sourceSystems[n],
 			"Inera",
 			"NA");
+       	
+       	e.setCreationTime(new Date());
        	
        	return e;    	
     }

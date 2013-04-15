@@ -2,6 +2,8 @@ package se.skltp.ei.intsvc.integrationtests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.registry.RegistrationException;
@@ -71,6 +73,7 @@ public class FindContentIntegrationTest extends AbstractTestCase {
     			sourceSystem,
     			owner, 
     			null);
+		engagement.setCreationTime(new Date());
     	engagementRepository.save(engagement);
 	}
 
