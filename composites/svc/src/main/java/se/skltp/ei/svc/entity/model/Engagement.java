@@ -59,10 +59,7 @@ public class Engagement {
     @Column(name="update_time")    
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
-    
-    @Column(name="delete_flag", nullable=false)
-    private boolean deleteFlag;
-
+ 
         
     /**
      * Sets the business key.
@@ -122,15 +119,6 @@ public class Engagement {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
-	
-	public void setDeleteFlag(boolean deleteFlag) {
-		this.deleteFlag = deleteFlag;
-	}
-	
-	public boolean isDeleteFlag() {
-		return deleteFlag;
-	}
-	
 	
 	/**
 	 * Implements the business key.

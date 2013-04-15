@@ -25,6 +25,14 @@ public class UpdateBean implements UpdateInterface {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateBean.class);
 
     private EngagementRepository engagementRepository;
+    
+    //
+    private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
+    	@Override
+    	public ResultCodeEnum getResultCode() {
+    		return ResultCodeEnum.OK;
+    	}
+    };
 
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
@@ -47,23 +55,26 @@ public class UpdateBean implements UpdateInterface {
     public UpdateResponseType update(Header header, UpdateType request) {
     	LOG.debug("The svc.update service is called");
 
-    	List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
-
-    	// Construct a list of entities to be saved
-    	List<Engagement> entities = new ArrayList<Engagement>();
-    	for (EngagementTransactionType engagementTransaction : engagementTransactions) {
-    		Engagement e = toEntity(engagementTransaction.getEngagement());
-    		e.setDeleteFlag(engagementTransaction.isDeleteFlag());
-    		entities.add(e);
+    	final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
+    	final List<Engagement> saveList = new ArrayList<Engagement>(engagementTransactions.size());
+    	List<Engagement> deleteList = null;
+    	for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
+    		final Engagement e = toEntity(engagementTransaction.getEngagement());
+    		if (engagementTransaction.isDeleteFlag()) {
+    			if (deleteList == null) {
+    				deleteList = new ArrayList<Engagement>();
+    			}
+    			deleteList.add(e);
+    		} else {
+    			saveList.add(e);
+    		}
 		}
 
-    	// Save the list in one operation
-    	engagementRepository.save(entities);
+    	if (deleteList != null) {
+    		engagementRepository.delete(deleteList);
+    	}
+    	engagementRepository.save(saveList);  	
 
-    	// Create a response
-        UpdateResponseType response = new UpdateResponseType();
-        response.setComment(null);
-        response.setResultCode(ResultCodeEnum.OK);
-        return response;
+    	return RESPONSE_OK;
     }
 }
