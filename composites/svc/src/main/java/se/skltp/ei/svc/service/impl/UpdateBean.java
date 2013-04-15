@@ -52,7 +52,9 @@ public class UpdateBean implements UpdateInterface {
     	// Construct a list of entities to be saved
     	List<Engagement> entities = new ArrayList<Engagement>();
     	for (EngagementTransactionType engagementTransaction : engagementTransactions) {
-    		entities.add(toEntity(engagementTransaction.getEngagement()));
+    		Engagement e = toEntity(engagementTransaction.getEngagement());
+    		e.setDeleteFlag(engagementTransaction.isDeleteFlag());
+    		entities.add(e);
 		}
 
     	// Save the list in one operation

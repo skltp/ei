@@ -39,9 +39,9 @@ public class Engagement {
 	// Tech id.
 	@Column(name="id", length=64)
 	@Id
-    private String id = null;
+    private String id;
 
-	// Buisness key.
+	// Business key.
 	@Embedded
 	private BusinessKey businessKey;	
 	
@@ -59,6 +59,9 @@ public class Engagement {
     @Column(name="update_time")    
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
+    
+    @Column(name="delete_flag", nullable=false)
+    private boolean deleteFlag;
 
         
     /**
@@ -118,6 +121,14 @@ public class Engagement {
 	
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+	
+	public void setDeleteFlag(boolean deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
+	
+	public boolean isDeleteFlag() {
+		return deleteFlag;
 	}
 	
 	
