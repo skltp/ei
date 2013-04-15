@@ -23,7 +23,7 @@ import se.skltp.ei.svc.entity.model.util.Hash;
 /**
  * Entity modeled after the service contract itintegration:engagementindex (r901) <p>
  * 
- * Uses a SHA-256 generated hash-key in UUID (3) format as an unique id.
+ * Uses a SHA-256 generated hash-key in hex string format as an unique id.
  * 
  * Also see: http://code.google.com/p/rivta/
  */
