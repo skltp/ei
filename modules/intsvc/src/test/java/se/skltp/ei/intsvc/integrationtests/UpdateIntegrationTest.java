@@ -137,7 +137,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
         
         // FIXME: Create a version of dispatchAndWaitForDelivery in soi-toolkit where no message is required to be sent like the existing method waitForServiceComponent()
-        MuleMessage r = dispatchAndWaitForDelivery("jms://foo?connector=soitoolkit-jms-connector", "", null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 3000);
+        MuleMessage r = dispatchAndWaitForDelivery("jms://foo?connector=soitoolkit-jms-connector", "", null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
 
         // Compare the notified message with the request message, they should be the same
         TextMessage jmsMsg = (TextMessage)r.getPayload();
