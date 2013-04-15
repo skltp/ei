@@ -43,7 +43,7 @@ public class Hash {
 	 * Returns a SHA-2 hashed value
 	 * 
 	 * @param text array of string to hash
-	 * @return 64 bit hash of the given string
+	 * @return 64 bytes hash of the given string
 	 */
 	public static String sha2(final String... text) {
 		final StringBuilder buf = new StringBuilder(1024);
