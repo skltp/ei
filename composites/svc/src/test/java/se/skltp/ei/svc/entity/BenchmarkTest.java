@@ -149,8 +149,7 @@ public class BenchmarkTest {
 	static List<Engagement> genEngagements(int start, int size) {
 		List<Engagement> list = new ArrayList<Engagement>();
 		for (long i = 0; i < size; i++) {
-			Engagement e = new Engagement();
-			genKey(e, start + i);
+			Engagement e = genKey(new Engagement(), start + i);
 			Date now = new Date();
 			e.setMostRecentContent(now);
 			e.setCreationTime(now);
@@ -163,8 +162,9 @@ public class BenchmarkTest {
     /**
      * Generates a key, which is completely derived from the value of residentIdentification (repeatable).
      * 
-     * @param residentIdentification
-     * @return the key.
+     * @param e the engagement
+     * @param residentIdentification a positive number.
+     * @return the engagement with an updated key
      */
     static Engagement genKey(Engagement e, long residentIdentification) {
     	final String[] domains = { "urn:riv:scheduling:timebooking", "urn:riv:clinicalprocess:dummy", "urn:riv:another:test:doamin", "urn:riv:yet:another:dummy:domain" };
