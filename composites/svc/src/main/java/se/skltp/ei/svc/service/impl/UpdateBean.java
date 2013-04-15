@@ -25,18 +25,18 @@ public class UpdateBean implements UpdateInterface {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateBean.class);
 
     private EngagementRepository engagementRepository;
-    
+
     //
     private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
-    	@Override
-    	public ResultCodeEnum getResultCode() {
-    		return ResultCodeEnum.OK;
-    	}
+        @Override
+        public ResultCodeEnum getResultCode() {
+            return ResultCodeEnum.OK;
+        }
     };
 
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
-    	this.engagementRepository = engagementRepository;
+        this.engagementRepository = engagementRepository;
     }
 
     /**
@@ -51,30 +51,30 @@ public class UpdateBean implements UpdateInterface {
      * @return the update response
      */
     @Override
-	@Transactional(isolation=Isolation.READ_UNCOMMITTED)
+    @Transactional(isolation=Isolation.READ_UNCOMMITTED)
     public UpdateResponseType update(Header header, UpdateType request) {
-    	LOG.debug("The svc.update service is called");
+        LOG.debug("The svc.update service is called");
 
-    	final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
-    	final List<Engagement> saveList = new ArrayList<Engagement>(engagementTransactions.size());
-    	List<Engagement> deleteList = null;
-    	for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
-    		final Engagement e = toEntity(engagementTransaction.getEngagement());
-    		if (engagementTransaction.isDeleteFlag()) {
-    			if (deleteList == null) {
-    				deleteList = new ArrayList<Engagement>();
-    			}
-    			deleteList.add(e);
-    		} else {
-    			saveList.add(e);
-    		}
-		}
+        final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
+        final List<Engagement> saveList = new ArrayList<Engagement>(engagementTransactions.size());
+        List<Engagement> deleteList = null;
+        for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
+            final Engagement e = toEntity(engagementTransaction.getEngagement());
+            if (engagementTransaction.isDeleteFlag()) {
+                if (deleteList == null) {
+                    deleteList = new ArrayList<Engagement>();
+                }
+                deleteList.add(e);
+            } else {
+                saveList.add(e);
+            }
+        }
 
-    	if (deleteList != null) {
-    		engagementRepository.delete(deleteList);
-    	}
-    	engagementRepository.save(saveList);  	
+        if (deleteList != null) {
+            engagementRepository.delete(deleteList);
+        }
+        engagementRepository.save(saveList);  	
 
-    	return RESPONSE_OK;
+        return RESPONSE_OK;
     }
 }

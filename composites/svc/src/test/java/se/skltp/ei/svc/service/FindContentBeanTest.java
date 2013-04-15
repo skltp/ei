@@ -22,21 +22,21 @@ import se.skltp.ei.svc.service.impl.FindContentBean;
 
 public class FindContentBeanTest {
 
-	private static FindContentBean BEAN = null; 
-	
-	@BeforeClass
+    private static FindContentBean BEAN = null; 
+
+    @BeforeClass
     public static void setUpClass() throws Exception {
-    	BEAN = new FindContentBean();
-    	EngagementRepository er = mock(EngagementRepository.class);
-		BEAN.setEngagementRepository(er);
-    	
-		when(er.findAll()).thenAnswer(new Answer<Iterable<Engagement>>() {
-		    @Override
-		    public Iterable<Engagement> answer(InvocationOnMock invocation) throws Throwable {
-		        List<Engagement> list = new ArrayList<Engagement>(); 
-		    	return list;
-		    }
-		});		
+        BEAN = new FindContentBean();
+        EngagementRepository er = mock(EngagementRepository.class);
+        BEAN.setEngagementRepository(er);
+
+        when(er.findAll()).thenAnswer(new Answer<Iterable<Engagement>>() {
+            @Override
+            public Iterable<Engagement> answer(InvocationOnMock invocation) throws Throwable {
+                List<Engagement> list = new ArrayList<Engagement>(); 
+                return list;
+            }
+        });		
     }
 
     @AfterClass
@@ -56,7 +56,7 @@ public class FindContentBeanTest {
      */
     @Test
     public void r1_findContent_ok() throws Exception {
-    	
+
         FindContentResponseType r = BEAN.findContent(null, null);
         assertEquals(0, r.getEngagement().size());
     }

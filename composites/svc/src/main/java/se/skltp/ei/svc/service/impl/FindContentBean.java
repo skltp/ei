@@ -25,7 +25,7 @@ public class FindContentBean implements FindContentInterface {
 
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
-    	this.engagementRepository = engagementRepository;
+        this.engagementRepository = engagementRepository;
     }
 
     /**
@@ -35,18 +35,18 @@ public class FindContentBean implements FindContentInterface {
      * @return
      */
     @Override
-	@Transactional(readOnly=true)
+    @Transactional(readOnly=true)
     public FindContentResponseType findContent(Header header, FindContentType parameters) {
-    	LOG.debug("The svc.findContent service is called");
-    	
-    	FindContentResponseType response = new FindContentResponseType();
-    	
-    	Iterable<Engagement> dbSearchResult = engagementRepository.findAll();
-    	
-    	List<EngagementType> EngagementList = response.getEngagement();
-    	for (Engagement engagement : dbSearchResult) {
-			EngagementList.add(fromEntity(engagement));
-		}
+        LOG.debug("The svc.findContent service is called");
+
+        FindContentResponseType response = new FindContentResponseType();
+
+        Iterable<Engagement> dbSearchResult = engagementRepository.findAll();
+
+        List<EngagementType> EngagementList = response.getEngagement();
+        for (Engagement engagement : dbSearchResult) {
+            EngagementList.add(fromEntity(engagement));
+        }
         return response;
     }
 

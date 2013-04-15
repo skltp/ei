@@ -17,13 +17,13 @@ import se.skltp.ei.svc.service.impl.UpdateBean;
 
 public class UpdateBeanTest {
 
-	private static UpdateBean BEAN = null; 
-	
-	@BeforeClass
+    private static UpdateBean BEAN = null; 
+
+    @BeforeClass
     public static void setUpClass() throws Exception {
-    	BEAN = new UpdateBean();
-    	EngagementRepository er = mock(EngagementRepository.class);
-		BEAN.setEngagementRepository(er);
+        BEAN = new UpdateBean();
+        EngagementRepository er = mock(EngagementRepository.class);
+        BEAN.setEngagementRepository(er);
     }
 
     @AfterClass
@@ -45,7 +45,7 @@ public class UpdateBeanTest {
     public void r1_update_positive() throws Exception {
 
         UpdateType request = new UpdateType();
-		UpdateResponseType r = BEAN.update(null, request );
+        UpdateResponseType r = BEAN.update(null, request );
         assertEquals(ResultCodeEnum.OK, r.getResultCode());
     }
 

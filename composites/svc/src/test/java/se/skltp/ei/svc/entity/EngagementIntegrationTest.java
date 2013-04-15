@@ -27,7 +27,7 @@ public class EngagementIntegrationTest {
     @Test
     public void shouldFindPreviouslySavedPerson() {
 
-     	// given
+        // given
         Engagement engagement  = BenchmarkTest.genEngagement(1212121212L);
         engagementRepository.deleteAll();
         engagementRepository.save(engagement);
@@ -41,40 +41,40 @@ public class EngagementIntegrationTest {
         Engagement foundEngagement = result.get(0);
         assertThat(foundEngagement.getBusinessKey(),is(engagement.getBusinessKey()));
     }
-    
-        
+
+
     @Test
     public void findByMultipleKeys() {
-    	// given
-    	final int num = 1000;
+        // given
+        final int num = 1000;
         List<Engagement> list = BenchmarkTest.genEngagements(0, num);
         engagementRepository.deleteAll();
-        
+
         engagementRepository.save(list);
-        
+
         List<String> ids = new LinkedList<String>();
         for (Engagement e : list) {
-        	ids.add(e.getId());
+            ids.add(e.getId());
         }
-        
+
         List<Engagement> result = engagementRepository.findByIdIn(ids);
-        
+
         assertEquals(num, result.size());
     }
-    
+
     @Test
     public void findByRegisteredResidentIdentification() {
-    	// given
-    	final int num = 10;
+        // given
+        final int num = 10;
         List<Engagement> list = BenchmarkTest.genEngagements(0, num);
         engagementRepository.deleteAll();      
         engagementRepository.save(list);
-        
+
         Engagement e = BenchmarkTest.genEngagement(1);
-    	Engagement.BusinessKey key = e.getBusinessKey();
+        Engagement.BusinessKey key = e.getBusinessKey();
         List<Engagement> result = engagementRepository.findByBusinessKey_RegisteredResidentIdentification(key.getRegisteredResidentIdentification());
-        
+
         assertEquals(1, result.size());
-    	
+
     }
 }
