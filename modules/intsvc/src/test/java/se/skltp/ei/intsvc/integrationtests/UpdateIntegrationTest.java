@@ -34,6 +34,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 
+	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
     private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
     private static final String LOGICAL_ADDRESS = "logical-address";
@@ -100,11 +101,14 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
 		System.err.println("### WAIT FOR RETRY HANDLING");
         try {
-			Thread.sleep(50000);
+        	// Tthe test is configured to perform 3 retries so in total 4 attempts, if we wait 5 times the timeout time we should be fins  
+			Thread.sleep(4 * SERVICE_TIMOUT_MS);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		// FIXME check error queues and DL-queue
     
     }
 
