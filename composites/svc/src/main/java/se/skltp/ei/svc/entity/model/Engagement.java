@@ -13,6 +13,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -50,7 +51,7 @@ public class Engagement {
 	@Column(name="most_recent_content")
     @Temporal(TemporalType.TIMESTAMP)
 	private Date mostRecentContent;
-    @Column(name="creation_time")    
+    @Column(name="creation_time", updatable=false)    
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
     @Column(name="update_time")    
@@ -60,8 +61,12 @@ public class Engagement {
     
     @PrePersist
     void onPrePersist() {
-    	Date now = new Date();
-    	setUpdateTime(now);
+    	setCreationTime(new Date());
+    }
+    
+    @PreUpdate
+    void onPreUpdate() {
+    	setUpdateTime(new Date());
     }
     
     /**
