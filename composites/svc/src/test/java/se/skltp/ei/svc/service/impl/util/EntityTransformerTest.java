@@ -28,7 +28,6 @@ public class EntityTransformerTest {
 	public void incorrectDateParseTest() {
 		exception.expect(IllegalArgumentException.class);
 		final String sDate = "1961-10-28 13:01:23";
-		Date date = EntityTransformer.parseDate(sDate);
-		System.out.println(date);
+		EntityTransformer.parseDate(sDate);
 	}
 }
