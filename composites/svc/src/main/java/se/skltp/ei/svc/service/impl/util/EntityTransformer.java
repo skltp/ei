@@ -89,7 +89,7 @@ public class EntityTransformer {
         try {
             return (date == null) ? null : dateFormatter.parse(date);
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Imput date is not according to expected format \"YYYYMMDDhhmmss\": " + date, e);
+            throw new IllegalArgumentException("Input date is not according to expected format \"YYYYMMDDhhmmss\": " + date, e);
         }
     }
 
