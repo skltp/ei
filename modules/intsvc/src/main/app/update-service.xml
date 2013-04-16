@@ -17,35 +17,16 @@ http://www.mulesoft.org/schema/mule/core      http://www.mulesoft.org/schema/mul
 http://www.mulesoft.org/schema/mule/https     http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd 
 http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <!-- JMS Connector for the durable topic subscribers -->
-    <jms:connector 
-        name="skltp-ei-jms-topic-connector"
-        connectionFactory-ref="soitoolkit-jms-connection-factory"
-        clientId="SKLTP-EI"
-        durable="true" 
-        persistentDelivery="true"
-        maxRedelivery="-1"
-        specification="1.1" 
-        disableTemporaryReplyToDestinations="true" 
-        validateConnections="true"
-        doc:name="JMS Topic Connector" 
-    />
-
     <spring:beans>
         <!-- Bean that expose a Web Service -->
-        <spring:bean id="" name="update-ws-bean" class="se.skltp.ei.intsvc.UpdateWSBean"/>
+        <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.UpdateWSBean"/>
 
         <!-- Bean with business logic -->
-        <spring:bean id="" name="update-bl-bean" class="se.skltp.ei.svc.service.impl.UpdateBean"/>
+        <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.service.impl.UpdateBean"/>
 
         <!-- Bean that process the update -->
-        <spring:bean id="" name="update-process-bean" class="se.skltp.ei.intsvc.UpdateDbBean">
+        <spring:bean name="update-process-bean" class="se.skltp.ei.intsvc.UpdateDbBean">
             <spring:property name="blBean" ref="update-bl-bean"/>
-        </spring:bean>
-
-        <!-- Bean that creates a ProcessNotification request -->
-        <spring:bean id="" name="create-process-notification-request-bean" class="se.skltp.ei.intsvc.CreateProcessNotificationRequest">
-            <spring:property name="logicalAddress" value="HSA-ID-1"/>
         </spring:bean>
     </spring:beans>
 
@@ -107,43 +88,6 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
             doc:name="JMS Topic">
             <jms:transaction action="ALWAYS_JOIN"/>
         </jms:outbound-endpoint>
-        
-        <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
-    </flow>
-
-
-    <flow name="notification-service" doc:name="notification-service">
-        <jms:inbound-endpoint 
-            connector-ref="skltp-ei-jms-topic-connector"
-            topic="${NOTIFICATION_TOPIC}" 
-            durableName="HSA-ID-1" 
-            transformer-refs="logMsgIn" 
-            doc:name="JMS Topic">
-            <jms:transaction action="ALWAYS_BEGIN"/>
-        </jms:inbound-endpoint>
-
-        <component doc:name="Java">
-            <spring-object bean="create-process-notification-request-bean"/>
-        </component>
-
-        <http:outbound-endpoint 
-            connector-ref="soitoolkit-http-connector"
-            address="${NOTIFICATION_OUTBOUND_URL}" 
-            exchange-pattern="request-response"
-            responseTimeout="${SERVICE_TIMEOUT_MS}"
-            transformer-refs="logReqOut"
-            responseTransformer-refs="logRespIn">
-
-            <cxf:jaxws-client 
-                port="ProcessNotificationResponderPort" 
-                operation="ProcessNotification" 
-                clientClass="riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderService"
-                wsdlLocation="classpath:/META-INF/wsdl/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl"
-            />
-
-            <jms:transaction action="ALWAYS_JOIN"/>
-
-        </http:outbound-endpoint>
         
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
     </flow>

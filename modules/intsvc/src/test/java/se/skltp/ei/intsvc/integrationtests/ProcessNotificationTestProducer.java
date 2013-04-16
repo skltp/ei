@@ -26,7 +26,7 @@ public class ProcessNotificationTestProducer implements ProcessNotificationRespo
 	@Override
 	public ProcessNotificationResponseType processNotification(String logicalAddress, ProcessNotificationType request) {
 
-		log.info("ProcessNotificationTestProducer received a notification request with {} transactions", request.getEngagementTransaction().size());
+		log.info("ProcessNotificationTestProducer received a notification request with {} transactions for logical-address {}", request.getEngagementTransaction().size(), logicalAddress);
 
         // Force a timeout if timeout Id
         if (TEST_ID_FAULT_TIMEOUT.equals(request.getEngagementTransaction().get(0).getEngagement().getRegisteredResidentIdentification())) forceTimeout();

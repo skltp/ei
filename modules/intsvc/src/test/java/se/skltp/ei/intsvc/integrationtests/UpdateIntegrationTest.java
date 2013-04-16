@@ -138,6 +138,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
         
         // FIXME: Create a version of dispatchAndWaitForDelivery in soi-toolkit where no message is required to be sent like the existing method waitForServiceComponent()
+        System.err.println("### WAIT FOR DELIVERY ON " + "jms://topic:" + NOTIFICATION_TOPIC);
         MuleMessage r = dispatchAndWaitForDelivery("jms://foo?connector=soitoolkit-jms-connector", "", null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
 
         // Compare the notified message with the request message, they should be the same
@@ -148,7 +149,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
 		// Verify that we got something in the database as well
         assertEquals(1, engagementRepository.count());
-        
+
         // FIXME: Split tests so that both separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
         try {
 			Thread.sleep(2000);

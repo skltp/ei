@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" 
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+    xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-current.xsd 
+        http://www.mulesoft.org/schema/mule/cxf       http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd 
+        http://www.mulesoft.org/schema/mule/jms       http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd 
+        http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd 
+        http://www.mulesoft.org/schema/mule/core      http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
+        http://www.mulesoft.org/schema/mule/https     http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd 
+        http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+<% LOGICAL_ADDRESSES.each { LOGICAL_ADDRESS -> %>
+    <spring:beans>
+        <!-- Bean that creates a ProcessNotification request -->
+        <spring:bean name="create-process-notification-request-bean-${LOGICAL_ADDRESS}" class="se.skltp.ei.intsvc.CreateProcessNotificationRequest">
+            <spring:property name="logicalAddress" value="${LOGICAL_ADDRESS}"/>
+        </spring:bean>
+    </spring:beans>
+
+    <flow name="notification-service-${LOGICAL_ADDRESS}">
+        <jms:inbound-endpoint 
+            connector-ref="skltp-ei-jms-topic-connector"
+            topic="${NOTIFICATION_TOPIC}" 
+            durableName="${LOGICAL_ADDRESS}" 
+            transformer-refs="logMsgIn" 
+            doc:name="JMS Topic">
+            <jms:transaction action="ALWAYS_BEGIN"/>
+        </jms:inbound-endpoint>
+
+        <component>
+            <spring-object bean="create-process-notification-request-bean-${LOGICAL_ADDRESS}"/>
+        </component>
+
+        <http:outbound-endpoint 
+            connector-ref="soitoolkit-http-connector"
+            address="${NOTIFICATION_OUTBOUND_URL}" 
+            exchange-pattern="request-response"
+            responseTimeout="${SERVICE_TIMEOUT_MS}"
+            transformer-refs="logReqOut"
+            responseTransformer-refs="logRespIn">
+
+            <cxf:jaxws-client 
+                port="ProcessNotificationResponderPort" 
+                operation="ProcessNotification" 
+                clientClass="riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderService"
+                wsdlLocation="classpath:/META-INF/wsdl/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl"
+            />
+
+            <jms:transaction action="ALWAYS_JOIN"/>
+
+        </http:outbound-endpoint>
+        
+        <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
+    </flow>
+<% } %>
+</mule>
