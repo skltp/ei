@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleException;
+import org.mule.api.MuleMessage;
 import org.mule.api.config.ConfigurationBuilder;
 import org.mule.api.config.MuleProperties;
 import org.mule.api.context.MuleContextBuilder;
@@ -22,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import riv.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._1.GetLogicalAddresseesByServiceContractResponseType;
 
 /**
  * Sample config:
@@ -64,7 +67,8 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 
 				starting = true;
 
-				List<String> flowConfigs = new CreateDynamicFlows().getContextConfiguration();
+				List<String> logicalAdresses = getLogicalAdresses(notification.getMuleContext());
+				List<String> flowConfigs = new CreateDynamicFlows(logicalAdresses).getContextConfiguration();
 
 				log.info("Starting {} flows...", flowConfigs.size());
 				
@@ -100,6 +104,15 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 				stopping = false;
 			}
 		}
+	}
+
+	private List<String> getLogicalAdresses(MuleContext muleContext) throws MuleException {
+		
+		// FIXME. Cache result in a local file ang get if from the file if the service doesn't respond.
+		MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
+		GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
+		List<String> logicalAdresses = logicalAddressesResponse.getLogicalAddress();
+		return logicalAdresses;
 	}
 
 	private void add(List<String> configs) {

@@ -14,14 +14,8 @@ public class CreateDynamicFlows  {
     private static final Logger log = LoggerFactory.getLogger(CreateDynamicFlows.class);
     private final Map<String, Object> propertyMap;
     
-    public CreateDynamicFlows() {
+    public CreateDynamicFlows(List<String> logicalAdresses) {
         propertyMap = PropertyUtil.getResovledProperties();
-        
-        List<String> logicalAdresses = new ArrayList<String>();
-        logicalAdresses.add("HSA_ID_1");
-        logicalAdresses.add("HSA_ID_2");
-        logicalAdresses.add("HSA_ID_3");
-        
         propertyMap.put("LOGICAL_ADDRESSES", logicalAdresses);
     }
     

@@ -54,7 +54,9 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
 	  		"skltp-ei-svc-spring-context.xml," +
+	        "get-logical-addressees-service.xml," + 
 	        "update-service.xml," + 
+	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
 	        "teststub-services/process-notification-teststub-service.xml";
     }
 
@@ -102,7 +104,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
 		System.err.println("### WAIT FOR RETRY HANDLING");
         try {
-        	// Tthe test is configured to perform 3 retries so in total 4 attempts, if we wait 5 times the timeout time we should be fins  
+        	// The test is configured to perform 3 retries so in total 4 attempts, if we wait 5 times the timeout time we should be fins  
 			Thread.sleep(4 * SERVICE_TIMOUT_MS);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

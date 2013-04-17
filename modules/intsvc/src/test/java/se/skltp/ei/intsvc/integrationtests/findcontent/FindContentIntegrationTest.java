@@ -39,7 +39,9 @@ public class FindContentIntegrationTest extends AbstractTestCase {
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
 	  		"skltp-ei-svc-spring-context.xml," +
-	        "find-content-service.xml";
+	        "find-content-service.xml," + 
+	        "get-logical-addressees-service.xml," + 
+	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml";
     }
 
     // FIXME. Move to a common test-util in svc
