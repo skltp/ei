@@ -16,7 +16,7 @@
 	<simple-service 
 		name="get-logical-addressees-by-service-contract-teststub-service"
         address="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_TESTSTUB_URL}?connector=soitoolkit-http-connector" 
-        component-class="se.skltp.ei.intsvc.integrationtests.GetLogicalAddresseesByServiceContractTestProducer"
+        component-class="se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducer"
         type="jax-ws" />
  
 </mule>

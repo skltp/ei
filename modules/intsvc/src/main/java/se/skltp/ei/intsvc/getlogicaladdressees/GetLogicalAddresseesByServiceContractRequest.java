@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc;
+package se.skltp.ei.intsvc.getlogicaladdressees;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

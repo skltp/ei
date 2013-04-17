@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests;
+package se.skltp.ei.intsvc.integrationtests.getlogicaladdressees;
 
 import javax.jws.WebService;
 

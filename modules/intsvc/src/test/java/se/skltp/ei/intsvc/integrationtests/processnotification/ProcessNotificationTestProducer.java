@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests;
+package se.skltp.ei.intsvc.integrationtests.processnotification;
 
 import javax.jws.WebService;
 

@@ -18,7 +18,7 @@
     </spring:bean>
 
     <!-- Bean that expose a Web Service -->
-    <spring:bean name="find-content-ws-bean" class="se.skltp.ei.intsvc.FindContentWSBean">
+    <spring:bean name="find-content-ws-bean" class="se.skltp.ei.intsvc.findcontent.FindContentWSBean">
         <spring:property name="blBean" ref="find-content-bl-bean" />
     </spring:bean>
 

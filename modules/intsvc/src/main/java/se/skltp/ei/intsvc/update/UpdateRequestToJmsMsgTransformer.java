@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc;
+package se.skltp.ei.intsvc.update;
 
 import org.mule.api.MuleMessage;
 import org.mule.api.transformer.TransformerException;

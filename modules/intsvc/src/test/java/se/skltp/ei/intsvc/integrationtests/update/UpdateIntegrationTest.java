@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests;
+package se.skltp.ei.intsvc.integrationtests.update;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,6 +22,7 @@ import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.intsvc.integrationtests.processnotification.ProcessNotificationTestProducer;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
 public class UpdateIntegrationTest extends AbstractTestCase {

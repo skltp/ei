@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc;
+package se.skltp.ei.intsvc.update;
 
 import javax.jws.WebService;
 

@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc;
+package se.skltp.ei.intsvc.update;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

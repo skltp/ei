@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests;
+package se.skltp.ei.intsvc.integrationtests.update;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +7,7 @@ import riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInte
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.intsvc.integrationtests.AbstractTestConsumer;
 
 public class UpdateTestConsumer extends AbstractTestConsumer<UpdateResponderInterface> {
 

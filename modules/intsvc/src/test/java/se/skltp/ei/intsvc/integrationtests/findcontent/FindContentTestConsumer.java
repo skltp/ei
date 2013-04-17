@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests;
+package se.skltp.ei.intsvc.integrationtests.findcontent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +7,7 @@ import riv.itintegration.engagementindex.findcontent._1.rivtabp21.FindContentRes
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.intsvc.integrationtests.AbstractTestConsumer;
 
 public class FindContentTestConsumer extends AbstractTestConsumer<FindContentResponderInterface> {
 

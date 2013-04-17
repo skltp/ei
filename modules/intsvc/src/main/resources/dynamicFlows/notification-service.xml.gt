@@ -20,7 +20,7 @@
 <% LOGICAL_ADDRESSES.each { LOGICAL_ADDRESS -> %>
     <spring:beans>
         <!-- Bean that creates a ProcessNotification request -->
-        <spring:bean name="create-process-notification-request-bean-${LOGICAL_ADDRESS}" class="se.skltp.ei.intsvc.CreateProcessNotificationRequest">
+        <spring:bean name="create-process-notification-request-bean-${LOGICAL_ADDRESS}" class="se.skltp.ei.intsvc.processnotification.CreateProcessNotificationRequest">
             <spring:property name="logicalAddress" value="${LOGICAL_ADDRESS}"/>
         </spring:bean>
     </spring:beans>

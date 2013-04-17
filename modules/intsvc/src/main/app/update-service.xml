@@ -19,13 +19,13 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
 
     <spring:beans>
         <!-- Bean that expose a Web Service -->
-        <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.UpdateWSBean"/>
+        <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.update.UpdateWSBean"/>
 
         <!-- Bean with business logic -->
         <spring:bean name="update-bl-bean" class="se.skltp.ei.svc.service.impl.UpdateBean"/>
 
         <!-- Bean that process the update -->
-        <spring:bean name="update-process-bean" class="se.skltp.ei.intsvc.UpdateDbBean">
+        <spring:bean name="update-process-bean" class="se.skltp.ei.intsvc.update.UpdateDbBean">
             <spring:property name="blBean" ref="update-bl-bean"/>
         </spring:bean>
     </spring:beans>
@@ -41,7 +41,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
 
         <cxf:jaxws-service
             namespace="urn:riv:itintegration:engagementindex:Update:1:rivtabp21"
-            serviceClass="se.skltp.ei.intsvc.UpdateWSBean"
+            serviceClass="se.skltp.ei.intsvc.update.UpdateWSBean"
             wsdlLocation="classpath:/META-INF/wsdl/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
 
         <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
@@ -54,7 +54,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
 
         <set-payload value="#[variable:request]" doc:name="Set Payload"/>        
 
-        <custom-transformer class="se.skltp.ei.intsvc.UpdateRequestToJmsMsgTransformer" doc:name="Java"/>
+        <custom-transformer class="se.skltp.ei.intsvc.update.UpdateRequestToJmsMsgTransformer" doc:name="Java"/>
 
         <jms:outbound-endpoint 
             connector-ref="soitoolkit-jms-connector"
