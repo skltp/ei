@@ -25,7 +25,7 @@
 		<module>composites/schema</module>
 		<module>composites/svc</module>
 		<module>modules/intsvc</module>
-        <module>applications/mule-app</module>
+        <module>applications/mule-backend-app</module>
 	</modules>
 		
 </project>
