@@ -17,7 +17,8 @@ import riv.itintegration.engagementindex.processnotificationresponder._1.Process
         targetNamespace = "urn:riv:itintegration:engagementindex:ProcessNotificatio:1:rivtabp21")
 public class ProcessNotificationTestProducer implements ProcessNotificationResponderInterface {
 
-    public static final String TEST_ID_FAULT_TIMEOUT = "0";
+    public static final long TEST_ID_FAULT_TIMEOUT = 0;
+    public static final String FULL_TEST_ID_FAULT_TIMEOUT = "19" + TEST_ID_FAULT_TIMEOUT;
     
 	private static final Logger log = LoggerFactory.getLogger(ProcessNotificationTestProducer.class);
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
@@ -29,7 +30,7 @@ public class ProcessNotificationTestProducer implements ProcessNotificationRespo
 		log.info("ProcessNotificationTestProducer received a notification request with {} transactions for logical-address {}", request.getEngagementTransaction().size(), logicalAddress);
 
         // Force a timeout if timeout Id
-        if (TEST_ID_FAULT_TIMEOUT.equals(request.getEngagementTransaction().get(0).getEngagement().getRegisteredResidentIdentification())) forceTimeout();
+        if (FULL_TEST_ID_FAULT_TIMEOUT.equals(request.getEngagementTransaction().get(0).getEngagement().getRegisteredResidentIdentification())) forceTimeout();
 
         ProcessNotificationResponseType response = new ProcessNotificationResponseType();
         response.setComment("");

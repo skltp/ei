@@ -55,6 +55,14 @@
         <!-- TEST DEPENDENCIES -->
 
         <dependency>
+            <groupId>se.skltp.ei</groupId>
+            <artifactId>skltp-ei-composite-svc</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>

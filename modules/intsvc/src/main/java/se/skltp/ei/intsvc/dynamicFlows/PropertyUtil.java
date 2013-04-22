@@ -102,6 +102,7 @@ public class PropertyUtil {
         return map;
     }
 
+	@SuppressWarnings("unused")
 	private List<Map> createListProperty(final String listName,
 			final Map<Integer, Map> rootMap, Validator validator,
 			Map<String, Object> map) {

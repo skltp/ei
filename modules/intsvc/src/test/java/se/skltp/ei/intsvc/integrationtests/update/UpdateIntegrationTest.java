@@ -1,6 +1,10 @@
 package se.skltp.ei.intsvc.integrationtests.update;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -23,7 +27,10 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.processnotification.ProcessNotificationTestProducer;
+import se.skltp.ei.svc.entity.GenTestDataUtil;
+import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 public class UpdateIntegrationTest extends AbstractTestCase {
 
@@ -39,6 +46,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
     
     private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
     private static final String LOGICAL_ADDRESS = "logical-address";
+	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
 	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
@@ -60,16 +68,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	        "teststub-services/process-notification-teststub-service.xml";
     }
 
-    // FIXME. Move to a common test-util in svc
     private EngagementRepository engagementRepository;
-
-    static private String businessObjectInstanceIdentifier = "boi";
-    static private String categorization = "categorization";
-    static private String logicalAddress = "logicalAddress";
-    static String residentId = "191212121212";
-    static String owner = "HSA-001";
-    static String serviceDomain = "urn:riv:healthprocess:test";
-    static String sourceSystem = "sourceSystem";
 
     @Before
     public void setUp() throws Exception {
@@ -90,7 +89,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
     @Test
     public void test_ok_one_tx() throws JMSException {
 		
-		doOneTest(residentId);
+		doOneTest(1212121212L);
     }
 
 	/**
@@ -99,7 +98,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	 */
     @Test
     public void test_error_timeout() throws JMSException {
-		
+
 		doOneTest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
 
 		System.err.println("### WAIT FOR RETRY HANDLING");
@@ -110,23 +109,16 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// FIXME check error queues and DL-queue
-    
+
     }
 
-	private void doOneTest(String in_residentId) throws JMSException {
-		EngagementType engagement = new EngagementType();
-        engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-    	engagement.setCategorization(categorization);
-    	engagement.setLogicalAddress(logicalAddress);
-        engagement.setBusinessObjectInstanceIdentifier(businessObjectInstanceIdentifier);
-        engagement.setRegisteredResidentIdentification(in_residentId);
-        engagement.setServiceDomain(serviceDomain);
-        engagement.setSourceSystem(sourceSystem);
-        engagement.setOwner(owner);
-        engagement.setCreationTime("20130101130101");
+	private void doOneTest(long in_residentId) throws JMSException {
 
+		// Create a new engagement and call the update web service
+		Engagement entity = GenTestDataUtil.genEngagement(in_residentId);
+		EngagementType engagement = EntityTransformer.fromEntity(entity);
     	EngagementTransactionType et = new EngagementTransactionType();
     	et.setDeleteFlag(false);
     	et.setEngagement(engagement);
@@ -138,6 +130,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
 		UpdateResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
         
+		// Assert OK response from the web service
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
         
         // FIXME: Create a version of dispatchAndWaitForDelivery in soi-toolkit where no message is required to be sent like the existing method waitForServiceComponent()
@@ -151,8 +144,10 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		assertEquals(requestXml, notificationXml);
 
 		// Verify that we got something in the database as well
-        assertEquals(1, engagementRepository.count());
-
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertEquals(1, result.size());
+        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(engagement.getRegisteredResidentIdentification()));
+        
         // FIXME: Split tests so that both separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
         try {
 			Thread.sleep(2000);

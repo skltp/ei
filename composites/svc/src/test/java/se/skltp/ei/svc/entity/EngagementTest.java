@@ -17,9 +17,9 @@ public class EngagementTest {
 
     @Test
     public void keyComparisonTest() {
-        Engagement e1 = BenchmarkTest.genEngagement(1L);
-        Engagement e2 = BenchmarkTest.genEngagement(1L);
-        Engagement e3 = BenchmarkTest.genEngagement(2L);
+        Engagement e1 = GenTestDataUtil.genEngagement(1L);
+        Engagement e2 = GenTestDataUtil.genEngagement(1L);
+        Engagement e3 = GenTestDataUtil.genEngagement(2L);
 
         Engagement.BusinessKey key1 = e1.getBusinessKey();
         Engagement.BusinessKey key2 = e2.getBusinessKey();
