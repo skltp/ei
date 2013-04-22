@@ -42,7 +42,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
         <cxf:jaxws-service
             namespace="urn:riv:itintegration:engagementindex:Update:1:rivtabp21"
             serviceClass="se.skltp.ei.intsvc.update.UpdateWSBean"
-            wsdlLocation="classpath:/META-INF/wsdl/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
+            wsdlLocation="classpath:/ei-schemas/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
 
         <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
  

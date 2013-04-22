@@ -30,9 +30,10 @@
       <xs:element name='categorization' type='xs:string' minOccurs='0'/>
       <xs:element name='logicalAddress' type='xs:string' minOccurs='0'/>
       <xs:element name='businessObjectInstanceIdentifier' type='xs:string' minOccurs='0'/>
-      <xs:element name='clinicalProcessInterestId' type='core:HsaIdType' minOccurs='0'/>
+      <xs:element name='clinicalProcessInterestId' type='core:ClinicalProcessInterestIdType' minOccurs='0'/>
       <xs:element name='mostRecentContent' type='core:TS' minOccurs='0'/>
       <xs:element name='sourceSystem' type='core:HsaIdType' minOccurs='0'/>
+      <xs:element name='dataConrtoller' type='core:OrgNoType'/>
       <xs:element name='owner' type='core:HsaIdType' minOccurs='0'/>
       <xs:any namespace='##other' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
     </xs:sequence>

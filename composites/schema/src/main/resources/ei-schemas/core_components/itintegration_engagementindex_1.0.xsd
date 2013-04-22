@@ -34,17 +34,26 @@
       <xs:element name='categorization' type='xs:string' />
       <xs:element name='logicalAddress' type='xs:string' />
       <xs:element name='businessObjectInstanceIdentifier' type='xs:string' />
-      <xs:element name='clinicalProcessInterestId' type='tns:HsaIdType' minOccurs='0'/>
+      <xs:element name='clinicalProcessInterestId' type='tns:ClinicalProcessInterestIdType' minOccurs='1'/>
       <xs:element name='mostRecentContent' type='tns:TS' minOccurs='0'/>
       <xs:element name='sourceSystem' type='tns:HsaIdType' />
       <xs:element name='creationTime' type='tns:TS' minOccurs='0' />
       <xs:element name='updateTime' type='tns:TS' minOccurs='0'/>
+      <xs:element name='dataConrtoller' type='tns:OrgNoType'/>
       <xs:element name='owner' type='tns:HsaIdType' minOccurs='0'/>
       <xs:any namespace='##other' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
     </xs:sequence>
   </xs:complexType>
 
 	<xs:simpleType name="HsaIdType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	
+	<xs:simpleType name="OrgNoType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	
+	<xs:simpleType name="ClinicalProcessInterestIdType">
 		<xs:restriction base="xs:string"/>
 	</xs:simpleType>
 	

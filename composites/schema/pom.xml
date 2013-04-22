@@ -40,13 +40,13 @@
                                     <wsdl>${basedir}/src/main/resources/META-INF/wsdl/GetLogicalAddresseesByServiceContractInteraction_1.0_RIVTABP21.wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/META-INF/wsdl/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                                    <wsdl>${basedir}/src/main/resources/ei-schemas/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/META-INF/wsdl/FindContentInteraction/FindContentInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                                    <wsdl>${basedir}/src/main/resources/ei-schemas/interactions/FindContentInteraction/FindContentInteraction_1.0_RIVTABP21.wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/META-INF/wsdl/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                                    <wsdl>${basedir}/src/main/resources/ei-schemas/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
