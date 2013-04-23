@@ -3,6 +3,7 @@ package se.skltp.ei.intsvc.integrationtests.update;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -87,8 +88,38 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	 */
     @Test
     public void test_ok_one_tx() throws JMSException {
+    	
+		long residentId = 1212121212L;
+		String fullResidentId = "19" + residentId;
 		
-		doOneTest(1212121212L);
+		doOneTest(residentId);
+
+		// Verify that we got something in the database as well
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertEquals(1, result.size());
+        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+        
+    }
+
+	/**
+	 * Perform a test that is expected to return one hit
+	 * @throws JMSException 
+	 */
+    @Test
+    public void update_r1_negative_equal() throws JMSException {
+		
+		UpdateType request = new UpdateType();
+		EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et1);
+		request.getEngagementTransaction().add(et1);
+
+		try {
+			doOneTest(request);
+			fail("Expected exception here");
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
+			assertEquals("javax.xml.ws.soap.SOAPFaultException: EI002: EngagementTransaction #1 and #2 have the same key. That is not allowed. See rule for Update-R1 in service contract", e.toString());
+		};
     }
 
 	/**
@@ -120,6 +151,12 @@ public class UpdateIntegrationTest extends AbstractTestCase {
     	
 		UpdateType request = new UpdateType();
 		request.getEngagementTransaction().add(et);
+		
+		doOneTest(request);
+
+    }
+
+	private void doOneTest(UpdateType request) throws JMSException {
 
 		UpdateTestConsumer consumer = new UpdateTestConsumer(SERVICE_ADDRESS);
 
@@ -138,11 +175,6 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		String requestXml = jabxUtil.marshal(of.createUpdate(request));
 		assertEquals(requestXml, notificationXml);
 
-		// Verify that we got something in the database as well
-        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
-        assertEquals(1, result.size());
-        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(et.getEngagement().getRegisteredResidentIdentification()));
-        
         // FIXME: Split tests so that both separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
         try {
 			Thread.sleep(2000);

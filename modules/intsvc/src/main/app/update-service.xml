@@ -18,8 +18,14 @@ http://www.mulesoft.org/schema/mule/https     http://www.mulesoft.org/schema/mul
 http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <spring:beans>
+        <!-- Bean with business validation logic -->
+        <spring:bean name="update-validation-bean" class="se.skltp.ei.svc.service.impl.ProcessBean"/>
+
         <!-- Bean that expose a Web Service -->
-        <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.update.UpdateWSBean"/>
+        <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.update.UpdateWSBean">
+            <spring:property name="blBean" ref="update-validation-bean"/>
+        </spring:bean>
+        
     </spring:beans>
 
     <flow name="update-service" doc:name="update-service">

@@ -15,6 +15,7 @@ import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class ProcessBeanTest {
@@ -79,19 +80,20 @@ public class ProcessBeanTest {
 			EngagementTransactionType e1 = null;
 			request.getEngagementTransaction().add(e1);
 			
-			BEAN.update(null, request);
+			BEAN.validateUpdate(null, request);
 			fail("Expected exception here");
 		
         } catch (NullPointerException e) {
 			// That was the expected exception, carry on...
+        	// TODO: Validate expected error message
 		}
     }
 
     /**
-     * test R1 for Update service with an negative test, i.e. two equal engagements (that is not allowed)
+     * test R1 for Update service with an negative test, i.e. verify that the validation detects two equal engagements in the same request (that is not allowed)
      */
     @Test
-    public void update_r1_negative_equal() throws Exception {
+    public void update_r1_negative_validate_non_equal() throws Exception {
 
         try {
 			UpdateType request = new UpdateType();
@@ -104,14 +106,13 @@ public class ProcessBeanTest {
 			request.getEngagementTransaction().add(et2);
 			request.getEngagementTransaction().add(et1);
 			
-			BEAN.update(null, request);
+			BEAN.validateUpdate(null, request);
 			fail("Expected exception here");
 
-        } catch (RuntimeException e) {
+        } catch (EiException e) {
 			// That was the expected exception, carry on...
-        	assertEquals("IE002, EngagementTransaction #2 and #4 have the same key. That is not allowed. See Upade R1 in service contract", e.getMessage());
+        	assertEquals("EI002", e.getCode());
+        	assertEquals("EI002: EngagementTransaction #2 and #4 have the same key. That is not allowed. See rule for Update-R1 in service contract", e.getMessage());
 		}
     }
-
-
 }

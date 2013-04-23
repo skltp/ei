@@ -1,5 +1,6 @@
 package se.skltp.ei.svc.service.impl;
 
+import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI002_DUPLICATE_UPDATE_ENTRIES;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
 
@@ -42,6 +44,33 @@ public class ProcessBean implements ProcessInterface {
     }
 
     /**
+     * Validates an update request without touching the database.
+     * 
+     * @param header the header
+     * @param request the request
+     */
+    @Override
+    @Transactional(isolation=Isolation.READ_UNCOMMITTED)
+    public void validateUpdate(Header header, UpdateType request) {
+
+    	// Validate request data
+        Map<Integer, Integer> hashCodes = new HashMap<Integer, Integer>();
+        int hashCodeIndex = 1;
+
+        for (final EngagementTransactionType engagementTransaction : request.getEngagementTransaction()) {
+            final Engagement e = toEntity(engagementTransaction.getEngagement());
+
+            // Update, R1: Validate uniqueness within the request
+            int hashCode = e.getBusinessKey().hashCode();
+            int index = hashCodeIndex++;
+            Integer otherIndex = hashCodes.put(hashCode, index);
+            if (otherIndex != null) {
+            	throw new EiException(EI002_DUPLICATE_UPDATE_ENTRIES, otherIndex, index);
+            }
+        }
+    }
+
+    /**
      * Performs an index update transaction. <p>
      * 
      * Due to the fact that no underlying XA resources is in use, this transaction will 
@@ -56,10 +85,6 @@ public class ProcessBean implements ProcessInterface {
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
     public UpdateResponseType update(Header header, UpdateType request) {
         LOG.debug("The svc.update service is called");
-
-        // Validate request data
-        Map<Integer, Integer> hashCodes = new HashMap<Integer, Integer>();
-        int hashCodeIndex = 1;
         
         // Separate deletes from the saves...
         final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
@@ -68,14 +93,6 @@ public class ProcessBean implements ProcessInterface {
         for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
             final Engagement e = toEntity(engagementTransaction.getEngagement());
 
-            // Update, R1: Validate uniqueness within the request
-            int hashCode = e.getBusinessKey().hashCode();
-            int index = hashCodeIndex++;
-            Integer otherIndex = hashCodes.put(hashCode, index);
-            if (otherIndex != null) {
-            	throw new RuntimeException("IE002, EngagementTransaction #" + otherIndex + " and #" + index + " have the same key. That is not allowed. See Upade R1 in service contract");
-            }
-            
             if (engagementTransaction.isDeleteFlag()) {
                 if (deleteList == null) {
                     deleteList = new ArrayList<Engagement>();
