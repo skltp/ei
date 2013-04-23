@@ -39,7 +39,7 @@
       <xs:element name='sourceSystem' type='tns:HsaIdType' />
       <xs:element name='creationTime' type='tns:TS' minOccurs='0' />
       <xs:element name='updateTime' type='tns:TS' minOccurs='0'/>
-      <xs:element name='dataConrtoller' type='tns:OrgNoType'/>
+      <xs:element name='dataController' type='tns:OrgNoType'/>
       <xs:element name='owner' type='tns:HsaIdType' minOccurs='0'/>
       <xs:any namespace='##other' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
     </xs:sequence>
