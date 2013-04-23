@@ -36,7 +36,7 @@ public class EngagementIntegrationTest {
     public void shouldFindPreviouslySavedPerson() {
 
         // given
-        Engagement engagement  = GenTestDataUtil.genEngagement(1212121212L);
+        Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
         engagementRepository.save(engagement);
 
         // when
@@ -54,7 +54,7 @@ public class EngagementIntegrationTest {
 
     	// given
         final int num = 1000;
-        List<Engagement> list = GenTestDataUtil.genEngagements(0, num);
+        List<Engagement> list = GenEntityTestDataUtil.genEngagements(0, num);
         engagementRepository.save(list);
 
         // when
@@ -73,11 +73,11 @@ public class EngagementIntegrationTest {
 
     	// given
     	final int num = 10;
-        List<Engagement> list = GenTestDataUtil.genEngagements(0, num);
+        List<Engagement> list = GenEntityTestDataUtil.genEngagements(0, num);
         engagementRepository.save(list);
 
         // when
-        Engagement e = GenTestDataUtil.genEngagement(1);
+        Engagement e = GenEntityTestDataUtil.genEngagement(1);
         Engagement.BusinessKey key = e.getBusinessKey();
         List<Engagement> result = engagementRepository.findByBusinessKey_RegisteredResidentIdentification(key.getRegisteredResidentIdentification());
 

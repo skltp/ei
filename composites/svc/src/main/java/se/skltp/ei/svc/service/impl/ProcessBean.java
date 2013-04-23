@@ -3,7 +3,9 @@ package se.skltp.ei.svc.service.impl;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +57,25 @@ public class ProcessBean implements ProcessInterface {
     public UpdateResponseType update(Header header, UpdateType request) {
         LOG.debug("The svc.update service is called");
 
+        // Validate request data
+        Map<Integer, Integer> hashCodes = new HashMap<Integer, Integer>();
+        int hashCodeIndex = 1;
+        
+        // Separate deletes from the saves...
         final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
         final List<Engagement> saveList = new ArrayList<Engagement>(engagementTransactions.size());
         List<Engagement> deleteList = null;
         for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
             final Engagement e = toEntity(engagementTransaction.getEngagement());
+
+            // Update, R1: Validate uniqueness within the request
+            int hashCode = e.getBusinessKey().hashCode();
+            int index = hashCodeIndex++;
+            Integer otherIndex = hashCodes.put(hashCode, index);
+            if (otherIndex != null) {
+            	throw new RuntimeException("IE002, EngagementTransaction #" + otherIndex + " and #" + index + " have the same key. That is not allowed. See Upade R1 in service contract");
+            }
+            
             if (engagementTransaction.isDeleteFlag()) {
                 if (deleteList == null) {
                     deleteList = new ArrayList<Engagement>();
@@ -70,9 +86,12 @@ public class ProcessBean implements ProcessInterface {
             }
         }
 
+        // Perform the delete if any
         if (deleteList != null) {
             engagementRepository.delete(deleteList);
         }
+
+        // Perform the save
         engagementRepository.save(saveList);  	
 
         return RESPONSE_OK;

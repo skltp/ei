@@ -6,7 +6,7 @@ import java.util.List;
 
 import se.skltp.ei.svc.entity.model.Engagement;
 
-public class GenTestDataUtil {
+public class GenEntityTestDataUtil {
 	
     /**
      * Generates test data.

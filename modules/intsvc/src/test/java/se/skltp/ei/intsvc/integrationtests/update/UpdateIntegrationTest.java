@@ -20,17 +20,15 @@ import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
-import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.processnotification.ProcessNotificationTestProducer;
-import se.skltp.ei.svc.entity.GenTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.impl.util.EntityTransformer;
+import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
 public class UpdateIntegrationTest extends AbstractTestCase {
 
@@ -118,11 +116,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	private void doOneTest(long in_residentId) throws JMSException {
 
 		// Create a new engagement and call the update web service
-		Engagement entity = GenTestDataUtil.genEngagement(in_residentId);
-		EngagementType engagement = EntityTransformer.fromEntity(entity);
-    	EngagementTransactionType et = new EngagementTransactionType();
-    	et.setDeleteFlag(false);
-    	et.setEngagement(engagement);
+		EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(in_residentId);
     	
 		UpdateType request = new UpdateType();
 		request.getEngagementTransaction().add(et);
@@ -147,7 +141,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		// Verify that we got something in the database as well
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
         assertEquals(1, result.size());
-        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(engagement.getRegisteredResidentIdentification()));
+        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(et.getEngagement().getRegisteredResidentIdentification()));
         
         // FIXME: Split tests so that both separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
         try {

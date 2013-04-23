@@ -92,7 +92,7 @@ public class BenchmarkTest {
      */
     @Transactional
     public int upsertBatch(int start, int size) {
-        engagementRepository.save(GenTestDataUtil.genEngagements(start, size));
+        engagementRepository.save(GenEntityTestDataUtil.genEngagements(start, size));
         return size;
     }
 

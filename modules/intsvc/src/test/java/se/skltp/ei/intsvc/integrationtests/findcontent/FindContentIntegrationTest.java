@@ -17,7 +17,7 @@ import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.intsvc.EiMuleServer;
-import se.skltp.ei.svc.entity.GenTestDataUtil;
+import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
@@ -66,7 +66,7 @@ public class FindContentIntegrationTest extends AbstractTestCase {
     	engagementRepository.deleteAll();
     	
     	// Insert one entity
-        Engagement engagement  = GenTestDataUtil.genEngagement(1212121212L);
+        Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
         residentId = engagement.getBusinessKey().getRegisteredResidentIdentification();
 		engagement.setCreationTime(new Date());
     	engagementRepository.save(engagement);
