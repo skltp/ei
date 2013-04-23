@@ -18,45 +18,37 @@ http://www.mulesoft.org/schema/mule/https     http://www.mulesoft.org/schema/mul
 http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <spring:beans>
-        <!-- Bean that expose a Web Service -->
-        <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.update.UpdateWSBean"/>
+        <!-- Bean with business logic -->
+        <spring:bean name="process-bl-bean" class="se.skltp.ei.svc.service.impl.ProcessBean"/>
+
+        <!-- Bean that process the update and/or process-notification -->
+        <spring:bean name="process-bean" class="se.skltp.ei.intsvc.process.ProcessBean">
+            <spring:property name="blBean" ref="process-bl-bean"/>
+        </spring:bean>
     </spring:beans>
 
-    <flow name="update-service" doc:name="update-service">
+    <flow name="process-service" doc:name="process-service">
+        <jms:inbound-endpoint 
+            connector-ref="soitoolkit-jms-connector"
+            queue="${PROCESS_QUEUE}" 
+            transformer-refs="logMsgIn" 
+            doc:name="JMS">
+            <jms:transaction action="ALWAYS_BEGIN"/>
+        </jms:inbound-endpoint>
 
-        <inbound-endpoint 
-            address="${UPDATE_WEB_SERVICE_URL}"  
-            connector-ref="soitoolkit-http-connector"
-            exchange-pattern="request-response"
-            transformer-refs="logReqIn"
-            responseTransformer-refs="logRespOut" doc:name="Generic"/>
-
-        <cxf:jaxws-service
-            namespace="urn:riv:itintegration:engagementindex:Update:1:rivtabp21"
-            serviceClass="se.skltp.ei.intsvc.update.UpdateWSBean"
-            wsdlLocation="classpath:/ei-schemas/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
-
-        <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
- 
         <component doc:name="Java">
-            <spring-object bean="update-ws-bean"/>
+            <spring-object bean="process-bean"/>
         </component>
-
-        <set-variable variableName="response" value="#[payload]" doc:name="Variable"/>
-
-        <set-payload value="#[variable:request]" doc:name="Set Payload"/>        
-
-        <custom-transformer class="se.skltp.ei.intsvc.update.UpdateRequestToJmsMsgTransformer" doc:name="Java"/>
 
         <jms:outbound-endpoint 
             connector-ref="soitoolkit-jms-connector"
-            queue="${PROCESS_QUEUE}" 
+            topic="${NOTIFICATION_TOPIC}" 
             transformer-refs="logMsgOut" 
-            doc:name="JMS"/>
- 
-        <set-payload value="#[variable:response]" doc:name="Set Payload"/>        
-
+            doc:name="JMS Topic">
+            <jms:transaction action="ALWAYS_JOIN"/>
+        </jms:outbound-endpoint>
+        
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
-    </flow>        
+    </flow>
 
 </mule>

@@ -64,6 +64,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	  		"skltp-ei-svc-spring-context.xml," +
 	        "get-logical-addressees-service.xml," + 
 	        "update-service.xml," + 
+	        "process-service.xml," + 
 	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
 	        "teststub-services/process-notification-teststub-service.xml";
     }

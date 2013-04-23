@@ -18,11 +18,11 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.Header;
-import se.skltp.ei.svc.service.api.UpdateInterface;
+import se.skltp.ei.svc.service.api.ProcessInterface;
 
-public class UpdateBean implements UpdateInterface {
+public class ProcessBean implements ProcessInterface {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessBean.class);
 
     private EngagementRepository engagementRepository;
 

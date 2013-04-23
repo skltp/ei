@@ -13,15 +13,15 @@ import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.impl.UpdateBean;
+import se.skltp.ei.svc.service.impl.ProcessBean;
 
-public class UpdateBeanTest {
+public class ProcessBeanTest {
 
-    private static UpdateBean BEAN = null; 
+    private static ProcessBean BEAN = null; 
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        BEAN = new UpdateBean();
+        BEAN = new ProcessBean();
         EngagementRepository er = mock(EngagementRepository.class);
         BEAN.setEngagementRepository(er);
     }
