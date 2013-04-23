@@ -96,7 +96,12 @@ public class ProcessBeanTest {
         try {
 			UpdateType request = new UpdateType();
 			EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+			EngagementTransactionType et2 = GenServiceTestDataUtil.genEngagementTransaction(2222222222L);
+		    EngagementTransactionType et3 = GenServiceTestDataUtil.genEngagementTransaction(3333333333L);
+
+		    request.getEngagementTransaction().add(et3);
 			request.getEngagementTransaction().add(et1);
+			request.getEngagementTransaction().add(et2);
 			request.getEngagementTransaction().add(et1);
 			
 			BEAN.update(null, request);
@@ -104,7 +109,7 @@ public class ProcessBeanTest {
 
         } catch (RuntimeException e) {
 			// That was the expected exception, carry on...
-			// TODO validate content in the exception!
+        	assertEquals("IE002, EngagementTransaction #2 and #4 have the same key. That is not allowed. See Upade R1 in service contract", e.getMessage());
 		}
     }
 
