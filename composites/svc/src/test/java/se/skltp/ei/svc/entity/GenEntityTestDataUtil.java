@@ -47,6 +47,7 @@ public class GenEntityTestDataUtil {
                 String.valueOf(residentIdentification),
                 logicalAdresses[n],
                 sourceSystems[n],
+                "dataController",
                 "Inera",
                 "NA");
 

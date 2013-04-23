@@ -33,6 +33,7 @@ public class EntityTransformer {
                 eIn.getLogicalAddress(),
                 eIn.getBusinessObjectInstanceIdentifier(),
                 eIn.getSourceSystem(),
+                eIn.getDataController(),
                 eIn.getOwner(),
                 eIn.getClinicalProcessInterestId());
 
@@ -61,7 +62,7 @@ public class EntityTransformer {
         eOut.setSourceSystem(key.getSourceSystem());
         eOut.setOwner(key.getOwner());
         eOut.setClinicalProcessInterestId(key.getClinicalProcessInterestId());
-
+        eOut.setDataController(key.getDataController());
         eOut.setCreationTime(forrmatDate(eIn.getCreationTime()));
         eOut.setMostRecentContent(forrmatDate(eIn.getMostRecentContent()));	    
         eOut.setUpdateTime(forrmatDate(eIn.getUpdateTime()));

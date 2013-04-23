@@ -70,6 +70,7 @@ public class Engagement {
             String logicalAddress,
             String businessObjectInstanceIdentifier,
             String sourceSystem,
+            String dataController,
             String owner,
             String clinicalProcessInterestId) {
         businessKey = new BusinessKey(registeredResidentIdentification,
@@ -78,6 +79,7 @@ public class Engagement {
                 logicalAddress,
                 businessObjectInstanceIdentifier,
                 sourceSystem,
+                dataController,
                 owner,
                 clinicalProcessInterestId);
         id = businessKey.getHashId();
@@ -127,7 +129,9 @@ public class Engagement {
     public static class BusinessKey implements Serializable {
         //
         private static final long serialVersionUID = 1L;
-        // Part of the business key
+        
+        // complex key (real primary key)
+        
         @Column(name="registered_resident_identification", nullable=false, length=32, updatable=false)
         private String registeredResidentIdentification;
 
@@ -142,9 +146,12 @@ public class Engagement {
 
         @Column(name="business_object_instance_identifier", nullable=false, length=128, updatable=false)
         private String businessObjectInstanceIdentifier = NA;
-
+        
         @Column(name="source_system", nullable=false, length=64, updatable=false)
         private String sourceSystem;
+
+        @Column(name="data_controller", nullable=false, length=64, updatable=false)
+        private String dataController;
 
         @Column(name="owner", nullable=false, length=64, updatable=false)
         private String owner = INERA;
@@ -165,6 +172,7 @@ public class Engagement {
                 String logicalAddress,
                 String businessObjectInstanceIdentifier,
                 String sourceSystem,
+                String dataController,
                 String owner,
                 String clinicalProcessInterestId) {
             this.registeredResidentIdentification = registeredResidentIdentification;
@@ -173,6 +181,7 @@ public class Engagement {
             this.logicalAddress = logicalAddress;
             this.businessObjectInstanceIdentifier = nvl(businessObjectInstanceIdentifier, NA);
             this.sourceSystem = sourceSystem;
+            this.dataController = dataController;
             this.owner = nvl(owner, INERA);
             this.clinicalProcessInterestId = nvl(clinicalProcessInterestId, NA);
             this.hashId = null;
@@ -180,22 +189,15 @@ public class Engagement {
 
         @Override
         public boolean equals(Object r) {
-            if (r == null) {
-                return false;
-            } else if (this == r) {
+            if (this == r) {
                 return true;
+            } else if (r == null) {
+                return false;
             } else if (r instanceof BusinessKey) {
-                BusinessKey other = (BusinessKey)r;
-                return eq(registeredResidentIdentification, other.registeredResidentIdentification)
-                        && eq(serviceDomain, other.serviceDomain)
-                        && eq(categorization, other.categorization)
-                        && eq(logicalAddress, other.logicalAddress)
-                        && eq(businessObjectInstanceIdentifier, other.businessObjectInstanceIdentifier)
-                        && eq(sourceSystem, other.sourceSystem)
-                        && eq(owner, other.owner)
-                        && eq(clinicalProcessInterestId, other.clinicalProcessInterestId);
+                return getHashId().equals(((BusinessKey)r).getHashId());
+            } else {
+                return false;
             }
-            return false;
         }
 
         @Override
@@ -204,18 +206,11 @@ public class Engagement {
         }
 
         /**
-         * Returns if the strings are equal.
+         * Returns the unique hash id and primary key.
          * 
-         * @param l the left hand side string.
-         * @param r the other string.
-         * @return true if equal, otherwise false.
+         * @return the unique hash id.
          */
-        private static boolean eq(String l, String r) {
-            return nvl(l, EMPTY).equals(nvl(r, EMPTY));
-        }
-
-        //
-        protected String getHashId() {
+        public String getHashId() {
             if (hashId == null) {
                 hashId = generateHashId();
             }
@@ -276,10 +271,14 @@ public class Engagement {
                     logicalAddress,
                     businessObjectInstanceIdentifier,
                     sourceSystem,
+                    dataController,
                     owner,
                     clinicalProcessInterestId);
             return hash;
         }
 
+        public String getDataController() {
+            return dataController;
+        }
     }
 }

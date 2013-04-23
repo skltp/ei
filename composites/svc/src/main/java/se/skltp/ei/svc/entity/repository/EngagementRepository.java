@@ -2,12 +2,19 @@ package se.skltp.ei.svc.entity.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import se.skltp.ei.svc.entity.model.Engagement;
 
-//
-public interface EngagementRepository extends CrudRepository<Engagement, String> {
+/**
+ * Please note. At this time these methods below are just placeholders and needs further updates as 
+ * implementation of use-cases evolves.
+ * 
+ * @author Peter
+ *
+ */
+public interface EngagementRepository extends JpaRepository<Engagement, String> {
     /**
      * Returns engagement records matching an array of identities  (primary keys)
      * 

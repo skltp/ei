@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,22 +51,17 @@ public class ProcessBean implements ProcessInterface {
      * @param request the request
      */
     @Override
-    @Transactional(isolation=Isolation.READ_UNCOMMITTED)
     public void validateUpdate(Header header, UpdateType request) {
-
-    	// Validate request data
-        Map<Integer, Integer> hashCodes = new HashMap<Integer, Integer>();
-        int hashCodeIndex = 1;
+       
+        final Map<String, Integer> hashCodes = new HashMap<String, Integer>(request.getEngagementTransaction().size());
+        int hashCodeIndex = 0;
 
         for (final EngagementTransactionType engagementTransaction : request.getEngagementTransaction()) {
             final Engagement e = toEntity(engagementTransaction.getEngagement());
-
             // Update, R1: Validate uniqueness within the request
-            int hashCode = e.getBusinessKey().hashCode();
-            int index = hashCodeIndex++;
-            Integer otherIndex = hashCodes.put(hashCode, index);
+            final Integer otherIndex = hashCodes.put(e.getBusinessKey().getHashId(), ++hashCodeIndex);
             if (otherIndex != null) {
-            	throw new EiException(EI002_DUPLICATE_UPDATE_ENTRIES, otherIndex, index);
+            	throw new EiException(EI002_DUPLICATE_UPDATE_ENTRIES, otherIndex, hashCodeIndex);
             }
         }
     }
