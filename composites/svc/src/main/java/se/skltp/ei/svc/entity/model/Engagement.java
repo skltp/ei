@@ -32,8 +32,6 @@ import se.skltp.ei.svc.entity.model.util.Hash;
 indexes={ @Index(name="engagement_search_index", columnNames="registered_resident_identification") })
 public class Engagement {
 
-    @SuppressWarnings("unused")
-	private static final String EMPTY = "";
     private static final String NA = "NA";
     private static final String INERA = "Inera";
 
@@ -86,6 +84,25 @@ public class Engagement {
         id = businessKey.getHashId();
     }
 
+    @Override
+    public boolean equals(Object r) {
+        if (this == r) {
+            return true;
+        } else if (r == null) {
+            return false;
+        } else if (r instanceof Engagement) {
+            return getId().equals(((Engagement)r).getId());
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    
     /**
      * Returns the business key.
      * 

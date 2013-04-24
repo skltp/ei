@@ -58,7 +58,7 @@ public class ProcessBean implements ProcessInterface {
         for (final EngagementTransactionType engagementTransaction : request.getEngagementTransaction()) {
             final Engagement e = toEntity(engagementTransaction.getEngagement());
             // Update, R1: Validate uniqueness within the request
-            final Integer otherIndex = hashCodes.put(e.getBusinessKey().getHashId(), ++hashCodeIndex);
+            final Integer otherIndex = hashCodes.put(e.getId(), ++hashCodeIndex);
             if (otherIndex != null) {
             	throw new EiException(EI002_DUPLICATE_UPDATE_ENTRIES, otherIndex, hashCodeIndex);
             }
