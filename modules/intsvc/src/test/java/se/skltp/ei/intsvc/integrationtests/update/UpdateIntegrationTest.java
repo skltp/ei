@@ -17,7 +17,6 @@ import org.mule.context.notification.EndpointMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
-import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
@@ -26,6 +25,7 @@ import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.intsvc.integrationtests.processnotification.ProcessNotificationTestProducer;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
@@ -165,9 +165,8 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		// Assert OK response from the web service
         assertEquals(ResultCodeEnum.OK, response.getResultCode());
         
-        // FIXME: Create a version of dispatchAndWaitForDelivery in soi-toolkit where no message is required to be sent like the existing method waitForServiceComponent()
         System.err.println("### WAIT FOR DELIVERY ON " + "jms://topic:" + NOTIFICATION_TOPIC);
-        MuleMessage r = dispatchAndWaitForDelivery("jms://foo?connector=soitoolkit-jms-connector", "", null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
+        MuleMessage r = waitForDelivery("jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
 
         // Compare the notified message with the request message, they should be the same
         TextMessage jmsMsg = (TextMessage)r.getPayload();
