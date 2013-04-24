@@ -9,6 +9,7 @@ import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInterface;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
 
 @WebService(
@@ -36,7 +37,7 @@ public class UpdateWSBean implements UpdateResponderInterface {
     public UpdateResponseType update(String logicalAddress, UpdateType parameters) {
 
     	// Validate the request (note no db-access will be performed)
-    	blBean.validateUpdate(null, parameters);
+    	blBean.validateUpdate(new Header(null,logicalAddress,null), parameters);
     	
     	// Create a default response
         UpdateResponseType response = new UpdateResponseType();

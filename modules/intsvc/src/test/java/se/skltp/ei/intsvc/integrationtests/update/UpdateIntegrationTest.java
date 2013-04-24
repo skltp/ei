@@ -45,7 +45,9 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
     private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
-    private static final String LOGICAL_ADDRESS = "logical-address";
+    private static final String INVALID_LOGICAL_ADDRESS = "wrongLogicalAddress";
+    private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
+    
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
@@ -125,6 +127,24 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		};
     }
 
+    @Test
+    public void update_r7_negative_owner_dont_match_logicaladdress() throws JMSException {
+		
+		UpdateType request = new UpdateType();
+		EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et1);
+		try {
+			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
+			new DoOneTestDispatcher(INVALID_LOGICAL_ADDRESS,request).doDispatch();
+			fail("Expected exception here");
+
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
+			assertEquals("javax.xml.ws.soap.SOAPFaultException: EI003: Invalid routing. Logical address is wrongLogicalAddress but the owner is logical-address. They must be the same. See rule for Update-R7 in service contract", e.toString());
+		};
+    }
+
+    
 	/**
 	 * Perform a test that is expected to create a timeout
 	 * @throws JMSException 
@@ -162,16 +182,23 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	private class DoOneTestDispatcher implements Dispatcher {
 		
 		private UpdateType request = null;
+		private String logicalAddress = null;
 
 		private DoOneTestDispatcher(UpdateType request) {
 			this.request  = request;
+			this.logicalAddress = LOGICAL_ADDRESS;
+		}
+		
+		private DoOneTestDispatcher(String logicalAddress, UpdateType request) {
+			this.request  = request;
+			this.logicalAddress = logicalAddress;
 		}
 		
 		@Override
 		public void doDispatch() {
 			UpdateTestConsumer consumer = new UpdateTestConsumer(SERVICE_ADDRESS);
 
-			UpdateResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
+			UpdateResponseType response = consumer.callService(logicalAddress, request);
 	        
 			// Assert OK response from the web service
 	        assertEquals(ResultCodeEnum.OK, response.getResultCode());

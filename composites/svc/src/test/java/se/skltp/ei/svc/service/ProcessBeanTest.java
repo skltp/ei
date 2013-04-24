@@ -1,6 +1,7 @@
 package se.skltp.ei.svc.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
@@ -16,17 +17,24 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.EiException;
+import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class ProcessBeanTest {
 
+	private static Header HEADER = null;
     private static ProcessBean BEAN = null; 
+    private static final String OWNER = "logical-address";
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         BEAN = new ProcessBean();
+        
+		BEAN.setOwner(OWNER);
         EngagementRepository er = mock(EngagementRepository.class);
         BEAN.setEngagementRepository(er);
+        
+		HEADER = new Header(null, OWNER, null);
     }
 
     @AfterClass
@@ -80,7 +88,7 @@ public class ProcessBeanTest {
 			EngagementTransactionType e1 = null;
 			request.getEngagementTransaction().add(e1);
 			
-			BEAN.validateUpdate(null, request);
+			BEAN.validateUpdate(HEADER, request);
 			fail("Expected exception here");
 		
         } catch (NullPointerException e) {
@@ -106,7 +114,7 @@ public class ProcessBeanTest {
 			request.getEngagementTransaction().add(et2);
 			request.getEngagementTransaction().add(et1);
 			
-			BEAN.validateUpdate(null, request);
+			BEAN.validateUpdate(HEADER, request);
 			fail("Expected exception here");
 
         } catch (EiException e) {
@@ -115,4 +123,42 @@ public class ProcessBeanTest {
         	assertEquals("EI002: EngagementTransaction #2 and #4 have the same key. That is not allowed. See rule for Update-R1 in service contract", e.getMessage());
 		}
     }
+    
+    @Test
+    public void update_r7_positive_owner_matches_logicaladdress() throws Exception {
+    	try {
+    		BEAN.validateUpdate(HEADER, new UpdateType());
+		} catch (EiException e) {
+			fail("Expected ok, not excpetion");
+		}
+    	assertTrue("Test went ok", true);
+    }
+    
+    @Test
+    public void update_r7_negative_owner_dont_match_logicaladdress() throws Exception {
+    	try {
+    		BEAN.validateUpdate(new Header(null, "wrongLogicalAddress", null), new UpdateType());
+    		fail("Expected EiException here");
+		} catch (EiException e) {
+			assertEquals("EI003: Invalid routing. Logical address is wrongLogicalAddress but the owner is logical-address. They must be the same. See rule for Update-R7 in service contract", e.getMessage());
+		}
+    }
+    
+    @Test
+    public void update_r7_neagtive_null_header() throws Exception {
+    	try {
+    		BEAN.validateUpdate(null, new UpdateType());
+    		fail("Expected EiException here");
+		} catch (EiException e) {
+			assertEquals("EI003: Invalid routing. Logical address is missing but the owner is logical-address. They must be the same. See rule for Update-R7 in service contract", e.getMessage());
+		}
+    	
+    	try {
+			BEAN.validateUpdate(new Header(null, null, null), new UpdateType());
+    		fail("Expected EiException here");
+		} catch (EiException e) {
+			assertEquals("EI003: Invalid routing. Logical address is missing but the owner is logical-address. They must be the same. See rule for Update-R7 in service contract", e.getMessage());
+		}
+    }
+    
 }

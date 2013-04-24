@@ -1,6 +1,7 @@
 package se.skltp.ei.svc.service.impl;
 
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI002_DUPLICATE_UPDATE_ENTRIES;
+import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI003_LOGICALADDRESS_DONT_MATCH_OWNER;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class ProcessBean implements ProcessInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessBean.class);
 
+	private String owner;
+
     private EngagementRepository engagementRepository;
 
     //
@@ -37,7 +40,12 @@ public class ProcessBean implements ProcessInterface {
             return ResultCodeEnum.OK;
         }
     };
-
+    
+    
+    public void setOwner(String owner) {
+		this.owner = owner;
+	}
+    
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
         this.engagementRepository = engagementRepository;
@@ -51,19 +59,36 @@ public class ProcessBean implements ProcessInterface {
      */
     @Override
     public void validateUpdate(Header header, UpdateType request) {
-       
-        final Map<String, Integer> hashCodes = new HashMap<String, Integer>(request.getEngagementTransaction().size());
+    	validateLogicalAddress(header);
+        validateUniqueness(request);
+    }
+
+    // Update, R1: Validate uniqueness within the request
+	private void validateUniqueness(UpdateType request) {
+		final Map<String, Integer> hashCodes = new HashMap<String, Integer>(request.getEngagementTransaction().size());
         int hashCodeIndex = 0;
 
         for (final EngagementTransactionType engagementTransaction : request.getEngagementTransaction()) {
             final Engagement e = toEntity(engagementTransaction.getEngagement());
-            // Update, R1: Validate uniqueness within the request
-            final Integer otherIndex = hashCodes.put(e.getId(), ++hashCodeIndex);
+            final Integer otherIndex = hashCodes.put(e.getBusinessKey().getHashId(), ++hashCodeIndex);
             if (otherIndex != null) {
             	throw new EiException(EI002_DUPLICATE_UPDATE_ENTRIES, otherIndex, hashCodeIndex);
             }
         }
-    }
+	}
+
+	// Update, R7: Logical address in request equals owner of EI
+	private void validateLogicalAddress(Header header) {
+		if (header == null || header.getReceiverId() == null) {
+			throw new EiException(EI003_LOGICALADDRESS_DONT_MATCH_OWNER,
+					"missing", owner);
+		}
+    	
+		if (!header.getReceiverId().equals(owner)) {
+			throw new EiException(EI003_LOGICALADDRESS_DONT_MATCH_OWNER,
+					header.getReceiverId(), owner);
+		}
+	}
 
     /**
      * Performs an index update transaction. <p>
@@ -80,7 +105,7 @@ public class ProcessBean implements ProcessInterface {
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
     public UpdateResponseType update(Header header, UpdateType request) {
         LOG.debug("The svc.update service is called");
-        
+          
         // Separate deletes from the saves...
         final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
         final List<Engagement> saveList = new ArrayList<Engagement>(engagementTransactions.size());

@@ -7,13 +7,13 @@ public class Header {
 
     private String senderId;
     private String receiverId;
-    private String correlationaid;
+    private String correlationId;
 
-    public Header(String senderId, String receiverId, String correlationaid) {
+    public Header(String senderId, String receiverId, String correlationId) {
 
         this.senderId = senderId;
         this.receiverId = receiverId;
-        this.correlationaid = correlationaid;
+        this.correlationId = correlationId;
     }
 
     public String getSenderId() {
@@ -23,7 +23,7 @@ public class Header {
         return receiverId;
     }
     public String getCorrelationaid() {
-        return correlationaid;
+        return correlationId;
     }
 
 }
