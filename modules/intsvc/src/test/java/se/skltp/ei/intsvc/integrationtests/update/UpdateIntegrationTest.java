@@ -17,6 +17,7 @@ import org.mule.context.notification.EndpointMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
+import org.soitoolkit.commons.mule.test.Dispatcher;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
@@ -114,8 +115,10 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		request.getEngagementTransaction().add(et1);
 
 		try {
-			doOneTest(request);
+			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
+			new DoOneTestDispatcher(request).doDispatch();
 			fail("Expected exception here");
+
 		} catch (javax.xml.ws.soap.SOAPFaultException e) {
 			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
 			assertEquals("javax.xml.ws.soap.SOAPFaultException: EI002: EngagementTransaction #1 and #2 have the same key. That is not allowed. See rule for Update-R1 in service contract", e.toString());
@@ -156,17 +159,31 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
     }
 
-	private void doOneTest(UpdateType request) throws JMSException {
+	private class DoOneTestDispatcher implements Dispatcher {
+		
+		private UpdateType request = null;
 
-		UpdateTestConsumer consumer = new UpdateTestConsumer(SERVICE_ADDRESS);
+		private DoOneTestDispatcher(UpdateType request) {
+			this.request  = request;
+		}
+		
+		@Override
+		public void doDispatch() {
+			UpdateTestConsumer consumer = new UpdateTestConsumer(SERVICE_ADDRESS);
 
-		UpdateResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
+			UpdateResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
+	        
+			// Assert OK response from the web service
+	        assertEquals(ResultCodeEnum.OK, response.getResultCode());
+		}
+	}
+
+	private void doOneTest(final UpdateType request) throws JMSException {
+
+		// Use dispatchAndWaitForDelivery() and a custom Dispatcher to ensure that the listener on the notification topic ir regiered before the web service call is made
         
-		// Assert OK response from the web service
-        assertEquals(ResultCodeEnum.OK, response.getResultCode());
-        
-        System.err.println("### WAIT FOR DELIVERY ON " + "jms://topic:" + NOTIFICATION_TOPIC);
-        MuleMessage r = waitForDelivery("jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
+        System.err.println("### DISPATCH AND WAIT FOR DELIVERY ON " + "jms://topic:" + NOTIFICATION_TOPIC);
+        MuleMessage r = dispatchAndWaitForDelivery(new DoOneTestDispatcher(request), "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
 
         // Compare the notified message with the request message, they should be the same
         TextMessage jmsMsg = (TextMessage)r.getPayload();

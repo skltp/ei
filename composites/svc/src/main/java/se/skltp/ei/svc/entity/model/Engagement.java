@@ -32,7 +32,8 @@ import se.skltp.ei.svc.entity.model.util.Hash;
 indexes={ @Index(name="engagement_search_index", columnNames="registered_resident_identification") })
 public class Engagement {
 
-    private static final String EMPTY = "";
+    @SuppressWarnings("unused")
+	private static final String EMPTY = "";
     private static final String NA = "NA";
     private static final String INERA = "Inera";
 

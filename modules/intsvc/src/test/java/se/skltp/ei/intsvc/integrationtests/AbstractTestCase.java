@@ -11,8 +11,6 @@ import org.mule.api.MuleMessage;
 import org.mule.api.context.notification.EndpointMessageNotificationListener;
 import org.mule.api.context.notification.ServerNotification;
 import org.mule.context.notification.EndpointMessageNotification;
-import org.mule.module.client.MuleClient;
-import org.mule.tck.junit4.FunctionalTestCase;
 import org.soitoolkit.commons.mule.test.Dispatcher;
 import org.soitoolkit.commons.mule.test.DispatcherMuleClientImpl;
 import org.soitoolkit.commons.mule.util.MuleUtil;
