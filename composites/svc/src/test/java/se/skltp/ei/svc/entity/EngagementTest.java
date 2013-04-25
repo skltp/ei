@@ -16,7 +16,7 @@ import se.skltp.ei.svc.entity.model.Engagement;
 public class EngagementTest {
 
     @Test
-    public void keyComparisonTest() {
+    public void businessKeyTest() {
         Engagement e1 = GenEntityTestDataUtil.genEngagement(1L);
         Engagement e2 = GenEntityTestDataUtil.genEngagement(1L);
         Engagement e3 = GenEntityTestDataUtil.genEngagement(2L);
@@ -31,6 +31,31 @@ public class EngagementTest {
         assertEquals(key1.hashCode(), key2.hashCode());
         assertTrue(key1.hashCode() != key3.hashCode());
         assertFalse(key1.equals(key3));
-    }	
+    }
+
+    @Test
+    public void equalsTest() {
+        Engagement e1 = GenEntityTestDataUtil.genEngagement(1L);
+        Engagement e2 = GenEntityTestDataUtil.genEngagement(1L);
+        Engagement e3 = GenEntityTestDataUtil.genEngagement(2L);
+        Engagement e4 = new Engagement();
+        Engagement e5 = new Engagement();
+        assertTrue(e1.equals(e2));
+        assertFalse(e1.equals(e3));
+        assertFalse(e4.equals(e5));
+        assertFalse(e4.equals(e1));
+    }
+
+    @Test
+    public void hashCodeTest() {
+        Engagement e1 = GenEntityTestDataUtil.genEngagement(1L);
+        Engagement e2 = GenEntityTestDataUtil.genEngagement(1L);
+        Engagement e3 = GenEntityTestDataUtil.genEngagement(2L);
+        Engagement e4 = new Engagement();
+        assertTrue(e1.hashCode() == e2.hashCode());
+        assertFalse(e1.hashCode() == e3.hashCode());
+        assertTrue(e4.hashCode() == 0);
+        assertEquals(e4.getId(), null);
+    }
 
 }
