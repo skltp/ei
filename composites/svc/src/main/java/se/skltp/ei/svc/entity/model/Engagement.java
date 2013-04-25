@@ -88,10 +88,10 @@ public class Engagement {
     public boolean equals(Object r) {
         if (this == r) {
             return true;
-        } else if (r == null) {
+        } else if (r == null || this.id == null) {
             return false;
         } else if (r instanceof Engagement) {
-            return getId().equals(((Engagement)r).getId());
+            return this.id.equals(((Engagement)r).id);
         } else {
             return false;
         }
@@ -99,7 +99,7 @@ public class Engagement {
     
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return (id == null) ? 0 : getId().hashCode();
     }
 
     
