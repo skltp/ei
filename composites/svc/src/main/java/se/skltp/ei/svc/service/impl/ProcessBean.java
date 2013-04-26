@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
+import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
@@ -111,7 +112,10 @@ public class ProcessBean implements ProcessInterface {
         final List<Engagement> saveList = new ArrayList<Engagement>(engagementTransactions.size());
         List<Engagement> deleteList = null;
         for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
-            final Engagement e = toEntity(engagementTransaction.getEngagement());
+        	
+            EngagementType et = engagementTransaction.getEngagement();
+            et.setOwner(this.owner); // According to R6 owner should always be set to owner of the index
+            final Engagement e = toEntity(et);            
 
             if (engagementTransaction.isDeleteFlag()) {
                 if (deleteList == null) {
