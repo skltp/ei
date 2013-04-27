@@ -82,6 +82,12 @@
             <version>${soitoolkit.version}</version>
             <type>pom</type>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+			      <groupId>hsqldb</groupId>
+			      <artifactId>hsqldb</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
 
 		<!-- Mockito -->
