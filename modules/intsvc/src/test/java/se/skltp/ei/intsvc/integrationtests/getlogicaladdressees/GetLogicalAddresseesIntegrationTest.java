@@ -46,7 +46,7 @@ public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
      * @throws MuleException 
 	 */
     @Test
-    public void test_ok() throws MuleException {
+    public void getLogicalAddresses_Ok() throws MuleException {
     	MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
     	GetLogicalAddresseesByServiceContractResponseType logicalAddresses = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
     	assertEquals(3, logicalAddresses.getLogicalAddress().size());

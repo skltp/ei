@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests.processnotification;
+package se.skltp.ei.intsvc.integrationtests.notifyservice;
 
 import javax.jws.WebService;
 
@@ -30,7 +30,8 @@ public class ProcessNotificationTestProducer implements ProcessNotificationRespo
 		log.info("ProcessNotificationTestProducer received a notification request with {} transactions for logical-address {}", request.getEngagementTransaction().size(), logicalAddress);
 
         // Force a timeout if timeout Id
-        if (FULL_TEST_ID_FAULT_TIMEOUT.equals(request.getEngagementTransaction().get(0).getEngagement().getRegisteredResidentIdentification())) forceTimeout();
+        String residentId = request.getEngagementTransaction().get(0).getEngagement().getRegisteredResidentIdentification();
+		if (FULL_TEST_ID_FAULT_TIMEOUT.equals(residentId)) forceTimeout();
 
         ProcessNotificationResponseType response = new ProcessNotificationResponseType();
         response.setComment("");

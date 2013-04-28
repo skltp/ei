@@ -16,7 +16,7 @@
 	<simple-service 
 		name="process-notification-teststub-service"
         address="${NOTIFICATION_TESTSTUB_URL}?connector=soitoolkit-http-connector" 
-        component-class="se.skltp.ei.intsvc.integrationtests.processnotification.ProcessNotificationTestProducer"
+        component-class="se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer"
         type="jax-ws" />
  
 </mule>

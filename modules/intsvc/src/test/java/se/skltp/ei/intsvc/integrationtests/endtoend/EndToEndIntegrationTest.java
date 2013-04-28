@@ -1,9 +1,8 @@
-package se.skltp.ei.intsvc.integrationtests.update;
+package se.skltp.ei.intsvc.integrationtests.endtoend;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -27,15 +26,16 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
-import se.skltp.ei.intsvc.integrationtests.processnotification.ProcessNotificationTestProducer;
+import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer;
+import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
-public class UpdateIntegrationTest extends AbstractTestCase {
+public class EndToEndIntegrationTest extends AbstractTestCase {
 
 	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(UpdateIntegrationTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 	 
 	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
 	private static final ObjectFactory of = new ObjectFactory();
@@ -45,7 +45,6 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
     private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
-    private static final String INVALID_LOGICAL_ADDRESS = "wrongLogicalAddress";
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
     
 	@SuppressWarnings("unused")
@@ -53,7 +52,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
 	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
   
-    public UpdateIntegrationTest() {
+    public EndToEndIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
         setDisposeContextPerClass(true);
@@ -63,7 +62,7 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 		return 
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
-	  		"skltp-ei-svc-spring-context.xml," +
+	  		"skltp-ei-svc-spring-context.xml," + // END-TO-END ONLY
 	        "get-logical-addressees-service.xml," + 
 	        "update-service.xml," + 
 	        "process-service.xml," + 
@@ -76,6 +75,8 @@ public class UpdateIntegrationTest extends AbstractTestCase {
     @Before
     public void setUp() throws Exception {
 
+    	// 	END-TO-END 
+
     	// Lookup the entity repository if not already done
     	if (engagementRepository == null) {
     		engagementRepository = muleContext.getRegistry().lookupObject(EngagementRepository.class);
@@ -87,10 +88,11 @@ public class UpdateIntegrationTest extends AbstractTestCase {
 
 	/**
 	 * Perform a test that is expected to return one hit
+	 * 
 	 * @throws JMSException 
 	 */
     @Test
-    public void test_ok_one_tx() throws JMSException {
+    public void endToEnd_update_OK() throws JMSException {
     	
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
@@ -105,52 +107,11 @@ public class UpdateIntegrationTest extends AbstractTestCase {
     }
 
 	/**
-	 * Perform a test that is expected to return one hit
-	 * @throws JMSException 
-	 */
-    @Test
-    public void update_r1_negative_equal() throws JMSException {
-		
-		UpdateType request = new UpdateType();
-		EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-		request.getEngagementTransaction().add(et1);
-		request.getEngagementTransaction().add(et1);
-
-		try {
-			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
-			new DoOneTestDispatcher(request).doDispatch();
-			fail("Expected exception here");
-
-		} catch (javax.xml.ws.soap.SOAPFaultException e) {
-			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
-			assertEquals("javax.xml.ws.soap.SOAPFaultException: EI002: EngagementTransaction #1 and #2 have the same key. That is not allowed. See rule for Update-R1 in service contract", e.toString());
-		};
-    }
-
-    @Test
-    public void update_r7_negative_owner_dont_match_logicaladdress() throws JMSException {
-		
-		UpdateType request = new UpdateType();
-		EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-		request.getEngagementTransaction().add(et1);
-		try {
-			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
-			new DoOneTestDispatcher(INVALID_LOGICAL_ADDRESS,request).doDispatch();
-			fail("Expected exception here");
-
-		} catch (javax.xml.ws.soap.SOAPFaultException e) {
-			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
-			assertEquals("javax.xml.ws.soap.SOAPFaultException: EI003: Invalid routing. Logical address is wrongLogicalAddress but the owner is logical-address. They must be the same. See rule for Update-R7 in service contract", e.toString());
-		};
-    }
-
-    
-	/**
 	 * Perform a test that is expected to create a timeout
 	 * @throws JMSException 
 	 */
     @Test
-    public void test_error_timeout() throws JMSException {
+    public void endToEnd_update_ERR_timeout_in_subscriber() throws JMSException {
 
 		doOneTest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
 

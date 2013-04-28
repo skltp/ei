@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests.findcontent;
+package se.skltp.ei.intsvc.integrationtests.findcontentservice;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
@@ -21,10 +21,10 @@ import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
-public class FindContentIntegrationTest extends AbstractTestCase {
+public class FindContentServiceIntegrationTest extends AbstractTestCase {
 
 	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(FindContentIntegrationTest.class);
+	private static final Logger log = LoggerFactory.getLogger(FindContentServiceIntegrationTest.class);
 	 
     @SuppressWarnings("unused")
 	private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
@@ -35,7 +35,7 @@ public class FindContentIntegrationTest extends AbstractTestCase {
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
 	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("FIND_CONTENT_WEB_SERVICE_URL");
   
-    public FindContentIntegrationTest() {
+    public FindContentServiceIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
         setDisposeContextPerClass(true);
@@ -77,7 +77,7 @@ public class FindContentIntegrationTest extends AbstractTestCase {
 	 * @throws RegistrationException 
 	 */
     @Test
-    public void test_ok() throws RegistrationException {
+    public void findContent_OK() throws RegistrationException {
         
         FindContentTestConsumer consumer = new FindContentTestConsumer(SERVICE_ADDRESS);
 

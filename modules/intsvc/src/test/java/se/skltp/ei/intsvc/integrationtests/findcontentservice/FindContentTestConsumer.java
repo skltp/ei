@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests.findcontent;
+package se.skltp.ei.intsvc.integrationtests.findcontentservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

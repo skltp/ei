@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.integrationtests.update;
+package se.skltp.ei.intsvc.integrationtests.updateservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
