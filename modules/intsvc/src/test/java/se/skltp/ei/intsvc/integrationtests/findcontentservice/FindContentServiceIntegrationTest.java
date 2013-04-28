@@ -46,9 +46,7 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
 	  		"skltp-ei-svc-spring-context.xml," +
-	        "find-content-service.xml," + 
-	        "get-logical-addressees-service.xml," + 
-	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml";
+	        "find-content-service.xml";
     }
 
     private EngagementRepository engagementRepository;

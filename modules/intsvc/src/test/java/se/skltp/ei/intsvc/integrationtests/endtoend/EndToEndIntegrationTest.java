@@ -4,6 +4,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.net.SocketException;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -21,6 +22,7 @@ import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
@@ -47,6 +49,8 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
     
+    private static final String SOITOOLKIT_LOG_ERROR_QUEUE = rb.getString("SOITOOLKIT_LOG_ERROR_QUEUE");
+    
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
@@ -62,10 +66,11 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		return 
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
-	  		"skltp-ei-svc-spring-context.xml," + // END-TO-END ONLY
+	  		"skltp-ei-svc-spring-context.xml," +
 	        "get-logical-addressees-service.xml," + 
 	        "update-service.xml," + 
 	        "process-service.xml," + 
+	        "teststub-services/init-dynamic-flows.xml," +
 	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
 	        "teststub-services/process-notification-teststub-service.xml";
     }
@@ -97,7 +102,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
 		
-		doOneTest(residentId);
+		doOneTest(createUdateRequest(residentId));
 
 		// Verify that we got something in the database as well
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
@@ -113,22 +118,26 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     @Test
     public void endToEnd_update_ERR_timeout_in_subscriber() throws JMSException {
 
-		doOneTest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
-
-		System.err.println("### WAIT FOR RETRY HANDLING");
-        try {
-        	// The test is configured to perform 3 retries so in total 4 attempts, if we wait 5 times the timeout time we should be fins  
-			Thread.sleep(4 * SERVICE_TIMOUT_MS);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		UpdateType request = createUdateRequest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
+		new DoOneTestDispatcher(request).doDispatch();
+		Exception e = waitForException(SERVICE_TIMOUT_MS + 2000);
+		
+		assertEquals(SocketException.class, e.getClass());
+		
+		SocketException se = (SocketException)e;
+		
+		System.err.println("Cause: " + se.getCause());
+		Throwable[] suppressed = se.getSuppressed();
+		System.err.println("suppressed cnt: " + suppressed.length);
+		for (int i = 0; i < suppressed.length; i++) {
+			System.err.println(suppressed[i]);
 		}
 
 		// FIXME check error queues and DL-queue
 
     }
 
-	private void doOneTest(long in_residentId) throws JMSException {
+	private UpdateType createUdateRequest(long in_residentId) throws JMSException {
 
 		// Create a new engagement and call the update web service
 		EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(in_residentId);
@@ -136,7 +145,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		UpdateType request = new UpdateType();
 		request.getEngagementTransaction().add(et);
 		
-		doOneTest(request);
+		return request;
 
     }
 
@@ -168,24 +177,10 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 
 	private void doOneTest(final UpdateType request) throws JMSException {
 
-		// Use dispatchAndWaitForDelivery() and a custom Dispatcher to ensure that the listener on the notification topic ir regiered before the web service call is made
+		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestDispatcher(request), "process-notification-teststub-service", 5000);
         
-        System.err.println("### DISPATCH AND WAIT FOR DELIVERY ON " + "jms://topic:" + NOTIFICATION_TOPIC);
-        MuleMessage r = dispatchAndWaitForDelivery(new DoOneTestDispatcher(request), "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
-
-        // Compare the notified message with the request message, they should be the same
-        TextMessage jmsMsg = (TextMessage)r.getPayload();
-        String notificationXml = jmsMsg.getText();
-		String requestXml = jabxUtil.marshal(of.createUpdate(request));
-		assertEquals(requestXml, notificationXml);
-
-        // FIXME: Split tests so that both separate parts are tested but also the complete chain and adopt listeners so that they listen to the last endpoint
-        try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
+		assertEquals( ResultCodeEnum.OK, nr.getResultCode());
 	}
 
 }

@@ -62,11 +62,6 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     </management:jmx-default-config> 
  -->
 
-  
-    <!-- Dynamic flows -->
-    <spring:bean id="initializer" class="se.skltp.ei.intsvc.dynamicFlows.Initializer"/>
-
-
     <!-- JMS Connector for the durable topic subscribers -->
     <jms:connector 
         name="skltp-ei-jms-topic-connector"
@@ -84,6 +79,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 
 	<!-- The default profile used by normal usage of mule-app, either deployed in mule or started using st-muleServer-helper-class. Not used by integration tests -->
     <spring:beans profile="default">
+
+	    <!-- Dynamic flows -->
+	    <spring:bean id="initializer" class="se.skltp.ei.intsvc.dynamicFlows.Initializer"/>
+
         <!-- Connectors et al that are specific for different environment specific config-files (local unit-test, integration-test or production environments) -->
 
         <!-- TODO: Add import of environment specific configuration files here as required -->

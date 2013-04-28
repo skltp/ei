@@ -111,27 +111,6 @@
             </property-collection>
         </properties>
     </global-element>
-    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#4">
-        <properties>
-            <property name="factory-bean"/>
-            <property name="abstract"/>
-            <property name="scope"/>
-            <property name="init-method"/>
-            <property name="autowire-candidate"/>
-            <property name="factory-method"/>
-            <property name="class" value="se.skltp.ei.intsvc.dynamicFlows.Initializer"/>
-            <property name="parent"/>
-            <property name="children"/>
-            <property name="lazy-init"/>
-            <property name="id" value="initializer"/>
-            <property name="primary"/>
-            <property name="name"/>
-            <property name="autowire"/>
-            <property name="destroy-method"/>
-            <property name="auxiliary;index" value="13"/>
-            <property name="depends-on"/>
-        </properties>
-    </global-element>
     <global-element name="JMS" type="http://www.mulesoft.org/schema/mule/jms/connector" entity-id="JMS#1">
         <properties>
             <property name="jndiProviderUrl"/>
@@ -145,7 +124,7 @@
             <property name="name" value="skltp-ei-jms-topic-connector"/>
             <property name="dynamicNotification"/>
             <property name="noLocal"/>
-            <property name="auxiliary;index" value="14"/>
+            <property name="auxiliary;index" value="13"/>
             <property name="eagerConsumer"/>
             <property name="numberOfConsumers"/>
             <property name="acknowledgementMode"/>
@@ -164,11 +143,34 @@
             <property name="jndiProviderProperties-ref"/>
         </properties>
     </global-element>
+    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#4">
+        <properties>
+            <property name="factory-bean"/>
+            <property name="abstract"/>
+            <property name="scope"/>
+            <property name="init-method"/>
+            <property name="autowire-candidate"/>
+            <property name="factory-method"/>
+            <property name="class" value="se.skltp.ei.intsvc.dynamicFlows.Initializer"/>
+            <property name="parent"/>
+            <property name="children"/>
+            <property name="lazy-init"/>
+            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property name="id" value="initializer"/>
+            <property name="primary"/>
+            <property name="name"/>
+            <property name="autowire"/>
+            <property name="destroy-method"/>
+            <property name="auxiliary;index" value="15"/>
+            <property name="auxiliary;wrapIn" value="14"/>
+            <property name="depends-on"/>
+        </properties>
+    </global-element>
     <global-element name="Import" type="http://www.springframework.org/schema/beans/import" entity-id="Import#1">
         <properties>
             <property name="resource" value="classpath:soitoolkit-mule-jms-connector-activemq-external.xml"/>
             <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
-            <property name="auxiliary;wrapIn" value="15"/>
+            <property name="auxiliary;wrapIn" value="14"/>
             <property name="auxiliary;index" value="16"/>
         </properties>
     </global-element>

@@ -56,9 +56,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		return 
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
-	        "get-logical-addressees-service.xml," + 
-	        "update-service.xml," + 
-	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml";
+	        "update-service.xml";
     }
 
 	/**

@@ -55,9 +55,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase {
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
 	  		"skltp-ei-svc-spring-context.xml," +
-	        "get-logical-addressees-service.xml," + 
-	        "process-service.xml," + 
-	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml";
+	        "process-service.xml";
     }
 
     private EngagementRepository engagementRepository;
