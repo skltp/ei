@@ -1,20 +1,35 @@
 package se.skltp.ei.intsvc.integrationtests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
 
 import org.mule.api.MuleMessage;
 import org.mule.api.context.notification.EndpointMessageNotificationListener;
 import org.mule.api.context.notification.ServerNotification;
 import org.mule.context.notification.EndpointMessageNotification;
+import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
+import org.soitoolkit.commons.mule.test.AbstractJmsTestUtil;
+import org.soitoolkit.commons.mule.test.ActiveMqJmsTestUtil;
 import org.soitoolkit.commons.mule.test.Dispatcher;
 import org.soitoolkit.commons.mule.test.DispatcherMuleClientImpl;
 import org.soitoolkit.commons.mule.util.MuleUtil;
 import org.soitoolkit.commons.mule.util.ValueHolder;
+
+import riv.itintegration.engagementindex._1.EngagementTransactionType;
+import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
+import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
 /**
  * Extends the base class in Mule, org.mule.tck.junit4.FuntionalTestCase.
@@ -24,10 +39,73 @@ import org.soitoolkit.commons.mule.util.ValueHolder;
  */
 public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.junit4.AbstractTestCase {
     
-    public AbstractTestCase() {
+	protected static final int DEFAULT_TEST_TIMEOUT = 5000;
+
+	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
+	private static final ObjectFactory of = new ObjectFactory();
+
+	private AbstractJmsTestUtil jmsUtil = null;
+
+	public AbstractTestCase() {
 		super();
 	}
     
+	protected AbstractJmsTestUtil getJmsUtil() {
+		
+		// TODO: Fix lazy init of JMS connection et al so that we can create jmsutil in the declaration
+		// (The embedded ActiveMQ queue manager is not yet started by Mule when jmsutil is declared...)
+		if (jmsUtil == null) jmsUtil = new ActiveMqJmsTestUtil();
+		
+		return jmsUtil;
+	}
+
+	protected List<Message> assertQueueDepth(String queueName, int expectedDepth) {
+	    List<Message> messages = jmsUtil.browseMessagesOnQueue(queueName);
+		assertEquals(expectedDepth, messages.size());
+		return messages;
+	}
+
+	protected List<Message> assertQueueContainsMessage(String queueName, String expectedText) {
+	    try {
+			List<Message> messages = jmsUtil.browseMessagesOnQueue(queueName);
+
+			for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext();) {
+				Message message = iterator.next();
+				String text = ((TextMessage)message).getText();
+
+				if (text.contains(expectedText)) return messages;
+			}
+			
+			fail("Faild to find any message on the queue " + queueName + " that contains the text: " + expectedText);
+			return messages;
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	protected void assertUpdateRequest(UpdateType expected, MuleMessage actual) {
+		try {
+			TextMessage actualJms = (TextMessage)actual.getPayload();
+			String actualXml = actualJms.getText();
+			String expectedXml = jabxUtil.marshal(of.createUpdate(expected));
+			assertEquals(expectedXml, actualXml);
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected UpdateType createUdateRequest(long... residentIds) {
+
+		UpdateType request = new UpdateType();
+
+		for (int i = 0; i < residentIds.length; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
+			request.getEngagementTransaction().add(et);
+		}
+		
+		return request;
+    }
+	
 	/**
 	 * Waits <code>timeout</code> ms for a <code>MuleMessage</code> to arrive on outboundEndpoint with the name <code>outboundEndpointName</code> and with the action <code>action</code>. 
 	 * 

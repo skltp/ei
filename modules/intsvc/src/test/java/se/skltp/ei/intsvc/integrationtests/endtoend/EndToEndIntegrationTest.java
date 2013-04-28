@@ -80,8 +80,6 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     @Before
     public void setUp() throws Exception {
 
-    	// 	END-TO-END 
-
     	// Lookup the entity repository if not already done
     	if (engagementRepository == null) {
     		engagementRepository = muleContext.getRegistry().lookupObject(EngagementRepository.class);
@@ -134,18 +132,6 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		}
 
 		// FIXME check error queues and DL-queue
-
-    }
-
-	private UpdateType createUdateRequest(long in_residentId) throws JMSException {
-
-		// Create a new engagement and call the update web service
-		EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(in_residentId);
-    	
-		UpdateType request = new UpdateType();
-		request.getEngagementTransaction().add(et);
-		
-		return request;
 
     }
 
