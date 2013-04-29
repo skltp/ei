@@ -29,12 +29,13 @@ import se.skltp.ei.svc.entity.model.util.Hash;
  * 
  * Also see: http://code.google.com/p/rivta/
  */
-@Entity(name="engagement_index_table")
-@Table(appliesTo="engagement_index_table",
+@Entity(name=Engagement.ENGAGEMENT_INDEX_TABLE)
+@Table(appliesTo=Engagement.ENGAGEMENT_INDEX_TABLE,
 indexes={ @Index(name="engagement_search_index", 
     columnNames= { Engagement.REGISTERED_RESIDENT_ID, Engagement.SERVICE_DOMAIN, Engagement.CATEGORIZATION }) })
 public class Engagement {
 
+    static final String ENGAGEMENT_INDEX_TABLE = "engagement_index_table";
     static final String REGISTERED_RESIDENT_ID = "registered_resident_id";
     static final String SERVICE_DOMAIN = "service_domain";
     static final String CATEGORIZATION = "categorization";
