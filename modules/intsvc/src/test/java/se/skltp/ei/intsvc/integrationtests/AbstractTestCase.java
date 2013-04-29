@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -24,6 +23,7 @@ import org.soitoolkit.commons.mule.test.ActiveMqJmsTestUtil;
 import org.soitoolkit.commons.mule.test.Dispatcher;
 import org.soitoolkit.commons.mule.test.DispatcherMuleClientImpl;
 import org.soitoolkit.commons.mule.util.MuleUtil;
+import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 import org.soitoolkit.commons.mule.util.ValueHolder;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
@@ -39,10 +39,16 @@ import se.skltp.ei.svc.service.GenServiceTestDataUtil;
  */
 public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.junit4.AbstractTestCase {
     
-	protected static final int DEFAULT_TEST_TIMEOUT = 5000;
+	protected static final int EI_TEST_TIMEOUT   = 5000;
+	protected static final int EI_SHORT_WAITTIME =  500;
 
 	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
 	private static final ObjectFactory of = new ObjectFactory();
+
+    protected static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
+	protected static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
+	protected static final String INFO_LOG_QUEUE  = rb.getString("SOITOOLKIT_LOG_INFO_QUEUE");
+	protected static final String ERROR_LOG_QUEUE = rb.getString("SOITOOLKIT_LOG_ERROR_QUEUE");
 
 	private AbstractJmsTestUtil jmsUtil = null;
 
@@ -60,23 +66,53 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 	}
 
 	protected List<Message> assertQueueDepth(String queueName, int expectedDepth) {
-	    List<Message> messages = jmsUtil.browseMessagesOnQueue(queueName);
+	    List<Message> messages = getJmsUtil().browseMessagesOnQueue(queueName);
 		assertEquals(expectedDepth, messages.size());
 		return messages;
 	}
 
 	protected List<Message> assertQueueContainsMessage(String queueName, String expectedText) {
 	    try {
-			List<Message> messages = jmsUtil.browseMessagesOnQueue(queueName);
+			List<Message> messages = getJmsUtil().browseMessagesOnQueue(queueName);
 
-			for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext();) {
-				Message message = iterator.next();
+			System.err.println("MSG CNT: " + messages.size());
+			for (Message message : messages) {
 				String text = ((TextMessage)message).getText();
-
+				System.err.println("MSG: " + text);
 				if (text.contains(expectedText)) return messages;
 			}
 			
 			fail("Faild to find any message on the queue " + queueName + " that contains the text: " + expectedText);
+			return messages;
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	protected List<Message> assertQueueMatchesMessages(String queueName, String... expectedRegexps) {
+	    try {
+			List<Message> messages = getJmsUtil().browseMessagesOnQueue(queueName);
+			System.err.println("MSG CNT: " + messages.size());
+
+			// Go through the messages in the queue checking each expected regexp, one by one
+			for (int i = 0; i < expectedRegexps.length; i++) {
+
+				// The regexp to check this time
+				String expectedRegexp = expectedRegexps[i];
+
+				// Look for a match
+				boolean found = false;
+				for (Message message : messages) {
+					String text = ((TextMessage)message).getText();
+					System.err.println("MSG: " + text);
+					if (text.matches(expectedRegexp)) found = true;
+				}
+				if (!found) {
+					// If not found then fail with a proper mesage
+					fail("Faild to find any message on the queue " + queueName + " that contains the text: " + expectedRegexp);
+				}
+			}
+
 			return messages;
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
@@ -106,6 +142,12 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 		return request;
     }
 	
+	protected void waitForBackgroundProcessing() {
+		try {
+			Thread.sleep(EI_SHORT_WAITTIME);
+		} catch (InterruptedException e) {}
+	}
+
 	/**
 	 * Waits <code>timeout</code> ms for a <code>MuleMessage</code> to arrive on outboundEndpoint with the name <code>outboundEndpointName</code> and with the action <code>action</code>. 
 	 * 

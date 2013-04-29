@@ -7,23 +7,15 @@ import static org.junit.Assert.assertThat;
 import java.net.SocketException;
 import java.util.List;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
-import org.mule.context.notification.EndpointMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.test.Dispatcher;
-import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
-import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
-import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
@@ -32,25 +24,16 @@ import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTest
 import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
 public class EndToEndIntegrationTest extends AbstractTestCase {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 	 
-	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
-	private static final ObjectFactory of = new ObjectFactory();
-	
-    private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
-
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
-    private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
-    
-    private static final String SOITOOLKIT_LOG_ERROR_QUEUE = rb.getString("SOITOOLKIT_LOG_ERROR_QUEUE");
-    
+        
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
@@ -87,52 +70,68 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 
     	// Clean the storage
     	engagementRepository.deleteAll();
-	}
+
+    	// Clear queues used for the tests
+		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE, PROCESS_QUEUE);
+    
+    }
 
 	/**
 	 * Perform a test that is expected to return one hit
-	 * 
-	 * @throws JMSException 
 	 */
     @Test
-    public void endToEnd_update_OK() throws JMSException {
+    public void endToEnd_update_OK() {
     	
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
 		
-		doOneTest(createUdateRequest(residentId));
+		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestDispatcher(createUdateRequest(residentId)), "process-notification-teststub-service", EI_TEST_TIMEOUT);
+        
+		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
+		assertEquals(ResultCodeEnum.OK, nr.getResultCode());
 
+		
 		// Verify that we got something in the database as well
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
         assertEquals(1, result.size());
         assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
-        
+
+		// Assert that no messages are left on the processing queue
+		assertQueueDepth(PROCESS_QUEUE, 0);
+
+		// Wait a short while for all background processing to complete
+		waitForBackgroundProcessing();
+		
+		// Expect no error logs
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+
+		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
+		assertQueueDepth(INFO_LOG_QUEUE, 14);
+
     }
 
 	/**
 	 * Perform a test that is expected to create a timeout
-	 * @throws JMSException 
 	 */
     @Test
-    public void endToEnd_update_ERR_timeout_in_subscriber() throws JMSException {
+    public void endToEnd_update_ERR_timeout_in_subscriber() {
 
 		UpdateType request = createUdateRequest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
 		new DoOneTestDispatcher(request).doDispatch();
 		Exception e = waitForException(SERVICE_TIMOUT_MS + 2000);
-		
+
+		// Assert that we got the expected exception
 		assertEquals(SocketException.class, e.getClass());
 		
-		SocketException se = (SocketException)e;
+		// Expect 3 error log and 17 info log entries
+		assertQueueDepth(ERROR_LOG_QUEUE, 3);
 		
-		System.err.println("Cause: " + se.getCause());
-		Throwable[] suppressed = se.getSuppressed();
-		System.err.println("suppressed cnt: " + suppressed.length);
-		for (int i = 0; i < suppressed.length; i++) {
-			System.err.println(suppressed[i]);
-		}
+		// TODO. Use assertQueueMatchesMessages() instead to match all three messages with their different service names, e.g. : <serviceImplementation>notification-service-HSA_ID_A</serviceImplementation>
+		assertQueueContainsMessage(ERROR_LOG_QUEUE, "java.net.SocketTimeoutException: Read timed out");
+		assertQueueDepth(INFO_LOG_QUEUE, 17);
 
-		// FIXME check error queues and DL-queue
-
+		// Expect nothing on the processing queue due to the error
+		assertQueueDepth(PROCESS_QUEUE, 0);
     }
 
 	private class DoOneTestDispatcher implements Dispatcher {
@@ -160,13 +159,4 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	        assertEquals(ResultCodeEnum.OK, response.getResultCode());
 		}
 	}
-
-	private void doOneTest(final UpdateType request) throws JMSException {
-
-		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestDispatcher(request), "process-notification-teststub-service", 5000);
-        
-		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
-		assertEquals( ResultCodeEnum.OK, nr.getResultCode());
-	}
-
 }

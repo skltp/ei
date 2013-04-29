@@ -11,12 +11,12 @@ import org.junit.Test;
 import org.mule.api.registry.RegistrationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
@@ -68,7 +68,10 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
         residentId = engagement.getBusinessKey().getRegisteredResidentIdentification();
 		engagement.setCreationTime(new Date());
     	engagementRepository.save(engagement);
-	}
+
+    	// Clear queues used for the tests
+		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE);
+    }
 
 	/**
 	 * Perform a test that is expected to return one hit
@@ -85,7 +88,11 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
 		FindContentResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
         
         assertEquals(1, response.getEngagement().size());
-        System.err.println("v1: " + response.getEngagement().get(0).getRegisteredResidentIdentification());
         assertThat(response.getEngagement().get(0).getRegisteredResidentIdentification(), is(residentId));
+
+		// Expect no error logs and two info log entries
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		assertQueueDepth(INFO_LOG_QUEUE, 2);
+    
     }
 }

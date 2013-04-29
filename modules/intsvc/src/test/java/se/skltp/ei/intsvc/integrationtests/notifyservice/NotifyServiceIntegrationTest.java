@@ -12,14 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
-import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
 public class NotifyServiceIntegrationTest extends AbstractTestCase {
 
@@ -66,7 +64,10 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 
     	// Clean the storage
     	engagementRepository.deleteAll();
-	}
+
+    	// Clear queues used for the tests
+		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE);
+    }
 
 	/**
 	 * Perform a test that is expected to return one hit
@@ -77,27 +78,23 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     	
 		long residentId = 1212121212L;
 		
-		doOneTest(residentId);
-    }
+		doOneTest(createUdateRequest(residentId));
 
-	private void doOneTest(long in_residentId) throws JMSException {
+		// Wait a short while for all background processing to complete
+		waitForBackgroundProcessing();
 
-		// Create a new engagement and call the update web service
-		EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(in_residentId);
-    	
-		UpdateType request = new UpdateType();
-		request.getEngagementTransaction().add(et);
-		
-		doOneTest(request);
-
+		// Expect no error logs and 3 * 3 info log entries
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		assertQueueDepth(INFO_LOG_QUEUE, 9);
+    
     }
 
 	private void doOneTest(final UpdateType request) throws JMSException {
 
 		String requestXml = jabxUtil.marshal(of.createUpdate(request));
-		MuleMessage mr = dispatchAndWaitForServiceComponent("jms://topic:" + NOTIFICATION_TOPIC + "?connector=soitoolkit-jms-connector", requestXml, null, "process-notification-teststub-service", 5000);
+		MuleMessage mr = dispatchAndWaitForServiceComponent("jms://topic:" + NOTIFICATION_TOPIC + "?connector=soitoolkit-jms-connector", requestXml, null, "process-notification-teststub-service", EI_TEST_TIMEOUT);
 
-		// TODO: How to verify hteat all three got their notifications?
+		// TODO: How to verify that all three got their notifications?
 		// Check log-queue?
 		
 		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)mr.getPayload();

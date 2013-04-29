@@ -2,14 +2,15 @@ package se.skltp.ei.intsvc.integrationtests.getlogicaladdressees;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
-import org.soitoolkit.commons.mule.test.junit4.AbstractTestCase;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._1.GetLogicalAddresseesByServiceContractResponseType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 
 public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
 
@@ -41,14 +42,27 @@ public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
 			"teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml";
     }
 
+    @Before
+    public void setUp() throws Exception {
+
+    	// Clear queues used for the tests
+		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE);
+    }
+
     /**
 	 * Perform a test that is expected to return one hit
      * @throws MuleException 
 	 */
     @Test
     public void getLogicalAddresses_Ok() throws MuleException {
+    	
     	MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
     	GetLogicalAddresseesByServiceContractResponseType logicalAddresses = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
+
     	assertEquals(3, logicalAddresses.getLogicalAddress().size());
+
+    	// Expect no error logs and four info log entries
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		assertQueueDepth(INFO_LOG_QUEUE, 4);
     }
 }

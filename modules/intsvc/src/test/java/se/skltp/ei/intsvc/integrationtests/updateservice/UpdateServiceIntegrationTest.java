@@ -3,8 +3,6 @@ package se.skltp.ei.intsvc.integrationtests.updateservice;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import javax.jms.JMSException;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
@@ -12,7 +10,6 @@ import org.mule.context.notification.EndpointMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.test.Dispatcher;
-import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
@@ -25,12 +22,9 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(UpdateServiceIntegrationTest.class);
 	 	
-    private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
-
 	@SuppressWarnings("unused")
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
-	private static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
     private static final String INVALID_LOGICAL_ADDRESS = "wrongLogicalAddress";
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
     
@@ -39,9 +33,6 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
 	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
   
-	private static final String INFO_LOG_QUEUE  = rb.getString("SOITOOLKIT_LOG_INFO_QUEUE");
-	private static final String ERROR_LOG_QUEUE = rb.getString("SOITOOLKIT_LOG_ERROR_QUEUE");
-
 	public UpdateServiceIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
@@ -64,16 +55,14 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 
 	/**
 	 * Validate expected behavior of the update-service with OK input
-	 * 
-	 * @throws JMSException 
 	 */
     @Test
-    public void update_OK() throws JMSException {
+    public void update_OK() {
     	
 		UpdateType request = createUdateRequest(1212121212L);
 		
 		// Use dispatchAndWaitForDelivery() and a custom Dispatcher to ensure that the listener on the queue is registered before the web service call is made
-        MuleMessage response = dispatchAndWaitForDelivery(new DoOneTestDispatcher(request), "jms://" + PROCESS_QUEUE, EndpointMessageNotification.MESSAGE_DISPATCH_END, DEFAULT_TEST_TIMEOUT);
+        MuleMessage response = dispatchAndWaitForDelivery(new DoOneTestDispatcher(request), "jms://" + PROCESS_QUEUE, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 
         // Compare the notified message with the request message, they should be the same
         assertUpdateRequest(request, response);

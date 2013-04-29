@@ -18,13 +18,11 @@ import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
-import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
 public class ProcessServiceIntegrationTest extends AbstractTestCase {
 
@@ -70,6 +68,9 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase {
 
     	// Clean the storage
     	engagementRepository.deleteAll();
+
+    	// Clear queues used for the tests
+		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE, PROCESS_QUEUE);
 	}
 
 	/**
@@ -81,39 +82,26 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase {
     	
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
+		String requestXml = jabxUtil.marshal(of.createUpdate(createUdateRequest(residentId)));
 
-		doOneTest(residentId);
-
-		// Verify that we got something in the database as well
-        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
-        assertEquals(1, result.size());
-        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
-
-    }
-
-
-	private void doOneTest(long in_residentId) throws JMSException {
-
-		// Create a new engagement and call the update web service
-		EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(in_residentId);
-    	
-		UpdateType request = new UpdateType();
-		request.getEngagementTransaction().add(et);
-		
-		doOneTest(request);
-
-    }
-	
-	private void doOneTest(final UpdateType request) throws JMSException {
-
-		String requestXml = jabxUtil.marshal(of.createUpdate(request));
-        MuleMessage r = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, 5000);
+		MuleMessage r = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 
         // Compare the notified message with the request message, they should be the same
         TextMessage jmsMsg = (TextMessage)r.getPayload();
         String notificationXml = jmsMsg.getText();
 		assertEquals(requestXml, notificationXml);
 
-	}
+		// Verify that we got something in the database as well
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertEquals(1, result.size());
+        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+
+		// Expect no error logs and three info log entries
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		assertQueueDepth(INFO_LOG_QUEUE, 2);
+
+		// Assert that the response is the only message on the queue
+		assertQueueDepth(PROCESS_QUEUE, 0);
+    }
 
 }
