@@ -4,7 +4,9 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -42,12 +44,53 @@ public class ProcessBeanIntegrationTest {
         BEAN = new ProcessBean();
         BEAN.setEngagementRepository(engagementRepository);
         BEAN.setOwner(OWNER);
-
     }
 
-
+    
     @Test
-    public void update_r6_positive_owner_should_be_set_when_saved() {
+    public void update_R5_positive_creationtime_should_be_set_when_saving() {
+        
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+  
+        BEAN.update(null, request);
+        
+        // Fetch last post
+        Engagement foundEngagement = getSingleEngagement(); 
+
+        // CreationTime should be set while the UpdateTime should not be set (e.g. it should be null)
+        assertThat(foundEngagement.getCreationTime(), instanceOf(Date.class));
+        assertThat(foundEngagement.getUpdateTime(), nullValue());
+    }
+    
+    @Test
+    public void update_R5_positive_updatetime_should_be_when_updating() {
+        
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+  
+        // Update 1
+        BEAN.update(null, request);
+        Engagement engagement1 = getSingleEngagement();
+        
+        // Update 2
+        BEAN.update(null, request);
+        Engagement engagement2 = getSingleEngagement();
+
+
+        //CreationTime should be the same 
+        assertThat(engagement1.getCreationTime(), equalTo(engagement2.getCreationTime())); 
+
+        // UpdateTime should be set to a date and it should be newer (greater than) creationTime 
+        assertThat(engagement2.getUpdateTime(), instanceOf(Date.class));
+        assertTrue(engagement2.getCreationTime().getTime() < engagement2.getUpdateTime().getTime());
+    }
+    
+    
+    @Test
+    public void update_R6_positive_owner_should_be_set_when_saved() {
 
         // Create a request
         UpdateType request = new UpdateType();
@@ -57,20 +100,24 @@ public class ProcessBeanIntegrationTest {
         et1.getEngagement().setOwner("wrong-owner");
         request.getEngagementTransaction().add(et1);
 
-        //Validate that the request went through
-        UpdateResponseType r = BEAN.update(null, request);
-        assertEquals(ResultCodeEnum.OK, r.getResultCode());
-
-        // Fetch last post
-        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
-
-        // Should be only one post
-        assertThat(result, hasSize(1));
+        BEAN.update(null, request);
 
         // Validate the owner is the correct one
-        Engagement foundEngagement = result.get(0);
+        Engagement foundEngagement = getSingleEngagement();
         assertThat(foundEngagement.getBusinessKey().getOwner(), equalTo(OWNER));
     }
+    
 
+    /**
+     * Convenience method for getting the only saved Engagement from the data store. Asserts that it only finds one Engagement
+     * @return Engagement
+     */
+    private Engagement getSingleEngagement() {
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(1));
+        
+        return result.get(0);
+    }
+    
 
 }

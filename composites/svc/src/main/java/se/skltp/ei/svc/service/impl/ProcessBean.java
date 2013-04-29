@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +116,20 @@ public class ProcessBean implements ProcessInterface {
         	
             EngagementType et = engagementTransaction.getEngagement();
             et.setOwner(this.owner); // According to R6 owner should always be set to owner of the index
-            final Engagement e = toEntity(et);            
+            
+            final Engagement e = toEntity(et);   
+            
+            // Find the existing engagement 
+            Engagement existingEngagement = engagementRepository.findOne(e.getId());
+            
+            // Set CreationTime and UpdateTime according to R5
+            if (existingEngagement == null) {
+                e.setCreationTime(new Date());
+            } else {
+            	// Reuse the creationTime from the existing engagement and set a new UpdateTime.
+                e.setUpdateTime(new Date());
+                e.setCreationTime(existingEngagement.getCreationTime());
+            }
 
             if (engagementTransaction.isDeleteFlag()) {
                 if (deleteList == null) {
