@@ -19,7 +19,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
-import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
 import se.skltp.ei.svc.entity.model.util.Hash;
 
