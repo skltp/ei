@@ -12,11 +12,14 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Table;
+import org.omg.IOP.ENCODING_CDR_ENCAPS;
 
 import se.skltp.ei.svc.entity.model.util.Hash;
 
@@ -29,9 +32,14 @@ import se.skltp.ei.svc.entity.model.util.Hash;
  */
 @Entity(name="engagement_index_table")
 @Table(appliesTo="engagement_index_table",
-indexes={ @Index(name="engagement_search_index", columnNames="registered_resident_identification") })
+indexes={ @Index(name="engagement_search_index", 
+    columnNames= { Engagement.REGISTERED_RESIDENT_ID, Engagement.SERVICE_DOMAIN, Engagement.CATEGORIZATION }) })
 public class Engagement {
 
+    static final String REGISTERED_RESIDENT_ID = "registered_resident_id";
+    static final String SERVICE_DOMAIN = "service_domain";
+    static final String CATEGORIZATION = "categorization";
+    
     private static final String NA = "NA";
     private static final String INERA = "Inera";
 
@@ -82,6 +90,25 @@ public class Engagement {
                 owner,
                 clinicalProcessInterestId);
         id = businessKey.getHashId();
+    }
+    
+    /**
+     * Returns current timestamp.
+     * 
+     * @return the timestamp.
+     */
+    private static Date now() {
+        return new Date();
+    }
+    
+    @PrePersist
+    public void setCreationTime() {
+        this.creationTime = now();
+    }
+    
+    @PreUpdate
+    public void setUpdateTime() {
+        this.updateTime = now();
     }
 
     @Override
@@ -150,19 +177,19 @@ public class Engagement {
         
         // complex key (real primary key)
         
-        @Column(name="registered_resident_identification", nullable=false, length=32, updatable=false)
+        @Column(name=REGISTERED_RESIDENT_ID, nullable=false, length=32, updatable=false)
         private String registeredResidentIdentification;
 
-        @Column(name="service_domain", nullable=false, length=255, updatable=false)
+        @Column(name=SERVICE_DOMAIN, nullable=false, length=255, updatable=false)
         private String serviceDomain;
 
-        @Column(name="categorization", nullable=false, length=255, updatable=false)
+        @Column(name=CATEGORIZATION, nullable=false, length=255, updatable=false)
         private String categorization = NA;
 
         @Column(name="logical_address", nullable=false, length=64, updatable=false)
         private String logicalAddress;
 
-        @Column(name="business_object_instance_identifier", nullable=false, length=128, updatable=false)
+        @Column(name="business_object_instance_id", nullable=false, length=128, updatable=false)
         private String businessObjectInstanceIdentifier = NA;
         
         @Column(name="source_system", nullable=false, length=64, updatable=false)
