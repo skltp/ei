@@ -121,35 +121,35 @@ public class EngagementSpecifications {
 
 
         if (engagement.getCategorization() != null) {
-            specs = specs.and(EngagementSpecifications.hasCategorization(engagement.getCategorization()));
+            specs = specs.and(hasCategorization(engagement.getCategorization()));
         }
 
         if (engagement.getMostRecentContent() != null) {
-            specs = specs.and(EngagementSpecifications.isMostRecent(engagement.getMostRecentContent()));
+            specs = specs.and(isMostRecent(engagement.getMostRecentContent()));
         }
 
         if (engagement.getClinicalProcessInterestId() != null) {
-            specs = specs.and(EngagementSpecifications.hasClinicalProcessInterestId(engagement.getClinicalProcessInterestId()));
+            specs = specs.and(hasClinicalProcessInterestId(engagement.getClinicalProcessInterestId()));
         }
 
         if (engagement.getBusinessObjectInstanceIdentifier() != null) {
-            specs = specs.and(EngagementSpecifications.hasBusinessObjectInstanceIdentifier(engagement.getBusinessObjectInstanceIdentifier()));            
+            specs = specs.and(hasBusinessObjectInstanceIdentifier(engagement.getBusinessObjectInstanceIdentifier()));            
         }
 
         if (engagement.getLogicalAddress() != null) {
-            specs = specs.and(EngagementSpecifications.hasLogicalAddress(engagement.getLogicalAddress()));            
+            specs = specs.and(hasLogicalAddress(engagement.getLogicalAddress()));            
         }
 
         if (engagement.getSourceSystem() != null) {
-            specs = specs.and(EngagementSpecifications.hasSourceSystem(engagement.getSourceSystem()));                        
+            specs = specs.and(hasSourceSystem(engagement.getSourceSystem()));                        
         }
 
         if (engagement.getDataController() != null) {
-            specs = specs.and(EngagementSpecifications.hasDataController(engagement.getDataController()));                        
+            specs = specs.and(hasDataController(engagement.getDataController()));                        
         }
 
         if (engagement.getOwner() != null) {
-            specs = specs.and(EngagementSpecifications.hasOwner(engagement.getOwner()));
+            specs = specs.and(hasOwner(engagement.getOwner()));
         }
 
         return specs;
