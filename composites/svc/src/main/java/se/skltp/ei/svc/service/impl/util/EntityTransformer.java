@@ -51,16 +51,15 @@ public class EntityTransformer {
     public static EngagementType fromEntity(Engagement eIn) {
 
         EngagementType eOut = new EngagementType();
-        Engagement.BusinessKey key = eIn.getBusinessKey();
-        eOut.setRegisteredResidentIdentification(key.getRegisteredResidentIdentification());
-        eOut.setServiceDomain(key.getServiceDomain());
-        eOut.setCategorization(key.getCategorization());
-        eOut.setLogicalAddress(key.getLogicalAddress());
-        eOut.setBusinessObjectInstanceIdentifier(key.getBusinessObjectInstanceIdentifier());
-        eOut.setSourceSystem(key.getSourceSystem());
-        eOut.setOwner(key.getOwner());
-        eOut.setClinicalProcessInterestId(key.getClinicalProcessInterestId());
-        eOut.setDataController(key.getDataController());
+        eOut.setRegisteredResidentIdentification(eIn.getRegisteredResidentIdentification());
+        eOut.setServiceDomain(eIn.getServiceDomain());
+        eOut.setCategorization(eIn.getCategorization());
+        eOut.setLogicalAddress(eIn.getLogicalAddress());
+        eOut.setBusinessObjectInstanceIdentifier(eIn.getBusinessObjectInstanceIdentifier());
+        eOut.setSourceSystem(eIn.getSourceSystem());
+        eOut.setOwner(eIn.getOwner());
+        eOut.setClinicalProcessInterestId(eIn.getClinicalProcessInterestId());
+        eOut.setDataController(eIn.getDataController());
         eOut.setCreationTime(forrmatDate(eIn.getCreationTime()));
         eOut.setMostRecentContent(forrmatDate(eIn.getMostRecentContent()));	    
         eOut.setUpdateTime(forrmatDate(eIn.getUpdateTime()));

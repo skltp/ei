@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import se.skltp.ei.svc.entity.model.BusinessKey;
 import se.skltp.ei.svc.entity.model.Engagement;
 
 /**
@@ -21,9 +22,9 @@ public class EngagementTest {
         Engagement e2 = GenEntityTestDataUtil.genEngagement(1L);
         Engagement e3 = GenEntityTestDataUtil.genEngagement(2L);
 
-        Engagement.BusinessKey key1 = e1.getBusinessKey();
-        Engagement.BusinessKey key2 = e2.getBusinessKey();
-        Engagement.BusinessKey key3 = e3.getBusinessKey();
+        BusinessKey key1 = e1.getBusinessKey();
+        BusinessKey key2 = e2.getBusinessKey();
+        BusinessKey key3 = e3.getBusinessKey();
 
         assertEquals(e1.getId(), e2.getId());
         assertFalse(e1.getId().equals(e3.getId()));

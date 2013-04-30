@@ -19,7 +19,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import se.skltp.ei.svc.entity.model.Engagement;
+import se.skltp.ei.svc.entity.model.EngagementSpecifications;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:skltp-ei-svc-spring-context.xml")
@@ -49,7 +51,7 @@ public class EngagementIntegrationTest {
         assertThat(result, hasSize(1));
 
         Engagement foundEngagement = result.get(0);
-        assertThat(foundEngagement.getBusinessKey(),is(engagement.getBusinessKey()));
+        assertThat(foundEngagement.getId(),is(engagement.getId()));
     }
 
     @Test
@@ -70,10 +72,71 @@ public class EngagementIntegrationTest {
         // then
         assertEquals(num, result.size());
     }
+    
+    @Test
+    public void findContentAllFields() {
+        Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
+        engagement.setMostRecentContent(new Date());
+        engagementRepository.save(engagement);
+        
+        List<Engagement> list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(engagement));
+        
+        assertEquals(1, list.size());
+    }
+    
+    @Test
+    public void findContentMandatoryFields() {
+        Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
+        engagement.setMostRecentContent(new Date());
+        engagementRepository.save(engagement);
+
+        Engagement me = mock(Engagement.class);
+        when(me.getRegisteredResidentIdentification()).thenReturn(engagement.getRegisteredResidentIdentification());
+        when(me.getServiceDomain()).thenReturn(engagement.getServiceDomain());
+        when(me.getBusinessObjectInstanceIdentifier()).thenReturn(null);
+        when(me.getMostRecentContent()).thenReturn(null);
+        when(me.getCategorization()).thenReturn(null);
+        when(me.getClinicalProcessInterestId()).thenReturn(null);
+        when(me.getDataController()).thenReturn(null);
+        when(me.getLogicalAddress()).thenReturn(null);
+        when(me.getSourceSystem()).thenReturn(null);
+        when(me.getOwner()).thenReturn(null);
+
+        
+        List<Engagement>list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(me));        
+        assertEquals(1, list.size());        
+    }
+
+    @Test
+    public void findContentMandatoryFieldsAndDate() {
+        Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
+        engagement.setMostRecentContent(new Date());
+        engagementRepository.save(engagement);
+
+        Engagement me = mock(Engagement.class);
+        when(me.getRegisteredResidentIdentification()).thenReturn(engagement.getRegisteredResidentIdentification());
+        when(me.getServiceDomain()).thenReturn(engagement.getServiceDomain());
+        when(me.getBusinessObjectInstanceIdentifier()).thenReturn(null);
+        when(me.getMostRecentContent()).thenReturn(new Date());
+        when(me.getCategorization()).thenReturn(null);
+        when(me.getClinicalProcessInterestId()).thenReturn(null);
+        when(me.getDataController()).thenReturn(null);
+        when(me.getLogicalAddress()).thenReturn(null);
+        when(me.getSourceSystem()).thenReturn(null);
+        when(me.getOwner()).thenReturn(null);
+      
+        List<Engagement>list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(me));        
+        assertEquals(1, list.size());
+        
+        when(me.getMostRecentContent()).thenReturn(new Date(0L));
+        
+        list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(me));        
+        assertEquals(0, list.size());
+    }
 
     @Test
     public void timestamp_R5() {
-        Engagement e = GenEntityTestDataUtil.genEngagements(0, 1).get(0);
+        Engagement e = GenEntityTestDataUtil.genEngagement(1212121212L);
         assertNull(e.getUpdateTime());
         assertNull(e.getCreationTime());
         
@@ -99,11 +162,10 @@ public class EngagementIntegrationTest {
 
         // when
         Engagement e = GenEntityTestDataUtil.genEngagement(1);
-        Engagement.BusinessKey key = e.getBusinessKey();
-        List<Engagement> result = engagementRepository.findByBusinessKey_RegisteredResidentIdentification(key.getRegisteredResidentIdentification());
+        List<Engagement> result = engagementRepository.findByRegisteredResidentIdentification(e.getRegisteredResidentIdentification());
 
         // then
         assertEquals(1, result.size());
-        assertThat(result.get(0).getBusinessKey(),is(key));
+        assertThat(result.get(0).getId(),is(e.getId()));
     }
 }

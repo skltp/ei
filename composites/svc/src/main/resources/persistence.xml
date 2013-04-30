@@ -6,7 +6,7 @@
     <persistence-unit name="springJpaPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <class>se.skltp.ei.svc.entity.model.Engagement</class>
-
+        
         <properties>
             <!--<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>-->
             <!--

@@ -42,8 +42,6 @@ public class ProcessBeanIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        Logger.getLogger(ProcessBeanIntegrationTest.class).info("SET UP **************");
-        
         // Clean the storage
         engagementRepository.deleteAll();
         engagementRepository.flush();
@@ -271,7 +269,7 @@ public class ProcessBeanIntegrationTest {
 
         // Validate the owner is the correct one
         Engagement foundEngagement = getSingleEngagement();
-        assertThat(foundEngagement.getBusinessKey().getOwner(), equalTo(OWNER));
+        assertThat(foundEngagement.getOwner(), equalTo(OWNER));
     }
     
 

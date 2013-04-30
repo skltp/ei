@@ -75,6 +75,7 @@
             <version>${spring.version}</version>
         </dependency>
 
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -188,5 +189,31 @@
             <scope>test</scope>
         </dependency>
   </dependencies> 
+
+	<build>
+		<plugins>
+			<plugin> 
+			      <groupId>org.bsc.maven</groupId>
+			        <artifactId>maven-processor-plugin</artifactId>
+			        <version>2.0.5</version>
+			        <executions>
+			          <execution>
+			            <id>process</id>
+			            <goals>
+			              <goal>process</goal>
+			            </goals>
+			            <phase>process-sources</phase>
+			          </execution>
+			        </executions>
+			    <dependencies> 
+			        <dependency> 
+			            <groupId>org.hibernate</groupId> 
+			            <artifactId>hibernate-jpamodelgen</artifactId> 
+			            <version>1.2.0.Final</version> 
+			        </dependency> 
+			    </dependencies> 
+			</plugin> 
+		</plugins>
+	</build>
 
 </project>

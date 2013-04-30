@@ -3,6 +3,7 @@ package se.skltp.ei.svc.entity.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import se.skltp.ei.svc.entity.model.Engagement;
 
@@ -13,7 +14,7 @@ import se.skltp.ei.svc.entity.model.Engagement;
  * @author Peter
  *
  */
-public interface EngagementRepository extends JpaRepository<Engagement, String> {
+public interface EngagementRepository extends JpaRepository<Engagement, String>, JpaSpecificationExecutor<Engagement> {
     /**
      * Returns engagement records matching an array of identities  (primary keys)
      * 
@@ -28,5 +29,6 @@ public interface EngagementRepository extends JpaRepository<Engagement, String> 
      * @param registeredResidentIdentification the identity.
      * @return the list of engagements.
      */
-    List<Engagement> findByBusinessKey_RegisteredResidentIdentification(String registeredResidentIdentification);
+    List<Engagement> findByRegisteredResidentIdentification(String registeredResidentIdentification);
+    
 }

@@ -4,16 +4,12 @@
  */
 package se.skltp.ei.svc.entity.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,28 +29,60 @@ import se.skltp.ei.svc.entity.model.util.Hash;
 @Entity(name=Engagement.ENGAGEMENT_INDEX_TABLE)
 @Table(appliesTo=Engagement.ENGAGEMENT_INDEX_TABLE,
 indexes={ @Index(name="engagement_search_index", 
-    columnNames= { Engagement.REGISTERED_RESIDENT_ID, Engagement.SERVICE_DOMAIN, Engagement.CATEGORIZATION }) })
+columnNames= { Engagement.REGISTERED_RESIDENT_ID, Engagement.SERVICE_DOMAIN, Engagement.CATEGORIZATION }) })
 public class Engagement {
 
     static final String ENGAGEMENT_INDEX_TABLE = "engagement_index_table";
     static final String REGISTERED_RESIDENT_ID = "registered_resident_id";
     static final String SERVICE_DOMAIN = "service_domain";
     static final String CATEGORIZATION = "categorization";
-    
-    private static final String NA = "NA";
-    private static final String INERA = "Inera";
+    static final String LOGICAL_ADDRESS = "logical_address";
+    static final String BUSINESS_OBJECT_INSTANCE_ID = "business_object_instance_id";
+    static final String SOURCE_SYSTEM = "source_system";
+    static final String DATA_CONTROLLER = "data_controller";
+    static final String OWNER = "owner";
+    static final String CLINICAL_PROCESS_INTEREST_ID = "clinical_process_interest_id";
+    static final String MOST_RECENT_CONTENT = "most_recent_content";
+
+    static final String NA = "NA";
+    static final String INERA = "Inera";
 
     // Tech id.
     @Column(name="id", length=64)
     @Id
     private String id;
 
-    // Business key.
-    @Embedded
-    private BusinessKey businessKey;	
+    // complex key (real primary key)
+
+    @Column(name=REGISTERED_RESIDENT_ID, nullable=false, length=32, updatable=false)
+    private String registeredResidentIdentification;
+
+    @Column(name=SERVICE_DOMAIN, nullable=false, length=255, updatable=false)
+    private String serviceDomain;
+
+    @Column(name=CATEGORIZATION, nullable=false, length=255, updatable=false)
+    private String categorization = NA;
+
+    @Column(name=LOGICAL_ADDRESS, nullable=false, length=64, updatable=false)
+    private String logicalAddress;
+
+    @Column(name=BUSINESS_OBJECT_INSTANCE_ID, nullable=false, length=128, updatable=false)
+    private String businessObjectInstanceIdentifier = NA;
+
+    @Column(name=SOURCE_SYSTEM, nullable=false, length=64, updatable=false)
+    private String sourceSystem;
+
+    @Column(name=DATA_CONTROLLER, nullable=false, length=64, updatable=false)
+    private String dataController;
+
+    @Column(name=OWNER, nullable=false, length=64, updatable=false)
+    private String owner = INERA;
+
+    @Column(name=CLINICAL_PROCESS_INTEREST_ID, nullable=false, length=128, updatable=false)    
+    private String clinicalProcessInterestId = NA;
 
     // Other non business key fields
-    @Column(name="most_recent_content")
+    @Column(name=MOST_RECENT_CONTENT)
     @Temporal(TemporalType.TIMESTAMP)
     private Date mostRecentContent;
 
@@ -81,18 +109,18 @@ public class Engagement {
             String dataController,
             String owner,
             String clinicalProcessInterestId) {
-        businessKey = new BusinessKey(registeredResidentIdentification,
-                serviceDomain,
-                categorization,
-                logicalAddress,
-                businessObjectInstanceIdentifier,
-                sourceSystem,
-                dataController,
-                owner,
-                clinicalProcessInterestId);
-        id = businessKey.getHashId();
+        this.registeredResidentIdentification = registeredResidentIdentification;
+        this.serviceDomain = serviceDomain;
+        this.categorization = nvl(categorization, NA);
+        this.logicalAddress = logicalAddress;
+        this.businessObjectInstanceIdentifier = nvl(businessObjectInstanceIdentifier, NA);
+        this.sourceSystem = sourceSystem;
+        this.dataController = dataController;
+        this.owner = nvl(owner, INERA);
+        this.clinicalProcessInterestId = nvl(clinicalProcessInterestId, NA);
+        this.id = generateHashId();
     }
-    
+
     /**
      * Returns current timestamp.
      * 
@@ -101,17 +129,17 @@ public class Engagement {
     private static Date now() {
         return new Date();
     }
-    
+
     @PrePersist
     void onPrePersist() {
         setCreationTime(now());
     }
-    
+
     @PreUpdate
     void onPreUpdate() {
         setUpdateTime(now());
     }
-    
+
     @Override
     public boolean equals(Object r) {
         if (this == r) {
@@ -124,23 +152,14 @@ public class Engagement {
             return false;
         }
     }
-    
+
     @Override
     public int hashCode() {
         return (id == null) ? 0 : getId().hashCode();
     }
 
-    
-    /**
-     * Returns the business key.
-     * 
-     * @return the e-index key.
-     */
-    public BusinessKey getBusinessKey() {
-        return businessKey;
-    }
 
-    public String getId() {
+    public String getId() {  
         return id;
     }
 
@@ -168,69 +187,97 @@ public class Engagement {
         this.updateTime = updateTime;
     }
 
-    /**
-     * Implements the business key.
-     */
-    @Embeddable
-    public static class BusinessKey implements Serializable {
+    public String getRegisteredResidentIdentification() {
+        return registeredResidentIdentification;
+    }
+
+    public String getServiceDomain() {
+        return serviceDomain;
+    }
+
+    public String getCategorization() {
+        return categorization;
+    }
+
+
+    public String getLogicalAddress() {
+        return logicalAddress;
+    }
+
+    public String getBusinessObjectInstanceIdentifier() {
+        return businessObjectInstanceIdentifier;
+    }
+
+    public String getSourceSystem() {
+        return sourceSystem;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public String getClinicalProcessInterestId() {
+        return clinicalProcessInterestId;
+    }
+
+    public String getDataController() {
+        return dataController;
+    }
+
+    //
+    class BusinessKeyImpl implements BusinessKey {
+
+        public BusinessKeyImpl() {
+        }
+
+        @Override
+        public String getSourceSystem() {
+            return Engagement.this.sourceSystem;
+        }
+
+        @Override
+        public String getServiceDomain() {
+            return Engagement.this.serviceDomain;
+        }
+
+        @Override
+        public String getRegisteredResidentIdentification() {
+            return Engagement.this.registeredResidentIdentification;
+        }
+
+        @Override
+        public String getOwner() {
+            return Engagement.this.owner;
+        }
+
+        @Override
+        public String getLogicalAddress() {
+            return Engagement.this.logicalAddress;
+        }
+
+        @Override
+        public String getDataController() {
+            return Engagement.this.getDataController();
+        }
+
+        @Override
+        public String getClinicalProcessInterestId() {
+            return Engagement.this.clinicalProcessInterestId;
+        }
+
+        @Override
+        public String getCategorization() {
+            return Engagement.this.categorization;
+        }
+
+        @Override
+        public String getBusinessObjectInstanceIdentifier() {
+            return Engagement.this.businessObjectInstanceIdentifier;
+        }
+
         //
-        private static final long serialVersionUID = 1L;
-        
-        // complex key (real primary key)
-        
-        @Column(name=REGISTERED_RESIDENT_ID, nullable=false, length=32, updatable=false)
-        private String registeredResidentIdentification;
-
-        @Column(name=SERVICE_DOMAIN, nullable=false, length=255, updatable=false)
-        private String serviceDomain;
-
-        @Column(name=CATEGORIZATION, nullable=false, length=255, updatable=false)
-        private String categorization = NA;
-
-        @Column(name="logical_address", nullable=false, length=64, updatable=false)
-        private String logicalAddress;
-
-        @Column(name="business_object_instance_id", nullable=false, length=128, updatable=false)
-        private String businessObjectInstanceIdentifier = NA;
-        
-        @Column(name="source_system", nullable=false, length=64, updatable=false)
-        private String sourceSystem;
-
-        @Column(name="data_controller", nullable=false, length=64, updatable=false)
-        private String dataController;
-
-        @Column(name="owner", nullable=false, length=64, updatable=false)
-        private String owner = INERA;
-
-        @Column(name="clinical_process_interest_id", nullable=false, length=128, updatable=false)    
-        private String clinicalProcessInterestId = NA;
-
-        // single business key hash value (derived) 
-        private transient String hashId;
-
-        //
-        protected BusinessKey() {}
-
-        //
-        protected BusinessKey(String registeredResidentIdentification,
-                String serviceDomain,
-                String categorization,
-                String logicalAddress,
-                String businessObjectInstanceIdentifier,
-                String sourceSystem,
-                String dataController,
-                String owner,
-                String clinicalProcessInterestId) {
-            this.registeredResidentIdentification = registeredResidentIdentification;
-            this.serviceDomain = serviceDomain;
-            this.categorization = nvl(categorization, NA);
-            this.logicalAddress = logicalAddress;
-            this.businessObjectInstanceIdentifier = nvl(businessObjectInstanceIdentifier, NA);
-            this.sourceSystem = sourceSystem;
-            this.dataController = dataController;
-            this.owner = nvl(owner, INERA);
-            this.clinicalProcessInterestId = nvl(clinicalProcessInterestId, NA);
-            this.hashId = null;
+        private String getId() {
+            return Engagement.this.id;
         }
 
         @Override
@@ -239,8 +286,8 @@ public class Engagement {
                 return true;
             } else if (r == null) {
                 return false;
-            } else if (r instanceof BusinessKey) {
-                return getHashId().equals(((BusinessKey)r).getHashId());
+            } else if (r instanceof BusinessKeyImpl) {
+                return getId().equals(((BusinessKeyImpl)r).getId());
             } else {
                 return false;
             }
@@ -248,83 +295,41 @@ public class Engagement {
 
         @Override
         public int hashCode() {
-            return getHashId().hashCode();
-        }
-
-        /**
-         * Returns the unique hash id and primary key.
-         * 
-         * @return the unique hash id.
-         */
-        public String getHashId() {
-            if (hashId == null) {
-                hashId = generateHashId();
-            }
-            return hashId;
-        }
-
-        public String getRegisteredResidentIdentification() {
-            return registeredResidentIdentification;
-        }
-
-        public String getServiceDomain() {
-            return serviceDomain;
-        }
-
-        public String getCategorization() {
-            return categorization;
-        }
-
-
-        public String getLogicalAddress() {
-            return logicalAddress;
-        }
-
-        public String getBusinessObjectInstanceIdentifier() {
-            return businessObjectInstanceIdentifier;
-        }
-
-        public String getSourceSystem() {
-            return sourceSystem;
-        }
-
-        public String getOwner() {
-            return owner;
-        }
-
-        public String getClinicalProcessInterestId() {
-            return clinicalProcessInterestId;
-        }
-
-        /**
-         * Returns NA constant for empty strings.
-         * 
-         * @param s the input.
-         * @param d the default value.
-         * @return NA if s is empty, otherwise s.
-         */
-        private static String nvl(String s, String d) {
-            return (s == null || s.length() == 0) ? d : s;
-        }
-
-        /**
-         * Generates a hash key for this post.
-         */
-        private String generateHashId() {
-            String hash = Hash.sha2(registeredResidentIdentification,
-                    serviceDomain,
-                    categorization,
-                    logicalAddress,
-                    businessObjectInstanceIdentifier,
-                    sourceSystem,
-                    dataController,
-                    owner,
-                    clinicalProcessInterestId);
-            return hash;
-        }
-
-        public String getDataController() {
-            return dataController;
+            return getId().hashCode();
         }
     }
+
+    //
+    public BusinessKey getBusinessKey() {
+        return new BusinessKeyImpl();
+    }
+
+
+    /**
+     * Returns NA constant for empty strings.
+     * 
+     * @param s the input.
+     * @param d the default value.
+     * @return NA if s is empty, otherwise s.
+     */
+    private static String nvl(String s, String d) {
+        return (s == null || s.length() == 0) ? d : s;
+    }
+
+    /**
+     * Generates a hash key for this post.
+     */
+    private String generateHashId() {
+        String hash = Hash.sha2(registeredResidentIdentification,
+                serviceDomain,
+                categorization,
+                logicalAddress,
+                businessObjectInstanceIdentifier,
+                sourceSystem,
+                dataController,
+                owner,
+                clinicalProcessInterestId);
+        return hash;
+    }
+
 }
