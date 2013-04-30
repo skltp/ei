@@ -66,7 +66,6 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
     	// Insert one entity
         Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
         residentId = engagement.getBusinessKey().getRegisteredResidentIdentification();
-		engagement.setCreationTime(new Date());
     	engagementRepository.save(engagement);
 
     	// Clear queues used for the tests
