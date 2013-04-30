@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -120,9 +121,10 @@ public class ProcessBeanIntegrationTest {
         assertThat(foundEngagement.getUpdateTime(), nullValue());
     }
     
+    
     @Test
     public void update_R5_OK_updatetime_should_be_set_when_updating() {
-         UpdateType request = new UpdateType();
+        UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
   
@@ -145,9 +147,35 @@ public class ProcessBeanIntegrationTest {
         assertTrue(engagement2.getCreationTime().getTime() < engagement2.getUpdateTime().getTime());
     }
     
+    @Test
+    public void update_R5_OK_updatetime_should_only_be_set_on_update() {
+    	
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+    	
+        // Update 1
+        BEAN.update(null, request);
+        Engagement engagement1 = getSingleEngagement();
+
+        // Update 2 - should not result in a update in the data store since 
+        // there is no new content
+        BEAN.update(null, request);
+        engagementRepository.flush();
+       
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        Engagement engagement2 = result.get(0);
+        
+        assertThat(result, hasSize(1)); // There should only be one post in the data store
+        assertThat(engagement1.getUpdateTime(), nullValue());
+        assertThat(engagement2.getUpdateTime(), nullValue());
+        assertThat(engagement1, equalTo(engagement2));
+        
+    }
+    
     
     @Test
-    public void update_R6_positive_owner_should_be_set_when_saved() {
+    public void update_R6_OK_owner_should_be_set_when_saved() {
          // Create a request
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
@@ -175,6 +203,11 @@ public class ProcessBeanIntegrationTest {
         
         return result.get(0);
     }
-    
+   
+    private int countEngagements() {
+        engagementRepository.flush();
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        return result.size();
+    }
 
 }
