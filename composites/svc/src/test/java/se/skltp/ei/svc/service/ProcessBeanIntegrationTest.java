@@ -1,14 +1,16 @@
 package se.skltp.ei.svc.service;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,13 +19,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
-import riv.itintegration.engagementindex._1.ResultCodeEnum;
-import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
-
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.impl.ProcessBean;
+import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:skltp-ei-svc-spring-context.xml")
@@ -37,9 +37,11 @@ public class ProcessBeanIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-
+        Logger.getLogger(ProcessBeanIntegrationTest.class).info("SET UP **************");
+        
         // Clean the storage
         engagementRepository.deleteAll();
+        engagementRepository.flush();
 
         BEAN = new ProcessBean();
         BEAN.setEngagementRepository(engagementRepository);
@@ -49,7 +51,8 @@ public class ProcessBeanIntegrationTest {
     
     @Test
     public void update_R5_positive_creationtime_should_be_set_when_saving() {
-        
+        Logger.getLogger(ProcessBeanIntegrationTest.class).info("update_R5_positive_creationtime_should_be_set_when_saving");
+
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
@@ -66,7 +69,8 @@ public class ProcessBeanIntegrationTest {
     
     @Test
     public void update_R5_positive_updatetime_should_be_when_updating() {
-        
+        Logger.getLogger(ProcessBeanIntegrationTest.class).info("update_R5_positive_updatetime_should_be_when_updating");
+
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
@@ -74,11 +78,13 @@ public class ProcessBeanIntegrationTest {
         // Update 1
         BEAN.update(null, request);
         Engagement engagement1 = getSingleEngagement();
-        
-        // Update 2
+
+
+        // Update 2, must update content, otherwise nothing happens.
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
         BEAN.update(null, request);
         Engagement engagement2 = getSingleEngagement();
-
+ 
 
         //CreationTime should be the same 
         assertThat(engagement1.getCreationTime(), equalTo(engagement2.getCreationTime())); 
@@ -91,6 +97,7 @@ public class ProcessBeanIntegrationTest {
     
     @Test
     public void update_R6_positive_owner_should_be_set_when_saved() {
+        Logger.getLogger(ProcessBeanIntegrationTest.class).info("update_R6_positive_owner_should_be_set_when_saved");
 
         // Create a request
         UpdateType request = new UpdateType();
@@ -113,6 +120,7 @@ public class ProcessBeanIntegrationTest {
      * @return Engagement
      */
     private Engagement getSingleEngagement() {
+        engagementRepository.flush();
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
         assertThat(result, hasSize(1));
         

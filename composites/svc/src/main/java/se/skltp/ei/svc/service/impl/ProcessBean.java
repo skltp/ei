@@ -23,6 +23,7 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import se.skltp.ei.svc.service.ProcessBeanIntegrationTest;
 import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
@@ -119,18 +120,6 @@ public class ProcessBean implements ProcessInterface {
             
             final Engagement e = toEntity(et);   
             
-            // Find the existing engagement 
-            Engagement existingEngagement = engagementRepository.findOne(e.getId());
-            
-            // Set CreationTime and UpdateTime according to R5
-            if (existingEngagement == null) {
-                e.setCreationTime(new Date());
-            } else {
-            	// Reuse the creationTime from the existing engagement and set a new UpdateTime.
-                e.setUpdateTime(new Date());
-                e.setCreationTime(existingEngagement.getCreationTime());
-            }
-
             if (engagementTransaction.isDeleteFlag()) {
                 if (deleteList == null) {
                     deleteList = new ArrayList<Engagement>();

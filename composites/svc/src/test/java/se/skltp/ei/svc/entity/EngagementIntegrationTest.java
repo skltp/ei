@@ -3,8 +3,11 @@ package se.skltp.ei.svc.entity;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,9 +30,9 @@ public class EngagementIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-
     	// Clean the storage
     	engagementRepository.deleteAll();
+    	engagementRepository.flush();
     }
     
     @Test
@@ -68,6 +71,24 @@ public class EngagementIntegrationTest {
         assertEquals(num, result.size());
     }
 
+    @Test
+    public void timestamp_R5() {
+        Engagement e = GenEntityTestDataUtil.genEngagements(0, 1).get(0);
+        assertNull(e.getUpdateTime());
+        assertNull(e.getCreationTime());
+        
+        Engagement saved = engagementRepository.save(e);
+        engagementRepository.flush();
+        assertNull(saved.getUpdateTime());
+        assertNotNull(saved.getCreationTime());
+        saved.setMostRecentContent(new Date());
+        
+        Engagement updated = engagementRepository.save(saved);
+        engagementRepository.flush();
+        assertNotNull(updated.getUpdateTime());
+        assertNotNull(updated.getCreationTime());
+    }
+    
     @Test
     public void findByRegisteredResidentIdentification() {
 

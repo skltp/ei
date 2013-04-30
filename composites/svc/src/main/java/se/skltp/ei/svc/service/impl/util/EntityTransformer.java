@@ -37,8 +37,6 @@ public class EntityTransformer {
                 eIn.getOwner(),
                 eIn.getClinicalProcessInterestId());
 
-        eOut.setCreationTime(parseDate(eIn.getCreationTime()));
-        eOut.setUpdateTime(parseDate(eIn.getUpdateTime()));
         eOut.setMostRecentContent(parseDate(eIn.getMostRecentContent()));
 
         return eOut;

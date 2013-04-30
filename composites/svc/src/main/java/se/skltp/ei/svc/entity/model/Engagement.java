@@ -13,6 +13,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -102,15 +103,15 @@ public class Engagement {
     }
     
     @PrePersist
-    public void setCreationTime() {
-        this.creationTime = now();
+    void onPrePersist() {
+        setCreationTime(now());
     }
     
     @PreUpdate
-    public void setUpdateTime() {
-        this.updateTime = now();
+    void onPreUpdate() {
+        setUpdateTime(now());
     }
-
+    
     @Override
     public boolean equals(Object r) {
         if (this == r) {
@@ -155,15 +156,15 @@ public class Engagement {
         return creationTime;
     }
 
-    public void setCreationTime(Date creationTime) {
+    void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
-    }
 
+    }
     public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 

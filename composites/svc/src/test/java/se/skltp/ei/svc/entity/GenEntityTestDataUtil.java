@@ -21,7 +21,6 @@ public class GenEntityTestDataUtil {
             Engagement e = genEngagement(start + i);
             Date now = new Date();
             e.setMostRecentContent(now);
-            e.setCreationTime(now);
             list.add(e);
         }
         return list;
@@ -50,8 +49,6 @@ public class GenEntityTestDataUtil {
                 "dataController",
                 "Inera",
                 "NA");
-
-        e.setCreationTime(new Date());
 
         return e;    	
     }
