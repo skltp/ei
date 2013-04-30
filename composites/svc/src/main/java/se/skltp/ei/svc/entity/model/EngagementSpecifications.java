@@ -116,8 +116,8 @@ public class EngagementSpecifications {
     public static Specifications<Engagement> createSpecifications(Engagement engagement) {
 
 
-        Specifications<Engagement> specs = Specifications.where(EngagementSpecifications.isPerson(engagement.getRegisteredResidentIdentification()))   
-                .and(EngagementSpecifications.hasServiceDomain(engagement.getServiceDomain()));
+        Specifications<Engagement> specs = Specifications.where(isPerson(engagement.getRegisteredResidentIdentification()))   
+                .and(hasServiceDomain(engagement.getServiceDomain()));
 
 
         if (engagement.getCategorization() != null) {

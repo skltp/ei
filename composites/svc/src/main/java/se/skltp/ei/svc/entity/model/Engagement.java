@@ -30,7 +30,7 @@ import se.skltp.ei.svc.entity.model.util.Hash;
 @Table(appliesTo=Engagement.ENGAGEMENT_INDEX_TABLE,
 indexes={ @Index(name="engagement_search_index", 
 columnNames= { Engagement.REGISTERED_RESIDENT_ID, Engagement.SERVICE_DOMAIN, Engagement.CATEGORIZATION }) })
-public class Engagement {
+public class Engagement implements BusinessKey {
 
     static final String ENGAGEMENT_INDEX_TABLE = "engagement_index_table";
     static final String REGISTERED_RESIDENT_ID = "registered_resident_id";
@@ -225,83 +225,8 @@ public class Engagement {
     }
 
     //
-    class BusinessKeyImpl implements BusinessKey {
-
-        public BusinessKeyImpl() {
-        }
-
-        @Override
-        public String getSourceSystem() {
-            return Engagement.this.sourceSystem;
-        }
-
-        @Override
-        public String getServiceDomain() {
-            return Engagement.this.serviceDomain;
-        }
-
-        @Override
-        public String getRegisteredResidentIdentification() {
-            return Engagement.this.registeredResidentIdentification;
-        }
-
-        @Override
-        public String getOwner() {
-            return Engagement.this.owner;
-        }
-
-        @Override
-        public String getLogicalAddress() {
-            return Engagement.this.logicalAddress;
-        }
-
-        @Override
-        public String getDataController() {
-            return Engagement.this.getDataController();
-        }
-
-        @Override
-        public String getClinicalProcessInterestId() {
-            return Engagement.this.clinicalProcessInterestId;
-        }
-
-        @Override
-        public String getCategorization() {
-            return Engagement.this.categorization;
-        }
-
-        @Override
-        public String getBusinessObjectInstanceIdentifier() {
-            return Engagement.this.businessObjectInstanceIdentifier;
-        }
-
-        //
-        private String getId() {
-            return Engagement.this.id;
-        }
-
-        @Override
-        public boolean equals(Object r) {
-            if (this == r) {
-                return true;
-            } else if (r == null) {
-                return false;
-            } else if (r instanceof BusinessKeyImpl) {
-                return getId().equals(((BusinessKeyImpl)r).getId());
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return getId().hashCode();
-        }
-    }
-
-    //
     public BusinessKey getBusinessKey() {
-        return new BusinessKeyImpl();
+        return this;
     }
 
 
