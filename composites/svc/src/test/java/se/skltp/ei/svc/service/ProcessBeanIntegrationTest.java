@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -13,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,9 +106,89 @@ public class ProcessBeanIntegrationTest {
         assertThat(result, hasSize(1));
     }
     
-
+    @Test
+    public void update_R4_OK_new_metadata_should_not_update_engagements() {
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+  
+        BEAN.update(null, request); 
+        
+        // Update setBusinessObjectInstanceIdentifier
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setBusinessObjectInstanceIdentifier(et1.getEngagement().getBusinessObjectInstanceIdentifier()+"1");
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(2));
+        
+        // Update setCategorization
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setCategorization(et1.getEngagement().getCategorization()+"1");
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(3));
+        
+        // Update setClinicalProcessInterestId
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setClinicalProcessInterestId(et1.getEngagement().getClinicalProcessInterestId()+"1");
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(4));
+        
+        // Update setDataController
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setDataController((et1.getEngagement().getDataController()+"1"));
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(5));
+        
+        // Update setLogicalAddress
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setLogicalAddress((et1.getEngagement().getLogicalAddress()+"1"));
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(6));
+        
+        // Update setRegisteredResidentIdentification
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setRegisteredResidentIdentification(et1.getEngagement().getRegisteredResidentIdentification()+"1");
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(7));
+        
+        // Update setServiceDomain
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setServiceDomain(et1.getEngagement().getServiceDomain()+"1");
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(8));
+        
+        // Update setRegisteredResidentIdentification
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setSourceSystem(et1.getEngagement().getSourceSystem()+"1");
+        BEAN.update(null, request);
+        assertThat(countEngagements(), is(9));
+    }
+    
     
     @Test
+    public void update_R4_OK_new_content_should_result_in_an_update() {
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+  
+        BEAN.update(null, request); 
+        
+        Engagement engagement1 = getSingleEngagement();         
+
+        // The only content that can be updated is mostRecentContent
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        BEAN.update(null, request); 
+      
+        engagementRepository.flush();
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(1)); // Should only be one post
+        
+        Engagement engagement2 = result.get(0);
+        assertThat(engagement1, equalTo(engagement2));
+    }
+
+
+
+	@Test
     public void update_R5_OK_creationtime_should_be_set_when_saving() {
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
