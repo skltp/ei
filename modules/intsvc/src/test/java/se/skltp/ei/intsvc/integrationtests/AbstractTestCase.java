@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -60,7 +61,10 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 		
 		// TODO: Fix lazy init of JMS connection et al so that we can create jmsutil in the declaration
 		// (The embedded ActiveMQ queue manager is not yet started by Mule when jmsutil is declared...)
-		if (jmsUtil == null) jmsUtil = new ActiveMqJmsTestUtil();
+		if (jmsUtil == null) {
+			String clientId = UUID.randomUUID().toString();
+			jmsUtil = new ActiveMqJmsTestUtil("vm://localhost", clientId);
+		}
 		
 		return jmsUtil;
 	}

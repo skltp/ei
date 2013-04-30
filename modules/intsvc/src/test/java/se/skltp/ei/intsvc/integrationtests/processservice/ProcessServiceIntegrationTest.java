@@ -3,11 +3,17 @@ package se.skltp.ei.intsvc.integrationtests.processservice;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import javax.jms.Topic;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +30,7 @@ import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
-public class ProcessServiceIntegrationTest extends AbstractTestCase {
+public class ProcessServiceIntegrationTest extends AbstractTestCase implements MessageListener {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(ProcessServiceIntegrationTest.class);
@@ -80,10 +86,18 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase {
     @Test
     public void process_OK() throws JMSException {
     	
+    	// Setup testdata
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
 		String requestXml = jabxUtil.marshal(of.createUpdate(createUdateRequest(residentId)));
 
+		// Setup a test-subscriber on the notification-topic
+		TopicSession topicSession = getJmsUtil().getTopicSession();
+		Topic topic = topicSession.createTopic(NOTIFICATION_TOPIC);
+		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
+		topicSubscriber.setMessageListener(this);
+
+		// Send an update message to the process-service and wait for a publish on the notification topic
 		MuleMessage r = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 
         // Compare the notified message with the request message, they should be the same
@@ -102,6 +116,18 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase {
 
 		// Assert that the response is the only message on the queue
 		assertQueueDepth(PROCESS_QUEUE, 0);
+		
+		// Finally verify that we got the expected notification to our own subscriber
+		assertNotNull("No processNotification received", processNotificationMessage);
+        jmsMsg = (TextMessage)processNotificationMessage;
+        notificationXml = jmsMsg.getText();
+		assertEquals(requestXml, notificationXml);
     }
 
+    private Message processNotificationMessage = null;
+
+    @Override
+	public void onMessage(Message message) {
+    	processNotificationMessage = message;
+	}
 }
