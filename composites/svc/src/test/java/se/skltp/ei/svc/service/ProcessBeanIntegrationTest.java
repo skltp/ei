@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -47,10 +48,64 @@ public class ProcessBeanIntegrationTest {
         BEAN.setEngagementRepository(engagementRepository);
         BEAN.setOwner(OWNER);
     }
+    
+    @Test
+    public void update_R2_OK_delete_engagesments_before_save() {
+    	
+    	UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        et1.setDeleteFlag(true);
+        
+        BEAN.update(null, request);
+    
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(0));
+    }
+    
+    @Test
+    public void update_R2_OK_delete_engagesments_after_save() {
+
+    	UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        
+        // Update 1
+        BEAN.update(null, request);
+        assertThat(getSingleEngagement(), notNullValue());
+        
+        // Update 2 - should delete the post
+        et1.setDeleteFlag(true);
+        BEAN.update(null, request);
+        
+        // Fetch all posts
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(0));
+    }
+    
+    /**
+     * Tests that the default value for deleteFlag dosen't actually delete the engagement
+     */
+    @Test
+    public void update_R2_OK_should_not_delete_when_deleteflag_is_false() {
+    	
+    	UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        
+        et1.setDeleteFlag(false); // Should be "default" state
+        
+        BEAN.update(null, request);
+        
+        // Fetch all posts
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(1));
+    }
+    
 
     
     @Test
-    public void update_R5_positive_creationtime_should_be_set_when_saving() {
+    public void update_R5_OK_creationtime_should_be_set_when_saving() {
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
@@ -66,7 +121,7 @@ public class ProcessBeanIntegrationTest {
     }
     
     @Test
-    public void update_R5_positive_updatetime_should_be_when_updating() {
+    public void update_R5_OK_updatetime_should_be_set_when_updating() {
          UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
