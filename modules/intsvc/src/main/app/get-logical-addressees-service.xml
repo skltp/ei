@@ -22,7 +22,7 @@
     <spring:beans>
         <!-- Bean that creates a ProcessNotification request -->
         <spring:bean name="create-get-logical-addressees-request-bean" class="se.skltp.ei.intsvc.getlogicaladdressees.GetLogicalAddresseesByServiceContractRequest">
-            <spring:property name="logicalAddress" value="${EI_HSA_ID}"/>
+            <spring:property name="logicalAddress" value="${VP_HSA_ID}"/>
         </spring:bean>
     </spring:beans>
 

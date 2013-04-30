@@ -1,140 +1,106 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="get-logical-addressees-service">
-    <global-element type="http://www.springframework.org/schema/beans/bean" name="Bean" entity-id="Bean#1">
+    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#1">
         <properties>
-            <property name="id"/>
-            <property value="create-get-logical-addressees-request-bean" name="name"/>
-            <property value="se.skltp.ei.intsvc.GetLogicalAddresseesByServiceContractRequest" name="class"/>
-            <property name="parent"/>
-            <property name="scope"/>
-            <property name="children"/>
-            <property value="2" name="auxiliary;index"/>
-            <property value="1" name="auxiliary;wrapIn"/>
-            <property value="2" name="auxiliary;index"/>
-            <property value="1" name="auxiliary;wrapIn"/>
-            <property name="abstract"/>
-            <property name="lazy-init"/>
-            <property name="autowire"/>
-            <property name="depends-on"/>
-            <property name="autowire-candidate"/>
-            <property name="primary"/>
-            <property name="init-method"/>
-            <property name="destroy-method"/>
-            <property name="factory-method"/>
             <property name="factory-bean"/>
-            <property value="2" name="auxiliary;index"/>
-            <property value="1" name="auxiliary;wrapIn"/>
-            <property value="2" name="auxiliary;index"/>
-            <property value="1" name="auxiliary;wrapIn"/>
-            <property value="2" name="auxiliary;index"/>
-            <property value="1" name="auxiliary;wrapIn"/>
+            <property name="abstract"/>
+            <property name="scope"/>
+            <property name="init-method"/>
+            <property name="autowire-candidate"/>
+            <property name="factory-method"/>
+            <property name="class" value="se.skltp.ei.intsvc.getlogicaladdressees.GetLogicalAddresseesByServiceContractRequest"/>
+            <property name="parent"/>
+            <property name="children"/>
+            <property name="lazy-init"/>
+            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property name="id"/>
+            <property name="primary"/>
+            <property name="name" value="create-get-logical-addressees-request-bean"/>
+            <property name="autowire"/>
+            <property name="destroy-method"/>
+            <property name="auxiliary;index" value="2"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="depends-on"/>
             <property-collection name="@http://www.springframework.org/schema/beans/property;0">
-                <property value="logicalAddress" name="name"/>
-                <property value="${EI_HSA_ID}" name="value"/>
-                <property value="3" name="auxiliary;wrapIn"/>
-                <property value="3" name="auxiliary;index"/>
+                <property name="name" value="logicalAddress"/>
+                <property name="value" value="${VP_HSA_ID}"/>
+                <property name="auxiliary;index" value="3"/>
+                <property name="auxiliary;wrapIn" value="3"/>
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="get-logical-addressees-service" entity-id="8397c3c2-5161-4871-b6d5-608c1f791c94">
+    <flow SubFlow="false" name="get-logical-addressees-service" entity-id="2c1e96bf-a8a0-42e4-b51c-5e8cfe262985">
         <properties>
-            <property name="processingStrategy2"/>
             <property name="processingStrategy"/>
-            <property value="4" name="auxiliary;index"/>
+            <property name="processingStrategy2"/>
             <property name="bussinessEventsLabel"/>
             <property name="tracking:enable-default-events"/>
-            <property value="4" name="auxiliary;index"/>
-            <property value="4" name="auxiliary;index"/>
-            <property value="4" name="auxiliary;index"/>
+            <property name="auxiliary;index" value="4"/>
         </properties>
-        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#1">
-            <endpoint message-exchange-pattern="OneWay" direction="Inbound" type="http://www.mulesoft.org/schema/mule/vm/endpoint" name="VM" entity-id="VM#1">
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="VM" type="http://www.mulesoft.org/schema/mule/vm/endpoint" entity-id="VM#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
-                    <property value="one-way" name="exchange-pattern"/>
-                    <property value="request-response" name="exchange-pattern"/>
-                    <property value="5" name="auxiliary;index"/>
-                    <property name="path"/>
-                    <property value="5" name="auxiliary;index"/>
-                    <property value="5" name="auxiliary;index"/>
-                    <property value="5" name="auxiliary;index"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs" value="logMsgIn"/>
+                    <property name="address" value="vm://get-logical-addressees"/>
                     <property name="businessEventsLabel"/>
-                    <property name="tracking:enable-default-events"/>
-                    <property value="5" name="auxiliary;index"/>
-                    <property value="vm://get-logical-addressees" name="address"/>
-                    <property name="responseTimeout"/>
                     <property name="encoding"/>
+                    <property name="path"/>
+                    <property name="responseTransformer-refs" value="logRespOut"/>
                     <property name="disableTransportTransformer"/>
                     <property name="mimeType"/>
-                    <property value="5" name="auxiliary;index"/>
-                    <property value="5" name="auxiliary;index"/>
+                    <property name="responseTimeout"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="auxiliary;index" value="5"/>
+                    <property name="exchange-pattern" value="request-response"/>
                     <property name="connector-ref"/>
-                    <property name="ref"/>
-                    <property value="logMsgIn" name="transformer-refs"/>
-                    <property value="logRespOut" name="responseTransformer-refs"/>
-                    <property value="5" name="auxiliary;index"/>
-                    <property value="5" name="auxiliary;index"/>
-                    <property value="5" name="auxiliary;index"/>
                 </properties>
             </endpoint>
-            <pattern type="http://www.mulesoft.org/schema/mule/core/component" name="Java" entity-id="Java#1">
+            <pattern name="Java" type="http://www.mulesoft.org/schema/mule/core/component" entity-id="Java#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
-                    <property value="6" name="auxiliary;index"/>
-                    <property value="6" name="auxiliary;index"/>
-                    <property value="6" name="auxiliary;index"/>
                     <property name="class"/>
-                    <property value="6" name="auxiliary;index"/>
-                    <property value="6" name="auxiliary;index"/>
-                    <property value="6" name="auxiliary;index"/>
+                    <property name="auxiliary;index" value="6"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/core/spring-object;0">
-                        <property value="create-get-logical-addressees-request-bean" name="bean"/>
-                        <property value="7" name="auxiliary;wrapIn"/>
-                        <property value="7" name="auxiliary;index"/>
+                        <property name="bean" value="create-get-logical-addressees-request-bean"/>
+                        <property name="auxiliary;index" value="7"/>
+                        <property name="auxiliary;wrapIn" value="7"/>
                     </property-collection>
                 </properties>
             </pattern>
-            <endpoint message-exchange-pattern="OneWay" direction="Outbound" type="http://www.mulesoft.org/schema/mule/http/endpoint" name="HTTP" entity-id="HTTP#1">
+            <endpoint direction="Outbound" message-exchange-pattern="RequestResponse" name="HTTP" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
-                    <property value="one-way" name="exchange-pattern"/>
-                    <property value="request-response" name="exchange-pattern"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="http://www.mulesoft.org/schema/mule/http/endpoint" name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property name="httpLabel"/>
-                    <property name="host"/>
                     <property name="port"/>
-                    <property name="path"/>
-                    <property name="method"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="8" name="auxiliary;index"/>
+                    <property name="host"/>
                     <property name="businessEventsLabel"/>
-                    <property name="tracking:enable-default-events"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_OUTBOUND_URL}" name="address"/>
-                    <property name="encoding"/>
-                    <property name="disableTransportTransformer"/>
-                    <property name="mimeType"/>
-                    <property value="${SERVICE_TIMEOUT_MS}" name="responseTimeout"/>
                     <property name="followRedirects"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="soitoolkit-http-connector" name="connector-ref"/>
-                    <property name="ref"/>
-                    <property value="logReqOut" name="transformer-refs"/>
-                    <property value="logRespIn" name="responseTransformer-refs"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property name="user"/>
-                    <property name="password"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property name="contentType"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/http/endpoint"/>
                     <property name="keep-alive"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="8" name="auxiliary;index"/>
-                    <property value="8" name="auxiliary;index"/>
+                    <property name="contentType"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="password"/>
+                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs" value="logReqOut"/>
+                    <property name="httpLabel"/>
+                    <property name="address" value="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_OUTBOUND_URL}"/>
+                    <property name="path"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs" value="logRespIn"/>
+                    <property name="method"/>
+                    <property name="user"/>
+                    <property name="responseTimeout" value="${SERVICE_TIMEOUT_MS}"/>
+                    <property name="mimeType"/>
+                    <property name="auxiliary;index" value="8"/>
+                    <property name="connector-ref" value="soitoolkit-http-connector"/>
                 </properties>
             </endpoint>
-            <unknown index="10" description="false" entity-id="unknown#1">
+            <unknown description="false" index="10" entity-id="unknown#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
                 <content>&lt;custom-exception-strategy xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; class=&quot;org.soitoolkit.commons.mule.error.ServiceExceptionStrategy&quot;/&gt;</content>
             </unknown>
         </lane>
