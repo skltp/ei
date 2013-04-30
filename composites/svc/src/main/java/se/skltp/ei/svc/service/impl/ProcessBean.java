@@ -23,7 +23,6 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.ProcessBeanIntegrationTest;
 import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;

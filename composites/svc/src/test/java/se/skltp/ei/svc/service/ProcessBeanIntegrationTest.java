@@ -51,8 +51,6 @@ public class ProcessBeanIntegrationTest {
     
     @Test
     public void update_R5_positive_creationtime_should_be_set_when_saving() {
-        Logger.getLogger(ProcessBeanIntegrationTest.class).info("update_R5_positive_creationtime_should_be_set_when_saving");
-
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
@@ -69,9 +67,7 @@ public class ProcessBeanIntegrationTest {
     
     @Test
     public void update_R5_positive_updatetime_should_be_when_updating() {
-        Logger.getLogger(ProcessBeanIntegrationTest.class).info("update_R5_positive_updatetime_should_be_when_updating");
-
-        UpdateType request = new UpdateType();
+         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
   
@@ -97,9 +93,7 @@ public class ProcessBeanIntegrationTest {
     
     @Test
     public void update_R6_positive_owner_should_be_set_when_saved() {
-        Logger.getLogger(ProcessBeanIntegrationTest.class).info("update_R6_positive_owner_should_be_set_when_saved");
-
-        // Create a request
+         // Create a request
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
 
