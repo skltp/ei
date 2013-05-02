@@ -113,46 +113,4 @@ public class EngagementSpecifications {
         };
     }
 
-    public static Specifications<Engagement> createSpecifications(Engagement engagement) {
-
-
-        Specifications<Engagement> specs = Specifications.where(isPerson(engagement.getRegisteredResidentIdentification()))   
-                .and(hasServiceDomain(engagement.getServiceDomain()));
-
-
-        if (engagement.getCategorization() != null) {
-            specs = specs.and(hasCategorization(engagement.getCategorization()));
-        }
-
-        if (engagement.getMostRecentContent() != null) {
-            specs = specs.and(isMostRecent(engagement.getMostRecentContent()));
-        }
-
-        if (engagement.getClinicalProcessInterestId() != null) {
-            specs = specs.and(hasClinicalProcessInterestId(engagement.getClinicalProcessInterestId()));
-        }
-
-        if (engagement.getBusinessObjectInstanceIdentifier() != null) {
-            specs = specs.and(hasBusinessObjectInstanceIdentifier(engagement.getBusinessObjectInstanceIdentifier()));            
-        }
-
-        if (engagement.getLogicalAddress() != null) {
-            specs = specs.and(hasLogicalAddress(engagement.getLogicalAddress()));            
-        }
-
-        if (engagement.getSourceSystem() != null) {
-            specs = specs.and(hasSourceSystem(engagement.getSourceSystem()));                        
-        }
-
-        if (engagement.getDataController() != null) {
-            specs = specs.and(hasDataController(engagement.getDataController()));                        
-        }
-
-        if (engagement.getOwner() != null) {
-            specs = specs.and(hasOwner(engagement.getOwner()));
-        }
-
-        return specs;
-
-    }
 }

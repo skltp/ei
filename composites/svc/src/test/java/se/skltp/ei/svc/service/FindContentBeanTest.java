@@ -16,6 +16,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
+import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.impl.FindContentBean;
@@ -56,8 +57,8 @@ public class FindContentBeanTest {
      */
     @Test
     public void r1_findContent_ok() throws Exception {
-
-        FindContentResponseType r = BEAN.findContent(null, null);
+        
+        FindContentResponseType r = BEAN.findContent(null, new FindContentType());
         assertEquals(0, r.getEngagement().size());
     }
 

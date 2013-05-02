@@ -15,12 +15,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import se.skltp.ei.svc.entity.model.Engagement;
-import se.skltp.ei.svc.entity.model.EngagementSpecifications;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -79,7 +80,7 @@ public class EngagementIntegrationTest {
         engagement.setMostRecentContent(new Date());
         engagementRepository.save(engagement);
         
-        List<Engagement> list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(engagement));
+        List<Engagement> list = engagementRepository.findAll(createSpecifications(engagement));
         
         assertEquals(1, list.size());
     }
@@ -103,7 +104,7 @@ public class EngagementIntegrationTest {
         when(me.getOwner()).thenReturn(null);
 
         
-        List<Engagement>list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(me));        
+        List<Engagement>list = engagementRepository.findAll(createSpecifications(me));        
         assertEquals(1, list.size());        
     }
 
@@ -125,12 +126,12 @@ public class EngagementIntegrationTest {
         when(me.getSourceSystem()).thenReturn(null);
         when(me.getOwner()).thenReturn(null);
       
-        List<Engagement>list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(me));        
+        List<Engagement>list = engagementRepository.findAll(createSpecifications(me));        
         assertEquals(1, list.size());
         
         when(me.getMostRecentContent()).thenReturn(new Date(0L));
         
-        list = engagementRepository.findAll(EngagementSpecifications.createSpecifications(me));        
+        list = engagementRepository.findAll(createSpecifications(me));        
         assertEquals(0, list.size());
     }
 
@@ -167,5 +168,48 @@ public class EngagementIntegrationTest {
         // then
         assertEquals(1, result.size());
         assertThat(result.get(0).getId(),is(e.getId()));
+    }
+    
+    public static Specifications<Engagement> createSpecifications(Engagement engagement) {
+
+
+        Specifications<Engagement> specs = Specifications.where(isPerson(engagement.getRegisteredResidentIdentification()))   
+                .and(hasServiceDomain(engagement.getServiceDomain()));
+
+
+        if (engagement.getCategorization() != null) {
+            specs = specs.and(hasCategorization(engagement.getCategorization()));
+        }
+
+        if (engagement.getMostRecentContent() != null) {
+            specs = specs.and(isMostRecent(engagement.getMostRecentContent()));
+        }
+
+        if (engagement.getClinicalProcessInterestId() != null) {
+            specs = specs.and(hasClinicalProcessInterestId(engagement.getClinicalProcessInterestId()));
+        }
+
+        if (engagement.getBusinessObjectInstanceIdentifier() != null) {
+            specs = specs.and(hasBusinessObjectInstanceIdentifier(engagement.getBusinessObjectInstanceIdentifier()));            
+        }
+
+        if (engagement.getLogicalAddress() != null) {
+            specs = specs.and(hasLogicalAddress(engagement.getLogicalAddress()));            
+        }
+
+        if (engagement.getSourceSystem() != null) {
+            specs = specs.and(hasSourceSystem(engagement.getSourceSystem()));                        
+        }
+
+        if (engagement.getDataController() != null) {
+            specs = specs.and(hasDataController(engagement.getDataController()));                        
+        }
+
+        if (engagement.getOwner() != null) {
+            specs = specs.and(hasOwner(engagement.getOwner()));
+        }
+
+        return specs;
+
     }
 }
