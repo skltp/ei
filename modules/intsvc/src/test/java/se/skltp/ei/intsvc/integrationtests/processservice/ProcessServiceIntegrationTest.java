@@ -124,6 +124,40 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		assertEquals(requestXml, notificationXml);
     }
 
+    @Test
+    public void update_R3_notifications_should_be_sent() throws JMSException {
+    	
+    	// Setup testdata
+		long residentId = 1212121212L;
+		String fullResidentId = "19" + residentId;
+		String requestXml = jabxUtil.marshal(of.createUpdate(createUdateRequest(residentId)));
+
+		// Setup a test-subscriber on the notification-topic
+		TopicSession topicSession = getJmsUtil().getTopicSession();
+		Topic topic = topicSession.createTopic(NOTIFICATION_TOPIC);
+		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
+		topicSubscriber.setMessageListener(this);
+
+		// Send an update message to the process-service and wait for a publish on the notification topic
+		MuleMessage r = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+
+        // Compare the notified message with the request message, they should be the same
+        TextMessage jmsMsg = (TextMessage)r.getPayload();
+        String notificationXml = jmsMsg.getText();
+		assertEquals(requestXml, notificationXml);
+
+		// Verify that we got something in the database as well
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+		
+		// Finally verify that we got the expected notification to our own subscriber
+		assertNotNull("No processNotification received", processNotificationMessage);
+        jmsMsg = (TextMessage)processNotificationMessage;
+        notificationXml = jmsMsg.getText();
+		assertEquals(requestXml, notificationXml);
+    }
+
+    
+    
     private Message processNotificationMessage = null;
 
     @Override
