@@ -125,7 +125,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
     }
 
     @Test
-    public void update_R3_notifications_should_be_sent() throws JMSException {
+    public void update_R3_OK_notifications_should_be_sent() throws JMSException {
     	
     	// Setup testdata
 		long residentId = 1212121212L;
