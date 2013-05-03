@@ -25,7 +25,7 @@ import static se.skltp.ei.svc.entity.model.EngagementSpecifications.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:skltp-ei-svc-spring-context.xml")
+@ContextConfiguration(locations = {"classpath:skltp-ei-svc-spring-context.xml", "classpath:skltp-ei-svc-test-spring-context.xml"})
 public class EngagementIntegrationTest {
 
     @Autowired

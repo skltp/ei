@@ -27,7 +27,7 @@ import se.skltp.ei.svc.service.impl.ProcessBean;
 import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:skltp-ei-svc-spring-context.xml")
+@ContextConfiguration(locations = {"classpath:skltp-ei-svc-spring-context.xml", "classpath:skltp-ei-svc-test-spring-context.xml"})
 public class ProcessBeanIntegrationTest {
 
     private static ProcessBean BEAN = null; 

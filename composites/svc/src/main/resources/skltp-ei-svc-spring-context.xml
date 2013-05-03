@@ -14,19 +14,45 @@
 
     <jpa:repositories base-package="se.skltp.ei.svc.entity.repository"/>
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-        <property name="url"        value="jdbc:hsqldb:mem:."/>
-        <property name="username"   value="sa"/>
-        <property name="password"   value=""/>
-    </bean>
+	<!-- 
+		Generic property based dataSource definition based on Apache's DBCP for connection pooling
+		 
+		Expects settings in the property file similar to:
+			EI_JDBC_DRIVER=jdbc driver class
+			EI_JDBC_URL=jdbc driver connection url
+			EI_JDBC_USR=username
+			EI_JDBC_PWD=password
+	    	EI_JDBC_CON_POOL_INIT_SIZE=1
+	    	EI_JDBC_CON_POOL_MAX_ACTIVE=10
+	    	EI_JDBC_CON_POOL_MAX_IDLE=10
 
-    <bean id="dataSource_hsql_srv" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <property name="url" value="jdbc:hsqldb:file:sampledb"/>
-        <property name="username" value="sa"/>
-        <property name="password" value=""/>
-    </bean>
+		Note: It is recommended to keep the username and password properties separate in the security-property-file
+		
+		Sample settings for an Apache Derby database:
+			EI_JDBC_DRIVER=org.apache.derby.jdbc.ClientDriver
+			EI_JDBC_URL=jdbc:derby://myhost:1527/mydatabase;create=true
+
+		Sample settings for a Microsoft SQL Server database using the JTDS JDBC driver:
+			EI_JDBC_DRIVER=net.sourceforge.jtds.jdbc.Driver
+			EI_JDBC_URL=jdbc:jtds:sqlserver://myhost:1433;prepareSql=2;domain=mydomain;DatabaseName=mydatabase
+
+		Sample settings for a MySQL database:
+			EI_JDBC_DRIVER=com.mysql.jdbc.Driver
+			EI_JDBC_URL=jdbc:mysql://myhost:3306/mydatabase
+
+		Sample settings for an Oracle database:
+			EI_JDBC_DRIVER=oracle.jdbc.driver.OracleDriver
+			EI_JDBC_URL=jdbc:oracle:thin:@muhost:1521:mydatabase
+	 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${EI_JDBC_DRIVER}"/>
+		<property name="url"        	 value="${EI_JDBC_URL}"/>
+	    <property name="username"      	 value="${EI_JDBC_USR}"/>
+	    <property name="password"   	 value="${EI_JDBC_PWD}"/>
+	    <property name="initialSize"   	 value="${EI_JDBC_CON_POOL_INIT_SIZE}"/>
+	    <property name="maxActive"   	 value="${EI_JDBC_CON_POOL_MAX_ACTIVE}"/>
+	    <property name="maxIdle"   		 value="${EI_JDBC_CON_POOL_MAX_IDLE}"/>
+	</bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>

@@ -84,7 +84,14 @@
     <logger name="org.hibernate.SQL">
         <level value="DEBUG" />
     </logger>
-    
+    <!-- For debugging of jdbc connections and transactions
+    <logger name="org.hibernate.jdbc.ConnectionManager">
+        <level value="TRACE" />
+    </logger>
+    <logger name="org.hibernate.transaction.JDBCTransaction">
+        <level value="TRACE" />
+    </logger>    
+    -->
 	<root>
 		<priority value="WARN" />
 
