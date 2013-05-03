@@ -6,7 +6,7 @@
     <parent>
         <groupId>se.skltp.ei</groupId>
         <artifactId>skltp-ei-parent</artifactId>
-        <version>1.0.0-RC1-SNAPSHOT</version>
+        <version>1.0.0-RC1</version>
         <relativePath>../../pom.xml</relativePath> 
     </parent>
 
