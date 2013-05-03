@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
@@ -139,4 +141,18 @@ public class ProcessBean implements ProcessInterface {
 
         return RESPONSE_OK;
     }
+
+	@Override
+	public void validateProcessNotification(Header header,
+			ProcessNotificationType parameters) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ProcessNotificationResponseType processNotification(Header header,
+			ProcessNotificationType parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
