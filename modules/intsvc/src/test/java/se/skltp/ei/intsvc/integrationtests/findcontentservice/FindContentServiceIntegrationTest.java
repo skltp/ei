@@ -132,7 +132,7 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
      * Tests that we get only one of multiple engagements and that uses multiple query parameters
      */
     @Test 
-    public void findContent_OK_R2_find_engagments() {
+    public void findContent_OK_R2_find_engagements() {
     	
     	// Insert another entity to the data store
         Engagement engagement  = GenEntityTestDataUtil.genEngagement(1111111111L);
