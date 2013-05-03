@@ -128,27 +128,30 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 	}
 	
 	protected void assertUpdateRequest(UpdateType expected, MuleMessage actual) {
+		String expectedXml = jabxUtil.marshal(update_of.createUpdate(expected));
+		assertRequest(expectedXml, actual);
+	}
+
+	protected void assertProcessNotificationRequest(ProcessNotificationType expected, MuleMessage actual) {
+		String expectedXml = jabxUtil.marshal(processNotification_of.createProcessNotification(expected));
+		assertRequest(expectedXml, actual);
+	}
+
+	protected void assertRequest(String expectedXml, MuleMessage actual) {
+		TextMessage actualJms = (TextMessage)actual.getPayload();
+		assertRequest(expectedXml, actualJms);
+	}
+
+	protected void assertRequest(String expectedXml, TextMessage actualJms) {
 		try {
-			TextMessage actualJms = (TextMessage)actual.getPayload();
 			String actualXml = actualJms.getText();
-			String expectedXml = jabxUtil.marshal(update_of.createUpdate(expected));
+			
 			assertXml(expectedXml, actualXml);
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected void assertProcessNotificationRequest(ProcessNotificationType expected, MuleMessage actual) {
-		try {
-			TextMessage actualJms = (TextMessage)actual.getPayload();
-			String actualXml = actualJms.getText();
-			
-			String expectedXml = jabxUtil.marshal(processNotification_of.createProcessNotification(expected));
-			assertXml(expectedXml, actualXml);
-		} catch (JMSException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
     private void assertXml(String expected, String actual) {
 

@@ -16,6 +16,7 @@ import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.context.notification.EndpointMessageNotification;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
@@ -35,8 +37,9 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(ProcessServiceIntegrationTest.class);
 	 
-	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
-	private static final ObjectFactory of = new ObjectFactory();
+	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class, ProcessNotificationType.class);
+	private static final ObjectFactory update_of = new ObjectFactory();
+	private static final riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory processNotification_of = new riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory();
 	
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 
@@ -84,12 +87,12 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 	 * @throws JMSException 
 	 */
     @Test
-    public void process_OK() throws JMSException {
+    public void process_update_OK() throws JMSException {
     	
     	// Setup testdata
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
-		String requestXml = jabxUtil.marshal(of.createUpdate(createUdateRequest(residentId)));
+		String requestXml = jabxUtil.marshal(update_of.createUpdate(createUdateRequest(residentId)));
 
 		// Setup a test-subscriber on the notification-topic
 		TopicSession topicSession = getJmsUtil().getTopicSession();
@@ -98,12 +101,10 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		topicSubscriber.setMessageListener(this);
 
 		// Send an update message to the process-service and wait for a publish on the notification topic
-		MuleMessage r = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFY_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+		MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFY_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 
         // Compare the notified message with the request message, they should be the same
-        TextMessage jmsMsg = (TextMessage)r.getPayload();
-        String notificationXml = jmsMsg.getText();
-		assertEquals(requestXml, notificationXml);
+		assertRequest(requestXml, response);
 
 		// Verify that we got something in the database as well
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
@@ -119,19 +120,60 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		
 		// Finally verify that we got the expected notification to our own subscriber
 		assertNotNull("No processNotification received", processNotificationMessage);
-        jmsMsg = (TextMessage)processNotificationMessage;
-        notificationXml = jmsMsg.getText();
-		assertEquals(requestXml, notificationXml);
+		assertRequest(requestXml, processNotificationMessage);
+    }
+
+	/**
+	 * Perform a test that is expected to return one hit
+	 * @throws JMSException 
+	 */
+    // TODO. Patrik. Remove Ignore annotation once business logic is in place.
+    @Ignore
+    @Test
+    public void process_notification_OK() throws JMSException {
+    	
+    	// Setup testdata
+		long residentId = 1212121212L;
+		String fullResidentId = "19" + residentId;
+		String requestXml = jabxUtil.marshal(processNotification_of.createProcessNotification(createProcessNotificationRequest(residentId)));
+
+		// Setup a test-subscriber on the notification-topic
+		TopicSession topicSession = getJmsUtil().getTopicSession();
+		Topic topic = topicSession.createTopic(NOTIFY_TOPIC);
+		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
+		topicSubscriber.setMessageListener(this);
+
+		// Send an update message to the process-service and wait for a publish on the notification topic
+		MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFY_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+
+        // Compare the notified message with the request message, they should be the same
+		assertRequest(requestXml, response);
+
+		// Verify that we got something in the database as well
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertEquals(1, result.size());
+        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+
+		// Expect no error logs and three info log entries
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		assertQueueDepth(INFO_LOG_QUEUE, 2);
+
+		// Assert that the response is the only message on the queue
+		assertQueueDepth(PROCESS_QUEUE, 0);
+		
+		// Finally verify that we got the expected notification to our own subscriber
+		assertNotNull("No processNotification received", processNotificationMessage);
+		assertRequest(requestXml, processNotificationMessage);
     }
 
     
-    // TODO - Implement (negative) tests for testing failure and resending of notifications
+    // TODO - Implement (negative) tests for testing failure and resending update_of notifications
     
     
-    private Message processNotificationMessage = null;
+    private TextMessage processNotificationMessage = null;
 
     @Override
 	public void onMessage(Message message) {
-    	processNotificationMessage = message;
+    	processNotificationMessage = (TextMessage)message;
 	}
 }

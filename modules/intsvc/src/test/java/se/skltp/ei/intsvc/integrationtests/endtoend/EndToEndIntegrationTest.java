@@ -8,6 +8,7 @@ import java.net.SocketException;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.slf4j.Logger;
@@ -16,10 +17,12 @@ import org.soitoolkit.commons.mule.test.Dispatcher;
 
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
+import se.skltp.ei.intsvc.integrationtests.notificationservice.NotificationTestConsumer;
 import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer;
 import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
 import se.skltp.ei.svc.entity.model.Engagement;
@@ -37,7 +40,8 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
-	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
+	private static final String UPDATE_SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
+	private static final String NOTIFICATION_SERVICE_ADDRESS = EiMuleServer.getAddress("NOTIFICATION_WEB_SERVICE_URL");
   
     public EndToEndIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
@@ -52,6 +56,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	  		"skltp-ei-svc-spring-context.xml," +
 	        "get-logical-addressees-service.xml," + 
 	        "update-service.xml," + 
+	        "notification-service.xml," + 
 	        "process-service.xml," + 
 	        "teststub-services/init-dynamic-flows.xml," +
 	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
@@ -85,7 +90,43 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
 		
-		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestDispatcher(createUdateRequest(residentId)), "process-notification-teststub-service", EI_TEST_TIMEOUT);
+		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestUpdateDispatcher(createUdateRequest(residentId)), "process-notification-teststub-service", EI_TEST_TIMEOUT);
+        
+		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
+		assertEquals(ResultCodeEnum.OK, nr.getResultCode());
+
+		
+		// Verify that we got something in the database as well
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertEquals(1, result.size());
+        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+
+		// Assert that no messages are left on the processing queue
+		assertQueueDepth(PROCESS_QUEUE, 0);
+
+		// Wait a short while for all background processing to complete
+		waitForBackgroundProcessing();
+		
+		// Expect no error logs
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+
+		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
+		assertQueueDepth(INFO_LOG_QUEUE, 14);
+
+    }
+
+	/**
+	 * Perform a test that is expected to return one hit
+	 */
+    // TODO. Patrik. Remove Ignore annotation once business logic is in place.
+    @Ignore
+    @Test
+    public void endToEnd_notification_OK() {
+    	
+		long residentId = 1212121212L;
+		String fullResidentId = "19" + residentId;
+		
+		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestNotificationDispatcher(createProcessNotificationRequest(residentId)), "process-notification-teststub-service", EI_TEST_TIMEOUT);
         
 		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
 		assertEquals(ResultCodeEnum.OK, nr.getResultCode());
@@ -117,7 +158,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     public void endToEnd_update_ERR_timeout_in_subscriber() {
 
 		UpdateType request = createUdateRequest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
-		new DoOneTestDispatcher(request).doDispatch();
+		new DoOneTestUpdateDispatcher(request).doDispatch();
 		Exception e = waitForException(SERVICE_TIMOUT_MS + 2000);
 
 		// Assert that we got the expected exception
@@ -134,26 +175,52 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		assertQueueDepth(PROCESS_QUEUE, 0);
     }
 
-	private class DoOneTestDispatcher implements Dispatcher {
+	private class DoOneTestUpdateDispatcher implements Dispatcher {
 		
 		private UpdateType request = null;
 		private String logicalAddress = null;
 
-		private DoOneTestDispatcher(UpdateType request) {
+		private DoOneTestUpdateDispatcher(UpdateType request) {
 			this.request  = request;
 			this.logicalAddress = LOGICAL_ADDRESS;
 		}
 		
-		private DoOneTestDispatcher(String logicalAddress, UpdateType request) {
+		private DoOneTestUpdateDispatcher(String logicalAddress, UpdateType request) {
 			this.request  = request;
 			this.logicalAddress = logicalAddress;
 		}
 		
 		@Override
 		public void doDispatch() {
-			UpdateTestConsumer consumer = new UpdateTestConsumer(SERVICE_ADDRESS);
+			UpdateTestConsumer consumer = new UpdateTestConsumer(UPDATE_SERVICE_ADDRESS);
 
 			UpdateResponseType response = consumer.callService(logicalAddress, request);
+	        
+			// Assert OK response from the web service
+	        assertEquals(ResultCodeEnum.OK, response.getResultCode());
+		}
+	}
+	
+	private class DoOneTestNotificationDispatcher implements Dispatcher {
+		
+		private ProcessNotificationType request = null;
+		private String logicalAddress = null;
+
+		private DoOneTestNotificationDispatcher(ProcessNotificationType request) {
+			this.request  = request;
+			this.logicalAddress = LOGICAL_ADDRESS;
+		}
+		
+		private DoOneTestNotificationDispatcher(String logicalAddress, ProcessNotificationType request) {
+			this.request  = request;
+			this.logicalAddress = logicalAddress;
+		}
+		
+		@Override
+		public void doDispatch() {
+			NotificationTestConsumer consumer = new NotificationTestConsumer(NOTIFICATION_SERVICE_ADDRESS);
+
+			ProcessNotificationResponseType response = consumer.callService(logicalAddress, request);
 	        
 			// Assert OK response from the web service
 	        assertEquals(ResultCodeEnum.OK, response.getResultCode());
