@@ -126,7 +126,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		// Expect 3 error log and 17 info log entries
 		assertQueueDepth(ERROR_LOG_QUEUE, 3);
 		
-		// TODO. Use assertQueueMatchesMessages() instead to match all three messages with their different service names, e.g. : <serviceImplementation>notification-service-HSA_ID_A</serviceImplementation>
+		// TODO. Use assertQueueMatchesMessages() instead to match all three messages with their different service names, e.g. : <serviceImplementation>notify-service-HSA_ID_A</serviceImplementation>
 		assertQueueContainsMessage(ERROR_LOG_QUEUE, "java.net.SocketTimeoutException: Read timed out");
 		assertQueueDepth(INFO_LOG_QUEUE, 17);
 

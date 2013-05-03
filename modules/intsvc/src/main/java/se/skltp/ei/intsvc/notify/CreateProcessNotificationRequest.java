@@ -1,4 +1,4 @@
-package se.skltp.ei.intsvc.processnotification;
+package se.skltp.ei.intsvc.notify;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

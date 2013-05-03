@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.registry.RegistrationException;
@@ -14,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
-import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.intsvc.EiMuleServer;
@@ -23,8 +20,6 @@ import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.impl.FindContentBean;
-import sun.print.ServiceDialog;
 
 public class FindContentServiceIntegrationTest extends AbstractTestCase {
 
@@ -116,7 +111,7 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
         String expectedErrorMessage = "EI000: A technical error has occurred, error message: registeredResidentIdentification is mandatory but missing";
         
         try {
-			FindContentResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
+			consumer.callService(LOGICAL_ADDRESS, request);
 			fail("Test failed");
 		} catch (javax.xml.ws.soap.SOAPFaultException e) {
 			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???

@@ -20,42 +20,42 @@
 
     <spring:beans>
         <!-- Bean with business validation logic -->
-        <spring:bean name="update-validation-bean" class="se.skltp.ei.svc.service.impl.ProcessBean">
+        <spring:bean name="notification-validation-bean" class="se.skltp.ei.svc.service.impl.ProcessBean">
         	<spring:property name="owner" value="${EI_HSA_ID}"/>
         </spring:bean>
 
         <!-- Bean that expose a Web Service -->
-        <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.update.UpdateWSBean">
-            <spring:property name="blBean" ref="update-validation-bean"/>
+        <spring:bean name="notification-ws-bean" class="se.skltp.ei.intsvc.notification.NotificationWSBean">
+            <spring:property name="blBean" ref="notification-validation-bean"/>
         </spring:bean>
         
     </spring:beans>
 
-    <flow name="update-service" doc:name="update-service">
+    <flow name="notification-service" doc:name="notification-service">
 
         <inbound-endpoint 
-            address="${UPDATE_WEB_SERVICE_URL}"  
+            address="${NOTIFICATION_WEB_SERVICE_URL}"  
             connector-ref="soitoolkit-http-connector"
             exchange-pattern="request-response"
             transformer-refs="logReqIn"
             responseTransformer-refs="logRespOut" doc:name="Generic"/>
 
         <cxf:jaxws-service
-            namespace="urn:riv:itintegration:engagementindex:Update:1:rivtabp21"
-            serviceClass="se.skltp.ei.intsvc.update.UpdateWSBean"
-            wsdlLocation="classpath:/ei-schemas/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
+            namespace="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21"
+            serviceClass="se.skltp.ei.intsvc.notification.NotificationWSBean"
+            wsdlLocation="classpath:/ei-schemas/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
 
         <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
  
         <component doc:name="Java">
-            <spring-object bean="update-ws-bean"/>
+            <spring-object bean="notification-ws-bean"/>
         </component>
 
         <set-variable variableName="response" value="#[payload]" doc:name="Variable"/>
 
         <set-payload value="#[variable:request]" doc:name="Set Payload"/>        
 
-        <custom-transformer class="se.skltp.ei.intsvc.update.UpdateRequestToJmsMsgTransformer" doc:name="Java"/>
+        <custom-transformer class="se.skltp.ei.intsvc.notification.ProcessNotificationRequestToJmsMsgTransformer" doc:name="Java"/>
 
         <jms:outbound-endpoint 
             connector-ref="soitoolkit-jms-connector"

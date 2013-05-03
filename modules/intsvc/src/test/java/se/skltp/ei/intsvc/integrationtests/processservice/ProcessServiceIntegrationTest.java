@@ -42,7 +42,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 
 	
 	private static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
-	private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
+	private static final String NOTIFY_TOPIC = rb.getString("NOTIFY_TOPIC");
     
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -93,12 +93,12 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 
 		// Setup a test-subscriber on the notification-topic
 		TopicSession topicSession = getJmsUtil().getTopicSession();
-		Topic topic = topicSession.createTopic(NOTIFICATION_TOPIC);
+		Topic topic = topicSession.createTopic(NOTIFY_TOPIC);
 		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
 		topicSubscriber.setMessageListener(this);
 
 		// Send an update message to the process-service and wait for a publish on the notification topic
-		MuleMessage r = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFICATION_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+		MuleMessage r = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFY_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 
         // Compare the notified message with the request message, they should be the same
         TextMessage jmsMsg = (TextMessage)r.getPayload();

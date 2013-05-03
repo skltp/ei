@@ -29,7 +29,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
     
-    private static final String NOTIFICATION_TOPIC = rb.getString("NOTIFICATION_TOPIC");
+    private static final String NOTIFY_TOPIC = rb.getString("NOTIFY_TOPIC");
     
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -92,7 +92,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	private void doOneTest(final UpdateType request) throws JMSException {
 
 		String requestXml = jabxUtil.marshal(of.createUpdate(request));
-		MuleMessage mr = dispatchAndWaitForServiceComponent("jms://topic:" + NOTIFICATION_TOPIC + "?connector=soitoolkit-jms-connector", requestXml, null, "process-notification-teststub-service", EI_TEST_TIMEOUT);
+		MuleMessage mr = dispatchAndWaitForServiceComponent("jms://topic:" + NOTIFY_TOPIC + "?connector=soitoolkit-jms-connector", requestXml, null, "process-notification-teststub-service", EI_TEST_TIMEOUT);
 
 		// TODO: How to verify that all three got their notifications?
 		// Check log-queue?

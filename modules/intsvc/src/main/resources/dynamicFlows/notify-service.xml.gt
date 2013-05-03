@@ -36,15 +36,15 @@
 <% LOGICAL_ADDRESSES.each { LOGICAL_ADDRESS -> %>
     <spring:beans>
         <!-- Bean that creates a ProcessNotification request -->
-        <spring:bean name="create-process-notification-request-bean-${LOGICAL_ADDRESS}" class="se.skltp.ei.intsvc.processnotification.CreateProcessNotificationRequest">
+        <spring:bean name="create-process-notification-request-bean-${LOGICAL_ADDRESS}" class="se.skltp.ei.intsvc.notify.CreateProcessNotificationRequest">
             <spring:property name="logicalAddress" value="${LOGICAL_ADDRESS}"/>
         </spring:bean>
     </spring:beans>
 
-    <flow name="notification-service-${LOGICAL_ADDRESS}">
+    <flow name="notify-service-${LOGICAL_ADDRESS}">
         <jms:inbound-endpoint 
             connector-ref="skltp-ei-jms-topic-connector"
-            topic="${NOTIFICATION_TOPIC}" 
+            topic="${NOTIFY_TOPIC}" 
             durableName="${LOGICAL_ADDRESS}" 
             transformer-refs="logMsgIn" 
             doc:name="JMS Topic">
@@ -57,7 +57,7 @@
 
         <http:outbound-endpoint 
             connector-ref="soitoolkit-http-connector"
-            address="${NOTIFICATION_OUTBOUND_URL}" 
+            address="${NOTIFY_OUTBOUND_URL}" 
             exchange-pattern="request-response"
             responseTimeout="${SERVICE_TIMEOUT_MS}"
             transformer-refs="logReqOut"

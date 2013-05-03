@@ -14,6 +14,8 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.mule.api.MuleMessage;
 import org.mule.api.context.notification.EndpointMessageNotificationListener;
 import org.mule.api.context.notification.ServerNotification;
@@ -28,6 +30,7 @@ import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 import org.soitoolkit.commons.mule.util.ValueHolder;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
@@ -43,8 +46,9 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 	protected static final int EI_TEST_TIMEOUT   = 5000;
 	protected static final int EI_SHORT_WAITTIME =  500;
 
-	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
-	private static final ObjectFactory of = new ObjectFactory();
+	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class, ProcessNotificationType.class);
+	private static final ObjectFactory update_of = new ObjectFactory();
+	private static final riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory processNotification_of = new riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory();
 
     protected static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 	protected static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
@@ -59,7 +63,7 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
     
 	protected AbstractJmsTestUtil getJmsUtil() {
 		
-		// TODO: Fix lazy init of JMS connection et al so that we can create jmsutil in the declaration
+		// TODO: Fix lazy init update_of JMS connection et al so that we can create jmsutil in the declaration
 		// (The embedded ActiveMQ queue manager is not yet started by Mule when jmsutil is declared...)
 		if (jmsUtil == null) {
 			String clientId = UUID.randomUUID().toString();
@@ -127,16 +131,59 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 		try {
 			TextMessage actualJms = (TextMessage)actual.getPayload();
 			String actualXml = actualJms.getText();
-			String expectedXml = jabxUtil.marshal(of.createUpdate(expected));
-			assertEquals(expectedXml, actualXml);
+			String expectedXml = jabxUtil.marshal(update_of.createUpdate(expected));
+			assertXml(expectedXml, actualXml);
 		} catch (JMSException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	protected void assertProcessNotificationRequest(ProcessNotificationType expected, MuleMessage actual) {
+		try {
+			TextMessage actualJms = (TextMessage)actual.getPayload();
+			String actualXml = actualJms.getText();
+			
+			String expectedXml = jabxUtil.marshal(processNotification_of.createProcessNotification(expected));
+			assertXml(expectedXml, actualXml);
+		} catch (JMSException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+    private void assertXml(String expected, String actual) {
+
+    	// We're using Xml Unit to compare results
+        // Ignore whitespace and comments
+
+    	try {
+	        XMLUnit.setIgnoreWhitespace(true);
+	        XMLUnit.setIgnoreComments(true);
+	        
+	        // Check if XSL transformation went OK
+	        Diff diff = new Diff(expected, actual);
+
+	        assertTrue("XML compare failed " + diff, diff.similar());
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+    }        
+    
 	protected UpdateType createUdateRequest(long... residentIds) {
 
 		UpdateType request = new UpdateType();
+
+		for (int i = 0; i < residentIds.length; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
+			request.getEngagementTransaction().add(et);
+		}
+		
+		return request;
+    }
+	
+	protected ProcessNotificationType createProcessNotificationRequest(long... residentIds) {
+
+		ProcessNotificationType request = new ProcessNotificationType();
 
 		for (int i = 0; i < residentIds.length; i++) {
 			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
@@ -232,7 +279,7 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 					if (notification instanceof EndpointMessageNotification) {
 						EndpointMessageNotification endpointNotification = (EndpointMessageNotification)notification;
 
-						// Extract action and name of the endpoint
+						// Extract action and name update_of the endpoint
 						int    actualAction   = endpointNotification.getAction();
 						String actualEndpoint = MuleUtil.getEndpointName(endpointNotification);
 

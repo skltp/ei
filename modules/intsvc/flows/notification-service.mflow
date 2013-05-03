@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="update-service">
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="notification-service">
     <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#1">
         <properties>
             <property name="factory-bean"/>
@@ -15,7 +15,7 @@
             <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
             <property name="id"/>
             <property name="primary"/>
-            <property name="name" value="update-validation-bean"/>
+            <property name="name" value="notification-validation-bean"/>
             <property name="autowire"/>
             <property name="destroy-method"/>
             <property name="auxiliary;index" value="2"/>
@@ -37,28 +37,28 @@
             <property name="init-method"/>
             <property name="autowire-candidate"/>
             <property name="factory-method"/>
-            <property name="class" value="se.skltp.ei.intsvc.update.UpdateWSBean"/>
+            <property name="class" value="se.skltp.ei.intsvc.notification.NotificationWSBean"/>
             <property name="parent"/>
             <property name="children"/>
             <property name="lazy-init"/>
             <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
             <property name="id"/>
             <property name="primary"/>
-            <property name="name" value="update-ws-bean"/>
+            <property name="name" value="notification-ws-bean"/>
             <property name="autowire"/>
             <property name="destroy-method"/>
             <property name="auxiliary;index" value="4"/>
             <property name="auxiliary;wrapIn" value="1"/>
             <property name="depends-on"/>
             <property-collection name="@http://www.springframework.org/schema/beans/property;0">
-                <property name="ref" value="update-validation-bean"/>
+                <property name="ref" value="notification-validation-bean"/>
                 <property name="name" value="blBean"/>
                 <property name="auxiliary;index" value="5"/>
                 <property name="auxiliary;wrapIn" value="5"/>
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="update-service" entity-id="c5b5b5b7-27ff-41e1-be72-e0904e725d65">
+    <flow SubFlow="false" name="notification-service" entity-id="bd4eee19-1d63-402a-aa7b-e8f6087508df">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -74,7 +74,7 @@
                     <property name="ref"/>
                     <property name="transformer-refs" value="logReqIn"/>
                     <property name="businessEventsLabel"/>
-                    <property name="address" value="${UPDATE_WEB_SERVICE_URL}"/>
+                    <property name="address" value="${NOTIFICATION_WEB_SERVICE_URL}"/>
                     <property name="encoding"/>
                     <property name="responseTransformer-refs" value="logRespOut"/>
                     <property name="disableTransportTransformer"/>
@@ -90,11 +90,11 @@
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
                     <property name="port"/>
-                    <property name="wsdlLocation" value="classpath:/ei-schemas/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl"/>
-                    <property name="serviceClass" value="se.skltp.ei.intsvc.update.UpdateWSBean"/>
+                    <property name="wsdlLocation" value="classpath:/ei-schemas/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl"/>
+                    <property name="serviceClass" value="se.skltp.ei.intsvc.notification.NotificationWSBean"/>
                     <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/cxf/jaxws-service"/>
                     <property name="configuration-ref"/>
-                    <property name="namespace" value="urn:riv:itintegration:engagementindex:Update:1:rivtabp21"/>
+                    <property name="namespace" value="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21"/>
                     <property name="validationEnabled"/>
                     <property name="bindingId"/>
                     <property name="onException"/>
@@ -120,7 +120,7 @@
                     <property name="class"/>
                     <property name="auxiliary;index" value="10"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/core/spring-object;0">
-                        <property name="bean" value="update-ws-bean"/>
+                        <property name="bean" value="notification-ws-bean"/>
                         <property name="auxiliary;index" value="11"/>
                         <property name="auxiliary;wrapIn" value="11"/>
                     </property-collection>
@@ -148,7 +148,7 @@
                     <property name="returnClass"/>
                     <property name="ignoreBadInput"/>
                     <property name="encoding"/>
-                    <property name="class" value="se.skltp.ei.intsvc.update.UpdateRequestToJmsMsgTransformer"/>
+                    <property name="class" value="se.skltp.ei.intsvc.notification.ProcessNotificationRequestToJmsMsgTransformer"/>
                     <property name="mimeType"/>
                     <property name="auxiliary;index" value="14"/>
                 </properties>

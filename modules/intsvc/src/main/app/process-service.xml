@@ -42,7 +42,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
 
         <jms:outbound-endpoint 
             connector-ref="soitoolkit-jms-connector"
-            topic="${NOTIFICATION_TOPIC}" 
+            topic="${NOTIFY_TOPIC}" 
             transformer-refs="logMsgOut" 
             doc:name="JMS Topic">
             <jms:transaction action="ALWAYS_JOIN"/>
