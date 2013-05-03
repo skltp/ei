@@ -1,6 +1,7 @@
 package se.skltp.ei.svc.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,8 +18,11 @@ import org.mockito.stubbing.Answer;
 
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
+import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
+import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.impl.FindContentBean;
 
 public class FindContentBeanTest {
@@ -56,10 +60,76 @@ public class FindContentBeanTest {
      * R1 test with n engagements
      */
     @Test
-    public void r1_findContent_ok() throws Exception {
+    public void findContent_R1_OK() throws Exception {
         
-        FindContentResponseType r = BEAN.findContent(null, new FindContentType());
+    	Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
+    	
+    	FindContentType request = new FindContentType();
+    	request.setRegisteredResidentIdentification(engagement.getRegisteredResidentIdentification());
+    	request.setServiceDomain(engagement.getServiceDomain());
+    	
+        FindContentResponseType r = BEAN.findContent(null, request);
         assertEquals(0, r.getEngagement().size());
     }
-
+   
+    
+    @Test 
+    public void  findContent_R1_OK_validate_findContent() {
+    	
+    	Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
+    	
+    	FindContentType request = new FindContentType();
+    	request.setRegisteredResidentIdentification(engagement.getRegisteredResidentIdentification());
+    	request.setServiceDomain(engagement.getServiceDomain());
+    	
+    	try {
+			BEAN.validateFindContent(null, request);
+		} catch (EiException e) {
+			fail("Test failed");
+		}   	
+    
+		assertTrue("Test went ok", true);
+    }
+    
+    
+    
+    @Test
+    public void findContent_R1_ERR_validate_findContent() {
+    	
+    	Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
+    	FindContentType request = new FindContentType();
+    	
+    	// Test without registeredResidentIdentification and serviceDomain
+    	try {
+			BEAN.validateFindContent(null, request);
+			fail("This should not happen");
+    	} catch (EiException e) {
+    		System.out.println(e.getMessage());
+    		assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
+		}
+    	
+    	// Test without serviceDomain
+    	request.setRegisteredResidentIdentification(engagement.getRegisteredResidentIdentification());
+    	try {
+			BEAN.validateFindContent(null, request);
+			fail("This should not happen");
+    	} catch (EiException e) {
+    		System.out.println(e.getMessage());
+    		assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
+    		assertTrue(e.getMessage().endsWith(FindContentBean.MISSING_SERVICEDOMAIN_MESSAGE));
+		}
+    	
+    	// Test without registeredResidentIdentification
+    	request.setRegisteredResidentIdentification(null);
+    	request.setServiceDomain(engagement.getServiceDomain());
+    	try {
+			BEAN.validateFindContent(null, request);
+			fail("This should not happen");
+    	} catch (EiException e) {
+    		System.out.println(e.getMessage());
+    		assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
+    		assertTrue(e.getMessage().endsWith(FindContentBean.MISSING_PERSON_MESSAGE));
+		}
+    }
+    
 }

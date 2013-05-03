@@ -16,6 +16,8 @@ import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import static se.skltp.ei.svc.entity.model.EngagementSpecifications.*;
+import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
+import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.FindContentInterface;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.impl.util.EntityTransformer;
@@ -25,7 +27,12 @@ public class FindContentBean implements FindContentInterface {
     private static final Logger LOG = LoggerFactory.getLogger(FindContentBean.class);
 
     private EngagementRepository engagementRepository;
-
+    
+    // Exception messages for missing fields
+    public static final String MISSING_PERSON_MESSAGE = "registeredResidentIdentification is mandatory but missing";
+    public static final String MISSING_SERVICEDOMAIN_MESSAGE = "serviceDomain is mandatory but missing";
+    
+    
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
         this.engagementRepository = engagementRepository;
@@ -41,7 +48,10 @@ public class FindContentBean implements FindContentInterface {
     @Transactional(readOnly=true)
     public FindContentResponseType findContent(Header header, FindContentType parameters) {
         LOG.debug("The svc.findContent service is called");
-
+        
+        // Validate input
+        this.validateFindContent(header, parameters);
+        
         FindContentResponseType response = new FindContentResponseType();
 
         Iterable<Engagement> dbSearchResult = engagementRepository.findAll(createQuery(parameters));
@@ -101,5 +111,25 @@ public class FindContentBean implements FindContentInterface {
         return specs;
 
     }
+    
+    /**
+     * Validate that we got enough information to do a query
+     * 
+     * @param header
+     * @param findContent
+     * @throws EiException
+     */
+    public void validateFindContent(Header header, FindContentType findContent) throws EiException {
+    	 
+    	// We need at least registeredResidentIdentification and serviceDomain to do a query
+    	
+    	if(findContent.getRegisteredResidentIdentification() == null) {
+    		throw new EiException(EiErrorCodeEnum.EI000_TECHNICAL_ERROR, MISSING_PERSON_MESSAGE);
+    		
+    	} else if(findContent.getServiceDomain() == null) {
+    		throw new EiException(EiErrorCodeEnum.EI000_TECHNICAL_ERROR, MISSING_SERVICEDOMAIN_MESSAGE);
+    	} 
+    }
+
 
 }
