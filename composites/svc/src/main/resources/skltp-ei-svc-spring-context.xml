@@ -10,7 +10,7 @@
     http://www.springframework.org/schema/data/jpa
     http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
-    <context:component-scan base-package="se.skltp.ei.entity.model"/>
+    <context:component-scan base-package="se.skltp.ei.svc"/>
 
     <jpa:repositories base-package="se.skltp.ei.svc.entity.repository"/>
 

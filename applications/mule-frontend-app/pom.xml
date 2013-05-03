@@ -17,7 +17,7 @@ DON'T CHANGE THE CONTENT OF THIS COMMENT UNLESS YOU REALLY KNOW WHAT YOU ARE DOI
         <relativePath>../../pom.xml</relativePath> 
     </parent>
 
-    <artifactId>skltp-ei-application-mule-backend-app</artifactId>
+    <artifactId>skltp-ei-application-mule-frontend-app</artifactId>
     <packaging>mule</packaging>
     <name>${project.artifactId}</name>
     

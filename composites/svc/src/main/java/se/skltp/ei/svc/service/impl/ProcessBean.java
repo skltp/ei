@@ -49,6 +49,7 @@ public class ProcessBean implements ProcessInterface {
     
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
+        LOG.info("ProcessBean got its engagementRepository injected");
         this.engagementRepository = engagementRepository;
     }
 

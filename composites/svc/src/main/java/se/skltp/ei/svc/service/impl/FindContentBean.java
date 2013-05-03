@@ -35,6 +35,7 @@ public class FindContentBean implements FindContentInterface {
     
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
+        LOG.info("FindContentBean got its engagementRepository injected: " + engagementRepository);
         this.engagementRepository = engagementRepository;
     }
 

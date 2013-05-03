@@ -24,6 +24,7 @@ public class CreateDynamicFlows  {
 
         int flowNo = 0;
         Object configFile = null;
+        log.info("Loading static flows...");
         do {
             String param = "STATIC_FLOW_" + ++flowNo;
             configFile = propertyMap.get(param);
@@ -44,6 +45,7 @@ public class CreateDynamicFlows  {
         
         flowNo = 0;
         Object templateFile = null;
+        log.info("Loading dynamic flows...");
         do {
             String param = "DYNAMIC_FLOW_" + ++flowNo;
             templateFile = propertyMap.get(param);

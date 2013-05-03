@@ -108,10 +108,20 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 
 	private List<String> getLogicalAdresses(MuleContext muleContext) throws MuleException {
 		
-		// FIXME. Cache result in a local file ang get if from the file if the service doesn't respond.
-		MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
-		GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
-		List<String> logicalAdresses = logicalAddressesResponse.getLogicalAddress();
+		// FIXME. Cache result in a local file and get if from the file if the service doesn't respond.
+		log.info("Looking up logical addresses for dynamic notify flows");
+		List<String> logicalAdresses = null;
+		try {
+			MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
+			GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
+			logicalAdresses = logicalAddressesResponse.getLogicalAddress();
+
+		} catch (Exception e) {
+			log.warn("Faild finding logical addresses, err: {}", e.getMessage());
+			logicalAdresses = new ArrayList<String>();
+		}
+		log.info("Found {} logical addresse" +
+				"s for dynamic notify flows", logicalAdresses.size());
 		return logicalAdresses;
 	}
 

@@ -27,7 +27,6 @@ public class FindContentWSBean implements FindContentResponderInterface {
      */
     @Override
     public FindContentResponseType findContent(String logicalAddress, FindContentType parameters) {
-        return blBean.findContent(null, parameters);
+    	return blBean.findContent(null, parameters);
     }
-
 }

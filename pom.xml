@@ -26,6 +26,7 @@
 		<module>composites/svc</module>
 		<module>modules/intsvc</module>
         <module>applications/mule-backend-app</module>
+        <module>applications/mule-frontend-app</module>
 	</modules>
 		
 </project>
