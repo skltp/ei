@@ -52,6 +52,10 @@
 	    <property name="initialSize"   	 value="${EI_JDBC_CON_POOL_INIT_SIZE}"/>
 	    <property name="maxActive"   	 value="${EI_JDBC_CON_POOL_MAX_ACTIVE}"/>
 	    <property name="maxIdle"   		 value="${EI_JDBC_CON_POOL_MAX_IDLE}"/>
+	    <property name="defaultAutoCommit" value="false"/>
+	    <property name="poolPreparedStatements" value="true"/>
+	    <property name="maxOpenPreparedStatements" value="20"/>
+	    <property name="testOnBorrow" value="true" />	    
 	</bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

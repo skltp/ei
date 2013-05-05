@@ -28,11 +28,15 @@
     <!-- pl.mjedynak.repository -->
     <jpa:repositories base-package="se.skltp.ei.svc.entity.repository"/>
     
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="${driverClassName}" />
         <property name="url"        value="${url}"/>
         <property name="username"   value="${username}"/>
         <property name="password"   value="${password}"/>
+	    <property name="defaultAutoCommit" value="false"/>
+	    <property name="poolPreparedStatements" value="true"/>
+	    <property name="maxOpenPreparedStatements" value="20"/>
+	    <property name="testOnBorrow" value="true" />
     </bean>
 
  
