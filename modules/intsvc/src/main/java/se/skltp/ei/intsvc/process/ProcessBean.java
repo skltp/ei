@@ -19,6 +19,12 @@ public class ProcessBean {
     public void setBlBean(ProcessInterface blBean) {
     	this.blBean = blBean;
     }
+
+	private String owner;
+
+    public void setOwner(String owner) {
+		this.owner = owner;
+	}
     
     /**
      *
@@ -35,6 +41,8 @@ public class ProcessBean {
     		blBean.update(null, (UpdateType)requestJaxb);
     	} else {
     		blBean.processNotification(null, (ProcessNotificationType)requestJaxb);
+    		
+    		// FIXME - ML: Filter records with owner = me!
     	}
 
     	return requestStr;

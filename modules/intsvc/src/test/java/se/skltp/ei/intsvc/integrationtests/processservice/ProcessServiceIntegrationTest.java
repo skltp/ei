@@ -123,6 +123,8 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		assertRequest(requestXml, processNotificationMessage);
     }
 
+	// FIXME - ML: Add PN tests with and without owner = me!
+
 	/**
 	 * Perform a test that is expected to return one hit
 	 * @throws JMSException 

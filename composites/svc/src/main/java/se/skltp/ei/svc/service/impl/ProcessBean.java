@@ -143,16 +143,14 @@ public class ProcessBean implements ProcessInterface {
     }
 
 	@Override
-	public void validateProcessNotification(Header header,
-			ProcessNotificationType parameters) {
-		// TODO Auto-generated method stub
+	public void validateProcessNotification(Header header, ProcessNotificationType parameters) {
+	    // TODO. Patrik. Add validation rules here, specifically regarding that the owner field is prsent.
 		
 	}
 
 	@Override
-	public ProcessNotificationResponseType processNotification(Header header,
-			ProcessNotificationType parameters) {
-		// TODO Auto-generated method stub
+	public ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType parameters) {
+	    // TODO. Patrik. Add business rules here.
 		return null;
 	}
 }
