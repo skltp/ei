@@ -137,8 +137,6 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	/**
 	 * Perform a test that is expected to return one hit
 	 */
-    // TODO. Patrik. Remove Ignore annotation once business logic is in place.
-    @Ignore
     @Test
     public void endToEnd_notification_OK() {
     	

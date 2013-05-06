@@ -32,6 +32,8 @@ import org.junit.Test;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
@@ -95,6 +97,7 @@ public class ProcessBeanTest {
         UpdateResponseType r = BEAN.update(null, request);
         assertEquals(ResultCodeEnum.OK, r.getResultCode());
     }
+    
 
     /**
      * test R1 for Update service with an negative test, i.e. null engagements (that is not allowed)
@@ -180,4 +183,74 @@ public class ProcessBeanTest {
 		}
     }
     
+    
+    /*** 
+     * Test for processNotification 
+     */
+    
+    
+    /**
+     * test R1 for Update service with an positive test, i.e. two different engagements
+     */
+    @Test
+    public void processNotication_update_R1_OK() throws Exception {
+
+    	ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        EngagementTransactionType et2 = GenServiceTestDataUtil.genEngagementTransaction(2222222222L);
+
+		request.getEngagementTransaction().add(et1);
+		request.getEngagementTransaction().add(et2);
+        
+        ProcessNotificationResponseType r = BEAN.processNotification(null, request);
+        assertEquals(ResultCodeEnum.OK, r.getResultCode());
+    }
+    
+
+    /**
+     * test R1 for Update service used for processNotifcation with an negative test, i.e. null engagements (that is not allowed)
+     */
+    @Test
+    public void processNotification_update_R1_ERR_null() throws Exception {
+
+        try {
+			ProcessNotificationType request = new ProcessNotificationType();
+			EngagementTransactionType e1 = null;
+			request.getEngagementTransaction().add(e1);
+			
+			BEAN.validateProcessNotification(HEADER, request);
+			fail("Expected exception here");
+		
+        } catch (NullPointerException e) {
+			// That was the expected exception, carry on...
+        	// TODO: Validate expected error message
+		}
+    }
+
+    /**
+     * test R1 for Update service used for processNotification with an negative test, i.e. verify that the validation detects two equal engagements in the same request (that is not allowed)
+     */
+    @Test
+    public void processNotification_update_R1_ERR_validate_non_equal() throws Exception {
+
+        try {
+        	ProcessNotificationType request = new ProcessNotificationType();
+			EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+			EngagementTransactionType et2 = GenServiceTestDataUtil.genEngagementTransaction(2222222222L);
+		    EngagementTransactionType et3 = GenServiceTestDataUtil.genEngagementTransaction(3333333333L);
+
+		    request.getEngagementTransaction().add(et3);
+			request.getEngagementTransaction().add(et1);
+			request.getEngagementTransaction().add(et2);
+			request.getEngagementTransaction().add(et1);
+			
+			BEAN.validateProcessNotification(HEADER, request);
+			fail("Expected exception here");
+
+        } catch (EiException e) {
+			// That was the expected exception, carry on...
+        	assertEquals("EI002", e.getCode());
+        	assertEquals("EI002: EngagementTransaction #2 and #4 have the same key. That is not allowed. See rule for Update-R1 in service contract", e.getMessage());
+		}
+    }
 }

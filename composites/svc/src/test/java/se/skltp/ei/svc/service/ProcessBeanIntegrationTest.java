@@ -39,6 +39,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
@@ -288,6 +289,115 @@ public class ProcessBeanIntegrationTest {
     }
     
 
+    /*** Test for ProcessNotification logic ***/
+    
+    
+    @Test
+    public void processNotification_R1_OK_owner_should_be_saved() {
+    	
+        ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+
+        // Setting an owner different from the owner of the index to verify
+        // that the incoming owner is stored
+        String remoteOwner = "remote-owner";
+        et1.getEngagement().setOwner(remoteOwner);
+        request.getEngagementTransaction().add(et1);
+        
+        BEAN.processNotification(null, request);
+        
+        // Validate the owner is the correct one
+        Engagement foundEngagement = getSingleEngagement();
+        assertThat(foundEngagement.getOwner(), equalTo(remoteOwner));
+    }
+    
+    
+    @Test
+    public void processNotification_R2_OK_delete_engagesments_before_save() {
+    	
+    	ProcessNotificationType request = new ProcessNotificationType();        
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        et1.setDeleteFlag(true);
+        
+        BEAN.processNotification(null, request);
+    
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(0));
+    }
+    
+    @Test
+    public void processNotification_R2_OK_delete_engagesments_after_save() {
+    	ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        
+        // Update 1
+        BEAN.processNotification(null, request);
+        assertThat(getSingleEngagement(), notNullValue());
+        
+        // Update 2 - should delete the post
+        et1.setDeleteFlag(true);
+        BEAN.processNotification(null, request);
+        
+        // Fetch all posts
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(0));
+    }
+    
+    /**
+     * Tests that the default value for deleteFlag dosen't actually delete the engagement
+     */
+    @Test
+    public void processNotification_R2_OK_should_not_delete_when_deleteflag_is_false() {
+    	
+    	ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        
+        et1.setDeleteFlag(false); // Should be "default" state
+        
+        BEAN.processNotification(null, request);
+        
+        // Fetch all posts
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(1));
+    }
+    
+    /**
+     * Tests rule R4 that notifications are not saved when the owner in
+     * the engagement is the same as the current owner of the EI.
+     * 
+     * This logic DOES NOT handle the issue with dropping circular notifications.
+     */
+    @Test
+    public void processNotification_R4_do_not_save_circular_notifications() {
+        ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+
+        // Setting an owner different from the owner of the index to verify
+        // that the incoming owner is stored
+        et1.getEngagement().setOwner(OWNER);
+        request.getEngagementTransaction().add(et1);
+        
+        BEAN.processNotification(null, request);
+        
+        // Data store should be empty
+        engagementRepository.flush();
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(0));
+    }
+//    
+//    TODO (patrik) - not done
+//    @Test
+//    public void processNotification_R5_new_owner() {
+//        ProcessNotificationType request = new ProcessNotificationType();
+//        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+//        
+//    }
+//    
+//    
+    
     /**
      * Convenience method for getting the only saved Engagement from the data store. Asserts that it only finds one Engagement
      * @return Engagement

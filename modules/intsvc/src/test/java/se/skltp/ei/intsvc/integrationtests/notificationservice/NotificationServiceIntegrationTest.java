@@ -97,8 +97,6 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 	/**
 	 * Validate correct error message when two Engagement Transactions have the same key
 	 */
-    // TODO. Patrik. Remove Ignore annotation once business logic is in place.
-    @Ignore
     @Test
     public void update_R1_ERR_duplicate_tx_found() {
 		

@@ -55,8 +55,14 @@ public class ProcessBean implements ProcessInterface {
 
     private EngagementRepository engagementRepository;
 
-    //
     private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
+        @Override
+        public ResultCodeEnum getResultCode() {
+            return ResultCodeEnum.OK;
+        }
+    };
+    
+    private static ProcessNotificationResponseType NOTIFICATION_RESPONSE_OK = new ProcessNotificationResponseType() {
         @Override
         public ResultCodeEnum getResultCode() {
             return ResultCodeEnum.OK;
@@ -88,10 +94,15 @@ public class ProcessBean implements ProcessInterface {
 
     // Update, R1: Validate uniqueness within the request
 	private void validateUniqueness(UpdateType request) {
-		final Map<String, Integer> hashCodes = new HashMap<String, Integer>(request.getEngagementTransaction().size());
+		validateUniqueness(request.getEngagementTransaction());
+	}
+	
+	// R1 - validate uniqueness for engagement in EngangementTransactions
+	private void validateUniqueness(List<EngagementTransactionType> engagementTransactions ) {
+		final Map<String, Integer> hashCodes = new HashMap<String, Integer>(engagementTransactions.size());
         int hashCodeIndex = 0;
 
-        for (final EngagementTransactionType engagementTransaction : request.getEngagementTransaction()) {
+        for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
             final Engagement e = toEntity(engagementTransaction.getEngagement());
             final Integer otherIndex = hashCodes.put(e.getId(), ++hashCodeIndex);
             if (otherIndex != null) {
@@ -99,6 +110,7 @@ public class ProcessBean implements ProcessInterface {
             }
         }
 	}
+	
 
 	// Update, R7: Logical address in request equals owner of EI
 	private void validateLogicalAddress(Header header) {
@@ -161,15 +173,84 @@ public class ProcessBean implements ProcessInterface {
         return RESPONSE_OK;
     }
 
+    /**
+     * Validates a processNotifcation request without touching the database.
+     * 
+     * @param header the header
+     * @param request the request
+     */
 	@Override
-	public void validateProcessNotification(Header header, ProcessNotificationType parameters) {
-	    // TODO. Patrik. Add validation rules here, specifically regarding that the owner field is prsent.
-		
+	public void validateProcessNotification(Header header, ProcessNotificationType request) {
+		validateUniqueness(request); // Update R1
 	}
+	
+	/**
+	 * R1 - Validate uniqueness within the request
+	 * @param request
+	 * @throws EiException when the validation fail
+	 */
+	private void validateUniqueness(ProcessNotificationType request) {
+		validateUniqueness(request.getEngagementTransaction());
+	}
+	
+	
+	/**
+	 * Performs an index update of based on a ProcessNotification
+	 * 
+     * @param header the header
+     * @param request the request
+     * @return the processNotifcation response
+	 */
+	@Override
+	@Transactional(isolation=Isolation.READ_UNCOMMITTED)
+	public ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType request) {
+		LOG.debug("The svc.processNotification service is called");
 
-	@Override
-	public ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType parameters) {
-	    // TODO. Patrik. Add business rules here.
-		return null;
+		// Separate deletes from the saves...
+		final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
+		final List<Engagement> saveList = new ArrayList<Engagement>(engagementTransactions.size());
+		List<Engagement> deleteList = null;
+		for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
+
+			EngagementType et = engagementTransaction.getEngagement();
+
+			// We should use the owner provided in the engagement
+
+			final Engagement e = toEntity(et);
+		
+			// If the owner of the engagement is same as the owner of the index, just drop the engagement
+			// since there is nothing for us to process here.
+			if(e.getOwner() == this.owner) {
+				LOG.info("Dropping this notification since this EI already is the owner of the Engagement");
+				continue;
+			}
+			
+			if (engagementTransaction.isDeleteFlag()) {
+				if (deleteList == null) {
+					deleteList = new ArrayList<Engagement>();
+				}
+				deleteList.add(e);
+			} else {
+				saveList.add(e);
+			}
+		}
+
+		// Perform the delete if any
+		if (deleteList != null) {
+			engagementRepository.delete(deleteList);
+		}
+
+		// Perform the save
+		engagementRepository.save(saveList);
+
+		return NOTIFICATION_RESPONSE_OK;
+		
+		// TODO (patrik) - hantera ut uppdatering av poster med annan owner ska göras
 	}
+	
+
+	
+//	private void saveEngagements(List<EngagementTransactionType> engagementTransactions) {
+//		
+//	}
 }
