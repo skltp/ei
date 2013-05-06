@@ -52,7 +52,7 @@ public class EngagementSpecifications {
         return new Specification<Engagement>() {
             @Override
             public Predicate toPredicate(Root<Engagement> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                return cb.lessThanOrEqualTo(root.get(Engagement_.mostRecentContent), mostRecent);
+                return cb.greaterThanOrEqualTo(root.get(Engagement_.mostRecentContent), mostRecent);
             }
         };
     }

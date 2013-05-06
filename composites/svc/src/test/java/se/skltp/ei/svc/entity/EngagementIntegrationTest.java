@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -129,15 +130,17 @@ public class EngagementIntegrationTest {
 
     @Test
     public void findContentMandatoryFieldsAndDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
         Engagement engagement  = GenEntityTestDataUtil.genEngagement(1212121212L);
-        engagement.setMostRecentContent(new Date());
+        engagement.setMostRecentContent(cal.getTime());
         engagementRepository.save(engagement);
 
         Engagement me = mock(Engagement.class);
         when(me.getRegisteredResidentIdentification()).thenReturn(engagement.getRegisteredResidentIdentification());
         when(me.getServiceDomain()).thenReturn(engagement.getServiceDomain());
         when(me.getBusinessObjectInstanceIdentifier()).thenReturn(null);
-        when(me.getMostRecentContent()).thenReturn(new Date());
+        when(me.getMostRecentContent()).thenReturn(cal.getTime());
         when(me.getCategorization()).thenReturn(null);
         when(me.getClinicalProcessInterestId()).thenReturn(null);
         when(me.getDataController()).thenReturn(null);
@@ -145,13 +148,19 @@ public class EngagementIntegrationTest {
         when(me.getSourceSystem()).thenReturn(null);
         when(me.getOwner()).thenReturn(null);
       
+        
         List<Engagement>list = engagementRepository.findAll(createSpecifications(me));        
         assertEquals(1, list.size());
         
-        when(me.getMostRecentContent()).thenReturn(new Date(0L));
-        
+        cal.add(Calendar.SECOND, 1);
+        when(me.getMostRecentContent()).thenReturn(cal.getTime());        
         list = engagementRepository.findAll(createSpecifications(me));        
         assertEquals(0, list.size());
+        
+        cal.add(Calendar.SECOND, -2);
+        when(me.getMostRecentContent()).thenReturn(cal.getTime());
+        list = engagementRepository.findAll(createSpecifications(me));        
+        assertEquals(1, list.size());        
     }
 
     @Test
