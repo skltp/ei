@@ -313,7 +313,7 @@ public class ProcessBeanIntegrationTest {
     
     
     @Test
-    public void processNotification_R2_OK_delete_engagesments_before_save() {
+    public void processNotification_R2_OK_delete_engagements_before_save() {
     	
     	ProcessNotificationType request = new ProcessNotificationType();        
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
@@ -327,7 +327,7 @@ public class ProcessBeanIntegrationTest {
     }
     
     @Test
-    public void processNotification_R2_OK_delete_engagesments_after_save() {
+    public void processNotification_R2_OK_delete_engagements_after_save() {
     	ProcessNotificationType request = new ProcessNotificationType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
         request.getEngagementTransaction().add(et1);
@@ -364,29 +364,6 @@ public class ProcessBeanIntegrationTest {
         assertThat(result, hasSize(1));
     }
     
-    /**
-     * Tests rule R4 that notifications are not saved when the owner in
-     * the engagement is the same as the current owner of the EI.
-     * 
-     * This logic DOES NOT handle the issue with dropping circular notifications.
-     */
-    @Test
-    public void processNotification_R4_do_not_save_circular_notifications() {
-        ProcessNotificationType request = new ProcessNotificationType();
-        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-
-        // Setting an owner different from the owner of the index to verify
-        // that the incoming owner is stored
-        et1.getEngagement().setOwner(OWNER);
-        request.getEngagementTransaction().add(et1);
-        
-        BEAN.processNotification(null, request);
-        
-        // Data store should be empty
-        engagementRepository.flush();
-        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
-        assertThat(result, hasSize(0));
-    }
 //    
 //    TODO (patrik) - not done
 //    @Test

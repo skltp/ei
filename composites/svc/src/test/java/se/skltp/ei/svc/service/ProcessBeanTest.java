@@ -253,4 +253,48 @@ public class ProcessBeanTest {
         	assertEquals("EI002: EngagementTransaction #2 and #4 have the same key. That is not allowed. See rule for Update-R1 in service contract", e.getMessage());
 		}
     }
+    
+    
+    /**
+     * Tests $10.5 - R4 that engagements with the same owner as the current index
+     * should be removed from the request
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void processNotification_R4_OK_filter_should_remove_circular_notifications() throws Exception {
+
+    	ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        EngagementTransactionType et2 = GenServiceTestDataUtil.genEngagementTransaction(2222222222L);
+        
+        et2.getEngagement().setOwner(OWNER);
+        
+		request.getEngagementTransaction().add(et1);
+		request.getEngagementTransaction().add(et2);
+		
+		
+        ProcessNotificationType request2 = BEAN.filterProcessNotification(request);
+    	assertEquals(1, request2.getEngagementTransaction().size());
+    	assertEquals(et1.getEngagement(), request2.getEngagementTransaction().get(0).getEngagement());
+    	
+    }
+    
+    /**
+     * R4 - verifies that everything works when all engagements have been removed from the request
+     */
+    @Test
+    public void processNotification_R4_OK_no_engagements_left() throws Exception {
+    	
+    	ProcessNotificationType request = new ProcessNotificationType();
+    	EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et1);
+
+    	et1.getEngagement().setOwner(OWNER);
+		
+		ProcessNotificationType request2 = BEAN.filterProcessNotification(request);
+		assertEquals(0, request2.getEngagementTransaction().size());
+		assertEquals(0, request.getEngagementTransaction().size());
+    }
+
 }

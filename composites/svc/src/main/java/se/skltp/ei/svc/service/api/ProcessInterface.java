@@ -55,4 +55,11 @@ public interface ProcessInterface {
     * @return
     */
 	public ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType parameters);
+	
+	/**
+	 * Filter away all engagements that has the same owner as the index.
+	 * @param  parameters
+	 * @return 
+	 */
+	public ProcessNotificationType filterProcessNotification(ProcessNotificationType parameters);
 }

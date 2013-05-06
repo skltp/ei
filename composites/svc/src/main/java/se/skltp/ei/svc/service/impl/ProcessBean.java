@@ -25,6 +25,7 @@ import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -247,10 +248,25 @@ public class ProcessBean implements ProcessInterface {
 		
 		// TODO (patrik) - hantera ut uppdatering av poster med annan owner ska göras
 	}
-	
 
 	
-//	private void saveEngagements(List<EngagementTransactionType> engagementTransactions) {
-//		
-//	}
+	/**
+	 * Removes all engagements that has this index as owner 
+	 * @param request 
+	 */
+	@Override
+	public ProcessNotificationType filterProcessNotification(ProcessNotificationType request) {
+
+		Iterator<EngagementTransactionType> iter = request.getEngagementTransaction().iterator();
+		while(iter.hasNext()) {
+			EngagementTransactionType e = iter.next();
+			if(e.getEngagement().getOwner() == this.owner) {
+				iter.remove();
+			}
+		}
+		
+		return request;
+	}
+	
+
 }
