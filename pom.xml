@@ -38,12 +38,11 @@
         <configuration>
           <properties>
             <year>2013</year>
-            <copyright>Sveriges Kommuner och Landsting (SKL). &lt;http://www.skl.se/&gt;</copyright>
+            <organization>Inera AB &lt;http://www.inera.se/&gt;</organization>
             <product>SKLTP</product>
           </properties>
           <strictCheck>true</strictCheck>
-	  <basedir>${basedir}</basedir>
-	  <header>${basedir}/../../src/license/lgpl/header.txt</header>
+	  <header>http://skltp.googlecode.com/svn/tp/docs/license-header-template.txt</header>
           <encoding>UTF-8</encoding>
           <includes>
             <include>src/main/**</include>
@@ -52,7 +51,6 @@
           <excludes>
             <exclude>**/*.xsd</exclude>
             <exclude>**/*.wsdl</exclude>
-            <exclude>**/*.xml</exclude>
             <exclude>**/*.dtd</exclude>
           </excludes>
 	  <useDefaultExcludes>true</useDefaultExcludes>
