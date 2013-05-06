@@ -38,12 +38,6 @@ public class ProcessBean {
     public void setBlBean(ProcessInterface blBean) {
     	this.blBean = blBean;
     }
-
-	private String owner;
-
-    public void setOwner(String owner) {
-		this.owner = owner;
-	}
     
     /**
      *

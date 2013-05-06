@@ -58,6 +58,9 @@ public class NotificationWSBean implements ProcessNotificationResponderInterface
     	// Validate the request (note no db-access will be performed)
     	blBean.validateProcessNotification(new Header(null,logicalAddress,null), parameters);
     	
+    	// Filter our own notifications if they are sent back from another EI instance
+    	parameters = blBean.filterProcessNotification(parameters);
+
     	// Create a default response
     	ProcessNotificationResponseType response = new ProcessNotificationResponseType();
         response.setComment(null);

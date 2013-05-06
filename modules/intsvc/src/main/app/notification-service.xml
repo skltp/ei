@@ -29,6 +29,9 @@
             <spring:property name="blBean" ref="notification-validation-bean"/>
         </spring:bean>
         
+		<!-- Register our custom filter-evaluator -->
+    	<spring:bean class="se.skltp.ei.intsvc.process.NotifyEvaluator"/>
+
     </spring:beans>
 
     <flow name="notification-service" doc:name="notification-service">
@@ -57,11 +60,16 @@
 
         <custom-transformer class="se.skltp.ei.intsvc.notification.ProcessNotificationRequestToJmsMsgTransformer" doc:name="Java"/>
 
-        <jms:outbound-endpoint 
-            connector-ref="soitoolkit-jms-connector"
-            queue="${PROCESS_QUEUE}" 
-            transformer-refs="logMsgOut" 
-            doc:name="JMS"/>
+        <choice>
+        	<!--  Do not send any message for processing in the case where all engagement rtnsactions have been removed by the filtered -->
+            <when expression="" evaluator="custom" custom-evaluator="ei-perform-notify">
+		        <jms:outbound-endpoint 
+		            connector-ref="soitoolkit-jms-connector"
+		            queue="${PROCESS_QUEUE}" 
+		            transformer-refs="logMsgOut" 
+		            doc:name="JMS"/>
+	        </when>
+        </choice>
  
         <set-payload value="#[variable:response]" doc:name="Set Payload"/>        
 

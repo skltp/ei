@@ -24,12 +24,8 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
         <!-- Bean that process the update and/or process-notification -->
         <spring:bean name="process-bean" class="se.skltp.ei.intsvc.process.ProcessBean">
             <spring:property name="blBean" ref="process-bl-bean"/>
-        	<spring:property name="owner" value="${EI_HSA_ID}"/>
         </spring:bean>
         
-		<!-- Register our custom filter-evaluator -->
-    	<spring:bean class="se.skltp.ei.intsvc.process.NotifyEvaluator"/>
-    	
     </spring:beans>
 
     <flow name="process-service" doc:name="process-service">
@@ -45,17 +41,13 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
             <spring-object bean="process-bean"/>
         </component>
 
-        <choice>
-            <when expression="" evaluator="custom" custom-evaluator="ei-perform-notify">
-		        <jms:outbound-endpoint 
-		            connector-ref="soitoolkit-jms-connector"
-		            topic="${NOTIFY_TOPIC}" 
-		            transformer-refs="logMsgOut" 
-		            doc:name="JMS Topic">
-		            <jms:transaction action="ALWAYS_JOIN"/>
-		        </jms:outbound-endpoint>
-	        </when>
-        </choice>
+        <jms:outbound-endpoint 
+            connector-ref="soitoolkit-jms-connector"
+            topic="${NOTIFY_TOPIC}" 
+            transformer-refs="logMsgOut" 
+            doc:name="JMS Topic">
+            <jms:transaction action="ALWAYS_JOIN"/>
+        </jms:outbound-endpoint>
         
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
     </flow>
