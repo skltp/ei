@@ -39,7 +39,7 @@ import org.hibernate.annotations.Table;
 import se.skltp.ei.svc.entity.model.util.Hash;
 
 /**
- * Entity modeled after the service contract itintegration:engagementindex (r901) <p>
+ * Entity modeled after the service contract itintegration:engagementindex (RC10) <p>
  * 
  * Uses a SHA-256 generated hash-key in hex string format as an unique id.
  * 
@@ -47,11 +47,13 @@ import se.skltp.ei.svc.entity.model.util.Hash;
  */
 @Entity(name=Engagement.ENGAGEMENT_INDEX_TABLE)
 @Table(appliesTo=Engagement.ENGAGEMENT_INDEX_TABLE,
-indexes={ @Index(name="engagement_search_index", 
+indexes={ @Index(name=Engagement.ENGAGEMENT_SEARCH_INDEX, 
 columnNames= { Engagement.REGISTERED_RESIDENT_ID, Engagement.SERVICE_DOMAIN, Engagement.CATEGORIZATION }) })
 public class Engagement implements BusinessKey {
 
+    // database names
     static final String ENGAGEMENT_INDEX_TABLE = "engagement_index_table";
+    static final String ENGAGEMENT_SEARCH_INDEX = "engagement_search_index";
     static final String REGISTERED_RESIDENT_ID = "registered_resident_id";
     static final String SERVICE_DOMAIN = "service_domain";
     static final String CATEGORIZATION = "categorization";
@@ -63,6 +65,7 @@ public class Engagement implements BusinessKey {
     static final String CLINICAL_PROCESS_INTEREST_ID = "clinical_process_interest_id";
     static final String MOST_RECENT_CONTENT = "most_recent_content";
 
+    // constants
     static final String NA = "NA";
     static final String INERA = "Inera";
 
