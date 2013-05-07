@@ -148,8 +148,6 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 	 * Perform a test that is expected to return one hit
 	 * @throws JMSException 
 	 */
-    // TODO. Patrik. Remove Ignore annotation once business logic is in place.
-    @Ignore
     @Test
     public void process_notification_OK() throws JMSException {
     	
