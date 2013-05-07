@@ -297,29 +297,5 @@ public class ProcessBeanTest {
 		assertEquals(0, request.getEngagementTransaction().size());
     }
     
-    
-    /**
-     * Tests $10.5 - R4 - a simple test that verifies that the filter method uses a case
-     * insensitive way to compare owners
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void processNotification_R4_OK_filter_should_ignore_case() throws Exception {
-
-    	ProcessNotificationType request = new ProcessNotificationType();
-        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-        
-        // To verify that the filter method uses a case insensitive way to compare owners
-        et1.getEngagement().setOwner(OWNER.toUpperCase());
-        
-		request.getEngagementTransaction().add(et1);
-		
-        BEAN.filterProcessNotification(request);
-    	assertEquals(0, request.getEngagementTransaction().size());
-    }
-    
-    
-    
 
 }
