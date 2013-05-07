@@ -221,7 +221,7 @@ public class ProcessBean implements ProcessInterface {
 		
 			// If the owner of the engagement is same as the owner of the index, just drop the engagement
 			// since there is nothing for us to process here.
-			if(e.getOwner() == this.owner) {
+			if(e.getOwner().equalsIgnoreCase(this.owner)) {
 				LOG.info("Dropping this notification since this EI already is the owner of the Engagement");
 				continue;
 			}
@@ -260,7 +260,7 @@ public class ProcessBean implements ProcessInterface {
 		Iterator<EngagementTransactionType> iter = request.getEngagementTransaction().iterator();
 		while(iter.hasNext()) {
 			EngagementTransactionType e = iter.next();
-			if(e.getEngagement().getOwner() == this.owner) {
+			if(e.getEngagement().getOwner().equalsIgnoreCase(this.owner)) {
 				iter.remove();
 			}
 		}
