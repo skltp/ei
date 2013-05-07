@@ -13,10 +13,13 @@
 		http://www.mulesoft.org/schema/mule/jms     http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 	">
 
+ 	<custom-transformer name="process-notification-teststub-logger" class="se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducerLogger"/>
+ 	
 	<simple-service 
 		name="process-notification-teststub-service"
         address="${NOTIFY_TESTSTUB_URL}?connector=soitoolkit-http-connector" 
         component-class="se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer"
+        transformer-refs="process-notification-teststub-logger"
         type="jax-ws" />
  
 </mule>

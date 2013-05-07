@@ -13,10 +13,13 @@
 		http://www.mulesoft.org/schema/mule/jms     http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 	">
 
-	<simple-service 
+ 	<custom-transformer name="get-logical-addressees-by-service-contract-teststub-logger" class="se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducerLogger"/>
+
+ 	<simple-service 
 		name="get-logical-addressees-by-service-contract-teststub-service"
         address="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_TESTSTUB_URL}?connector=soitoolkit-http-connector" 
         component-class="se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducer"
+        transformer-refs="get-logical-addressees-by-service-contract-teststub-logger"
         type="jax-ws" />
- 
+
 </mule>

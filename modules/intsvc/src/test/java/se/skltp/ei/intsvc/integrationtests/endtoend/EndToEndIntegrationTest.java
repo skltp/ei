@@ -41,8 +41,10 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
+import se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducerLogger;
 import se.skltp.ei.intsvc.integrationtests.notificationservice.NotificationTestConsumer;
 import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer;
+import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducerLogger;
 import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
@@ -86,7 +88,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 
     @Before
     public void setUp() throws Exception {
-
+    	
     	// Lookup the entity repository if not already done
     	if (engagementRepository == null) {
     		engagementRepository = muleContext.getRegistry().lookupObject(EngagementRepository.class);
@@ -132,6 +134,9 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
 		assertQueueDepth(INFO_LOG_QUEUE, 14);
 
+		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
+    	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastOriginalConsumer());
+    	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastOriginalConsumer());
     }
 
 	/**
@@ -139,8 +144,8 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	 */
     @Test
     public void endToEnd_notification_OK() {
-    	
-		long residentId = 1212121212L;
+
+    	long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
 		
 		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestNotificationDispatcher(createProcessNotificationRequest(residentId)), "process-notification-teststub-service", EI_TEST_TIMEOUT);
@@ -166,6 +171,9 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
 		assertQueueDepth(INFO_LOG_QUEUE, 14);
 
+		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
+    	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastOriginalConsumer());
+    	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastOriginalConsumer());
     }
 
 	/**

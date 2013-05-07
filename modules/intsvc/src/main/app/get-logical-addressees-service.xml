@@ -37,6 +37,8 @@
             <spring-object bean="create-get-logical-addressees-request-bean"/>
         </component>
 
+ 		<set-property propertyName="x-rivta-original-serviceconsumer-hsaid" value="${EI_HSA_ID}" doc:name="x-rivta-original-serviceconsumer-hsaid" />
+
         <http:outbound-endpoint 
             connector-ref="soitoolkit-http-connector"
             address="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_OUTBOUND_URL}" 

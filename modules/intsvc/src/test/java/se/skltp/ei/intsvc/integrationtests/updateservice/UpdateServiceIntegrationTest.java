@@ -46,6 +46,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
     
     private static final String INVALID_LOGICAL_ADDRESS = "wrongLogicalAddress";
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
+    private static final String OWNER = rb.getString("EI_HSA_ID");
     
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -129,7 +130,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
     public void update_R7_ERR_owner_dont_match_logicaladdress() {
 		
 		UpdateType request = createUdateRequest(1111111111L);
-		String expectedError = "EI003: Invalid routing. Logical address is wrongLogicalAddress but the owner is logical-address. They must be the same. See rule for Update-R7 in service contract";
+		String expectedError = "EI003: Invalid routing. Logical address is wrongLogicalAddress but the owner is " + OWNER + ". They must be the same. See rule for Update-R7 in service contract";
 
 		try {
 			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing

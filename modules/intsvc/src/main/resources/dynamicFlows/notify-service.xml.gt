@@ -55,6 +55,8 @@
             <spring-object bean="create-process-notification-request-bean-${LOGICAL_ADDRESS}"/>
         </component>
 
+ 		<set-property propertyName="x-rivta-original-serviceconsumer-hsaid" value="${EI_HSA_ID}" doc:name="x-rivta-original-serviceconsumer-hsaid" />
+
         <http:outbound-endpoint 
             connector-ref="soitoolkit-http-connector"
             address="${NOTIFY_OUTBOUND_URL}" 

@@ -29,7 +29,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="get-logical-addressees-service" entity-id="2c1e96bf-a8a0-42e4-b51c-5e8cfe262985">
+    <flow SubFlow="false" name="get-logical-addressees-service" entity-id="1d28d117-14e1-4611-8b52-9492af9ea24d">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -70,6 +70,15 @@
                     </property-collection>
                 </properties>
             </pattern>
+            <pattern name="x-rivta-original-serviceconsumer-hsaid" type="http://www.mulesoft.org/schema/mule/core/properties-transformer" entity-id="Property#1">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="propertyName" value="x-rivta-original-serviceconsumer-hsaid"/>
+                    <property name="value" value="${EI_HSA_ID}"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/core/set-property"/>
+                    <property name="auxiliary;index" value="8"/>
+                </properties>
+            </pattern>
             <endpoint direction="Outbound" message-exchange-pattern="RequestResponse" name="HTTP" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
@@ -95,11 +104,11 @@
                     <property name="user"/>
                     <property name="responseTimeout" value="${SERVICE_TIMEOUT_MS}"/>
                     <property name="mimeType"/>
-                    <property name="auxiliary;index" value="8"/>
+                    <property name="auxiliary;index" value="9"/>
                     <property name="connector-ref" value="soitoolkit-http-connector"/>
                 </properties>
             </endpoint>
-            <unknown description="false" index="10" entity-id="unknown#1">
+            <unknown description="false" index="11" entity-id="unknown#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <content>&lt;custom-exception-strategy xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; class=&quot;org.soitoolkit.commons.mule.error.ServiceExceptionStrategy&quot;/&gt;</content>
             </unknown>
