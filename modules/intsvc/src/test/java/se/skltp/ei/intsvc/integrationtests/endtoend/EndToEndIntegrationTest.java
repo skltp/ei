@@ -26,12 +26,21 @@ import static org.junit.Assert.assertThat;
 import java.net.SocketException;
 import java.util.List;
 
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+import javax.jms.Topic;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.test.Dispatcher;
 
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
@@ -50,12 +59,13 @@ import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
-public class EndToEndIntegrationTest extends AbstractTestCase {
+public class EndToEndIntegrationTest extends AbstractTestCase implements MessageListener {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 	 
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
+	private static final String NOTIFY_TOPIC = rb.getString("NOTIFY_TOPIC");
     
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
     private static final String OWNER = rb.getString("EI_HSA_ID");
@@ -66,6 +76,17 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	private static final String UPDATE_SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
 	private static final String NOTIFICATION_SERVICE_ADDRESS = EiMuleServer.getAddress("NOTIFICATION_WEB_SERVICE_URL");
   
+	private static final JaxbUtil jaxbUtil = new JaxbUtil(ProcessNotificationType.class);
+
+	private EngagementRepository engagementRepository;
+
+    private TextMessage processNotificationMessage = null;
+
+    @Override
+	public void onMessage(Message message) {
+    	processNotificationMessage = (TextMessage)message;
+	}
+
     public EndToEndIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
@@ -85,8 +106,6 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
 	        "teststub-services/process-notification-teststub-service.xml";
     }
-
-    private EngagementRepository engagementRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -181,11 +200,19 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     /**
      * Performs a test that verifies that engagements with same owner as the index are filtered out and not saved
      * in the data store.
+     * @throws JMSException 
      */
     @Test
-    public void endToEnd_processNotification_R4_OK_filter_should_remove_circular_notifications() {
+    public void endToEnd_processNotification_R4_OK_filter_should_remove_circular_notifications() throws JMSException {
     	
-    	long residentId = 1111111111L;
+		// Setup a test-subscriber on the notification-topic
+		TopicSession topicSession = getJmsUtil().getTopicSession();
+		Topic topic = topicSession.createTopic(NOTIFY_TOPIC);
+		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
+		topicSubscriber.setMessageListener(this);
+
+		// Setup testdata
+		long residentId = 1111111111L;
 		String fullResidentId = "19" + residentId;
     	
     	ProcessNotificationType request = createProcessNotificationRequest(residentId, 1212121212L);
@@ -215,6 +242,10 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		
 		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
 		assertQueueDepth(INFO_LOG_QUEUE, 14);
+
+		// Expect publish on JMS topic only containing 1 engagementTransaction, meaning that the otherwise never ending loop effectively is broken :-)
+		ProcessNotificationType pn = (ProcessNotificationType)jaxbUtil.unmarshal(processNotificationMessage.getText());
+		assertEquals(1, pn.getEngagementTransaction().size());
     }
 
 	/**

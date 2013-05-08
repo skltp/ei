@@ -22,6 +22,8 @@ package se.skltp.ei.intsvc.integrationtests.notificationservice;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import javax.jms.JMSException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
@@ -149,7 +151,38 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 		assertQueueDepth(PROCESS_QUEUE, 1);
     }
 
-	private class DoOneTestDispatcher implements Dispatcher {
+    /**
+     * Performs a test that verifies that engagements with same owner as the index are filtered out and not saved
+     * in the data store.
+     * @throws JMSException 
+     */
+    @Test
+    public void processNotification_R4_OK_filter_removes_all_transactions() throws JMSException {
+    	
+		// Setup testdata
+    	ProcessNotificationType request = createProcessNotificationRequest(1111111111L, 1212121212L);
+
+    	// Set all engagements as ours, i.e. all engagement transactions are expected to be filtered out
+    	request.getEngagementTransaction().get(0).getEngagement().setOwner(OWNER); 
+    	request.getEngagementTransaction().get(1).getEngagement().setOwner(OWNER); 
+    	
+    	// Make the synchronous call, nothing to wait for since we don't expect any messages on the queue in this test.
+    	new DoOneTestDispatcher(request).doDispatch();
+
+		// Wait a short while for all background processing to complete
+		waitForBackgroundProcessing();
+		
+		// Assert that no messages are posted on the processing queue
+		assertQueueDepth(PROCESS_QUEUE, 0);
+		
+		// Expect no error logs
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		
+		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
+		assertQueueDepth(INFO_LOG_QUEUE, 2);
+    }
+
+    private class DoOneTestDispatcher implements Dispatcher {
 		
 		private ProcessNotificationType request = null;
 		private String logicalAddress = null;

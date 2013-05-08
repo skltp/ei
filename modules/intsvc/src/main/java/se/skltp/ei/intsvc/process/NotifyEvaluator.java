@@ -19,14 +19,20 @@
  */
 package se.skltp.ei.intsvc.process;
 
+import static org.junit.Assert.assertEquals;
+
 import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
+
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 
 public class NotifyEvaluator implements ExpressionEvaluator {
 
     private static final Logger log = LoggerFactory.getLogger(NotifyEvaluator.class);
+	private static final JaxbUtil jaxbUtil = new JaxbUtil(ProcessNotificationType.class);
 
     private static final String NAME = "ei-perform-notify";
     
@@ -43,10 +49,11 @@ public class NotifyEvaluator implements ExpressionEvaluator {
         try {
         	log.info("Evaluate: {} on message {}", expression, message.getPayload());
 
-    		// FIXME - ML: True if Update or if PN and ET.size > 0
+    		ProcessNotificationType pn = (ProcessNotificationType)jaxbUtil.unmarshal(message.getPayload());
+    		boolean ok = pn.getEngagementTransaction().size() > 0;
 
-        	log.info("Evaluator return true");
-        	return true;
+        	log.info("Evaluator return: " + ok);
+        	return ok;
 
         } catch (Exception e) {
         	log.warn("Evaluator failed, return true", e);

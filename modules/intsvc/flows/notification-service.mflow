@@ -81,7 +81,7 @@
             <property name="depends-on"/>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="notification-service" entity-id="62e590f4-e56c-4566-841f-97f36ab4a582">
+    <flow SubFlow="false" name="notification-service" entity-id="69046405-fe78-48ec-87c6-9ab4f26318e3">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -179,7 +179,7 @@
             <splitter index="16" name="Choice" type="org.mule.tooling.ui.modules.core.pattern.cbr" entity-id="Choice#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
-                    <property-collection name="f6720e10-6655-4e60-a2c1-68a29a3abcc3">
+                    <property-collection name="4213ba97-a3df-4b84-9589-611280001503">
                         <property name="choice.expression" value=""/>
                         <property-collection name="choice.attributes">
                             <property name="expression" value=""/>
@@ -187,10 +187,14 @@
                             <property name="evaluator" value="custom"/>
                         </property-collection>
                     </property-collection>
+                    <property-collection name="34d99833-c73b-4eb3-81c8-cf16af4d8f14">
+                        <property name="choice.otherwise" value="true"/>
+                        <property-collection name="choice.attributes"/>
+                    </property-collection>
                 </properties>
                 <pattern name="Choice" type="org.mule.tooling.ui.modules.core.pattern.cbr" entity-id="Choice#2"/>
                 <compartment entity-id="compartment#1">
-                    <lane hadOnlyOneElement="false" index="18" isChoiceOtherwiseLane="false" entity-id="f6720e10-6655-4e60-a2c1-68a29a3abcc3">
+                    <lane hadOnlyOneElement="false" index="18" isChoiceOtherwiseLane="false" entity-id="4213ba97-a3df-4b84-9589-611280001503">
                         <endpoint direction="Outbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#1">
                             <graphicalData x="0" y="0" width="0" height="0"/>
                             <properties>
@@ -214,17 +218,27 @@
                             </properties>
                         </endpoint>
                     </lane>
-                    <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="true" entity-id="435b237e-9cf5-4411-9c15-be800ae4bf22"/>
+                    <lane hadOnlyOneElement="false" index="20" isChoiceOtherwiseLane="true" entity-id="34d99833-c73b-4eb3-81c8-cf16af4d8f14">
+                        <pattern name="Logger" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#1">
+                            <graphicalData x="0" y="0" width="0" height="0"/>
+                            <properties>
+<property name="message" value="SKip empty message"/>
+<property name="category"/>
+<property name="level"/>
+<property name="auxiliary;index" value="20"/>
+                            </properties>
+                        </pattern>
+                    </lane>
                 </compartment>
             </splitter>
             <pattern name="Set Payload" type="http://www.mulesoft.org/schema/mule/core/set-payload" entity-id="Set Payload#2">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
                     <property name="value" value="#[variable:response]"/>
-                    <property name="auxiliary;index" value="19"/>
+                    <property name="auxiliary;index" value="21"/>
                 </properties>
             </pattern>
-            <unknown description="false" index="20" entity-id="unknown#1">
+            <unknown description="false" index="22" entity-id="unknown#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <content>&lt;custom-exception-strategy xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; class=&quot;org.soitoolkit.commons.mule.error.ServiceExceptionStrategy&quot;/&gt;</content>
             </unknown>
