@@ -370,7 +370,7 @@ public class ProcessBeanIntegrationTest {
      * R5 - Tests that no engagements are deleted if the owner is the same between requests
      */
     @Test
-    public void processNotification_R5_should_not_remove_posts_with_other_owner() {
+    public void processNotification_R5_OK_should_not_remove_posts_with_other_owner() {
     	
     	ProcessNotificationType request = new ProcessNotificationType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
@@ -402,7 +402,7 @@ public class ProcessBeanIntegrationTest {
      * @throws Exception
      */
     @Test
-    public void processNotification_R5_should_one_store_engagement_with_new_owner() throws Exception {
+    public void processNotification_R5_OK_should_one_store_engagement_with_new_owner() throws Exception {
     	
     	ProcessNotificationType request = new ProcessNotificationType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
@@ -440,7 +440,7 @@ public class ProcessBeanIntegrationTest {
      * engagements that should be removed in favor of new with updated Owner.
      */
     @Test
-    public void processNotification_R5_find_engagements_to_remove() throws Exception {
+    public void processNotification_R5_OK_find_engagements_to_remove() throws Exception {
     	
     	ProcessNotificationType request = new ProcessNotificationType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
@@ -463,7 +463,7 @@ public class ProcessBeanIntegrationTest {
      * @throws Exception
      */
     @Test
-    public void processNotification_R5_find_engagements_should_return_empty_list() throws Exception{
+    public void processNotification_R5_OK_find_engagements_should_return_empty_list() throws Exception{
     	
     	ProcessNotificationType request = new ProcessNotificationType();
         List<Engagement> list = BEAN.getEngagementsWithNewOwners(request);
