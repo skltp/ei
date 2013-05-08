@@ -141,11 +141,11 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
         assertEquals(1, result.size());
         assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
 
-		// Assert that no messages are left on the processing queue
-		assertQueueDepth(PROCESS_QUEUE, 0);
-
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
+
+		// Assert that no messages are left on the processing queue
+		assertQueueDepth(PROCESS_QUEUE, 0);
 		
 		// Expect no error logs
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);
@@ -176,6 +176,9 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
         assertEquals(1, result.size());
         assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+
+		// Wait a short while for all background processing to complete
+		waitForBackgroundProcessing();
 
 		// Assert that no messages are left on the processing queue
 		assertQueueDepth(PROCESS_QUEUE, 0);
