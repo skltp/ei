@@ -35,7 +35,6 @@ import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.slf4j.Logger;
@@ -55,7 +54,6 @@ import se.skltp.ei.intsvc.integrationtests.notificationservice.NotificationTestC
 import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer;
 import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducerLogger;
 import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
-import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 

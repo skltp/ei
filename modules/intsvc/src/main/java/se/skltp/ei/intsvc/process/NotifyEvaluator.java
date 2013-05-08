@@ -19,8 +19,6 @@
  */
 package se.skltp.ei.intsvc.process;
 
-import static org.junit.Assert.assertEquals;
-
 import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionEvaluator;
 import org.slf4j.Logger;

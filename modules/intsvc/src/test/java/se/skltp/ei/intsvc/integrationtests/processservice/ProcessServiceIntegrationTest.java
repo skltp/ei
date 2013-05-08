@@ -21,8 +21,8 @@ package se.skltp.ei.intsvc.integrationtests.processservice;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
@@ -35,7 +35,6 @@ import javax.jms.TopicSession;
 import javax.jms.TopicSubscriber;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.context.notification.EndpointMessageNotification;

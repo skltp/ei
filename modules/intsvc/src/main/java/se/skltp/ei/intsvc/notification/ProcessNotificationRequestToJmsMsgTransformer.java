@@ -24,8 +24,8 @@ import org.mule.api.transformer.TransformerException;
 import org.mule.transformer.AbstractMessageTransformer;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 
-import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 
 public class ProcessNotificationRequestToJmsMsgTransformer extends AbstractMessageTransformer {
 
