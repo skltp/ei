@@ -93,6 +93,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 
 	<!-- Used by st-muleServer-helper-class only -->
     <spring:beans profile="soitoolkit-teststubs">
+
+        <!-- Load svc services -->
+        <spring:import resource="classpath:skltp-ei-svc-spring-context.xml"/>
+
         <!-- Load all teststub services -->
         <spring:import resource="classpath:teststub-services/*-teststub-service.xml"/>
     </spring:beans>
