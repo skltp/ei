@@ -32,11 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.test.Dispatcher;
 
+import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
+import se.skltp.ei.svc.service.GenServiceTestDataUtil;
+import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class NotificationServiceIntegrationTest extends AbstractTestCase {
 
@@ -181,7 +184,44 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
 		assertQueueDepth(INFO_LOG_QUEUE, 2);
     }
+    
+    /**
+     * Verifies that we get an error message when a request contains too many engagements.
+     */
+    @Test
+    public void processNotification_ERR_max_number_of_engagements() {
+		
+    	// Setup testdata
+    	ProcessNotificationType request = new ProcessNotificationType();
 
+		long start = 1111111111L;
+		for(int i = 0 ; i < ProcessBean.MAX_NUMBER_OF_ENGAGEMENTS+100; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(start + i);
+			request.getEngagementTransaction().add(et);
+		}
+		
+		String expectedError = "EI000: A technical error has occurred, error message: The request contains more than 1000 engagements. Maximum number of engagements per request is 1000.";
+
+		try {
+			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
+			new DoOneTestDispatcher(request).doDispatch();
+			fail("Expected exception here");
+
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
+			assertEquals("javax.xml.ws.soap.SOAPFaultException: " + expectedError, e.toString());
+		};
+
+		// Expect one error log and info log entry
+		assertQueueDepth(ERROR_LOG_QUEUE, 1);
+		assertQueueContainsMessage(ERROR_LOG_QUEUE, expectedError);
+		assertQueueDepth(INFO_LOG_QUEUE, 1);
+
+		// Expect nothing on the processing queue due to the error
+		assertQueueDepth(PROCESS_QUEUE, 0);
+    }
+    
+    
     private class DoOneTestDispatcher implements Dispatcher {
 		
 		private ProcessNotificationType request = null;

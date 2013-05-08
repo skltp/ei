@@ -44,6 +44,7 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
 import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
@@ -53,7 +54,11 @@ public class ProcessBean implements ProcessInterface {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessBean.class);
 
 	private String owner;
-
+	
+	// Maximum number of engagements that should be processed
+	public static int MAX_NUMBER_OF_ENGAGEMENTS = 1000;
+	 
+	
     private EngagementRepository engagementRepository;
 
     private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
@@ -91,6 +96,7 @@ public class ProcessBean implements ProcessInterface {
     public void validateUpdate(Header header, UpdateType request) {
     	validateLogicalAddress(header);
         validateUniqueness(request);
+        validateMaxLength(request.getEngagementTransaction());
     }
 
     // Update, R1: Validate uniqueness within the request
@@ -125,6 +131,16 @@ public class ProcessBean implements ProcessInterface {
 					header.getReceiverId(), owner);
 		}
 	}
+
+	// Update/processNotification - max 1000 engagements per request
+	private void validateMaxLength(List<EngagementTransactionType> engagementTransactions ) {
+	
+		if(engagementTransactions.size() > MAX_NUMBER_OF_ENGAGEMENTS) {
+			throw new EiException(EiErrorCodeEnum.EI000_TECHNICAL_ERROR, "The request contains more than " + 
+					MAX_NUMBER_OF_ENGAGEMENTS + " engagements. Maximum number of engagements per request is " + MAX_NUMBER_OF_ENGAGEMENTS + ".");
+		}
+	}
+	
 
     /**
      * Performs an index update transaction. <p>
@@ -183,6 +199,7 @@ public class ProcessBean implements ProcessInterface {
 	@Override
 	public void validateProcessNotification(Header header, ProcessNotificationType request) {
 		validateUniqueness(request); // Update R1
+		validateMaxLength(request.getEngagementTransaction());
 	}
 	
 	/**

@@ -37,6 +37,7 @@ import riv.itintegration.engagementindex.processnotificationresponder._1.Process
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
+import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
 import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.impl.ProcessBean;
@@ -184,6 +185,28 @@ public class ProcessBeanTest {
     }
     
     
+    @Test
+    public void update_ERR_max_number_of_engagements() throws Exception {
+    	
+		UpdateType request = new UpdateType();
+
+		long start = 1111111111L;
+		for(int i = 0 ; i < ProcessBean.MAX_NUMBER_OF_ENGAGEMENTS+100; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(start + i);
+			request.getEngagementTransaction().add(et);
+		}
+		
+    	try {
+    		
+    		BEAN.validateUpdate(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+    		
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
+		}
+    }
+    
+    
     /*** 
      * Test for processNotification 
      */
@@ -297,5 +320,29 @@ public class ProcessBeanTest {
 		assertEquals(0, request.getEngagementTransaction().size());
     }
     
+    
+    /**
+     * @throws Exception
+     */
+    @Test
+    public void processNotification_ERR_max_number_of_engagements() throws Exception {
+    	
+		ProcessNotificationType request = new ProcessNotificationType();
+
+		long start = 1111111111L;
+		for(int i = 0 ; i < ProcessBean.MAX_NUMBER_OF_ENGAGEMENTS+100; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(start + i);
+			request.getEngagementTransaction().add(et);
+		}
+		
+    	try {
+    		
+    		BEAN.validateProcessNotification(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+    		
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
+		}
+    }
 
 }
