@@ -215,8 +215,6 @@ public class ProcessBean implements ProcessInterface {
 
 			EngagementType et = engagementTransaction.getEngagement();
 
-			// We should use the owner provided in the engagement
-
 			final Engagement e = toEntity(et);	
 			if (engagementTransaction.isDeleteFlag()) {
 				if (deleteList == null) {
@@ -228,6 +226,20 @@ public class ProcessBean implements ProcessInterface {
 			}
 		}
 
+
+		// R5 - fetch all posts that should be removed since the incoming Engagement changed owner
+		List<Engagement> engagementsWithNewOwners = getEngagementsWithNewOwners(request);
+		if(engagementsWithNewOwners.size() > 0) {
+			if(deleteList == null) {
+				deleteList = new ArrayList<Engagement>();
+			}
+			
+			for(final Engagement e : engagementsWithNewOwners) {
+				LOG.warn("The owner has changed for Engagement with ID: " +  e.getId());
+				deleteList.add(e);
+			}
+		}
+		
 		// Perform the delete if any
 		if (deleteList != null) {
 			engagementRepository.delete(deleteList);
@@ -237,8 +249,6 @@ public class ProcessBean implements ProcessInterface {
 		engagementRepository.save(saveList);
 
 		return NOTIFICATION_RESPONSE_OK;
-		
-		// TODO (patrik) - hantera ut uppdatering av poster med annan owner ska göras
 	}
 
 	
@@ -258,6 +268,33 @@ public class ProcessBean implements ProcessInterface {
 		}
 		
 		return request;
+	}
+	
+	
+	/**
+	 * R5 - fetch all posts that should be removed since the incoming Engagement changed owner
+	 * 
+	 * This method is not part of the public API
+	 * 
+	 * @param request
+	 * @return List with engagements to remove
+	 */
+	public List<Engagement> getEngagementsWithNewOwners(ProcessNotificationType request) {
+		
+		final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
+		List<String> ids = new ArrayList<String>();
+		
+		for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
+			EngagementType et = engagementTransaction.getEngagement();
+			ids.add(toEntity(et, this.owner).getId());
+		}
+
+		// The request fail if findByIdIn receives an empty list
+		if (ids.size() == 0) {
+			return new ArrayList<Engagement>();
+		} else {
+			return engagementRepository.findByIdIn(ids);
+		}
 	}
 	
 

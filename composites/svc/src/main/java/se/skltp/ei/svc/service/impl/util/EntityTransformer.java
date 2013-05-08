@@ -60,6 +60,32 @@ public class EntityTransformer {
 
         return eOut;
     }
+    
+    /**
+     * Transform an engagement from the service model to the entity model
+     * 
+     * @param eIn
+     * @param owner The owner that should be used instead of the current one in ein
+     * @return eOut
+     */
+    public static Engagement toEntity(EngagementType eIn, String owner) {
+
+        Engagement eOut = new Engagement();
+
+        eOut.setBusinessKey(eIn.getRegisteredResidentIdentification(),
+                eIn.getServiceDomain(),
+                eIn.getCategorization(),
+                eIn.getLogicalAddress(),
+                eIn.getBusinessObjectInstanceIdentifier(),
+                eIn.getSourceSystem(),
+                eIn.getDataController(),
+                owner,
+                eIn.getClinicalProcessInterestId());
+
+        eOut.setMostRecentContent(parseDate(eIn.getMostRecentContent()));
+
+        return eOut;
+    }
 
     /**
      * Transform an engagement from the entity model to the service model

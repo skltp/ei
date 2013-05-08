@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -52,7 +53,7 @@ public class ProcessBeanIntegrationTest {
 
     private static ProcessBean BEAN = null; 
     private static final String OWNER = "logical-address";
-
+    
     @Autowired
     private EngagementRepository engagementRepository;
 
@@ -364,16 +365,112 @@ public class ProcessBeanIntegrationTest {
         assertThat(result, hasSize(1));
     }
     
-//    
-//    TODO (patrik) - not done
-//    @Test
-//    public void processNotification_R5_new_owner() {
-//        ProcessNotificationType request = new ProcessNotificationType();
-//        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-//        
-//    }
-//    
-//    
+    
+    /**
+     * R5 - Tests that no engagements are deleted if the owner is the same between requests
+     */
+    @Test
+    public void processNotification_R5_should_not_remove_posts_with_other_owner() {
+    	
+    	ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        EngagementTransactionType et2 = GenServiceTestDataUtil.genEngagementTransaction(1212121212L);
+        
+        et1.getEngagement().setOwner("remote-owner");
+        et2.getEngagement().setOwner(OWNER);
+
+        request.getEngagementTransaction().add(et1);
+        request.getEngagementTransaction().add(et2);
+       
+        BEAN.processNotification(null, request);
+        BEAN.processNotification(null, request);
+        
+        // Fetch all posts
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(2));
+        
+        // Verify that owner is same as before the request
+        assertThat(getOwner(result, et1), equalTo(et1.getEngagement().getOwner()));
+        assertThat(getOwner(result, et2), equalTo(et2.getEngagement().getOwner()));
+    }
+    
+    
+    
+    /**
+     * R5 - verifies that an engagement with the index as owner will be replaced when
+     * processNotification receives the same engagement but with a different owner.
+     * @throws Exception
+     */
+    @Test
+    public void processNotification_R5_should_one_store_engagement_with_new_owner() throws Exception {
+    	
+    	ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        EngagementTransactionType et2 = GenServiceTestDataUtil.genEngagementTransaction(1212121212L);
+        
+        et1.getEngagement().setOwner(OWNER);
+        et2.getEngagement().setOwner(OWNER);
+
+        request.getEngagementTransaction().add(et1);
+        request.getEngagementTransaction().add(et2);
+       
+        BEAN.processNotification(null, request);
+        
+        // Request 2
+        ProcessNotificationType request2 = new ProcessNotificationType();
+        EngagementTransactionType et3 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        et3.getEngagement().setOwner("remote-owner");
+        request2.getEngagementTransaction().add(et3);
+
+        // Set new owner and remove one of existing posts
+        BEAN.processNotification(null, request2);
+
+        // Fetch all posts
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertThat(result, hasSize(2));
+
+        assertThat(getOwner(result, et2), equalTo(OWNER));
+        assertThat(getOwner(result, et3), equalTo("remote-owner"));
+        
+    }
+    
+    
+    /**
+     * R5 - testing getEngagementsWithNewOwners that is the method the find all
+     * engagements that should be removed in favor of new with updated Owner.
+     */
+    @Test
+    public void processNotification_R5_find_engagements_to_remove() throws Exception {
+    	
+    	ProcessNotificationType request = new ProcessNotificationType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        et1.getEngagement().setOwner(OWNER);
+        request.getEngagementTransaction().add(et1);
+        
+        BEAN.processNotification(null, request);
+        
+        assertEquals(1, countEngagements());
+        
+        request.getEngagementTransaction().get(0).getEngagement().setOwner("remote-owner");
+        List<Engagement> list = BEAN.getEngagementsWithNewOwners(request);
+        
+        
+        assertThat(list.get(0).getOwner(), equalTo(OWNER));
+    }
+    
+    /**
+     * Tests that getEngagementsWithNewOwners returns an empty list when there is no engagements to remove
+     * @throws Exception
+     */
+    @Test
+    public void processNotification_R5_find_engagements_should_return_empty_list() throws Exception{
+    	
+    	ProcessNotificationType request = new ProcessNotificationType();
+        List<Engagement> list = BEAN.getEngagementsWithNewOwners(request);
+
+        assertThat(list, hasSize(0));
+    }
+    
     
     /**
      * Convenience method for getting the only saved Engagement from the data store. Asserts that it only finds one Engagement
@@ -387,10 +484,31 @@ public class ProcessBeanIntegrationTest {
         return result.get(0);
     }
    
+    /**
+     * Convenience method for getting numbers of Engagements in the data store
+     * @return number of records in the data store
+     */
     private int countEngagements() {
         engagementRepository.flush();
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
         return result.size();
     }
-
+    
+    /**
+     * Convenience method for getting getting the owner for an engagement in a list based on getRegisteredResidentIdentification
+     * @param result
+     * @param et
+     * @return The owner
+     */
+    private String getOwner(List<Engagement> result, EngagementTransactionType et) {
+    	for(Engagement e : result) {
+    		if (e.getRegisteredResidentIdentification().equals(et.getEngagement().getRegisteredResidentIdentification())) {
+    			return e.getOwner();
+    		}
+    	}
+    	
+    	return "";
+    }
+    
+    
 }
