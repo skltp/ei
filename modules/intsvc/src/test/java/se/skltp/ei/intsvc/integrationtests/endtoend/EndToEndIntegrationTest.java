@@ -46,6 +46,7 @@ import se.skltp.ei.intsvc.integrationtests.notificationservice.NotificationTestC
 import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer;
 import se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducerLogger;
 import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
+import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
@@ -57,6 +58,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
+    private static final String OWNER = rb.getString("EI_HSA_ID");
         
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -144,7 +146,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	 */
     @Test
     public void endToEnd_notification_OK() {
-
+    	
     	long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
 		
@@ -153,7 +155,6 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
 		assertEquals(ResultCodeEnum.OK, nr.getResultCode());
 
-		
 		// Verify that we got something in the database as well
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
         assertEquals(1, result.size());
@@ -170,10 +171,50 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 
 		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
 		assertQueueDepth(INFO_LOG_QUEUE, 14);
-
+		
 		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
     	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastOriginalConsumer());
     	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastOriginalConsumer());
+    }
+    
+    
+    /**
+     * Performs a test that verifies that engagements with same owner as the index are filtered out and not saved
+     * in the data store.
+     */
+    @Test
+    public void endToEnd_processNotification_R4_OK_filter_should_remove_circular_notifications() {
+    	
+    	long residentId = 1111111111L;
+		String fullResidentId = "19" + residentId;
+    	
+    	ProcessNotificationType request = createProcessNotificationRequest(residentId, 1212121212L);
+    	request.getEngagementTransaction().get(1).getEngagement().setOwner(OWNER); // This engagement should be filtered out
+    	
+		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestNotificationDispatcher(request), "process-notification-teststub-service", EI_TEST_TIMEOUT);
+        
+		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
+		assertEquals(ResultCodeEnum.OK, nr.getResultCode());
+
+		// Verify that we got something in the database as well
+        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+        assertEquals(1, result.size());
+        
+        // Verify that the correct Engagement was saved
+        assertThat(result.get(0).getRegisteredResidentIdentification(), is(fullResidentId));
+        assertThat(result.get(0).getOwner(), is(request.getEngagementTransaction().get(0).getEngagement().getOwner()));
+        
+		// Assert that no messages are left on the processing queue
+		assertQueueDepth(PROCESS_QUEUE, 0);
+		
+		// Wait a short while for all background processing to complete
+		waitForBackgroundProcessing();
+		
+		// Expect no error logs
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		
+		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
+		assertQueueDepth(INFO_LOG_QUEUE, 14);
     }
 
 	/**

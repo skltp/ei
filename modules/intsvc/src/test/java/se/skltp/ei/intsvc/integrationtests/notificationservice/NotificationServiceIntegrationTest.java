@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.mule.context.notification.EndpointMessageNotification;
@@ -46,7 +45,8 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
 
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
-
+    private static final String OWNER = rb.getString("EI_HSA_ID");
+    
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
@@ -120,6 +120,33 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 
 		// Expect nothing on the processing queue due to the error
 		assertQueueDepth(PROCESS_QUEUE, 0);
+    }
+    
+    /**
+     * Verify that we ignore circular engagements and only process engagements with owners
+     * different from the current index.
+     */
+    @Test
+    public void processNotification_R4_OK_filter_should_remove_circular_notifications() {
+    
+    	ProcessNotificationType request = createProcessNotificationRequest(1111111111L, 1212121212L);
+    	request.getEngagementTransaction().get(1).getEngagement().setOwner(OWNER); // This engagement should be filtered out
+    	
+    	// Request with only one engagement left
+    	ProcessNotificationType request2 = createProcessNotificationRequest(1111111111L);
+    	
+		// Use dispatchAndWaitForDelivery() and a custom Dispatcher to ensure that the listener on the queue is registered before the web service call is made
+        MuleMessage response = dispatchAndWaitForDelivery(new DoOneTestDispatcher(request), "jms://" + PROCESS_QUEUE, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+
+        // Verify that we only sending 1 engagement to the PROCESS_QUEUE
+        assertProcessNotificationRequest(request2, response);
+
+		// Expect no error logs and three info log entries
+		assertQueueDepth(ERROR_LOG_QUEUE, 0);
+		assertQueueDepth(INFO_LOG_QUEUE, 3);
+
+		// Assert that the response is the only message on the queue
+		assertQueueDepth(PROCESS_QUEUE, 1);
     }
 
 	private class DoOneTestDispatcher implements Dispatcher {

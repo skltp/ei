@@ -275,6 +275,7 @@ public class ProcessBean implements ProcessInterface {
 	 * R5 - fetch all posts that should be removed since the incoming Engagement changed owner
 	 * 
 	 * This method is not part of the public API
+	 * TODO (patrik) - refactor the test so the this method can be private
 	 * 
 	 * @param request
 	 * @return List with engagements to remove
