@@ -60,7 +60,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 	private static final riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory processNotification_of = new riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory();
 	
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
-
+    private static final String OWNER = rb.getString("EI_HSA_ID");
 	
 	private static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
 	private static final String NOTIFY_TOPIC = rb.getString("NOTIFY_TOPIC");
@@ -128,6 +128,10 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
         List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
         assertEquals(1, result.size());
         assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+        
+        // Should be owner of the index
+        assertThat(result.get(0).getOwner(), is(OWNER)); 
+        
 
 		// Expect no error logs and three info log entries
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);

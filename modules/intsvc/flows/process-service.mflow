@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="process-service">
-    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#1">
+    <global-element type="http://www.springframework.org/schema/beans/bean" name="Bean" entity-id="Bean#1">
         <properties>
             <property name="factory-bean"/>
             <property name="abstract"/>
@@ -8,65 +8,71 @@
             <property name="init-method"/>
             <property name="autowire-candidate"/>
             <property name="factory-method"/>
-            <property name="class" value="se.skltp.ei.svc.service.impl.ProcessBean"/>
+            <property value="se.skltp.ei.svc.service.impl.ProcessBean" name="class"/>
             <property name="parent"/>
             <property name="children"/>
             <property name="lazy-init"/>
-            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property value="beans@spring@http://www.springframework.org/schema/beans" name="auxiliary;wrappedIn"/>
             <property name="id"/>
             <property name="primary"/>
-            <property name="name" value="process-bl-bean"/>
+            <property value="process-bl-bean" name="name"/>
             <property name="autowire"/>
             <property name="destroy-method"/>
-            <property name="auxiliary;index" value="2"/>
-            <property name="auxiliary;wrapIn" value="1"/>
-            <property name="depends-on"/>
-        </properties>
-    </global-element>
-    <global-element name="Bean" type="http://www.springframework.org/schema/beans/bean" entity-id="Bean#2">
-        <properties>
-            <property name="factory-bean"/>
-            <property name="abstract"/>
-            <property name="scope"/>
-            <property name="init-method"/>
-            <property name="autowire-candidate"/>
-            <property name="factory-method"/>
-            <property name="class" value="se.skltp.ei.intsvc.process.ProcessBean"/>
-            <property name="parent"/>
-            <property name="children"/>
-            <property name="lazy-init"/>
-            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
-            <property name="id"/>
-            <property name="primary"/>
-            <property name="name" value="process-bean"/>
-            <property name="autowire"/>
-            <property name="destroy-method"/>
-            <property name="auxiliary;index" value="3"/>
-            <property name="auxiliary;wrapIn" value="1"/>
+            <property value="2" name="auxiliary;index"/>
+            <property value="1" name="auxiliary;wrapIn"/>
             <property name="depends-on"/>
             <property-collection name="@http://www.springframework.org/schema/beans/property;0">
-                <property name="ref" value="process-bl-bean"/>
-                <property name="name" value="blBean"/>
-                <property name="auxiliary;index" value="4"/>
-                <property name="auxiliary;wrapIn" value="4"/>
+                <property value="owner" name="name"/>
+                <property value="${EI_HSA_ID}" name="value"/>
+                <property value="3" name="auxiliary;index"/>
+                <property value="3" name="auxiliary;wrapIn"/>
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="process-service" entity-id="18532386-e0c0-418f-9665-8c6ab9dea08a">
+    <global-element type="http://www.springframework.org/schema/beans/bean" name="Bean" entity-id="Bean#2">
+        <properties>
+            <property name="factory-bean"/>
+            <property name="abstract"/>
+            <property name="scope"/>
+            <property name="init-method"/>
+            <property name="autowire-candidate"/>
+            <property name="factory-method"/>
+            <property value="se.skltp.ei.intsvc.process.ProcessBean" name="class"/>
+            <property name="parent"/>
+            <property name="children"/>
+            <property name="lazy-init"/>
+            <property value="beans@spring@http://www.springframework.org/schema/beans" name="auxiliary;wrappedIn"/>
+            <property name="id"/>
+            <property name="primary"/>
+            <property value="process-bean" name="name"/>
+            <property name="autowire"/>
+            <property name="destroy-method"/>
+            <property value="4" name="auxiliary;index"/>
+            <property value="1" name="auxiliary;wrapIn"/>
+            <property name="depends-on"/>
+            <property-collection name="@http://www.springframework.org/schema/beans/property;0">
+                <property value="process-bl-bean" name="ref"/>
+                <property value="blBean" name="name"/>
+                <property value="5" name="auxiliary;index"/>
+                <property value="5" name="auxiliary;wrapIn"/>
+            </property-collection>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="process-service" entity-id="0878bdbf-2da9-4636-ad40-15ca5c53988a">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
             <property name="bussinessEventsLabel"/>
             <property name="tracking:enable-default-events"/>
-            <property name="auxiliary;index" value="5"/>
+            <property value="6" name="auxiliary;index"/>
         </properties>
-        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
-            <graphicalData x="0" y="0" width="0" height="0"/>
-            <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#1">
-                <graphicalData x="0" y="0" width="0" height="0"/>
+        <lane isChoiceOtherwiseLane="false" index="0" hadOnlyOneElement="false" entity-id="compartment-lane#1">
+            <graphicalData height="0" width="0" y="0" x="0"/>
+            <endpoint message-exchange-pattern="OneWay" direction="Inbound" type="http://www.mulesoft.org/schema/mule/jms/endpoint" name="JMS" entity-id="JMS#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="topic"/>
-                    <property name="queue" value="${PROCESS_QUEUE}"/>
+                    <property value="${PROCESS_QUEUE}" name="queue"/>
                     <property name="durableName"/>
                     <property name="businessEventsLabel"/>
                     <property name="disableTransportTransformer"/>
@@ -74,38 +80,38 @@
                     <property name="exchange-pattern"/>
                     <property name="tracking:enable-default-events"/>
                     <property name="ref"/>
-                    <property name="transformer-refs" value="logMsgIn"/>
+                    <property value="logMsgIn" name="transformer-refs"/>
                     <property name="address"/>
                     <property name="encoding"/>
                     <property name="responseTransformer-refs"/>
-                    <property name="auxiliary;index" value="6"/>
+                    <property value="7" name="auxiliary;index"/>
                     <property name="mimeType"/>
                     <property name="responseTimeout"/>
-                    <property name="connector-ref" value="soitoolkit-jms-connector"/>
+                    <property value="soitoolkit-jms-connector" name="connector-ref"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/jms/transaction;0">
-                        <property name="action2" value="ALWAYS_BEGIN"/>
-                        <property name="action1" value="ALWAYS_BEGIN"/>
-                        <property name="auxiliary;index" value="7"/>
-                        <property name="auxiliary;wrapIn" value="7"/>
+                        <property value="ALWAYS_BEGIN" name="action2"/>
+                        <property value="ALWAYS_BEGIN" name="action1"/>
+                        <property value="8" name="auxiliary;index"/>
+                        <property value="8" name="auxiliary;wrapIn"/>
                     </property-collection>
                 </properties>
             </endpoint>
-            <pattern name="Java" type="http://www.mulesoft.org/schema/mule/core/component" entity-id="Java#1">
-                <graphicalData x="0" y="0" width="0" height="0"/>
+            <pattern type="http://www.mulesoft.org/schema/mule/core/component" name="Java" entity-id="Java#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
                     <property name="class"/>
-                    <property name="auxiliary;index" value="8"/>
+                    <property value="9" name="auxiliary;index"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/core/spring-object;0">
-                        <property name="bean" value="process-bean"/>
-                        <property name="auxiliary;index" value="9"/>
-                        <property name="auxiliary;wrapIn" value="9"/>
+                        <property value="process-bean" name="bean"/>
+                        <property value="10" name="auxiliary;index"/>
+                        <property value="10" name="auxiliary;wrapIn"/>
                     </property-collection>
                 </properties>
             </pattern>
-            <endpoint direction="Outbound" message-exchange-pattern="OneWay" name="JMS Topic" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#2">
-                <graphicalData x="0" y="0" width="0" height="0"/>
+            <endpoint message-exchange-pattern="OneWay" direction="Outbound" type="http://www.mulesoft.org/schema/mule/jms/endpoint" name="JMS Topic" entity-id="JMS#2">
+                <graphicalData height="0" width="0" y="0" x="0"/>
                 <properties>
-                    <property name="topic" value="${NOTIFY_TOPIC}"/>
+                    <property value="${NOTIFY_TOPIC}" name="topic"/>
                     <property name="queue"/>
                     <property name="durableName"/>
                     <property name="businessEventsLabel"/>
@@ -114,24 +120,24 @@
                     <property name="exchange-pattern"/>
                     <property name="tracking:enable-default-events"/>
                     <property name="ref"/>
-                    <property name="transformer-refs" value="logMsgOut"/>
+                    <property value="logMsgOut" name="transformer-refs"/>
                     <property name="address"/>
                     <property name="encoding"/>
                     <property name="responseTransformer-refs"/>
-                    <property name="auxiliary;index" value="10"/>
+                    <property value="11" name="auxiliary;index"/>
                     <property name="mimeType"/>
                     <property name="responseTimeout"/>
-                    <property name="connector-ref" value="soitoolkit-jms-connector"/>
+                    <property value="soitoolkit-jms-connector" name="connector-ref"/>
                     <property-collection name="@http://www.mulesoft.org/schema/mule/jms/transaction;0">
-                        <property name="action2" value="ALWAYS_JOIN"/>
-                        <property name="action1" value="ALWAYS_JOIN"/>
-                        <property name="auxiliary;index" value="11"/>
-                        <property name="auxiliary;wrapIn" value="11"/>
+                        <property value="ALWAYS_JOIN" name="action2"/>
+                        <property value="ALWAYS_JOIN" name="action1"/>
+                        <property value="12" name="auxiliary;index"/>
+                        <property value="12" name="auxiliary;wrapIn"/>
                     </property-collection>
                 </properties>
             </endpoint>
-            <unknown description="false" index="12" entity-id="unknown#1">
-                <graphicalData x="0" y="0" width="0" height="0"/>
+            <unknown index="13" description="false" entity-id="unknown#1">
+                <graphicalData height="0" width="0" y="0" x="0"/>
                 <content>&lt;custom-exception-strategy xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; class=&quot;org.soitoolkit.commons.mule.error.ServiceExceptionStrategy&quot;/&gt;</content>
             </unknown>
         </lane>

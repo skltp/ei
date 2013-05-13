@@ -19,7 +19,10 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
 
     <spring:beans>
         <!-- Bean with business logic -->
-        <spring:bean name="process-bl-bean" class="se.skltp.ei.svc.service.impl.ProcessBean"/>
+        <spring:bean name="process-bl-bean" class="se.skltp.ei.svc.service.impl.ProcessBean">
+        	<spring:property name="owner" value="${EI_HSA_ID}"/>
+        </spring:bean>
+     
 
         <!-- Bean that process the update and/or process-notification -->
         <spring:bean name="process-bean" class="se.skltp.ei.intsvc.process.ProcessBean">
