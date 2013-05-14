@@ -60,7 +60,7 @@
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="persistenceXmlLocation" value="persistence.xml"/>
+        <property name="persistenceXmlLocation" value="${EI_JPA_PERSISTENCE_XML}"/>
         <property name="persistenceUnitName" value="springJpaPersistenceUnit"/>
     </bean>
 
