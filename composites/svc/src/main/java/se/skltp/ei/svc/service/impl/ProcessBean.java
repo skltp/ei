@@ -92,11 +92,61 @@ public class ProcessBean implements ProcessInterface {
      * @param header the header
      * @param request the request
      */
-    @Override
+    @Override 
     public void validateUpdate(Header header, UpdateType request) {
     	validateLogicalAddress(header);
         validateUniqueness(request);
         validateMaxLength(request.getEngagementTransaction());
+        validateRequiredFieldsInEngagements(request.getEngagementTransaction());
+    }
+    /**
+     * Validates that all required attributes for engagements are supplied 
+     * @param engagementTransactions
+     * @throws EIException
+     */
+    private void validateRequiredFieldsInEngagements(List<EngagementTransactionType> engagementTransactions) {
+    	
+        for (final EngagementTransactionType engagementTransaction : engagementTransactions){
+        	EngagementType et = engagementTransaction.getEngagement();
+        	
+        	String message = "";
+        	Boolean error = true;
+        	
+        	if (et.getRegisteredResidentIdentification() == null || et.getRegisteredResidentIdentification().equals("")) {
+        		message  = "registeredResidentIdentification";
+        		
+        	} else if(et.getServiceDomain() == null || et.getServiceDomain().equals("")) {
+        		message = "serviceDomain";
+        		
+        	} else if (et.getCategorization() == null || et.getCategorization().equals("")) {
+        		message = "categorization";
+        		
+        	} else if (et.getLogicalAddress() == null || et.getLogicalAddress().equals("")) {
+        		message = "logicalAddress";
+        		
+        	} else if (et.getBusinessObjectInstanceIdentifier() == null || et.getBusinessObjectInstanceIdentifier().equals("")) {
+        		message = "businessObjectInstanceIdentifier";
+        		
+        	} else if (et.getClinicalProcessInterestId() == null || et.getClinicalProcessInterestId().equals("")) {
+        		message = "clinicalProcessInterestId";
+        		
+        	} else if(et.getSourceSystem() == null || et.getSourceSystem().equals("")) {
+        		message = "sourceSystem";
+        		
+        	} else if(et.getDataController() == null || et.getDataController().equals("")) {
+        		message = "dataController";
+        		
+        	} else {
+        		// No errors
+        		error = false;
+        	}
+        	
+        	if (error) {
+        		message = message + " is missing but mandatory";
+        		throw new EiException(EiErrorCodeEnum.EI004_VALIDATION_ERROR, message);
+        	}
+        	
+        }    	
     }
 
     // Update, R1: Validate uniqueness within the request
@@ -200,6 +250,8 @@ public class ProcessBean implements ProcessInterface {
 	public void validateProcessNotification(Header header, ProcessNotificationType request) {
 		validateUniqueness(request); // Update R1
 		validateMaxLength(request.getEngagementTransaction());
+		validateRequiredFieldsInEngagements(request.getEngagementTransaction());
+		validateOwner(request);
 	}
 	
 	/**
@@ -209,6 +261,22 @@ public class ProcessBean implements ProcessInterface {
 	 */
 	private void validateUniqueness(ProcessNotificationType request) {
 		validateUniqueness(request.getEngagementTransaction());
+	}
+	
+	
+	/**
+	 * Validates that the owner is supplied in all engagements
+	 * @param request
+	 */
+	private void validateOwner(ProcessNotificationType request) {
+		
+        for (final EngagementTransactionType engagementTransaction : request.getEngagementTransaction()) {
+        	EngagementType et = engagementTransaction.getEngagement();
+        	if (et.getOwner() == null || et.getOwner().equals("")) {
+        		throw new EiException(EiErrorCodeEnum.EI004_VALIDATION_ERROR, "owner is missing but mandatory");
+        	}
+        }
+		
 	}
 	
 	

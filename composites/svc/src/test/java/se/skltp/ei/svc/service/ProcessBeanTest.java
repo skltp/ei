@@ -207,6 +207,70 @@ public class ProcessBeanTest {
     }
     
     
+    /**
+     * Validates that all mandatory fields is supplied in an engagement.
+     * @throws Exception
+     */
+    @Test
+    public void update_ERR_mandatory_fields_are_missing() throws Exception {
+    	
+    	// registeredResidentIdentification
+		UpdateType request = new UpdateType();
+		EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setRegisteredResidentIdentification(null);
+		assertRequest(request);
+    	
+    	// serviceDomain
+    	request = new UpdateType();
+		et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setServiceDomain(null);
+		assertRequest(request);
+		
+    	// categorization
+    	request = new UpdateType();
+		et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setCategorization(null);
+		assertRequest(request);
+		
+    	// logicalAddress
+    	request = new UpdateType();
+		et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setLogicalAddress(null);
+		assertRequest(request);
+    	
+    	// BusinessObjectInstanceIdentifier
+    	request = new UpdateType();
+		et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setBusinessObjectInstanceIdentifier(null);
+		assertRequest(request);
+    	
+    	// clinicalProcessInterestId
+    	request = new UpdateType();
+		et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setClinicalProcessInterestId(null);
+		assertRequest(request);
+    	
+    	// sourceSystem
+    	request = new UpdateType();
+		et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setSourceSystem(null);
+		assertRequest(request);
+    	
+    	// dataController
+    	request = new UpdateType();
+		et = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et);
+		et.getEngagement().setDataController(null);
+		assertRequest(request);
+    }
+    
     /*** 
      * Test for processNotification 
      */
@@ -342,6 +406,32 @@ public class ProcessBeanTest {
     		
 		} catch (EiException e) {
 			assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
+		}
+    }
+    
+    @Test
+    public void processNotification_ERR_owner_is_missing() throws Exception {
+    	ProcessNotificationType request = new ProcessNotificationType();
+    	EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+		request.getEngagementTransaction().add(et1);
+
+    	et1.getEngagement().setOwner(null);
+		
+		try {
+			BEAN.validateProcessNotification(HEADER, request);	
+			fail("Test failed - No EIException thrown");
+		} catch(EiException e) {
+			assertEquals(EiErrorCodeEnum.EI004_VALIDATION_ERROR.getErrorCode(), e.getCode());
+		}
+		
+    }
+    
+    private void assertRequest(UpdateType request) {
+    	try {
+    		BEAN.validateUpdate(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI004_VALIDATION_ERROR.getErrorCode(), e.getCode());
 		}
     }
 

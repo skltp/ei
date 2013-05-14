@@ -188,6 +188,37 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		// Expect nothing on the processing queue due to the error
 		assertQueueDepth(PROCESS_QUEUE, 0);
     }
+    
+    /**
+	 * Validate correct error message when one of the required fields is missing. 
+	 * Does not validate all fields!. Thats is instead done in ProcessBeanTest
+     */
+    @Test
+    public void update_ERR_mandatory_fields_are_missing() {
+		
+		UpdateType request = createUdateRequest(1111111111L);
+		request.getEngagementTransaction().get(0).getEngagement().setBusinessObjectInstanceIdentifier(null);
+	
+		
+		String expectedError = "EI004: The payload does not validate, error messge: businessObjectInstanceIdentifier is missing but mandatory";
+
+		try {
+			new DoOneTestDispatcher(request).doDispatch();
+			fail("Expected exception here");
+
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
+			assertEquals("javax.xml.ws.soap.SOAPFaultException: " + expectedError, e.toString());
+		};
+
+		// Expect one error log and info log entry
+		assertQueueDepth(ERROR_LOG_QUEUE, 1);
+		assertQueueContainsMessage(ERROR_LOG_QUEUE, expectedError);
+		assertQueueDepth(INFO_LOG_QUEUE, 1);
+
+		// Expect nothing on the processing queue due to the error
+		assertQueueDepth(PROCESS_QUEUE, 0);
+    }
 
 	private class DoOneTestDispatcher implements Dispatcher {
 		
