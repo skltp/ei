@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <con:soapui-project name="SKLTP-EI" resourceRoot="${projectDir}" soapui-version="3.0.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Global Properties" value=""/>
-  <con:entry key="TestSuite" value="Update Tests"/>
+  <con:entry key="TestSuite" value="FindContent Tests"/>
   <con:entry key="Report to Generate" value=""/>
   <con:entry key="Password" value=""/>
   <con:entry key="soapui-setings.xml Password" value=""/>
@@ -21,7 +21,7 @@
   <con:entry key="Project Password" value=""/>
   <con:entry key="Export All" value="false"/>
   <con:entry key="Report Format(s)" value=""/>
-  <con:entry key="TestCase" value="&lt;all>"/>
+  <con:entry key="TestCase" value="FindContent - empty response"/>
   <con:entry key="Print Report" value="false"/>
   <con:entry key="Username" value=""/>
   <con:entry key="Root Folder" value=""/>
@@ -212,7 +212,7 @@
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
     </xs:sequence>
   </xs:complexType>
-</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update" name="Update" bindingOperationName="Update" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update" name="Update" bindingOperationName="Update" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Update 1"><con:description>Sends a single engagement to the update-service</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -231,9 +231,58 @@
                <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
             </urn2:engagement>
          </urn1:engagementTransaction>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>false</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1111111111</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
       </urn1:Update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="FindContentWSBeanServiceSoapBinding" type="wsdl" bindingName="{http://findcontent.intsvc.ei.skltp.se/}FindContentWSBeanServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8082/skltp-ei/find-content-service/v1?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8082/skltp-ei/find-content-service/v1?wsdl"><con:part><con:url>http://localhost:8082/skltp-ei/find-content-service/v1?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="FindContentWSBeanService" targetNamespace="http://findcontent.intsvc.ei.skltp.se/" xmlns:ns1="urn:riv:itintegration:engagementindex:FindContent:1:rivtabp21" xmlns:ns4="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://findcontent.intsvc.ei.skltp.se/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Delete all"><con:description>Deletes all known TEST-DOMAIN engagements</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:Update>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>true</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1212121212</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>true</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1111111111</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+
+
+      </urn1:Update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="FindContentWSBeanServiceSoapBinding" type="wsdl" bindingName="{http://findcontent.intsvc.ei.skltp.se/}FindContentWSBeanServiceSoapBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8082/skltp-ei/find-content-service/v1?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8082/skltp-ei/find-content-service/v1?wsdl"><con:part><con:url>http://localhost:8082/skltp-ei/find-content-service/v1?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="FindContentWSBeanService" targetNamespace="http://findcontent.intsvc.ei.skltp.se/" xmlns:ns1="urn:riv:itintegration:engagementindex:FindContent:1:rivtabp21" xmlns:ns4="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://findcontent.intsvc.ei.skltp.se/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <wsdl:import location="http://localhost:8082/skltp-ei/find-content-service/v1?wsdl=FindContentResponderInterface.wsdl" namespace="urn:riv:itintegration:engagementindex:FindContent:1:rivtabp21"></wsdl:import>
   <wsdl:binding name="FindContentWSBeanServiceSoapBinding" type="ns1:FindContentResponderInterface">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -331,7 +380,7 @@
       <wsdl:output message="ns1:FindContentResponse" name="FindContentResponse"></wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
-</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:riv:itintegration:engagementindex:FindContentResponder:1:FindContent" name="FindContent" bindingOperationName="FindContent" type="Request-Response" outputName="FindContentResponse" inputName="FindContent" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:FindContentResponder:1">
+</wsdl:definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:riv:itintegration:engagementindex:FindContentResponder:1:FindContent" name="FindContent" bindingOperationName="FindContent" type="Request-Response" outputName="FindContentResponse" inputName="FindContent" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:description>Should find 1 engagement</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:FindContentResponder:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -341,7 +390,17 @@
           <urn1:serviceDomain>TEST-DOMAIN</urn1:serviceDomain>
       </urn1:FindContent>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:FindContentResponder:1:FindContent"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="ProcessNotificationResponderBinding" type="wsdl" bindingName="{urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21}ProcessNotificationResponderBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8081/skltp-ei/notification-service/v1?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8081/skltp-ei/notification-service/v1?wsdl"><con:part><con:url>http://localhost:8081/skltp-ei/notification-service/v1?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ProcessNotificationInteraction" targetNamespace="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21" xmlns:itr="urn:riv:itintegration:registry:1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tjsi="urn:riv:itintegration:engagementindex:ProcessNotificationInitiator:1" xmlns:tjsr="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1" xmlns:tns="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:FindContentResponder:1:FindContent"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Request 2"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:FindContentResponder:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:FindContent>
+          <urn1:registeredResidentIdentification>1111111111</urn1:registeredResidentIdentification>
+          <urn1:serviceDomain>TEST-DOMAIN</urn1:serviceDomain>
+      </urn1:FindContent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:FindContentResponder:1:FindContent"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="ProcessNotificationResponderBinding" type="wsdl" bindingName="{urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21}ProcessNotificationResponderBinding" soapVersion="1_1" anonymous="optional" definition="http://localhost:8081/skltp-ei/notification-service/v1?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhost:8081/skltp-ei/notification-service/v1?wsdl"><con:part><con:url>http://localhost:8081/skltp-ei/notification-service/v1?wsdl</con:url><con:content><![CDATA[<wsdl:definitions name="ProcessNotificationInteraction" targetNamespace="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21" xmlns:itr="urn:riv:itintegration:registry:1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tjsi="urn:riv:itintegration:engagementindex:ProcessNotificationInitiator:1" xmlns:tjsr="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1" xmlns:tns="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <wsdl:types>
     <xs:schema targetNamespace="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21">
       <xs:import namespace="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1" schemaLocation="http://localhost:8081/skltp-ei/notification-service/v1?xsd=ProcessNotificationResponder_1.0.xsd"/>
@@ -565,7 +624,7 @@
          <urn1:engagementTransaction>
             <urn2:deleteFlag>false</urn2:deleteFlag>
             <urn2:engagement>
-               <urn2:registeredResidentIdentification>1212121212</urn2:registeredResidentIdentification>
+               <urn2:registeredResidentIdentification>1111111111</urn2:registeredResidentIdentification>
                <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
                <urn2:categorization>TEST-CATEGORY</urn2:categorization>
                <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
@@ -611,23 +670,31 @@
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:wsaConfig action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite name="FindContent Tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="FindContent TestCase" searchProperties="true"><con:settings/><con:testStep type="request" name="FindContent"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FindContentWSBeanServiceSoapBinding</con:interface><con:operation>FindContent</con:operation><con:request name="FindContent"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:FindContentResponder:1">
    <soapenv:Header>
-      <urn:LogicalAddress>?</urn:LogicalAddress>
+      <urn:LogicalAddress>123</urn:LogicalAddress>
    </soapenv:Header>
    <soapenv:Body>
       <urn1:FindContent>
          <urn1:dataController>?</urn1:dataController>
       </urn1:FindContent>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig action="urn:riv:itintegration:engagementindex:FindContentResponder:1:FindContent" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite name="ProcessNotification Tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ProcessNotification - filtered out all" searchProperties="true"><con:settings/><con:testStep type="request" name="DeleteAllPosts"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FindContentWSBeanServiceSoapBinding</con:interface><con:operation>FindContent</con:operation><con:request name="DeleteAllPosts"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:FindContentResponder:1">
+</soapenv:Envelope>]]></con:request><con:wsaConfig action="urn:riv:itintegration:engagementindex:FindContentResponder:1:FindContent" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="FindContent - empty response" searchProperties="true"><con:settings/><con:testStep type="request" name="FindContent"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FindContentWSBeanServiceSoapBinding</con:interface><con:operation>FindContent</con:operation><con:request name="FindContent"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:FindContentResponder:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
    <soapenv:Body>
       <urn1:FindContent>
           <urn1:registeredResidentIdentification>1212121212</urn1:registeredResidentIdentification>
-          <urn1:serviceDomain>TEST-DOMAIN</urn1:serviceDomain>
+          <urn1:serviceDomain>TEST-DOMAIN-NOBODY-USES</urn1:serviceDomain>
       </urn1:FindContent>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="groovy" name="Groovy Script"><con:settings/><con:config><script>def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
-log.info(groovyUtils)
-//def holder = groovyUtils.getXmlHolder( "Request 1#Response" )</script></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Simple Contains"><con:configuration><token/><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:loadTest name="LoadTest 1"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>1</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>60</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite name="ProcessNotification Tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ProcessNotification - no messages" searchProperties="true"><con:settings/><con:testStep type="request" name="FindAllPosts"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>FindContentWSBeanServiceSoapBinding</con:interface><con:operation>FindContent</con:operation><con:request name="FindAllPosts"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8082/skltp-ei/find-content-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:FindContentResponder:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:FindContent>
+          <urn1:registeredResidentIdentification>1212121212</urn1:registeredResidentIdentification>
+          <urn1:serviceDomain>TEST-DOMAINz</urn1:serviceDomain>
+      </urn1:FindContent>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/></con:soapui-project>
