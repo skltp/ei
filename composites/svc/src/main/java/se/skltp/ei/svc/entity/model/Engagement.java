@@ -67,7 +67,6 @@ public class Engagement implements BusinessKey {
 
     // constants
     static final String NA = "NA";
-    static final String INERA = "Inera";
 
     // Tech id.
     @Column(name="id", length=64)
@@ -98,7 +97,7 @@ public class Engagement implements BusinessKey {
     private String dataController;
 
     @Column(name=OWNER, nullable=false, length=64, updatable=false)
-    private String owner = INERA;
+    private String owner;
 
     @Column(name=CLINICAL_PROCESS_INTEREST_ID, nullable=false, length=128, updatable=false)    
     private String clinicalProcessInterestId = NA;
@@ -138,7 +137,7 @@ public class Engagement implements BusinessKey {
         this.businessObjectInstanceIdentifier = nvl(businessObjectInstanceIdentifier, NA);
         this.sourceSystem = sourceSystem;
         this.dataController = dataController;
-        this.owner = nvl(owner, INERA);
+        this.owner = owner;
         this.clinicalProcessInterestId = nvl(clinicalProcessInterestId, NA);
         this.id = generateHashId();
     }
