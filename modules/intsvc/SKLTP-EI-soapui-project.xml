@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <con:soapui-project name="SKLTP-EI" resourceRoot="${projectDir}" soapui-version="3.0.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Global Properties" value=""/>
-  <con:entry key="TestSuite" value="&lt;all>"/>
+  <con:entry key="TestSuite" value="Update Tests"/>
   <con:entry key="Report to Generate" value=""/>
   <con:entry key="Password" value=""/>
   <con:entry key="soapui-setings.xml Password" value=""/>
@@ -212,7 +212,7 @@
       <xs:any maxOccurs="unbounded" minOccurs="0" namespace="##other" processContents="lax"/>
     </xs:sequence>
   </xs:complexType>
-</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:endpoint>http://${#Project#ServiceEndpoint}/skltp-ei/update-service/v1</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update" name="Update" bindingOperationName="Update" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Update 1"><con:description>Sends a single engagement to the update-service</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#ServiceEndpoint}/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:endpoint>http://${#Project#ServiceEndpoint}/skltp-ei/update-service/v1</con:endpoint></con:endpoints><con:operation isOneWay="false" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update" name="Update" bindingOperationName="Update" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Update 1 - OK"><con:description>Sends a single engagement to the update-service</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://${#Project#ServiceEndpoint}/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -246,7 +246,7 @@
          </urn1:engagementTransaction>
       </urn1:Update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Delete all"><con:description>Deletes all known TEST-DOMAIN engagements</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Delete all - OK"><con:description>Deletes all known TEST-DOMAIN engagements</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -280,7 +280,7 @@
          </urn1:engagementTransaction>
       </urn1:Update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 3 - missing mandatory fields"><con:description>One of the engagements do not have all of the mandatory posts</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 3 - ERR - missing mandatory fields"><con:description>One of the engagements do not have all of the mandatory posts</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -315,7 +315,7 @@
 
       </urn1:Update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 1 - mostRecentContent"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 2 - OK - with mostRecentContent"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -339,7 +339,7 @@
       </urn1:Update>
    </soapenv:Body>
 </soapenv:Envelope>
-]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 4 - duplicate"><con:description>2 identical engagement will result in an error</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 4 - ERR - duplicate"><con:description>2 identical engagement will result in an error</con:description><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -373,7 +373,7 @@
          </urn1:engagementTransaction>
       </urn1:Update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 5 - wrong logicaladdress"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 5 - ERR - wrong logicaladdress"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>wrong-logical-address</urn:LogicalAddress>
    </soapenv:Header>
@@ -394,7 +394,7 @@
          </urn1:engagementTransaction>
       </urn1:Update>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 6 - too many"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:call><con:call name="Update 6 - ERR - too many engagements"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -29087,7 +29087,7 @@
          </urn1:engagementTransaction>
       </urn1:ProcessNotification>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1:ProcessNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="Update Tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Update - valid request" searchProperties="true" id="279b9352-13f9-4218-98d5-01381e1723fd"><con:settings/><con:testStep type="request" name="Update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>UpdateResponderBinding</con:interface><con:operation>Update</con:operation><con:request name="Update"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1:ProcessNotification"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:testSuite name="Update Tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Update - valid request" searchProperties="true" id="279b9352-13f9-4218-98d5-01381e1723fd"><con:settings/><con:testStep type="request" name="Update - Insert/update"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>UpdateResponderBinding</con:interface><con:operation>Update</con:operation><con:request name="Update - Insert/update"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -29113,7 +29113,46 @@ declare namespace ns3='urn:riv:itintegration:registry:1';
 declare namespace ns1='urn:riv:itintegration:engagementindex:1';
 declare namespace ns2='urn:riv:itintegration:engagementindex:UpdateResponder:1';
 
-//ns2:ResultCode</path><content>OK</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences></con:configuration></con:assertion><con:wsaConfig action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Update - missing mandatory attribute" searchProperties="true" id="120fe1af-6b74-4342-a7a8-3b86d79f9cf4"><con:settings/><con:testStep type="request" name="Update - missing mandatory fields"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>UpdateResponderBinding</con:interface><con:operation>Update</con:operation><con:request name="Update - missing mandatory fields" outgoingWss="" incomingWss="" wssPasswordType=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+//ns2:ResultCode</path><content>OK</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences></con:configuration></con:assertion><con:wsaConfig action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update" mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="Update - Delete all"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>UpdateResponderBinding</con:interface><con:operation>Update</con:operation><con:request name="Update - Delete all" outgoingWss="" incomingWss="" wssPasswordType=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:Update>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>true</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1212121212</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>true</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1111111111</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+      </urn1:Update>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="SOAP Fault Assertion"/><con:assertion type="XPath Match"><con:configuration><path>declare namespace soap='http://schemas.xmlsoap.org/soap/envelope/';
+declare namespace ns3='urn:riv:itintegration:registry:1';
+declare namespace ns1='urn:riv:itintegration:engagementindex:1';
+declare namespace ns2='urn:riv:itintegration:engagementindex:UpdateResponder:1';
+
+//ns2:ResultCode</path><content>OK</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:UpdateResponder:1:Update"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Update - missing mandatory attribute" searchProperties="true" id="120fe1af-6b74-4342-a7a8-3b86d79f9cf4"><con:settings/><con:testStep type="request" name="Update - missing mandatory fields"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>UpdateResponderBinding</con:interface><con:operation>Update</con:operation><con:request name="Update - missing mandatory fields" outgoingWss="" incomingWss="" wssPasswordType=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/update-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
       <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
    </soapenv:Header>
@@ -29255,7 +29294,71 @@ declare namespace ns1='urn:riv:itintegration:engagementindex:FindContentResponde
 
 declare namespace ns='urn:riv:itintegration:engagementindex:FindContentResponder:1';
 
-count(//ns:engagement)</path><content>0</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite name="ProcessNotification Tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ProcessNotification - no messages" searchProperties="true" id="2575f4ed-3de7-4b4e-b5cc-3086db1bab72"><con:settings/><con:setupScript>def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context) 
+count(//ns:engagement)</path><content>0</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:testSuite name="ProcessNotification Tests"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ProcessNotification - valid request" searchProperties="true" id="2575f4ed-3de7-4b4e-b5cc-3086db1bab72"><con:settings/><con:testStep type="request" name="PN"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ProcessNotificationResponderBinding</con:interface><con:operation>ProcessNotification</con:operation><con:request name="PN" outgoingWss="" incomingWss="" wssPasswordType=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/notification-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:ProcessNotification>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>false</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1313131313</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+               <urn2:owner>remote-owner</urn2:owner>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+      </urn1:ProcessNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="SOAP Fault Assertion"/><con:assertion type="XPath Match"><con:configuration><path>declare namespace soap='http://schemas.xmlsoap.org/soap/envelope/';
+declare namespace ns3='urn:riv:itintegration:registry:1';
+declare namespace ns1='urn:riv:itintegration:engagementindex:1';
+declare namespace ns2='urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1';
 
+//ns2:ResultCode</path><content>OK</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1:ProcessNotification"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:testStep type="request" name="PN - same Owner as EI"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ProcessNotificationResponderBinding</con:interface><con:operation>ProcessNotification</con:operation><con:request name="PN - same Owner as EI" outgoingWss="" incomingWss="" wssPasswordType=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/notification-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:ProcessNotification>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>false</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1313131313</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+               <urn2:owner>ei-hsa-id</urn2:owner>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+      </urn1:ProcessNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="SOAP Fault Assertion"/><con:assertion type="XPath Match"><con:configuration><path>declare namespace soap='http://schemas.xmlsoap.org/soap/envelope/';
+declare namespace ns3='urn:riv:itintegration:registry:1';
+declare namespace ns1='urn:riv:itintegration:engagementindex:1';
+declare namespace ns2='urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1';
 
-holder = groovyUtils.getXmlHolder( "Update#Update1" )</con:setupScript><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>ServiceEndpoint</con:name><con:value>localhost:8081</con:value></con:property><con:property><con:name>Localhost</con:name><con:value>http://localhost:8081/</con:value></con:property></con:properties><con:wssContainer/></con:soapui-project>
+//ns2:ResultCode</path><content>OK</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1:ProcessNotification"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:setupScript/><con:properties/></con:testCase><con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="ProcessNotifiation - missing mandatory attributes" searchProperties="true"><con:settings/><con:testStep type="request" name="ProcessNotification - missing mandatory fields"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>ProcessNotificationResponderBinding</con:interface><con:operation>ProcessNotification</con:operation><con:request name="ProcessNotification - missing mandatory fields" outgoingWss="" incomingWss="" wssPasswordType=""><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8081/skltp-ei/notification-service/v1</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:ProcessNotification>
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>false</urn2:deleteFlag>
+            <urn2:engagement>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+      </urn1:ProcessNotification>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="Not SOAP Fault Assertion"/><con:assertion type="Simple Contains"><con:configuration><token>EI004: The payload does not validate</token><ignoreCase>true</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:wsaConfig mustUnderstand="NONE" version="200508" action="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1:ProcessNotification"/><con:wsrmConfig version="1.2"/></con:request></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>ServiceEndpoint</con:name><con:value>localhost:8081</con:value></con:property><con:property><con:name>Localhost</con:name><con:value>http://localhost:8081/</con:value></con:property></con:properties><con:wssContainer/></con:soapui-project>
