@@ -42,7 +42,7 @@ import se.skltp.ei.svc.entity.repository.EngagementRepository;
  * @author Peter
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:skltp-ei-mysql-benchmark-test.xml")
+@ContextConfiguration(locations = {"classpath:skltp-ei-svc-spring-context.xml", "classpath:skltp-ei-svc-test-spring-context.xml"})
 public class BenchmarkTest {
 
     static class Timer {
@@ -95,10 +95,10 @@ public class BenchmarkTest {
     @Autowired
     private EngagementRepository engagementRepository;
 
-    @Value("${benchmarkRows}")
+    @Value("${benchmarkRows:10}")
     private int rows;
 
-    @Value("${benchmarkBatchSize}")
+    @Value("${benchmarkBatchSize:5}")
     private int batchSize;
 
 
