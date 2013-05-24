@@ -70,7 +70,7 @@ public class PropertyUtil {
 	static public Map<String, Object> getResovledProperties() {
     	if (resovledProperties == null) {
     		// FIXME. Inject the name of the property file!
-    		resovledProperties = new PropertyUtil().getResovledProperties("ei-config");
+    		resovledProperties = new PropertyUtil().getResovledProperties("ei-config","ei-config-override");
     	}
 		return resovledProperties;
     }
