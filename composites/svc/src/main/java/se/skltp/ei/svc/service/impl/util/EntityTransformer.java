@@ -60,7 +60,7 @@ public class EntityTransformer {
 
         return eOut;
     }
-    
+
     /**
      * Transform an engagement from the service model to the entity model
      * 
@@ -112,6 +112,21 @@ public class EntityTransformer {
         return eOut;
     }
 
+    //
+    private synchronized static String format(Date date) {
+        return dateFormatter.format(date);
+    }
+
+    //
+    private synchronized static Date parse(String date) {
+        try {
+            return dateFormatter.parse(date);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Input date is not according to expected format \"YYYYMMDDhhmmss\": " + date, e);
+        }
+
+    }
+
     /**
      * Returns a formatted date according to the service contract format.
      * 
@@ -119,7 +134,7 @@ public class EntityTransformer {
      * @return the formatted date.
      */
     public static String forrmatDate(Date date) {
-        return (date == null) ? null : dateFormatter.format(date);
+        return (date == null) ? null : format(date);
     }
 
     /**
@@ -129,11 +144,7 @@ public class EntityTransformer {
      * @return the date.
      */
     public static Date parseDate(String date) {
-        try {
-            return (date == null) ? null : dateFormatter.parse(date);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Input date is not according to expected format \"YYYYMMDDhhmmss\": " + date, e);
-        }
+        return (date == null) ? null : parse(date);
     }
 
 }
