@@ -47,7 +47,7 @@ public class GetLogicalAddresseesByServiceContractRequest {
     	GetLogicalAddresseesByServiceContractType getReq = new GetLogicalAddresseesByServiceContractType(); 
     	getReq.setServiceConsumerHsaId(logicalAddress);
     	ServiceContractNamespaceType ns = new ServiceContractNamespaceType();
-    	ns.setServiceContractNamespace("urn:riv:itintegration:registry:GetLogicalAddresseesByServiceContractResponder:1");
+    	ns.setServiceContractNamespace("urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1");
 		getReq.setServiceContractNameSpace(ns);
     	
 		Object[] request = new Object[] {logicalAddress, getReq};

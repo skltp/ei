@@ -40,6 +40,7 @@ public class GetLogicalAddresseesByServiceContractTestProducer implements GetLog
 	private static final Logger log = LoggerFactory.getLogger(GetLogicalAddresseesByServiceContractTestProducer.class);
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
+	private static final String EXPECTED_SERVICECONTRACT = "urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1";
 
 	@Override
 	public GetLogicalAddresseesByServiceContractResponseType getLogicalAddresseesByServiceContract(
@@ -50,8 +51,12 @@ public class GetLogicalAddresseesByServiceContractTestProducer implements GetLog
 
         // Force a timeout if timeout Id
         if (TEST_ID_FAULT_TIMEOUT.equals(request.getServiceConsumerHsaId())) forceTimeout();
-
+        
         GetLogicalAddresseesByServiceContractResponseType response = new GetLogicalAddresseesByServiceContractResponseType();
+        if(!EXPECTED_SERVICECONTRACT.equals(request.getServiceContractNameSpace().getServiceContractNamespace())){
+            return response; 
+        }
+
         response.getLogicalAddress().add("HSA_ID_A");
         response.getLogicalAddress().add("HSA_ID_B");
         response.getLogicalAddress().add("HSA_ID_C");
