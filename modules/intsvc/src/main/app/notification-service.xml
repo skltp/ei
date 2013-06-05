@@ -46,7 +46,7 @@
         <cxf:jaxws-service
             namespace="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21"
             serviceClass="se.skltp.ei.intsvc.notification.NotificationWSBean"
-            wsdlLocation="classpath:/ei-schemas/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
+            wsdlLocation="classpath:/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
 
         <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
  

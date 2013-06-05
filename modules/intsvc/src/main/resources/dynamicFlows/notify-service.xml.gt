@@ -69,7 +69,7 @@
                 port="ProcessNotificationResponderPort" 
                 operation="ProcessNotification" 
                 clientClass="riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderService"
-                wsdlLocation="classpath:/ei-schemas/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl"
+                wsdlLocation="classpath:/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl"
             />
 
             <jms:transaction action="ALWAYS_JOIN"/>

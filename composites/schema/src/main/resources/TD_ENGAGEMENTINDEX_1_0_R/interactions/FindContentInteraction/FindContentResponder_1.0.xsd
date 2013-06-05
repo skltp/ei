@@ -25,15 +25,15 @@
 
   <xs:complexType name='FindContentType'>
     <xs:sequence>
-      <xs:element name='registeredResidentIdentification' type='core:RegisteredResidentIdentificationType' minOccurs='0'/>
-      <xs:element name='serviceDomain' type='xs:anyURI' minOccurs='0'/>
+      <xs:element name='registeredResidentIdentification' type='core:RegisteredResidentIdentificationType' minOccurs='1'/>
+      <xs:element name='serviceDomain' type='xs:anyURI' minOccurs='1'/>
       <xs:element name='categorization' type='xs:string' minOccurs='0'/>
       <xs:element name='logicalAddress' type='xs:string' minOccurs='0'/>
       <xs:element name='businessObjectInstanceIdentifier' type='xs:string' minOccurs='0'/>
       <xs:element name='clinicalProcessInterestId' type='core:ClinicalProcessInterestIdType' minOccurs='0'/>
       <xs:element name='mostRecentContent' type='core:TS' minOccurs='0'/>
       <xs:element name='sourceSystem' type='core:HsaIdType' minOccurs='0'/>
-      <xs:element name='dataController' type='core:OrgNoType'/>
+      <xs:element name='dataController' type='core:OrgNoType' minOccurs='0'/>
       <xs:element name='owner' type='core:HsaIdType' minOccurs='0'/>
       <xs:any namespace='##other' processContents='lax' minOccurs='0' maxOccurs='unbounded' />
     </xs:sequence>

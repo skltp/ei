@@ -90,7 +90,7 @@
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
                     <property name="port"/>
-                    <property name="wsdlLocation" value="classpath:/ei-schemas/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl"/>
+                    <property name="wsdlLocation" value="classpath:/TD_ENGAGEMENTINDEX_1_0_R/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl"/>
                     <property name="serviceClass" value="se.skltp.ei.intsvc.update.UpdateWSBean"/>
                     <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/cxf/jaxws-service"/>
                     <property name="configuration-ref"/>
