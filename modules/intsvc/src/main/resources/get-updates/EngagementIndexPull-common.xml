@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans    
+						http://www.springframework.org/schema/beans/spring-beans-current.xsd
+       					http://cxf.apache.org/jaxws 
+       					http://cxf.apache.org/schemas/jaxws.xsd 
+       					http://www.springframework.org/schema/context 
+       					http://www.springframework.org/schema/context/spring-context-current.xsd">
+
+<!-- 
+	<import resource="classpath:META-INF/cxf/cxf.xml"/>
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+	<import resource="classpath:META-INF/cxf/cxf-extension-http.xml"/>
+ -->
+
+	<context:component-scan base-package="se.skltp.ei.intsvc.getupdates"/>
+	
+	<bean id="propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:get-updates/EIndexPullIntegrationComponent-config.properties</value>
+				<value>classpath:get-updates/EIndexPullIntegrationComponent-config-override.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="propertyResolver" class="se.skltp.ei.intsvc.getupdates.utils.PropertyResolver">
+       <property name="properties">
+           <map>
+               <entry key="ei.push.address.servicedomain" value="${ei.push.address.servicedomain}"/>
+               <entry key="ei.pull.belongsto.hsaid" value="${ei.pull.belongsto.hsaid}"/>
+               <entry key="ei.address.service.address.logical" value="${ei.address.service.address.logical}"/>
+               <entry key="ei.push.address.logical" value="${ei.push.address.logical}"/>
+               <entry key="ei.pull.address.servicedomains" value="${ei.pull.address.servicedomains}"/>
+               <entry key="ei.pull.time.offset" value="${ei.pull.time.offset}"/>
+               <entry key="ei.pull.time.format" value="${ei.pull.time.format}"/>
+               <entry key="ei.pull.time.margin" value="${ei.pull.time.margin}"/>
+
+               <entry key="trustStoreType" value="${ei.https.trustStoreType}"/>
+               <entry key="trustStoreFile" value="${ei.https.trustStoreFile}"/>
+               <entry key="trustStorePassword" value="${ei.https.trustStorePassword}"/>
+               <entry key="keyStoreType" value="${ei.https.keyStoreType}"/>
+               <entry key="keyStoreFile" value="${ei.https.keyStoreFile}"/>
+               <entry key="keyStorePassword" value="${ei.https.keyStorePassword}"/>
+           </map>
+       </property>
+    </bean>
+    
+    <!-- Database table name -->
+    <bean id="eiPullStatusDbName" name="eiPullStatusDbName" class="java.lang.String">
+        <constructor-arg value="${ei.pull.status.db.tablename}"/>
+    </bean>
+    <!-- Database data source -->
+    <bean id="eiPullDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${ei.pull.status.db.driver}"/>
+        <property name="url" value="${ei.pull.status.db.url}"/>
+        <property name="username" value="${ei.pull.status.db.user}"/>
+        <property name="password" value="${ei.pull.status.db.password}"/>
+    </bean>
+
+	<jaxws:client id="getAddressesClient"
+		serviceClass="riv.itintegration.registry.getlogicaladdresseesbyservicecontract._1.rivtabp21.GetLogicalAddresseesByServiceContractResponderInterface"
+		address="${ei.address.service.address.uri}"/>
+
+	<jaxws:client id="getUpdatesClient"
+		serviceClass="riv.itintegration.engagementindex.getupdates._1.rivtabp21.GetUpdatesResponderInterface"
+		address="${ei.pull.address.uri}"/>
+
+	<jaxws:client id="updateClient"
+		serviceClass="riv.itintegration.engagementindex.update._1.rivtabp21.UpdateResponderInterface"
+		address="${ei.push.address.uri}"/>
+
+</beans> 

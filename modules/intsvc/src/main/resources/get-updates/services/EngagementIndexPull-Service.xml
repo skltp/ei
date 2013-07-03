@@ -1,0 +1,55 @@
+
+<!-- * Copyright 2009 Sjukvardsradgivningen * * This library is free software; 
+	you can redistribute it and/or modify * it under the terms of version 2.1 
+	of the GNU Lesser General Public * License as published by the Free Software 
+	Foundation. * * This library is distributed in the hope that it will be useful, 
+	* but WITHOUT ANY WARRANTY; without even the implied warranty of * MERCHANTABILITY 
+	or FITNESS FOR A PARTICULAR PURPOSE. See the * GNU Lesser General Public 
+	License for more details. * * You should have received a copy of the GNU 
+	Lesser General Public * License along with this library; if not, write to 
+	the * Free Software Foundation, Inc., 59 Temple Place, Suite 330, * Boston, 
+	MA 02111-1307 USA -->
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz"
+      xsi:schemaLocation="http://www.springframework.org/schema/beans    http://www.springframework.org/schema/beans/spring-beans-current.xsd
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd">
+    
+    <spring:beans>
+        <spring:bean id="pull-1" class="se.skltp.ei.intsvc.getupdates.main.EngagementIndexPull">
+            <spring:constructor-arg type="java.lang.String" value="Test"/>
+        </spring:bean>
+
+<!--         <spring:bean id="pull-2" class="se.skltp.ei.intsvc.getupdates.main.EngagementIndexPull"> -->
+<!--             <spring:constructor-arg type="java.lang.String" value="Test2"/> -->
+<!--         </spring:bean> -->
+    </spring:beans>
+
+    <!-- Schedule these pull modules.. -->
+
+	<model name="EngagementIndex-GetUpdates-trigger-model">
+		<service name="EngagementIndex-schedule-pull-1">
+			<inbound>
+                <quartz:inbound-endpoint jobName="endpoint-pull-1" repeatInterval="${ei.pull.interval.inmillis}" startDelay="${ei.pull.startdelay.inmillis}">
+                    <quartz:event-generator-job/>
+                </quartz:inbound-endpoint>
+            </inbound>
+            <component>
+                <spring-object bean="pull-1"/>
+			</component>
+		</service>
+
+<!--         <service name="EngagementIndex-schedule-pull-2"> -->
+<!-- 			<inbound> -->
+<!--                 <quartz:inbound-endpoint jobName="endpoint-pull-2" repeatInterval="5000" startDelay="10000"> -->
+<!--                     <quartz:event-generator-job/> -->
+<!--                 </quartz:inbound-endpoint> -->
+<!--             </inbound> -->
+<!--             <component> -->
+<!--                 <spring-object bean="pull-2"/> -->
+<!--             </component> -->
+<!-- 		</service> -->
+	</model>
+
+</mule>
