@@ -46,6 +46,9 @@
                                 <wsdlOption>
                                     <wsdl>${basedir}/src/main/resources/TD_ENGAGEMENTINDEX_1_0_R/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl</wsdl>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/TD_ENGAGEMENTINDEX_1_0_R/interactions/GetUpdatesInteraction/GetUpdatesInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                         <goals>
