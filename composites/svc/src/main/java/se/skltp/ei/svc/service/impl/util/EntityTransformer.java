@@ -28,13 +28,18 @@ import se.skltp.ei.svc.entity.model.Engagement;
 
 public class EntityTransformer {
 
-    static SimpleDateFormat dateFormatter;
-
-    static {
-        dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        // strict syntax mode
-        dateFormatter.setLenient(false);
-    }
+    /**
+     * Makes sure multi-threaded access can be supported, i.e. SimpleDateFormat is not thread-safe.
+     */
+    static ThreadLocal<SimpleDateFormat> dateFormatters = new ThreadLocal<SimpleDateFormat>() {
+      @Override
+      protected SimpleDateFormat initialValue() {
+          // strict syntax mode
+          SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
+          dateFormatter.setLenient(false);
+          return dateFormatter;
+      }
+    };
 
     /**
      * Transform an engagement from the service model to the entity model
@@ -113,14 +118,14 @@ public class EntityTransformer {
     }
 
     //
-    private synchronized static String format(Date date) {
-        return dateFormatter.format(date);
+    private static String format(Date date) {
+        return dateFormatters.get().format(date);
     }
 
     //
     private synchronized static Date parse(String date) {
         try {
-            return dateFormatter.parse(date);
+            return dateFormatters.get().parse(date);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Input date is not according to expected format \"YYYYMMDDhhmmss\": " + date, e);
         }

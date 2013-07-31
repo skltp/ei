@@ -38,21 +38,24 @@ import java.security.NoSuchAlgorithmException;
 public class Hash {
 
     /**
-     * Digest.
+     * Makes sure multi-threaded access can be supported, i.e. MesssageDigest is not thread safe.
      */
-    private static MessageDigest messageDigestSHA2;
+    private static ThreadLocal<MessageDigest> digesters = new ThreadLocal<MessageDigest>() {
+        @Override
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    };
+    
     /**
      * Hex digits.
      */
     private static char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-    static {
-        try {
-            messageDigestSHA2 = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     //
     private Hash() {};
@@ -71,7 +74,7 @@ public class Hash {
         }
         final byte[] hash;		
         try {
-            hash = messageDigestSHA2.digest(buf.toString().getBytes("UTF-8"));
+            hash = digesters.get().digest(buf.toString().getBytes("UTF-8"));                
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
