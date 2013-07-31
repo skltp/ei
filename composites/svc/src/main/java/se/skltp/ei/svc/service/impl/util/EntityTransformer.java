@@ -123,7 +123,7 @@ public class EntityTransformer {
     }
 
     //
-    private synchronized static Date parse(String date) {
+    private static Date parse(String date) {
         try {
             return dateFormatters.get().parse(date);
         } catch (ParseException e) {
