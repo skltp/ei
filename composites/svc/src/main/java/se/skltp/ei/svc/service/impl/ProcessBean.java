@@ -23,7 +23,9 @@ import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI002_DUPLICATE_UPDATE
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI003_LOGICALADDRESS_DONT_MATCH_OWNER;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -99,53 +101,37 @@ public class ProcessBean implements ProcessInterface {
         validateMaxLength(request.getEngagementTransaction());
         validateRequiredFieldsInEngagements(request.getEngagementTransaction());
     }
+    
+
+    /**
+     * Checks that a mandatory value exists.
+     * 
+     * @param name the field name.
+     * @param value the field value.
+     */
+    private static void mandatoryValueCheck(String name, String value) {
+        if (value == null || value.length() == 0) {
+            throw new EiException(EiErrorCodeEnum.EI004_VALIDATION_ERROR, "mandatory field \"" + name + "\" is missing");            
+        }
+    }
+    
     /**
      * Validates that all required attributes for engagements are supplied 
-     * @param engagementTransactions
-     * @throws EIException
+     * @param engagementTransactions the transactions
+     * @throws EIException when an mandatory field is not set
      */
     private void validateRequiredFieldsInEngagements(List<EngagementTransactionType> engagementTransactions) {
-    	
-        for (final EngagementTransactionType engagementTransaction : engagementTransactions){
-        	EngagementType et = engagementTransaction.getEngagement();
-        	
-        	String message = "";
-        	Boolean error = true;
-        	
-        	if (et.getRegisteredResidentIdentification() == null || et.getRegisteredResidentIdentification().equals("")) {
-        		message  = "registeredResidentIdentification";
-        		
-        	} else if(et.getServiceDomain() == null || et.getServiceDomain().equals("")) {
-        		message = "serviceDomain";
-        		
-        	} else if (et.getCategorization() == null || et.getCategorization().equals("")) {
-        		message = "categorization";
-        		
-        	} else if (et.getLogicalAddress() == null || et.getLogicalAddress().equals("")) {
-        		message = "logicalAddress";
-        		
-        	} else if (et.getBusinessObjectInstanceIdentifier() == null || et.getBusinessObjectInstanceIdentifier().equals("")) {
-        		message = "businessObjectInstanceIdentifier";
-        		
-        	} else if (et.getClinicalProcessInterestId() == null || et.getClinicalProcessInterestId().equals("")) {
-        		message = "clinicalProcessInterestId";
-        		
-        	} else if(et.getSourceSystem() == null || et.getSourceSystem().equals("")) {
-        		message = "sourceSystem";
-        		
-        	} else if(et.getDataController() == null || et.getDataController().equals("")) {
-        		message = "dataController";
-        		
-        	} else {
-        		// No errors
-        		error = false;
-        	}
-        	
-        	if (error) {
-        		message = message + " is missing but mandatory";
-        		throw new EiException(EiErrorCodeEnum.EI004_VALIDATION_ERROR, message);
-        	}
-        	
+
+        for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
+            final EngagementType et = engagementTransaction.getEngagement();     	
+            mandatoryValueCheck("registeredResidentIdentification", et.getRegisteredResidentIdentification());        	
+            mandatoryValueCheck("serviceDomain", et.getServiceDomain());
+            mandatoryValueCheck("categorization", et.getCategorization());
+            mandatoryValueCheck("logicalAddress", et.getLogicalAddress());
+            mandatoryValueCheck("businessObjectInstanceIdentifier", et.getBusinessObjectInstanceIdentifier());
+            mandatoryValueCheck("clinicalProcessInterestId", et.getClinicalProcessInterestId());
+            mandatoryValueCheck("sourceSystem", et.getSourceSystem());
+            mandatoryValueCheck("dataController", et.getDataController()); 	
         }    	
     }
 
@@ -344,7 +330,7 @@ public class ProcessBean implements ProcessInterface {
 	@Override
 	public ProcessNotificationType filterProcessNotification(ProcessNotificationType request) {
 
-		Iterator<EngagementTransactionType> iter = request.getEngagementTransaction().iterator();
+		final Iterator<EngagementTransactionType> iter = request.getEngagementTransaction().iterator();
 		while(iter.hasNext()) {
 			EngagementTransactionType e = iter.next();
 			if(e.getEngagement().getOwner().equals(this.owner)) {
@@ -368,16 +354,16 @@ public class ProcessBean implements ProcessInterface {
 	public List<Engagement> getEngagementsWithNewOwners(ProcessNotificationType request) {
 		
 		final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
-		List<String> ids = new ArrayList<String>();
+		final List<String> ids = new ArrayList<String>(engagementTransactions.size());
 		
 		for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
 			EngagementType et = engagementTransaction.getEngagement();
 			ids.add(toEntity(et, this.owner).getId());
 		}
 
-		// The request fail if findByIdIn receives an empty list
+                // The request fail if findByIdIn receives an empty list
 		if (ids.size() == 0) {
-			return new ArrayList<Engagement>();
+			return Collections.emptyList();
 		} else {
 			return engagementRepository.findByIdIn(ids);
 		}

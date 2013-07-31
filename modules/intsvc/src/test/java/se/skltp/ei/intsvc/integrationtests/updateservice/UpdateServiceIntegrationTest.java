@@ -200,7 +200,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		request.getEngagementTransaction().get(0).getEngagement().setBusinessObjectInstanceIdentifier(null);
 	
 		
-		String expectedError = "EI004: The payload does not validate, error messge: businessObjectInstanceIdentifier is missing but mandatory";
+		String expectedError = "EI004: The payload does not validate, error messge: mandatory field \"businessObjectInstanceIdentifier\" is missing";
 
 		try {
 			new DoOneTestDispatcher(request).doDispatch();
