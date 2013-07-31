@@ -101,8 +101,13 @@ public class ProcessBean implements ProcessInterface {
         validateEngagementTransactions(request.getEngagementTransaction(), false);
     }
 
-    //
-    private void validateEngagementTransactions(final List<EngagementTransactionType> engagementTransactions, boolean ownerCheck) {
+    /**
+     * Validates all aspects of the list of engagement transactions.
+     * 
+     * @param engagementTransactions the list.
+     * @param ownerCheck true if mandatory owner check shall be carried out as well, otherwise false.
+     */
+    private static void validateEngagementTransactions(final List<EngagementTransactionType> engagementTransactions, boolean ownerCheck) {
         validateMaxLength(engagementTransactions);
 
         final Map<String, Integer> hashCodes = new HashMap<String, Integer>(engagementTransactions.size());
@@ -121,7 +126,6 @@ public class ProcessBean implements ProcessInterface {
             validateMandatoryFields(et, ownerCheck);
 
         }
-
     }
 
     /**
@@ -173,7 +177,6 @@ public class ProcessBean implements ProcessInterface {
 
     // Update/processNotification - max 1000 engagements per request
     private static void validateMaxLength(List<EngagementTransactionType> engagementTransactions ) {
-
         if(engagementTransactions.size() > MAX_NUMBER_OF_ENGAGEMENTS) {
             throw new EiException(EiErrorCodeEnum.EI000_TECHNICAL_ERROR, "The request contains more than " + 
                     MAX_NUMBER_OF_ENGAGEMENTS + " engagements. Maximum number of engagements per request is " + MAX_NUMBER_OF_ENGAGEMENTS + ".");
