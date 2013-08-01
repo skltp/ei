@@ -30,6 +30,7 @@ import se.skltp.ei.svc.entity.model.Engagement;
  * Transforms service model beans (JAXB), to/from persistent entity model beans (JPA).
  * 
  * @author Magnus Larsson
+ * @author Peter
  */
 public class EntityTransformer {
 

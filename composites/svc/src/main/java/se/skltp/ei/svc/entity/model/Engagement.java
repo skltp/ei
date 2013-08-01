@@ -39,11 +39,14 @@ import org.hibernate.annotations.Table;
 import se.skltp.ei.svc.entity.model.util.Hash;
 
 /**
- * Entity modeled after the service contract itintegration:engagementindex (RC10) <p>
+ * Entity modeled after the service contract itintegration:engagementindex (1.0) <p>
  * 
- * Uses a SHA-256 generated hash-key in hex string format as an unique id.
+ * Uses a SHA-256 generated hash-key in hex string format as an unique id. <p>
  * 
- * Also see: http://code.google.com/p/rivta/
+ * Also see <a href="https://code.google.com/p/rivta/wiki/ServiceDomainTable">RIV-TA Service Contract Page</a> 
+ * to find more detailed descriptions.
+ * 
+ * @author Peter
  */
 @Entity(name=Engagement.ENGAGEMENT_INDEX_TABLE)
 @Table(appliesTo=Engagement.ENGAGEMENT_INDEX_TABLE,
@@ -120,6 +123,16 @@ public class Engagement implements BusinessKey {
 
     /**
      * Sets the business key.
+     * 
+     * @param registeredResidentIdentification the resident id
+     * @param serviceDomain the service domain
+     * @param categorization the categorization
+     * @param logicalAddress the logical address
+     * @param businessObjectInstanceIdentifier the business object instance id.
+     * @param sourceSystem the source system
+     * @param dataController the data controller
+     * @param owner the owner (e-index record owner)
+     * @param clinicalProcessInterestId the process interest id
      */
     public void setBusinessKey(String registeredResidentIdentification,
             String serviceDomain,
@@ -145,7 +158,7 @@ public class Engagement implements BusinessKey {
     /**
      * Returns current timestamp.
      * 
-     * @return the timestamp.
+     * @return the current timestamp
      */
     private static Date now() {
         return new Date();
@@ -180,90 +193,131 @@ public class Engagement implements BusinessKey {
     }
 
 
+    /**
+     * Returns the unique hash id.
+     * 
+     * @return the id
+     */
     public String getId() {  
         return id;
     }
 
+    /**
+     * Sets the most recent content timestamp.
+     * 
+     * @param mostRecentContent the timestamp
+     */
     public void setMostRecentContent(Date mostRecentContent) {
         this.mostRecentContent = mostRecentContent;
     }
 
+    /**
+     * Returns most recent content timestamp.
+     * 
+     * @return the timestamp.
+     */
     public Date getMostRecentContent() {
         return mostRecentContent;
     }
 
+    /**
+     * Returns the creation time.
+     * 
+     * @return the creation timestamp
+     */
     public Date getCreationTime() {
         return creationTime;
     }
 
+    //
     void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
-
     }
+    
+    /**
+     * Returns last updated timestamp.
+     * 
+     * @return the timestamp
+     */
     public Date getUpdateTime() {
         return updateTime;
     }
 
+    //
     void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
+    @Override
     public String getRegisteredResidentIdentification() {
         return registeredResidentIdentification;
     }
 
+    @Override
     public String getServiceDomain() {
         return serviceDomain;
     }
 
+    @Override
     public String getCategorization() {
         return categorization;
     }
 
-
+    @Override
     public String getLogicalAddress() {
         return logicalAddress;
     }
 
+    @Override
     public String getBusinessObjectInstanceIdentifier() {
         return businessObjectInstanceIdentifier;
     }
 
+    @Override
     public String getSourceSystem() {
         return sourceSystem;
     }
 
+    @Override
     public String getOwner() {
         return owner;
     }
 
+    @Override
     public String getClinicalProcessInterestId() {
         return clinicalProcessInterestId;
     }
 
+    @Override
     public String getDataController() {
         return dataController;
     }
 
-    //
+    /**
+     * Returns the business key
+     * 
+     * @return the business key
+     */
     public BusinessKey getBusinessKey() {
         return this;
     }
 
 
     /**
-     * Returns NA constant for empty strings.
+     * Returns a default value for empty input string
      * 
-     * @param s the input.
+     * @param s the input string
      * @param d the default value.
-     * @return NA if s is empty, otherwise s.
+     * @return the input string, or the default value if the input string is empty.
      */
     private static String nvl(String s, String d) {
         return (s == null || s.length() == 0) ? d : s;
     }
 
     /**
-     * Generates a hash key for this post.
+     * Generates a hash id for this post.
+     * 
+     * @return the generated hash id as a string.
      */
     private String generateHashId() {
         String hash = Hash.sha2(registeredResidentIdentification,
