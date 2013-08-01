@@ -37,7 +37,7 @@ public class EiException extends RuntimeException {
 	private String message;
 
 	/**
-	 * Creates an EiException constructor.
+	 * Creates an EiException.
 	 */
 	protected EiException() {
 	    super((String)null);
