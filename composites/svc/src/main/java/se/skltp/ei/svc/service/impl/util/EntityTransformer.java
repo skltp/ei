@@ -26,6 +26,11 @@ import java.util.Date;
 import riv.itintegration.engagementindex._1.EngagementType;
 import se.skltp.ei.svc.entity.model.Engagement;
 
+/**
+ * Transforms JAXB data object representations to/from persistent entity beans.
+ * 
+ * @author Magnus Larsson
+ */
 public class EntityTransformer {
 
     /**
@@ -44,34 +49,19 @@ public class EntityTransformer {
     /**
      * Transform an engagement from the service model to the entity model
      * 
-     * @param eIn
-     * @return eOut
+     * @param eIn the data object.
+     * @return the corresponding entity.
      */
     public static Engagement toEntity(EngagementType eIn) {
-
-        Engagement eOut = new Engagement();
-
-        eOut.setBusinessKey(eIn.getRegisteredResidentIdentification(),
-                eIn.getServiceDomain(),
-                eIn.getCategorization(),
-                eIn.getLogicalAddress(),
-                eIn.getBusinessObjectInstanceIdentifier(),
-                eIn.getSourceSystem(),
-                eIn.getDataController(),
-                eIn.getOwner(),
-                eIn.getClinicalProcessInterestId());
-
-        eOut.setMostRecentContent(parseDate(eIn.getMostRecentContent()));
-
-        return eOut;
+        return toEntity(eIn, eIn.getOwner());
     }
 
     /**
      * Transform an engagement from the service model to the entity model
      * 
-     * @param eIn
-     * @param owner The owner that should be used instead of the current one in ein
-     * @return eOut
+     * @param eIn the data object.
+     * @param owner owner of this entity
+     * @return the corresponding entity
      */
     public static Engagement toEntity(EngagementType eIn, String owner) {
 
@@ -95,8 +85,8 @@ public class EntityTransformer {
     /**
      * Transform an engagement from the entity model to the service model
      * 
-     * @param eIn
-     * @return eOut
+     * @param eIn the entity
+     * @return the corresponding data transfer object
      */
     public static EngagementType fromEntity(Engagement eIn) {
 
