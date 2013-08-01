@@ -27,14 +27,15 @@ import riv.itintegration.engagementindex._1.EngagementType;
 import se.skltp.ei.svc.entity.model.Engagement;
 
 /**
- * Transforms JAXB data object representations to/from persistent entity beans.
+ * Transforms service model beans (JAXB), to/from persistent entity model beans (JPA).
  * 
  * @author Magnus Larsson
  */
 public class EntityTransformer {
 
     /**
-     * Makes sure multi-threaded access can be supported, i.e. SimpleDateFormat is not thread-safe.
+     * Makes sure multi-threaded access to date formatting and parsing is supported, 
+     * i.e. SimpleDateFormat is not thread-safe.
      */
     static ThreadLocal<SimpleDateFormat> dateFormatters = new ThreadLocal<SimpleDateFormat>() {
       @Override
@@ -49,8 +50,8 @@ public class EntityTransformer {
     /**
      * Transform an engagement from the service model to the entity model
      * 
-     * @param eIn the data object.
-     * @return the corresponding entity.
+     * @param eIn the service model bean.
+     * @return the corresponding entity model bean.
      */
     public static Engagement toEntity(EngagementType eIn) {
         return toEntity(eIn, eIn.getOwner());
@@ -59,9 +60,9 @@ public class EntityTransformer {
     /**
      * Transform an engagement from the service model to the entity model
      * 
-     * @param eIn the data object.
+     * @param eIn the service model bean
      * @param owner owner of this entity
-     * @return the corresponding entity
+     * @return the corresponding entity model bean
      */
     public static Engagement toEntity(EngagementType eIn, String owner) {
 
@@ -85,8 +86,8 @@ public class EntityTransformer {
     /**
      * Transform an engagement from the entity model to the service model
      * 
-     * @param eIn the entity
-     * @return the corresponding data transfer object
+     * @param eIn the entity model bean
+     * @return the corresponding service model bean
      */
     public static EngagementType fromEntity(Engagement eIn) {
 
