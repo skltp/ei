@@ -21,35 +21,69 @@ package se.skltp.ei.svc.service.api;
 
 import java.text.MessageFormat;
 
+/**
+ * Service model exception, typically raised when validation errors occurs. <p>
+ * 
+ * Only to be instantiated from {@link EiErrorCodeEnum}.
+ *
+ * @author Magnus Larsson
+ */
 public class EiException extends RuntimeException {
 
 	private static final long serialVersionUID = -1536440597887391129L;
 
 	private EiErrorCodeEnum code;
 	private Object[] messageArgs;
+	private String message;
+
+	/**
+	 * Creates an EiException constructor.
+	 */
+	protected EiException() {
+	    super((String)null);
+	}
 	
-	public EiException(EiErrorCodeEnum code, Object... messageArgs) {
-		super((String)null);
+	/**
+	 * Creates an EiException.
+	 * 
+	 * @param code the code
+         * @param messageArgs the message format arguments matching the message format of the actual code
+	 */
+	protected EiException(EiErrorCodeEnum code, Object... messageArgs) {
+		this();
 		this.code = code;
 		this.messageArgs = messageArgs;
 	}
-	
-	public EiException(EiErrorCodeEnum code, Throwable cause, Object... messageArgs) {
+
+	/**
+        /**
+         * Creates an EiException.
+         * 
+         * @param code the code
+         * @param cause the causing exception
+         * @param messageArgs the message format arguments matching the message format of the actual code
+         */
+	protected EiException(EiErrorCodeEnum code, Throwable cause, Object... messageArgs) {
 		super(null, cause);
 		this.code = code;
 		this.messageArgs = messageArgs;
 	}
 	
+	/**
+	 * Returns the error code.
+	 * 
+	 * @return the error code
+	 */
 	public String getCode() {
 		return code.getErrorCode();
 	}
 
 	@Override
 	public String getMessage() {
-		StringBuffer sb = new StringBuffer(code.getErrorCode());
-		String msg = MessageFormat.format(code.getMessageFormat(), messageArgs);
-		sb.append(": ");
-		sb.append(msg);
-		return sb.toString();
+	    if (this.message == null) {
+	       this.message = String.format("%s: %s", code.getErrorCode(), 
+	               MessageFormat.format(code.getMessageFormat(), messageArgs));
+	    }
+	    return this.message;
 	}
 }

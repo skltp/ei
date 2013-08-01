@@ -19,6 +19,11 @@
  */
 package se.skltp.ei.svc.service.api;
 
+/**
+ * Defines all service level application errors.
+ * 
+ * @author Magnus Larsson
+ */
 public enum EiErrorCodeEnum {
     EI000_TECHNICAL_ERROR("EI000", "A technical error has occurred, error message: {0}"),
     EI001_XSD_VALIDATION_ERROR("EI001", "The payload does not follow the XML Schema, error messge: {0}"),
@@ -34,10 +39,31 @@ public enum EiErrorCodeEnum {
         this.msg = msg;
     }
 
+    /**
+     * Returns the error code.
+     * 
+     * @return the error code
+     */
     public String getErrorCode() {
         return code;
     }	
+    
+    /**
+     * Returns the message format string.
+     * 
+     * @return the message format string
+     */
     public String getMessageFormat() {
         return msg;
-    }	
+    }
+    
+    /**
+     * Creates a corresponding exception.
+     * 
+     * @param args the arguments to message format string.
+     * @return a corresponding exception
+     */
+    public EiException createException(Object... args) {
+        return new EiException(this, args);
+    }
 }

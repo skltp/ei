@@ -20,7 +20,10 @@
 package se.skltp.ei.svc.service.api;
 
 /**
-  Header with fields primarily used for traceability in logging.
+ * Keeps request header parameters of interest, typically used for logging and traceability.
+ * 
+ * @author Magnus Larsson
+ *
  */
 public class Header {
 
@@ -28,6 +31,14 @@ public class Header {
     private String receiverId;
     private String correlationId;
 
+    /**
+     * Creates a header object.
+     * 
+     * @param senderId the sender id (HSA ID)
+     * @param receiverId the receiver id (HSA ID)
+     * 
+     * @param correlationId the actual correlation id, a token created in the service bus for each message transaction
+     */
     public Header(String senderId, String receiverId, String correlationId) {
 
         this.senderId = senderId;
@@ -35,12 +46,29 @@ public class Header {
         this.correlationId = correlationId;
     }
 
+    /**
+     * Returns sender id.
+     * 
+     * @return the sender id
+     */
     public String getSenderId() {
         return senderId;
     }
+    
+    /**
+     * Returns receiver id.
+     * 
+     * @return the receiver id
+     */
     public String getReceiverId() {
         return receiverId;
     }
+    
+    /**
+     * Returns correlation id.
+     * 
+     * @return the correlation id
+     */
     public String getCorrelationaid() {
         return correlationId;
     }

@@ -22,13 +22,21 @@ package se.skltp.ei.svc.service.api;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 
+/**
+ * Service model API for find content requests.
+ * 
+ * @author Magnus Larsson
+ *
+ */
 public interface FindContentInterface {
 
     /**
-     *
-     * @param logicalAddress
-     * @param parameters
-     * @return
+     * Finds engagement index records given input query parameters.
+     * 
+     * @param header the request header
+     * @param parameters the request parameters
+     * 
+     * @return the response with zero or more engagement records.
      */
-    public FindContentResponseType findContent(Header header, FindContentType parameters);
+    FindContentResponseType findContent(Header header, FindContentType parameters);
 }

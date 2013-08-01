@@ -19,6 +19,17 @@
  */
 package se.skltp.ei.svc.service.impl;
 
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasBusinessObjectInstanceIdentifier;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasCategorization;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasClinicalProcessInterestId;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasDataController;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasLogicalAddress;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasOwner;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasServiceDomain;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.hasSourceSystem;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.isMostRecent;
+import static se.skltp.ei.svc.entity.model.EngagementSpecifications.isPerson;
+import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI000_TECHNICAL_ERROR;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.fromEntity;
 
 import java.util.List;
@@ -34,13 +45,17 @@ import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResp
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import static se.skltp.ei.svc.entity.model.EngagementSpecifications.*;
-import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
 import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.FindContentInterface;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
+/**
+ * Queries engagement records, handling find requests.
+ * 
+ * @author Magnus Larsson
+ *
+ */
 public class FindContentBean implements FindContentInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(FindContentBean.class);
@@ -141,13 +156,12 @@ public class FindContentBean implements FindContentInterface {
      */
     public void validateFindContent(Header header, FindContentType findContent) throws EiException {
     	 
-    	// We need at least registeredResidentIdentification and serviceDomain to do a query
-    	
+    	// We need at least registeredResidentIdentification and serviceDomain to do a query    	
     	if(findContent.getRegisteredResidentIdentification() == null) {
-    		throw new EiException(EiErrorCodeEnum.EI000_TECHNICAL_ERROR, MISSING_PERSON_MESSAGE);
+    		throw EI000_TECHNICAL_ERROR.createException(MISSING_PERSON_MESSAGE);
     		
     	} else if(findContent.getServiceDomain() == null) {
-    		throw new EiException(EiErrorCodeEnum.EI000_TECHNICAL_ERROR, MISSING_SERVICEDOMAIN_MESSAGE);
+    		throw EI000_TECHNICAL_ERROR.createException(MISSING_SERVICEDOMAIN_MESSAGE);
     	} 
     }
 

@@ -24,42 +24,64 @@ import riv.itintegration.engagementindex.processnotificationresponder._1.Process
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 
+/**
+ * Service model API for process notification and update requests.
+ * 
+ * @author Magnus Larsson
+ */
 public interface ProcessInterface {
 
     /**
-     *
-     * @param header
-     * @param parameters
+     * Defines the maximum number of allowed engagement records in a request.
      */
-    public void validateUpdate(Header header, UpdateType parameters); 
-
+    int MAX_NUMBER_OF_ENGAGEMENTS = 1000;
+    
     /**
-     *
-     * @param header
-     * @param parameters
-     * @return
+     * Validates an update request without having to touch the database.
+     * 
+     * @param header the header
+     * @param parameters the update request parameters
+     * @throws EiException on validation errors
      */
-    public UpdateResponseType update(Header header, UpdateType parameters); 
+    void validateUpdate(Header header, UpdateType parameters); 
 
     /**
-    *
-    * @param header
-    * @param parameters
-    */
-	public void validateProcessNotification(Header header, ProcessNotificationType parameters); 
+     * Performs an engagement index database update due to a an update request. <p>
+     * 
+     * On any type of error a {@link RuntimeException} shall be expected.
+     * 
+     * @param header the header
+     * @param parameters the update request parameters
+     *
+     * @return an update response, which always is OK
+     */
+    UpdateResponseType update(Header header, UpdateType parameters); 
 
     /**
-    *
-    * @param header
-    * @param parameters
-    * @return
-    */
-	public ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType parameters);
-	
-	/**
-	 * Filter away all engagements that has the same owner as the index.
-	 * @param  parameters
-	 * @return 
-	 */
-	public ProcessNotificationType filterProcessNotification(ProcessNotificationType parameters);
+     * Validates a process notification request without having to touch the database.
+     * 
+     * @param header the header
+     * @param parameters the update request parameters
+     * @throws EiException on validation errors
+     */
+    void validateProcessNotification(Header header, ProcessNotificationType parameters); 
+
+    /**
+     * Performs an engagement index database update due to a process notification request. <p>
+     * 
+     * On any type of error a {@link RuntimeException} shall be expected.
+     * 
+     * @param header the header
+     * @param parameters the process notification response, which always is OK
+     */
+    ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType parameters);
+
+    /**
+     * Filters out engagement records with the same owner (origin) as this instance, 
+     * i.e. avoids never ending recursion of process notification updates.
+     * 
+     * @param parameters the request parameters.
+     * @return the input request parameters.
+     */
+    ProcessNotificationType filterProcessNotification(ProcessNotificationType parameters);
 }

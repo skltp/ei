@@ -19,8 +19,10 @@
  */
 package se.skltp.ei.svc.service.impl;
 
+import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI000_TECHNICAL_ERROR;
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI002_DUPLICATE_UPDATE_ENTRIES;
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI003_LOGICALADDRESS_DONT_MATCH_OWNER;
+import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI004_VALIDATION_ERROR;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 
 import java.util.ArrayList;
@@ -45,20 +47,19 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
-import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
-import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
 
+/**
+ * Updates engagement index with either update or process notification requests.
+ * 
+ * @author Magnus Larsson
+ */
 public class ProcessBean implements ProcessInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessBean.class);
 
     private String owner;
-
-    // Maximum number of engagements that should be processed
-    public static int MAX_NUMBER_OF_ENGAGEMENTS = 1000;
-
 
     private EngagementRepository engagementRepository;
 
@@ -81,6 +82,11 @@ public class ProcessBean implements ProcessInterface {
         this.owner = owner;
     }
 
+    /**
+     * Sets/injects the database repository.
+     * 
+     * @param engagementRepository the actual repository to use
+     */
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
         LOG.info("ProcessBean got its engagementRepository injected");
@@ -88,10 +94,7 @@ public class ProcessBean implements ProcessInterface {
     }
 
     /**
-     * Validates an update request without touching the database.
-     * 
-     * @param header the header
-     * @param request the request
+     * {@inheritDoc}
      */
     @Override 
     public void validateUpdate(Header header, UpdateType request) {
@@ -119,7 +122,7 @@ public class ProcessBean implements ProcessInterface {
             final Engagement e = toEntity(et);
             final Integer otherIndex = hashCodes.put(e.getId(), ++hashCodeIndex);
             if (otherIndex != null) {
-                throw new EiException(EI002_DUPLICATE_UPDATE_ENTRIES, otherIndex, hashCodeIndex);
+                throw EI002_DUPLICATE_UPDATE_ENTRIES.createException(otherIndex, hashCodeIndex);
             }
 
             // mandatory fields
@@ -136,7 +139,7 @@ public class ProcessBean implements ProcessInterface {
      */
     private static void mandatoryValueCheck(String name, String value) {
         if (value == null || value.length() == 0) {
-            throw new EiException(EiErrorCodeEnum.EI004_VALIDATION_ERROR, "mandatory field \"" + name + "\" is missing");            
+            throw EI004_VALIDATION_ERROR.createException("mandatory field \"" + name + "\" is missing");            
         }
     }
 
@@ -165,35 +168,31 @@ public class ProcessBean implements ProcessInterface {
     // Update, R7: Logical address in request equals owner of EI
     private void validateLogicalAddress(Header header) {
         if (header == null || header.getReceiverId() == null) {
-            throw new EiException(EI003_LOGICALADDRESS_DONT_MATCH_OWNER,
-                    "missing", owner);
+            throw EI003_LOGICALADDRESS_DONT_MATCH_OWNER.createException("missing", owner);
         }
 
         if (!header.getReceiverId().equals(owner)) {
-            throw new EiException(EI003_LOGICALADDRESS_DONT_MATCH_OWNER,
-                    header.getReceiverId(), owner);
+            throw EI003_LOGICALADDRESS_DONT_MATCH_OWNER.createException(header.getReceiverId(), owner);
         }
     }
 
     // Update/processNotification - max 1000 engagements per request
     private static void validateMaxLength(List<EngagementTransactionType> engagementTransactions ) {
         if(engagementTransactions.size() > MAX_NUMBER_OF_ENGAGEMENTS) {
-            throw new EiException(EiErrorCodeEnum.EI000_TECHNICAL_ERROR, "The request contains more than " + 
+            throw EI000_TECHNICAL_ERROR.createException("The request contains more than " + 
                     MAX_NUMBER_OF_ENGAGEMENTS + " engagements. Maximum number of engagements per request is " + MAX_NUMBER_OF_ENGAGEMENTS + ".");
         }
     }
 
 
     /**
-     * Performs an index update transaction. <p>
+     * {@inheritDoc}
+     * 
+     * <p>
      * 
      * Due to the fact that no underlying XA resources is in use, this transaction will 
      * be completely standalone and not to be confused with other transactions, i.e. already 
      * started JMS transactions in modules/insvc.
-     * 
-     * @param header the header
-     * @param request the request
-     * @return the update response
      */
     @Override
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
@@ -233,10 +232,7 @@ public class ProcessBean implements ProcessInterface {
     }
 
     /**
-     * Validates a processNotifcation request without touching the database.
-     * 
-     * @param header the header
-     * @param request the request
+     * {@inheritDoc}
      */
     @Override
     public void validateProcessNotification(Header header, ProcessNotificationType request) {
@@ -245,11 +241,7 @@ public class ProcessBean implements ProcessInterface {
 
 
     /**
-     * Performs an index update of based on a ProcessNotification
-     * 
-     * @param header the header
-     * @param request the request
-     * @return the processNotifcation response
+     * {@inheritDoc}
      */
     @Override
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
@@ -302,8 +294,7 @@ public class ProcessBean implements ProcessInterface {
 
 
     /**
-     * Removes all engagements that has this index as owner 
-     * @param request 
+     * {@inheritDoc}
      */
     @Override
     public ProcessNotificationType filterProcessNotification(ProcessNotificationType request) {

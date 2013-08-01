@@ -27,9 +27,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import se.skltp.ei.svc.entity.model.Engagement;
 
 /**
- * Please note. At this time these methods below are just placeholders and needs further updates as 
- * implementation of use-cases evolves.
- * 
+ *
+ * Database repository API and specific methods.
+ *  
  * @author Peter
  *
  */
@@ -49,5 +49,5 @@ public interface EngagementRepository extends JpaRepository<Engagement, String>,
      * @return the list of engagements.
      */
     List<Engagement> findByRegisteredResidentIdentification(String registeredResidentIdentification);
-    
+
 }
