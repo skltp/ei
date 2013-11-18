@@ -27,7 +27,8 @@ import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
-import riv.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._1.GetLogicalAddresseesByServiceContractResponseType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractResponseType;
+
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 
@@ -78,7 +79,7 @@ public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
     	MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
     	GetLogicalAddresseesByServiceContractResponseType logicalAddresses = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
 
-    	assertEquals(3, logicalAddresses.getLogicalAddress().size());
+    	assertEquals(3, logicalAddresses.getLogicalAddressRecord().size());
 
     	// Expect no error logs and four info log entries
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);

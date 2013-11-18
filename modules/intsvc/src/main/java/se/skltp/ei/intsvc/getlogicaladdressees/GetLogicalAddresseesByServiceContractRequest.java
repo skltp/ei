@@ -22,8 +22,8 @@ package se.skltp.ei.intsvc.getlogicaladdressees;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import riv.itintegration.registry._1.ServiceContractNamespaceType;
-import riv.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._1.GetLogicalAddresseesByServiceContractType;
+import riv.infrastructure.itintegration.registry._2.ServiceContractNamespaceType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractType;
 
 public class GetLogicalAddresseesByServiceContractRequest {
 

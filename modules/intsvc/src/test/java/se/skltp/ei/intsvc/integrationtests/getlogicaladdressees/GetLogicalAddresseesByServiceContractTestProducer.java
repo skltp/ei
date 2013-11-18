@@ -19,20 +19,25 @@
  */
 package se.skltp.ei.intsvc.integrationtests.getlogicaladdressees;
 
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
-import riv.itintegration.registry.getlogicaladdresseesbyservicecontract._1.rivtabp21.GetLogicalAddresseesByServiceContractResponderInterface;
-import riv.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._1.GetLogicalAddresseesByServiceContractResponseType;
-import riv.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._1.GetLogicalAddresseesByServiceContractType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract._2.rivtabp21.GetLogicalAddresseesByServiceContractResponderInterface;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractResponseType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.LogicalAddresseeRecordType;
+
 
 @WebService(
         serviceName = "GetLogicalAddresseesByServiceContractResponderService", 
-        portName = "GetLogicalAddresseesByServiceContractResponderPort", 
-        targetNamespace = "urn:riv:itintegration:registry:GetLogicalAddresseesByServiceContract:1:rivtabp21")
+        portName = "GetLogicalAddresseesByServiceContractResponderPort",
+        targetNamespace = "urn:riv:infrastructure:itintegration:registry:GetLogicalAddresseesByServiceContract:2:rivtabp21")
 public class GetLogicalAddresseesByServiceContractTestProducer implements GetLogicalAddresseesByServiceContractResponderInterface {
 
     public static final String TEST_ID_FAULT_TIMEOUT = "0";
@@ -42,26 +47,6 @@ public class GetLogicalAddresseesByServiceContractTestProducer implements GetLog
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
 	private static final String EXPECTED_SERVICECONTRACT = "urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1";
 
-	@Override
-	public GetLogicalAddresseesByServiceContractResponseType getLogicalAddresseesByServiceContract(
-			String logicalAddress,
-			GetLogicalAddresseesByServiceContractType request) {
-
-		log.info("GetLogicalAddresseesByServiceContractTestProducer received a GetLogicalAddresseesByServiceContract request for hsa-id {} and service contract {}", request.getServiceConsumerHsaId(), request.getServiceContractNameSpace().getServiceContractNamespace());
-
-        // Force a timeout if timeout Id
-        if (TEST_ID_FAULT_TIMEOUT.equals(request.getServiceConsumerHsaId())) forceTimeout();
-        
-        GetLogicalAddresseesByServiceContractResponseType response = new GetLogicalAddresseesByServiceContractResponseType();
-        if(!EXPECTED_SERVICECONTRACT.equals(request.getServiceContractNameSpace().getServiceContractNamespace())){
-            return response; 
-        }
-
-        response.getLogicalAddress().add("HSA_ID_A");
-        response.getLogicalAddress().add("HSA_ID_B");
-        response.getLogicalAddress().add("HSA_ID_C");
-		return response;
-	}
 
     private void forceTimeout() {
         try {
@@ -69,5 +54,36 @@ public class GetLogicalAddresseesByServiceContractTestProducer implements GetLog
             Thread.sleep(SERVICE_TIMOUT_MS + 1000);
         } catch (InterruptedException e) {}
     }
+
+	@Override
+	@WebResult(name = "GetLogicalAddresseesByServiceContractResponse", targetNamespace = "urn:riv:infrastructure:itintegration:registry:GetLogicalAddresseesByServiceContractResponder:2", partName = "parameters")
+	@WebMethod(operationName = "GetLogicalAddresseesByServiceContract", action = "urn:riv:infrastructure:itintegration:registry:GetLogicalAddresseesByServiceContractResponder:2:GetLogicalAddresseesByServiceContract")
+	public GetLogicalAddresseesByServiceContractResponseType getLogicalAddresseesByServiceContract(
+			@WebParam(partName = "LogicalAddress", name = "LogicalAddress", targetNamespace = "urn:riv:infrastructure:itintegration:registry:2", header = true) String logicalAddress,
+			@WebParam(partName = "parameters", name = "GetLogicalAddresseesByServiceContract", targetNamespace = "urn:riv:infrastructure:itintegration:registry:GetLogicalAddresseesByServiceContractResponder:2") GetLogicalAddresseesByServiceContractType parameters) {
+
+		log.info("GetLogialAddresseesByServiceContractTestProducer received a GetLogicalAddresseesByServiceContract request for hsa-id {} and service contract {}", parameters.getServiceConsumerHsaId(), parameters.getServiceContractNameSpace().getServiceContractNamespace());
+
+        // Force a timeout if timeout Id
+        if (TEST_ID_FAULT_TIMEOUT.equals(parameters.getServiceConsumerHsaId())) forceTimeout();
+        
+        GetLogicalAddresseesByServiceContractResponseType response = new GetLogicalAddresseesByServiceContractResponseType();
+        if(!EXPECTED_SERVICECONTRACT.equals(parameters.getServiceContractNameSpace().getServiceContractNamespace())){
+            return response; 
+        }
+        
+        
+        String[] hsa_ids = {"HSA_ID_A", "HSA_ID_B", "HSA_ID_C"};
+        
+        for(int i = 0; i < hsa_ids.length; i++) {
+            LogicalAddresseeRecordType logicalAddresseeRecordType = new LogicalAddresseeRecordType();
+            logicalAddresseeRecordType.setLogicalAddress(hsa_ids[i]);
+            
+            response.getLogicalAddressRecord().add(i, logicalAddresseeRecordType);
+        }
+        
+        
+		return response;
+	}
 
 }

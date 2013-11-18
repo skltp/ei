@@ -54,6 +54,9 @@
         <component>
             <spring-object bean="create-process-notification-request-bean-${LOGICAL_ADDRESS}"/>
         </component>
+        
+		<custom-filter class="se.skltp.ei.intsvc.notify.FilterEmptyNotifications" doc:name="Filter empty notifications">
+        </custom-filter>
 
  		<set-property propertyName="x-rivta-original-serviceconsumer-hsaid" value="${EI_HSA_ID}" doc:name="x-rivta-original-serviceconsumer-hsaid" />
 

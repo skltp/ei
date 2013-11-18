@@ -63,8 +63,9 @@ public class CreateProcessNotificationRequest {
 
     	ProcessNotificationType processNotification = new ProcessNotificationType();
     	processNotification.getEngagementTransaction().addAll(et);
+
     	
-		Object[] request = new Object[] {logicalAddress, processNotification};
+		Object[] request = new Object[] {logicalAddress, ProcessNotificationFilter.filter(processNotification, logicalAddress)};
 		return request;
     }
 }

@@ -43,7 +43,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import riv.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._1.GetLogicalAddresseesByServiceContractResponseType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractResponseType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.LogicalAddresseeRecordType;
+import se.skltp.ei.intsvc.notify.ProcessNotificationFilter;
 
 /**
  * Sample config:
@@ -129,11 +131,18 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 		
 		// FIXME. Cache result in a local file and get if from the file if the service doesn't respond.
 		log.info("Looking up logical addresses for dynamic notify flows");
-		List<String> logicalAdresses = null;
+		List<String> logicalAdresses = new ArrayList<String>();
 		try {
 			MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
 			GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
-			logicalAdresses = logicalAddressesResponse.getLogicalAddress();
+			
+			// Get all logicalAddresses
+			for(LogicalAddresseeRecordType logicalAddresseeType : logicalAddressesResponse.getLogicalAddressRecord()) {
+				logicalAdresses.add(logicalAddresseeType.getLogicalAddress());
+			}
+			
+			// Set the filter for later use in the process notification filters
+			ProcessNotificationFilter.setFilters(logicalAddressesResponse.getLogicalAddressRecord());
 
 		} catch (Exception e) {
 			log.warn("Faild finding logical addresses, err: {}", e.getMessage());

@@ -50,8 +50,8 @@
             <cxf:jaxws-client 
                 port="GetLogicalAddresseesByServiceContractResponderPort" 
                 operation="GetLogicalAddresseesByServiceContract" 
-                clientClass="riv.itintegration.registry.getlogicaladdresseesbyservicecontract._1.rivtabp21.GetLogicalAddresseesByServiceContractResponderService"
-                wsdlLocation="classpath:/META-INF/wsdl/GetLogicalAddresseesByServiceContractInteraction_1.0_RIVTABP21.wsdl"
+				clientClass="riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract._2.rivtabp21.GetLogicalAddresseesByServiceContractResponderService"
+                wsdlLocation="classpath:/META-INF/wsdl/GetLogicalAddresseesByServiceContractInteraction_2.0_RIVTABP21.wsdl"
             />
         </http:outbound-endpoint>
         
