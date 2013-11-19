@@ -35,12 +35,6 @@
                                     <wsdl>${basedir}/src/main/resources/META-INF/wsdl/wrapped-vagvalsinfo-sokvagvalsinfo-1.0.wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/META-INF/wsdl/GetLogicalAddresseesByServiceContractInteraction_1.0_RIVTABP21.wsdl</wsdl>
-                                </wsdlOption>
-                                <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/META-INF/wsdl/GetLogicalAddresseesByServiceContractInteraction_2.0_RIVTABP21.wsdl</wsdl>
-                                </wsdlOption>
-                                <wsdlOption>
                                     <wsdl>${basedir}/src/main/resources/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
@@ -67,6 +61,14 @@
             </plugin>
         </plugins>
     </build>
+    
+   	<dependencies>
+    	<dependency>
+  			<groupId>se.rivta.infrastructure.itintegration</groupId>
+  			<artifactId>ServiceContracts_infrastructure_itintegration_registry</artifactId>
+  			<version>2.0-M6</version>
+		</dependency>
+    </dependencies>
 
 <!-- 
     <dependencies>  

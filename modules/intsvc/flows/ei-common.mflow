@@ -262,7 +262,7 @@
         </properties>
     </global-element>
     <global-unknown description="false" unknownName="jaxbContext" index="35" entity-id="global-unknown#3">
-        <content>&lt;mulexml:jaxb-context xmlns:mulexml=&quot;http://www.mulesoft.org/schema/mule/xml&quot; name=&quot;jaxbContext&quot; packageNames=&quot;org.soitoolkit.commons.logentry.schema.v1:riv.itintegration.engagementindex.findcontentresponder._1:riv.itintegration.engagementindex.processnotificationresponder._1:riv.itintegration.engagementindex.updateresponder._1:riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2&quot;/&gt;</content>
+        <content>&lt;mulexml:jaxb-context xmlns:mulexml=&quot;http://www.mulesoft.org/schema/mule/xml&quot; name=&quot;jaxbContext&quot; packageNames=&quot;org.soitoolkit.commons.logentry.schema.v1:riv.itintegration.engagementindex.findcontentresponder._1:riv.itintegration.engagementindex.processnotificationresponder._1:riv.itintegration.engagementindex.updateresponder._1:se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2&quot;/&gt;</content>
     </global-unknown>
     <global-element name="Java" type="http://www.mulesoft.org/schema/mule/core/custom-transformer" entity-id="Java#1">
         <properties>

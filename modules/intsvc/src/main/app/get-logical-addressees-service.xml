@@ -50,11 +50,11 @@
             <cxf:jaxws-client 
                 port="GetLogicalAddresseesByServiceContractResponderPort" 
                 operation="GetLogicalAddresseesByServiceContract" 
-				clientClass="riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract._2.rivtabp21.GetLogicalAddresseesByServiceContractResponderService"
-                wsdlLocation="classpath:/META-INF/wsdl/GetLogicalAddresseesByServiceContractInteraction_2.0_RIVTABP21.wsdl"
+				clientClass="se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract.v2.rivtabp21.GetLogicalAddresseesByServiceContractResponderService"
+                wsdlLocation="classpath:/ServiceContracts_infrastructure_itintegration_registry/interactions/GetLogicalAddresseesByServiceContractInteraction/GetLogicalAddresseesByServiceContractInteraction_2.0_RIVTABP21.wsdl"
             />
         </http:outbound-endpoint>
-        
+ 
         <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
     </flow>
 </mule>

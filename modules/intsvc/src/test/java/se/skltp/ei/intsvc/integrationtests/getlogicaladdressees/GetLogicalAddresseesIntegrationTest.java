@@ -27,8 +27,8 @@ import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
-import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractResponseType;
 
+import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 

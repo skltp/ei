@@ -29,7 +29,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="get-logical-addressees-service" entity-id="35072692-719c-4a21-affc-6948a6e7d45f">
+    <flow SubFlow="false" name="get-logical-addressees-service" entity-id="176b9b78-ca18-46b9-a8c3-2fc171857df3">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
