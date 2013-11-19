@@ -28,6 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.util.MiscUtil;
 
+import se.skltp.ei.intsvc.subscriber.api.Subscriber;
+
+
 public class CreateDynamicFlows  {
 
     private static final Logger log = LoggerFactory.getLogger(CreateDynamicFlows.class);
@@ -36,6 +39,7 @@ public class CreateDynamicFlows  {
     public CreateDynamicFlows(List<String> logicalAdresses) {
         propertyMap = PropertyUtil.getResovledProperties();
         propertyMap.put("LOGICAL_ADDRESSES", logicalAdresses);
+        propertyMap.put("NOTIFICATION_QUEUE_PREFIX", Subscriber.NOTIFICATION_QUEUE_PREFIX);
     }
     
     public List<String> getContextConfiguration() {

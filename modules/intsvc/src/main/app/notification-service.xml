@@ -30,7 +30,7 @@
         </spring:bean>
         
 		<!-- Register our custom filter-evaluator -->
-    	<spring:bean class="se.skltp.ei.intsvc.process.NotifyEvaluator"/>
+    	<spring:bean class="se.skltp.ei.intsvc.notify.NotifyEvaluator"/>
 
     </spring:beans>
 

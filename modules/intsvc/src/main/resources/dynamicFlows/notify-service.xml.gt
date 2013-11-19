@@ -18,12 +18,10 @@
         http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
 <% if (LOGICAL_ADDRESSES.size() > 0) { %>
-    <!-- JMS Connector for the durable topic subscribers -->
+    <!-- JMS Connector for the subscribers -->
     <jms:connector
-        name="skltp-ei-jms-topic-connector"
+        name="skltp-ei-jms-notify-connector"
         connectionFactory-ref="soitoolkit-jms-connection-factory"
-        clientId="SKLTP-EI"
-        durable="true" 
         persistentDelivery="true"
         maxRedelivery="-1"
         specification="1.1" 
@@ -43,11 +41,10 @@
 
     <flow name="notify-service-${LOGICAL_ADDRESS}">
         <jms:inbound-endpoint 
-            connector-ref="skltp-ei-jms-topic-connector"
-            topic="${NOTIFY_TOPIC}" 
-            durableName="${LOGICAL_ADDRESS}" 
+            connector-ref="skltp-ei-jms-notify-connector"
+            queue="${NOTIFICATION_QUEUE_PREFIX}${LOGICAL_ADDRESS}" 
             transformer-refs="logMsgIn" 
-            doc:name="JMS Topic">
+            doc:name="JMS Queue">
             <jms:transaction action="ALWAYS_BEGIN"/>
         </jms:inbound-endpoint>
 
