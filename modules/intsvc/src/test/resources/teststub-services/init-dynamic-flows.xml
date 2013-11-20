@@ -12,7 +12,9 @@
 
     <spring:beans>
 	    <!-- Dynamic flows -->
-	    <spring:bean id="initializer" class="se.skltp.ei.intsvc.dynamicFlows.Initializer"/>
+	    <spring:bean id="initializer" class="se.skltp.ei.intsvc.dynamicFlows.Initializer">
+            <spring:property name="subscriberCache" ref="subscriber-cache-bean"/>
+	    </spring:bean>
     </spring:beans>
 
 </mule>

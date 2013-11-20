@@ -62,11 +62,17 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     </management:jmx-default-config> 
  -->
 
+	<!-- Subscriber cache -->
+	<spring:bean id="subscriber-cache-bean" class="se.skltp.ei.intsvc.subscriber.impl.SubscriberCacheImpl"/>
+
+
 	<!-- The default profile used by normal usage of mule-app, either deployed in mule or started using st-muleServer-helper-class. Not used by integration tests -->
     <spring:beans profile="default">
 
 	    <!-- Dynamic flows -->
-	    <spring:bean id="initializer" class="se.skltp.ei.intsvc.dynamicFlows.Initializer"/>
+	    <spring:bean id="initializer" class="se.skltp.ei.intsvc.dynamicFlows.Initializer">
+            <spring:property name="subscriberCache" ref="subscriber-cache-bean"/>
+	    </spring:bean>
 
         <!-- Connectors et al that are specific for different environment specific config-files (local unit-test, integration-test or production environments) -->
 
@@ -74,7 +80,6 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         
         <!-- Import the JMS-provider used in production here, embedded JMS providers used for integration tests are loaded by the *IntegratIonTest.java classes directly -->  
         <spring:import resource="classpath:soitoolkit-mule-jms-connector-activemq-external.xml"/>
-
 
     </spring:beans>
 

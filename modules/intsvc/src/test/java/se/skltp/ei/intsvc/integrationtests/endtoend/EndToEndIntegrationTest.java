@@ -27,19 +27,12 @@ import java.net.SocketException;
 import java.util.List;
 
 import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
-import javax.jms.TopicSession;
-import javax.jms.TopicSubscriber;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.test.Dispatcher;
 
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
@@ -57,13 +50,12 @@ import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
-public class EndToEndIntegrationTest extends AbstractTestCase implements MessageListener {
+public class EndToEndIntegrationTest extends AbstractTestCase {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(EndToEndIntegrationTest.class);
 	 
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
-	private static final String NOTIFY_TOPIC = rb.getString("NOTIFY_TOPIC");
     
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
     private static final String OWNER = rb.getString("EI_HSA_ID");
@@ -74,16 +66,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
 	private static final String UPDATE_SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
 	private static final String NOTIFICATION_SERVICE_ADDRESS = EiMuleServer.getAddress("NOTIFICATION_WEB_SERVICE_URL");
   
-	private static final JaxbUtil jaxbUtil = new JaxbUtil(ProcessNotificationType.class);
-
 	private EngagementRepository engagementRepository;
-
-    private TextMessage processNotificationMessage = null;
-
-    @Override
-	public void onMessage(Message message) {
-    	processNotificationMessage = (TextMessage)message;
-	}
 
     public EndToEndIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
@@ -150,8 +133,8 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
 		// Expect no error logs
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);
 
-		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
-		assertQueueDepth(INFO_LOG_QUEUE, 14);
+		// Expect 14 info log entries, 3 from update-service, 1+3 from process-service and 3*3 from the three notify-services
+		assertQueueDepth(INFO_LOG_QUEUE, 16);
 
 		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
     	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastOriginalConsumer());
@@ -189,8 +172,8 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
 		// Expect no error logs
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);
 
-		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
-		assertQueueDepth(INFO_LOG_QUEUE, 14);
+		// Expect 14 info log entries, 3 from update-service, 1+3 from process-service and 3*3 from the three notify-services
+		assertQueueDepth(INFO_LOG_QUEUE, 16);
 		
 		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
     	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastOriginalConsumer());
@@ -206,32 +189,26 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
     @Test
     public void endToEnd_processNotification_R4_OK_filter_should_remove_circular_notifications() throws JMSException {
     	
-		// Setup a test-subscriber on the notification-topic
-		TopicSession topicSession = getJmsUtil().getTopicSession();
-		Topic topic = topicSession.createTopic(NOTIFY_TOPIC);
-		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
-		topicSubscriber.setMessageListener(this);
-
 		// Setup testdata
 		long residentId = 1111111111L;
 		String fullResidentId = "19" + residentId;
-    	
-    	ProcessNotificationType request = createProcessNotificationRequest(residentId, 1212121212L);
-    	request.getEngagementTransaction().get(1).getEngagement().setOwner(OWNER); // This engagement should be filtered out
-    	
+		
+		ProcessNotificationType request = createProcessNotificationRequest(residentId, 1212121212L);
+		request.getEngagementTransaction().get(1).getEngagement().setOwner(OWNER); // This engagement should be filtered out
+		
 		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestNotificationDispatcher(request), "process-notification-teststub-service", EI_TEST_TIMEOUT);
-        
+					
 		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
 		assertEquals(ResultCodeEnum.OK, nr.getResultCode());
 
 		// Verify that we got something in the database as well
-        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
-        assertEquals(1, result.size());
-        
-        // Verify that the correct Engagement was saved
-        assertThat(result.get(0).getRegisteredResidentIdentification(), is(fullResidentId));
-        assertThat(result.get(0).getOwner(), is(request.getEngagementTransaction().get(0).getEngagement().getOwner()));
-        
+		List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+		assertEquals(1, result.size());
+		
+		// Verify that the correct Engagement was saved
+		assertThat(result.get(0).getRegisteredResidentIdentification(), is(fullResidentId));
+		assertThat(result.get(0).getOwner(), is(request.getEngagementTransaction().get(0).getEngagement().getOwner()));
+		
 		// Assert that no messages are left on the processing queue
 		assertQueueDepth(PROCESS_QUEUE, 0);
 		
@@ -241,11 +218,11 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
 		// Expect no error logs
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);
 		
-		// Expect 14 info log entries, 3 from update-service, 2 from process-service and 3*3 from the three notify-services
-		assertQueueDepth(INFO_LOG_QUEUE, 14);
+		// Expect 14 info log entries, 3 from update-service, 1+3 from process-service and 3*3 from the three notify-services
+		assertQueueDepth(INFO_LOG_QUEUE, 16);
 
-		// Expect publish on JMS topic only containing 1 engagementTransaction, meaning that the otherwise never ending loop effectively is broken :-)
-		ProcessNotificationType pn = (ProcessNotificationType)jaxbUtil.unmarshal(processNotificationMessage.getText());
+		// Expect message sent to the subscriber only containing 1 engagementTransaction, meaning that the otherwise never ending loop effectively is broken :-)
+		ProcessNotificationType pn = (ProcessNotificationType)ProcessNotificationTestProducer.getLastPayload();
 		assertEquals(1, pn.getEngagementTransaction().size());
     }
 
@@ -262,12 +239,12 @@ public class EndToEndIntegrationTest extends AbstractTestCase implements Message
 		// Assert that we got the expected exception
 		assertEquals(SocketException.class, e.getClass());
 		
-		// Expect 3 error log and 17 info log entries
+		// Expect 3 error log and 19 info log entries
 		assertQueueDepth(ERROR_LOG_QUEUE, 3);
 		
 		// TODO. Use assertQueueMatchesMessages() instead to match all three messages with their different service names, e.g. : <serviceImplementation>notify-service-HSA_ID_A</serviceImplementation>
 		assertQueueContainsMessage(ERROR_LOG_QUEUE, "java.net.SocketTimeoutException: Read timed out");
-		assertQueueDepth(INFO_LOG_QUEUE, 17);
+		assertQueueDepth(INFO_LOG_QUEUE, 19);
 
 		// Expect nothing on the processing queue due to the error
 		assertQueueDepth(PROCESS_QUEUE, 0);

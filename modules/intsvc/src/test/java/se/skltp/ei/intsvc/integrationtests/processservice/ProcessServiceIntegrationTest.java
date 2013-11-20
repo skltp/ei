@@ -24,15 +24,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-import javax.jms.Topic;
-import javax.jms.TopicSession;
-import javax.jms.TopicSubscriber;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +46,8 @@ import riv.itintegration.engagementindex.processnotificationresponder._1.Process
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
+import se.skltp.ei.intsvc.subscriber.api.Subscriber;
+import se.skltp.ei.intsvc.subscriber.api.SubscriberCache;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 
@@ -63,7 +64,6 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
     private static final String OWNER = rb.getString("EI_HSA_ID");
 	
 	private static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
-	private static final String NOTIFY_TOPIC = rb.getString("NOTIFY_TOPIC");
     
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -84,6 +84,8 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
     }
 
     private EngagementRepository engagementRepository;
+    private SubscriberCache subscriberCache;
+    private String lastSubscriberQueueName; // Used to listen for messages arriving to the last component in the tests below, i.e. knowing when the asynch processing is complete
 
     @Before
     public void setUp() throws Exception {
@@ -96,6 +98,20 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
     	// Clean the storage
     	engagementRepository.deleteAll();
 
+    	// Lookup the subscriber cache if not already done
+    	if (subscriberCache == null) {
+    		subscriberCache = muleContext.getRegistry().lookupObject(SubscriberCache.class);
+    	}
+
+    	// Init the subscriber cache with some testdata
+		List<Subscriber> subscribers = new ArrayList<Subscriber>();
+    	for (int i = 0; i < 3; i++) {
+			Subscriber subscriber = new Subscriber("" + i);
+			lastSubscriberQueueName = subscriber.getNotificationQueueName();
+			subscribers.add(subscriber);
+		}
+		subscriberCache.initialize(subscribers);
+    	
     	// Clear queues used for the tests
 		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE, PROCESS_QUEUE);
 	}
@@ -112,37 +128,38 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		String fullResidentId = "19" + residentId;
 		String requestXml = jabxUtil.marshal(update_of.createUpdate(createUdateRequest(residentId)));
 
-		// Setup a test-subscriber on the notification-topic
-		TopicSession topicSession = getJmsUtil().getTopicSession();
-		Topic topic = topicSession.createTopic(NOTIFY_TOPIC);
-		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
-		topicSubscriber.setMessageListener(this);
+		// Setup a test-subscriber on the notification-queues
+		MessageConsumer consumer = setupListener(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*", this);
 
-		// Send an update message to the process-service and wait for a publish on the notification topic
-		MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFY_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
-
-        // Compare the notified message with the request message, they should be the same
-		assertRequest(requestXml, response);
-
-		// Verify that we got something in the database as well
-        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
-        assertEquals(1, result.size());
-        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
-        
-        // Should be owner of the index
-        assertThat(result.get(0).getOwner(), is(OWNER)); 
-        
-
-		// Expect no error logs and three info log entries
-		assertQueueDepth(ERROR_LOG_QUEUE, 0);
-		assertQueueDepth(INFO_LOG_QUEUE, 2);
-
-		// Assert that the response is the only message on the queue
-		assertQueueDepth(PROCESS_QUEUE, 0);
+		try {
+			// Send an update message to the process-service and wait for a publish on one of the notification queues
+			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+			
+	        // Compare the notified message with the request message, they should be the same
+			assertRequest(requestXml, response);
+	
+			// Verify that we got something in the database as well
+	        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+	        assertEquals(1, result.size());
+	        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+	        
+	        // Should be owner of the index
+	        assertThat(result.get(0).getOwner(), is(OWNER)); 
+	        
+			// Expect no error logs and four (1 in + 3 out) info log entries
+			assertQueueDepth(ERROR_LOG_QUEUE, 0);
+			assertQueueDepth(INFO_LOG_QUEUE, 4);
+	
+			// Assert that the response is the only message on the queue
+			assertQueueDepth(PROCESS_QUEUE, 0);
+			
+			// Finally verify that we got the expected notification to our own subscriber
+			assertNotNull("No processNotification received", processNotificationMessage);
+			assertRequest(requestXml, processNotificationMessage);
 		
-		// Finally verify that we got the expected notification to our own subscriber
-		assertNotNull("No processNotification received", processNotificationMessage);
-		assertRequest(requestXml, processNotificationMessage);
+		} finally {
+			removeListener(consumer);
+		}
     }
 
 	// FIXME - ML: Add PN tests with and without owner = me!
@@ -159,43 +176,50 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		String fullResidentId = "19" + residentId;
 		String requestXml = jabxUtil.marshal(processNotification_of.createProcessNotification(createProcessNotificationRequest(residentId)));
 
-		// Setup a test-subscriber on the notification-topic
-		TopicSession topicSession = getJmsUtil().getTopicSession();
-		Topic topic = topicSession.createTopic(NOTIFY_TOPIC);
-		TopicSubscriber topicSubscriber = topicSession.createSubscriber(topic);
-		topicSubscriber.setMessageListener(this);
+		// Setup a test-subscriber on the notification-queues
+		MessageConsumer consumer = setupListener(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*", this);
 
-		// Send an update message to the process-service and wait for a publish on the notification topic
-		MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://topic:" + NOTIFY_TOPIC, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+		try {
 
-        // Compare the notified message with the request message, they should be the same
-		assertRequest(requestXml, response);
-
-		// Verify that we got something in the database as well
-        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
-        assertEquals(1, result.size());
-        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
-
-		// Expect no error logs and three info log entries
-		assertQueueDepth(ERROR_LOG_QUEUE, 0);
-		assertQueueDepth(INFO_LOG_QUEUE, 2);
-
-		// Assert that the response is the only message on the queue
-		assertQueueDepth(PROCESS_QUEUE, 0);
+			// Send an update message to the process-service and wait for a publish on one of the notification queues
+			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+	
+	        // Compare the notified message with the request message, they should be the same
+			assertRequest(requestXml, response);
+	
+			// Verify that we got something in the database as well
+	        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+	        assertEquals(1, result.size());
+	        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+	
+			// Expect no error logs and four (1 in + 3 out) info log entries
+			assertQueueDepth(ERROR_LOG_QUEUE, 0);
+			assertQueueDepth(INFO_LOG_QUEUE, 4);
+	
+			// Assert that the response is the only message on the queue
+			assertQueueDepth(PROCESS_QUEUE, 0);
+			
+			// Finally verify that we got the expected notification to our own subscriber
+			assertNotNull("No processNotification received", processNotificationMessage);
+			assertRequest(requestXml, processNotificationMessage);
 		
-		// Finally verify that we got the expected notification to our own subscriber
-		assertNotNull("No processNotification received", processNotificationMessage);
-		assertRequest(requestXml, processNotificationMessage);
+		} finally {
+			removeListener(consumer);
+		}
     }
 
-    
     // TODO - Implement (negative) tests for testing failure and resending update_of notifications
-    
-    
+        
     private TextMessage processNotificationMessage = null;
 
     @Override
 	public void onMessage(Message message) {
     	processNotificationMessage = (TextMessage)message;
+    	try {
+			System.err.println("GOT message: " + processNotificationMessage.getText());
+			System.err.println("ON QUEUE: " + message.getJMSDestination());
+		} catch (JMSException e) {
+			e.printStackTrace();
+		}
 	}
 }

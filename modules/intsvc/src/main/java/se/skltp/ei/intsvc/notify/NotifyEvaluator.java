@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package se.skltp.ei.intsvc.process;
+package se.skltp.ei.intsvc.notify;
 
 import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionEvaluator;
@@ -45,12 +45,12 @@ public class NotifyEvaluator implements ExpressionEvaluator {
 
     public Object evaluate(String expression, MuleMessage message) {
         try {
-        	log.info("Evaluate: {} on message {}", expression, message.getPayload());
+        	log.debug("Evaluate: {} on message {}", expression, message.getPayload());
 
     		ProcessNotificationType pn = (ProcessNotificationType)jaxbUtil.unmarshal(message.getPayload());
     		boolean ok = pn.getEngagementTransaction().size() > 0;
 
-        	log.info("Evaluator return: " + ok);
+        	log.debug("Evaluator return: " + ok);
         	return ok;
 
         } catch (Exception e) {

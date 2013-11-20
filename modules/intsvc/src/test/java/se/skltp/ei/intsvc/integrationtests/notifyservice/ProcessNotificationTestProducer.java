@@ -43,10 +43,14 @@ public class ProcessNotificationTestProducer implements ProcessNotificationRespo
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
 
+	private static Object lastPaylaod = null;
+	
 	@Override
 	public ProcessNotificationResponseType processNotification(String logicalAddress, ProcessNotificationType request) {
 
 		log.info("ProcessNotificationTestProducer received a notification request with {} transactions for logical-address {}", request.getEngagementTransaction().size(), logicalAddress);
+
+		lastPaylaod = request;
 
         // Force a timeout if timeout Id
         String residentId = request.getEngagementTransaction().get(0).getEngagement().getRegisteredResidentIdentification();
@@ -64,4 +68,8 @@ public class ProcessNotificationTestProducer implements ProcessNotificationRespo
             Thread.sleep(SERVICE_TIMOUT_MS + 1000);
         } catch (InterruptedException e) {}
     }
+
+	public static Object getLastPayload() {
+		return lastPaylaod;
+	}
 }

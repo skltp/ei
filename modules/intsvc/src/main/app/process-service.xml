@@ -44,11 +44,22 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
             <spring-object bean="process-bean"/>
         </component>
 
+	    <custom-transformer doc:name="Create notification list" class="se.skltp.ei.intsvc.process.CreateNotificationListTransformer" >
+            <spring:property name="subscriberCache" ref="subscriber-cache-bean"/>
+        </custom-transformer>
+	    
+	    <!-- Split the list-payload to a set of discrete messages -->
+		<collection-splitter />
+
+		<!-- Based on the incoming message set a variable EI-NOTIFICATION-QUEUE to the name of the queue to use and set the actual payload -->
+	    <custom-transformer doc:name="Set queue-name and payload" class="se.skltp.ei.intsvc.process.SetQueueAndPayloadTransformer" />
+
+		<!-- Post he message to the queue in the varaible EI-NOTIFICATION-QUEUE -->
         <jms:outbound-endpoint 
             connector-ref="soitoolkit-jms-connector"
-            topic="${NOTIFY_TOPIC}" 
+            queue="#[variable:EI-NOTIFICATION-QUEUE]"
             transformer-refs="logMsgOut" 
-            doc:name="JMS Topic">
+            doc:name="JMS Queue">
             <jms:transaction action="ALWAYS_JOIN"/>
         </jms:outbound-endpoint>
         

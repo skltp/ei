@@ -46,6 +46,8 @@ import org.springframework.context.ApplicationContextAware;
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.LogicalAddresseeRecordType;
 import se.skltp.ei.intsvc.notify.ProcessNotificationFilter;
+import se.skltp.ei.intsvc.subscriber.api.Subscriber;
+import se.skltp.ei.intsvc.subscriber.api.SubscriberCache;
 
 /**
  * Sample config:
@@ -68,6 +70,11 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 	static boolean stopping = false;
 	
 	private MuleContext dynamicContext;
+
+	private SubscriberCache subscriberCache;
+	public void setSubscriberCache (SubscriberCache subscriberCache) {
+		this.subscriberCache = subscriberCache;
+	}
 	
 	public Initializer() {
 		log.debug("Initializer object constructed");
@@ -148,8 +155,15 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 			log.warn("Faild finding logical addresses, err: {}", e.getMessage());
 			logicalAdresses = new ArrayList<String>();
 		}
-		log.info("Found {} logical addresse" +
-				"s for dynamic notify flows", logicalAdresses.size());
+		log.info("Found {} logical addresses for dynamic notify flows", logicalAdresses.size());
+
+		// Initialize the cache
+		List<Subscriber> subscribers = new ArrayList<Subscriber>();
+		for (String logicalAdress : logicalAdresses) {
+			subscribers.add(new Subscriber(logicalAdress));
+		}
+		subscriberCache.initialize(subscribers);
+		
 		return logicalAdresses;
 	}
 

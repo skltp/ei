@@ -31,6 +31,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.QueueSession;
 import javax.jms.TextMessage;
 
 import org.custommonkey.xmlunit.Diff;
@@ -82,16 +86,31 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
     
 	protected AbstractJmsTestUtil getJmsUtil() {
 		
-		// TODO: Fix lazy init update_of JMS connection et al so that we can create jmsutil in the declaration
+		// TODO: Fix lazy init of JMS connection et al so that we can create jmsutil in the declaration
 		// (The embedded ActiveMQ queue manager is not yet started by Mule when jmsutil is declared...)
 		if (jmsUtil == null) {
-			String clientId = UUID.randomUUID().toString();
-			jmsUtil = new ActiveMqJmsTestUtil("vm://localhost", clientId);
+			jmsUtil = new ActiveMqJmsTestUtil("vm://localhost");
 		}
 		
 		return jmsUtil;
 	}
 
+	protected MessageConsumer setupListener(String qName, MessageListener listener) throws JMSException {
+		// Do not share the session used to check queue depth with the session used for the listener since they will lock each other
+		// Instead us a new session
+		// QueueSession session = getJmsUtil().getSession();
+		QueueSession session = new ActiveMqJmsTestUtil("vm://localhost").getSession();
+		Queue queue = session.createQueue(qName);
+		MessageConsumer consumer = session.createConsumer(queue);
+		consumer.setMessageListener(listener);
+		return consumer;
+	}    
+	protected void removeListener(MessageConsumer consumer) throws JMSException {
+		consumer.setMessageListener(null);
+		consumer.close();
+	}
+
+	
 	protected List<Message> assertQueueDepth(String queueName, int expectedDepth) {
 	    List<Message> messages = getJmsUtil().browseMessagesOnQueue(queueName);
 		assertEquals(expectedDepth, messages.size());
