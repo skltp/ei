@@ -21,6 +21,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
         <!-- Bean with business logic -->
         <spring:bean name="process-bl-bean" class="se.skltp.ei.svc.service.impl.ProcessBean">
         	<spring:property name="owner" value="${EI_HSA_ID}"/>
+        	<spring:property name="updateNotificationNotAllowedHsaIdList" value="${UPDATE_NOTIFICATION_NOT_ALLOWED_HSA_ID_LIST}"/>
         </spring:bean>
      
 

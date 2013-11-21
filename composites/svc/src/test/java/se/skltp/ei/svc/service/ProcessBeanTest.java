@@ -271,6 +271,49 @@ public class ProcessBeanTest {
 		assertRequest(request);
     }
     
+    /**
+     * Validates that use of not allowed hsa-id's in engagement transactions logical-address are detected.
+     * @throws Exception
+     */
+    @Test
+    public void update_ERR_not_allowed_logical_address() throws Exception {
+		
+        ProcessBean bean = createBeanWithNotAllowedHsaIdList();
+    	UpdateType request = createUpdateRequestWithTransactions(5);
+		
+		request.getEngagementTransaction().get(2).getEngagement().setLogicalAddress("NOT-ALLOWED-2");
+
+    	try {
+    		bean.validateUpdate(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI005_VALIDATION_ERROR_INVALID_LOGICAL_ADDRESS.getErrorCode(), e.getCode());
+			assertEquals(e.getMessage(), "EI005: The logicalAddress in EngagementTransaction #3 is reserved and not allowed, hsa-id: NOT-ALLOWED-2");
+		}
+    }
+
+    /**
+     * Validates that use of not allowed hsa-id's in engagement transactions source-system are detected.
+     * @throws Exception
+     */
+    @Test
+    public void update_ERR_not_allowed_source_system() throws Exception {
+		
+        ProcessBean bean = createBeanWithNotAllowedHsaIdList();
+    	UpdateType request = createUpdateRequestWithTransactions(5);
+		
+		request.getEngagementTransaction().get(4).getEngagement().setSourceSystem("NOT-ALLOWED-1");
+
+    	try {
+    		bean.validateUpdate(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI006_VALIDATION_ERROR_INVALID_SOURCE_SYSTEM.getErrorCode(), e.getCode());
+			assertEquals(e.getMessage(), "EI006: The sourceSystem in EngagementTransaction #5 is reserved and not allowed, hsa-id: NOT-ALLOWED-1");
+
+		}
+    }
+
     /*** 
      * Test for processNotification 
      */
@@ -425,6 +468,49 @@ public class ProcessBeanTest {
 		}
 		
     }
+
+    /**
+     * Validates that use of not allowed hsa-id's in engagement transactions logical-address are detected.
+     * @throws Exception
+     */
+    @Test
+    public void processNotification_ERR_not_allowed_logical_address() throws Exception {
+		
+        ProcessBean bean = createBeanWithNotAllowedHsaIdList();
+        ProcessNotificationType request = createProcessNotificationRequestWithTransactions(5);
+		
+		request.getEngagementTransaction().get(2).getEngagement().setLogicalAddress("NOT-ALLOWED-2");
+
+    	try {
+    		bean.validateProcessNotification(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI005_VALIDATION_ERROR_INVALID_LOGICAL_ADDRESS.getErrorCode(), e.getCode());
+			assertEquals(e.getMessage(), "EI005: The logicalAddress in EngagementTransaction #3 is reserved and not allowed, hsa-id: NOT-ALLOWED-2");
+		}
+    }
+
+    /**
+     * Validates that use of not allowed hsa-id's in engagement transactions source-system are detected.
+     * @throws Exception
+     */
+    @Test
+    public void processNotification_ERR_not_allowed_source_system() throws Exception {
+		
+        ProcessBean bean = createBeanWithNotAllowedHsaIdList();
+        ProcessNotificationType request = createProcessNotificationRequestWithTransactions(5);
+		
+		request.getEngagementTransaction().get(4).getEngagement().setSourceSystem("NOT-ALLOWED-1");
+
+    	try {
+    		bean.validateProcessNotification(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI006_VALIDATION_ERROR_INVALID_SOURCE_SYSTEM.getErrorCode(), e.getCode());
+			assertEquals(e.getMessage(), "EI006: The sourceSystem in EngagementTransaction #5 is reserved and not allowed, hsa-id: NOT-ALLOWED-1");
+
+		}
+    }
     
     private void assertRequest(UpdateType request) {
     	try {
@@ -434,5 +520,36 @@ public class ProcessBeanTest {
 			assertEquals(EiErrorCodeEnum.EI004_VALIDATION_ERROR.getErrorCode(), e.getCode());
 		}
     }
+
+	private UpdateType createUpdateRequestWithTransactions(int count) {
+		UpdateType request = new UpdateType();
+
+		long start = 1111111111L;
+		for(int i = 0 ; i < count; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(start + i);
+			request.getEngagementTransaction().add(et);
+		}
+		return request;
+	}
+
+	private ProcessNotificationType createProcessNotificationRequestWithTransactions(int count) {
+		ProcessNotificationType request = new ProcessNotificationType();
+
+		long start = 1111111111L;
+		for(int i = 0 ; i < count; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(start + i);
+			request.getEngagementTransaction().add(et);
+		}
+		return request;
+	}
+
+	private ProcessBean createBeanWithNotAllowedHsaIdList() {
+		ProcessBean bean = new ProcessBean();
+        
+        bean.setOwner(OWNER);
+        bean.setEngagementRepository(mock(EngagementRepository.class));
+        bean.setUpdateNotificationNotAllowedHsaIdList("NOT-ALLOWED-1,NOT-ALLOWED-2,NOT-ALLOWED-3");
+		return bean;
+	}
 
 }

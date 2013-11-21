@@ -37,6 +37,8 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
+import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
+import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class UpdateServiceIntegrationTest extends AbstractTestCase {
@@ -220,7 +222,27 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		assertQueueDepth(PROCESS_QUEUE, 0);
     }
 
-	private class DoOneTestDispatcher implements Dispatcher {
+    /**
+     * Validates that use of not allowed hsa-id's in engagement transactions logical-address are detected.
+     */
+    @Test
+    public void update_ERR_not_allowed_logical_address() throws Exception {
+
+    	UpdateType request = createUpdateRequestWithTransactions(5);
+		
+		request.getEngagementTransaction().get(2).getEngagement().setLogicalAddress(OWNER); // This HSA-ID is for sure not allowed!
+
+    	try {
+			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
+			new DoOneTestDispatcher(request).doDispatch();
+    		fail("Test Failed - No SOAPFaultException thrown");
+    		
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			assertEquals(e.getMessage(), "EI005: The logicalAddress in EngagementTransaction #3 is reserved and not allowed, hsa-id: " + OWNER);
+		}
+    }   
+    
+    private class DoOneTestDispatcher implements Dispatcher {
 		
 		private UpdateType request = null;
 		private String logicalAddress = null;
@@ -246,5 +268,15 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		}
 	}
 
+	private UpdateType createUpdateRequestWithTransactions(int count) {
+		UpdateType request = new UpdateType();
+
+		long start = 1111111111L;
+		for(int i = 0 ; i < count; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(start + i);
+			request.getEngagementTransaction().add(et);
+		}
+		return request;
+	}
 
 }

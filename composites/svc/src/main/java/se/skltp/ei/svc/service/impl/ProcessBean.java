@@ -23,9 +23,12 @@ import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI000_TECHNICAL_ERROR;
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI002_DUPLICATE_UPDATE_ENTRIES;
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI003_LOGICALADDRESS_DONT_MATCH_OWNER;
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI004_VALIDATION_ERROR;
+import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI005_VALIDATION_ERROR_INVALID_LOGICAL_ADDRESS;
+import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI006_VALIDATION_ERROR_INVALID_SOURCE_SYSTEM;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -62,6 +65,8 @@ public class ProcessBean implements ProcessInterface {
     private String owner;
 
     private EngagementRepository engagementRepository;
+	private List<String> updateNotificationNotAllowedHsaIdList;
+
 
     private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
         @Override
@@ -92,6 +97,11 @@ public class ProcessBean implements ProcessInterface {
         LOG.info("ProcessBean got its engagementRepository injected");
         this.engagementRepository = engagementRepository;
     }
+    
+    public void setUpdateNotificationNotAllowedHsaIdList(String setUpdateNotificationNotAllowedHsaIdListString) {
+    	updateNotificationNotAllowedHsaIdList = Arrays.asList(setUpdateNotificationNotAllowedHsaIdListString.split(","));
+    }
+
 
     /**
      * {@inheritDoc}
@@ -110,7 +120,7 @@ public class ProcessBean implements ProcessInterface {
      * @param engagementTransactions the list.
      * @param ownerCheck true if mandatory owner check shall be carried out as well, otherwise false.
      */
-    private static void validateEngagementTransactions(final List<EngagementTransactionType> engagementTransactions, boolean ownerCheck) {
+    private void validateEngagementTransactions(final List<EngagementTransactionType> engagementTransactions, boolean ownerCheck) {
         validateMaxLength(engagementTransactions);
 
         final Map<String, Integer> hashCodes = new HashMap<String, Integer>(engagementTransactions.size());
@@ -125,19 +135,36 @@ public class ProcessBean implements ProcessInterface {
                 throw EI002_DUPLICATE_UPDATE_ENTRIES.createException(otherIndex, hashCodeIndex);
             }
 
+            // Validate that reserved hsa-id's (the platforms own hsa-id's for example) are not used by mistake
+            // If used it could cause a aggregating servie to call itself with no end, a looping service...
+            validateTransactionLogicalAdressAndSourceSystem(hashCodeIndex, et);
+            
             // mandatory fields
             validateMandatoryFields(et, ownerCheck);
 
         }
     }
 
-    /**
+    private void validateTransactionLogicalAdressAndSourceSystem(int etIndex, EngagementType et) {
+    	
+    	// If no black-list is set then simply bail out without any validations
+    	if (updateNotificationNotAllowedHsaIdList == null) return;
+    	
+    	if (updateNotificationNotAllowedHsaIdList.contains(et.getLogicalAddress())) {
+    		throw EI005_VALIDATION_ERROR_INVALID_LOGICAL_ADDRESS.createException(etIndex, et.getLogicalAddress());
+    	}
+    	if (updateNotificationNotAllowedHsaIdList.contains(et.getSourceSystem())) {
+    		throw EI006_VALIDATION_ERROR_INVALID_SOURCE_SYSTEM.createException(etIndex, et.getSourceSystem());
+    	}
+	}
+
+	/**
      * Checks that a mandatory value exists.
      * 
      * @param name the field name.
      * @param value the field value.
      */
-    private static void mandatoryValueCheck(String name, String value) {
+    private void mandatoryValueCheck(String name, String value) {
         if (value == null || value.length() == 0) {
             throw EI004_VALIDATION_ERROR.createException("mandatory field \"" + name + "\" is missing");            
         }
@@ -149,7 +176,7 @@ public class ProcessBean implements ProcessInterface {
      * @param et the engagement record to validate.
      * @param ownerCheck true if an owner check shall be performed as well, otherwise false.
      */
-    private static void validateMandatoryFields(final EngagementType et, boolean ownerCheck) {
+    private void validateMandatoryFields(final EngagementType et, boolean ownerCheck) {
         mandatoryValueCheck("registeredResidentIdentification", et.getRegisteredResidentIdentification());          
         mandatoryValueCheck("serviceDomain", et.getServiceDomain());
         mandatoryValueCheck("categorization", et.getCategorization());
@@ -177,7 +204,7 @@ public class ProcessBean implements ProcessInterface {
     }
 
     // Update/processNotification - max 1000 engagements per request
-    private static void validateMaxLength(List<EngagementTransactionType> engagementTransactions ) {
+    private void validateMaxLength(List<EngagementTransactionType> engagementTransactions ) {
         if(engagementTransactions.size() > MAX_NUMBER_OF_ENGAGEMENTS) {
             throw EI000_TECHNICAL_ERROR.createException("The request contains more than " + 
                     MAX_NUMBER_OF_ENGAGEMENTS + " engagements. Maximum number of engagements per request is " + MAX_NUMBER_OF_ENGAGEMENTS + ".");

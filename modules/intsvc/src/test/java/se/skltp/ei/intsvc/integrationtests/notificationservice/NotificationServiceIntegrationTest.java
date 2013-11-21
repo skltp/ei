@@ -21,6 +21,7 @@ package se.skltp.ei.intsvc.integrationtests.notificationservice;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import javax.jms.JMSException;
 
@@ -36,9 +37,13 @@ import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
+import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
+import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
+import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
+import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class NotificationServiceIntegrationTest extends AbstractTestCase {
@@ -221,6 +226,25 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 		assertQueueDepth(PROCESS_QUEUE, 0);
     }
     
+    /**
+     * Validates that use of not allowed hsa-id's in engagement transactions logical-address are detected.
+     */
+    @Test
+    public void processNotification_ERR_not_allowed_logical_address() throws Exception {
+
+    	ProcessNotificationType request = createProcessNotificationRequestWithTransactions(5);
+		
+		request.getEngagementTransaction().get(2).getEngagement().setLogicalAddress(OWNER);
+
+    	try {
+			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
+			new DoOneTestDispatcher(request).doDispatch();
+    		fail("Test Failed - No SOAPFaultException thrown");
+    		
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			assertEquals(e.getMessage(), "EI005: The logicalAddress in EngagementTransaction #3 is reserved and not allowed, hsa-id: " + OWNER);
+		}
+    }   
     
     private class DoOneTestDispatcher implements Dispatcher {
 		
@@ -248,5 +272,15 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 		}
 	}
 
+	private ProcessNotificationType createProcessNotificationRequestWithTransactions(int count) {
+		ProcessNotificationType request = new ProcessNotificationType();
+
+		long start = 1111111111L;
+		for(int i = 0 ; i < count; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(start + i);
+			request.getEngagementTransaction().add(et);
+		}
+		return request;
+	}
 
 }
