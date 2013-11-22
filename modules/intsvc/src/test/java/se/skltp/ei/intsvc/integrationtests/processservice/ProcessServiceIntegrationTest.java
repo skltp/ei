@@ -106,7 +106,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
     	// Init the subscriber cache with some testdata
 		List<Subscriber> subscribers = new ArrayList<Subscriber>();
     	for (int i = 0; i < 3; i++) {
-			Subscriber subscriber = new Subscriber("" + i);
+			Subscriber subscriber = new Subscriber("" + i, null);
 			lastSubscriberQueueName = subscriber.getNotificationQueueName();
 			subscribers.add(subscriber);
 		}

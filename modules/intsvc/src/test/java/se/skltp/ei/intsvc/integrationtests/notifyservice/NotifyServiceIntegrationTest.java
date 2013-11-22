@@ -22,7 +22,6 @@ package se.skltp.ei.intsvc.integrationtests.notifyservice;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -40,9 +39,8 @@ import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.LogicalAddresseeRecordType;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
+import se.skltp.ei.intsvc.integrationtests.notifyservice.util.FilterCreator;
 import se.skltp.ei.intsvc.notify.ProcessNotificationFilter;
 import se.skltp.ei.intsvc.subscriber.api.Subscriber;
 import se.skltp.ei.intsvc.subscriber.api.SubscriberCache;
@@ -124,13 +122,13 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     }
     
     /**
-     * Verifies that no messages are filtered away when only servicedomain is used in the filter.
-     * All subscribers should get on message.
+     * Verifies that a matching filter with service domain not removes messages to
+     * the the other two subscribers. 
      * 
      * @throws JMSException
      */
     @Test
-    public void no_filtering_OK() throws JMSException {
+    public void servicedomain_filtering_OK() throws JMSException {
     	
 		long residentId = 1212121212L;
 		
@@ -138,15 +136,9 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
 		
-		// Create filter
-		LogicalAddresseeRecordType logicalAddresseeRecordType = createLogicalAddresseeRecordType("HSA_ID_A");
-		logicalAddresseeRecordType.getFilter().add(createFilter("SERVICEDOMAIN-A"));
-
-		List<LogicalAddresseeRecordType> filters = new ArrayList<LogicalAddresseeRecordType>();
-		filters.add(logicalAddresseeRecordType);
-		
-		ProcessNotificationFilter.setFilters(filters);
-		
+		// Create one subscriber with one filter
+		List<Subscriber> subscriberList = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A");
+		ProcessNotificationFilter.setFilters(subscriberList);
 		
 		doOneTest(createUdateRequest);
 
@@ -176,16 +168,10 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
 		
-		// Create filter
-		LogicalAddresseeRecordType logicalAddresseeRecordType = createLogicalAddresseeRecordType("HSA_ID_A");
-		logicalAddresseeRecordType.getFilter().add(createFilter("SERVICEDOMAIN-A", "CATEGORY-B"));
-
-		List<LogicalAddresseeRecordType> filters = new ArrayList<LogicalAddresseeRecordType>();
-		filters.add(logicalAddresseeRecordType);
 		
-		// Set filters
-		ProcessNotificationFilter.setFilters(filters);
-
+		// Create one subscriber with one filter
+		List<Subscriber> subscriberList = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A", "CATEGORY-B");
+		ProcessNotificationFilter.setFilters(subscriberList);
 		
 		doOneTestWithActiveFilter(createUdateRequest);
 
@@ -214,26 +200,14 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
 		
-		// Creating all 3 filters
-		List<LogicalAddresseeRecordType> filters = new ArrayList<LogicalAddresseeRecordType>();
+		// Create three subscriber with a filter each. Only subscriber HSA_ID_A should
+		// get a message.
+		List<Subscriber> subscriberList = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A", "CATEGORY-A");
+		subscriberList.add(FilterCreator.createOneSubscriber("HSA_ID_B", "SERVICEDOMAIN-B").get(0));
+		subscriberList.add(FilterCreator.createOneSubscriber("HSA_ID_C", "SERVICEDOMAIN-C").get(0));
 		
-		// Filter 1 - should get one message
-		LogicalAddresseeRecordType logicalAddresseeRecordType = createLogicalAddresseeRecordType("HSA_ID_A");
-		logicalAddresseeRecordType.getFilter().add(createFilter("SERVICEDOMAIN-A", "CATEGORY-A"));
-		filters.add(logicalAddresseeRecordType);
+		ProcessNotificationFilter.setFilters(subscriberList);
 
-		// Filter 2 - should not get a message
-		logicalAddresseeRecordType = createLogicalAddresseeRecordType("HSA_ID_B");
-		logicalAddresseeRecordType.getFilter().add(createFilter("SERVICEDOMAIN-B"));
-		filters.add(logicalAddresseeRecordType);
-		
-		// Filter 3 - should not get a message
-		logicalAddresseeRecordType = createLogicalAddresseeRecordType("HSA_ID_C");
-		logicalAddresseeRecordType.getFilter().add(createFilter("SERVICEDOMAIN-C"));
-		filters.add(logicalAddresseeRecordType);
-		
-		// Set filters
-		ProcessNotificationFilter.setFilters(filters);
 		
 		doOneTestWithActiveFilter(createUdateRequest);
 
@@ -294,41 +268,6 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 
 		// If the messages are still there we better throw an assert-exception now
 		assertEquals(0, getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size());
-	}
-	
-
-	/**
-	 * Creates a filter with a serviceDomain and zero or more categories
-	 * 
-	 * @param serviceDomain
-	 * @param categorizations
-	 * @return
-	 */
-	private FilterType createFilter(String serviceDomain, String ...categorizations) {
-		
-		FilterType filterType = new FilterType();
-		filterType.setServiceDomain(serviceDomain);
-		
-		if (categorizations != null) {
-			for (String categorization : categorizations) {
-				filterType.getCategorization().add(categorization);
-			}
-		}
-		
-		return filterType;
-	}
-	
-	/**
-	 * Creates a LogicalAddresseeRecordType with only a logicalAddress.
-	 * 
-	 * @param logicalAddress
-	 * @return
-	 */
-	private LogicalAddresseeRecordType createLogicalAddresseeRecordType(String logicalAddress) {
-		LogicalAddresseeRecordType logicalAddresseeRecordType = new LogicalAddresseeRecordType();
-		logicalAddresseeRecordType.setLogicalAddress(logicalAddress);
-		
-		return logicalAddresseeRecordType;
 	}
 	
 

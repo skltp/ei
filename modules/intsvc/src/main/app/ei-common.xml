@@ -63,7 +63,9 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
  -->
 
 	<!-- Subscriber cache -->
-	<spring:bean id="subscriber-cache-bean" class="se.skltp.ei.intsvc.subscriber.impl.SubscriberCacheImpl"/>
+	<spring:bean id="subscriber-cache-bean" class="se.skltp.ei.intsvc.subscriber.impl.SubscriberCacheImpl">
+		<spring:property name="filePath" value="${LOCAL_EI_SUBSCRIBER_CACHE}" />
+	</spring:bean>
 
 
 	<!-- The default profile used by normal usage of mule-app, either deployed in mule or started using st-muleServer-helper-class. Not used by integration tests -->
@@ -116,10 +118,6 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 
     <rest-router:config />
 
-    <spring:beans>
-  
-    </spring:beans>
-    
     <spring:beans>
         <spring:bean name="soitoolkit.eventLogger" class="se.skltp.ei.intsvc.log.CustomEventLogger" primary="true">
             <spring:property name="infoEventQueue" value="${SOITOOLKIT_LOG_INFO_QUEUE}"/>

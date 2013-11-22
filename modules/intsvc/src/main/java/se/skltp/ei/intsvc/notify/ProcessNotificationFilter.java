@@ -7,7 +7,7 @@ import java.util.Map;
 
 
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.LogicalAddresseeRecordType;
+import se.skltp.ei.intsvc.subscriber.api.Subscriber;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.EngagementType;
@@ -33,13 +33,13 @@ public class ProcessNotificationFilter {
 	 */
 	public static ProcessNotificationType filter(ProcessNotificationType pn, String logicalAddress) {
 		
+		// Filters for this user
+		List<FilterType> filterList = filters.get(logicalAddress);
+		
 		// Loop over all engagements in the transaction and remove the unwanted ones
 		Iterator<EngagementTransactionType> iterator = pn.getEngagementTransaction().iterator();
 		while(iterator.hasNext()) {
 			EngagementType engagement = iterator.next().getEngagement();
-			
-			// Filters for this user
-			List<FilterType> filterList = filters.get(logicalAddress);
 			
 			// There is no need to filter if there is no filter to use
 			if (filterList == null || filterList.size() == 0) {
@@ -74,21 +74,22 @@ public class ProcessNotificationFilter {
 		return pn;
 	}
 	
+
+	
 	/**
 	 * Used for setting all filters that should be used when unwanted processnotifications should
 	 * be filtered away.
 	 * 
-	 * The data should be a list of LogicalAddresseeRecordType that should contains at least a logicaladdress 
-	 * and zero or more filters.
+	 * The data should be a list of Subscribers that should contains at least a logicaladdress 
+	 * and zero or more filters per subscriber
 	 * 
-	 * @param incomingFilters
+	 * @param subscribersList list of subscribers
 	 */
-	public static void setFilters(List<LogicalAddresseeRecordType> incomingFilters) {
-		
+	public static void setFilters(List<Subscriber> subscribersList) {
 		Map<String,List<FilterType>> map = new HashMap<String,List<FilterType>>();
 		
-		for (LogicalAddresseeRecordType record : incomingFilters) {
-			map.put(record.getLogicalAddress(), record.getFilter());
+		for(Subscriber s : subscribersList) {
+			map.put(s.getLogicalAdress(), s.getFilterList());
 		}
 		
 		filters = map;

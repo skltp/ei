@@ -2,21 +2,19 @@ package se.skltp.ei.intsvc.integrationtests.notifyservice;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-//import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.FilterType;
-//import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.LogicalAddresseeRecordType;
 
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.LogicalAddresseeRecordType;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
+import se.skltp.ei.intsvc.integrationtests.notifyservice.util.FilterCreator;
 import se.skltp.ei.intsvc.notify.ProcessNotificationFilter;
+import se.skltp.ei.intsvc.subscriber.api.Subscriber;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
 public class ProcessNotificationFilterTest {
@@ -49,37 +47,28 @@ public class ProcessNotificationFilterTest {
 	@Test
 	public void no_filters() {
 		
-		LogicalAddresseeRecordType logicalAddresseeRecordType = new LogicalAddresseeRecordType();
-		logicalAddresseeRecordType.setLogicalAddress("HSA_ID_A");
-
-		List<LogicalAddresseeRecordType> filters = new ArrayList<LogicalAddresseeRecordType>();
-		filters.add(logicalAddresseeRecordType);
+		// Create a subscriber with no filters
+		List<Subscriber> subscriberList = FilterCreator.createOneSubscriber("HSA_ID_A", null);
+		ProcessNotificationFilter.setFilters(subscriberList);
 		
-		ProcessNotificationFilter.setFilters(filters);
 		ProcessNotificationType pn = ProcessNotificationFilter.filter(processNotificationType, "HSA_ID_A");
 		
 		assertSame(processNotificationType, pn);
-		assertEquals(processNotificationType.getEngagementTransaction().size(), pn.getEngagementTransaction().size());
+
+		// Verify that we still got two engagements 
+		assertEquals(2, pn.getEngagementTransaction().size());
 	}
 	
 	
 	/**
-	 * Verifies that the no notifcation is filtered away when only serviceDomain is set in the filtertype.
+	 * Verifies that the no notifications are filtered away when only serviceDomain is set in the filter.
 	 */
 	@Test
 	public void filter_with_servicedomain() {
 		
-		FilterType filterType = new FilterType();
-		filterType.setServiceDomain("SERVICEDOMAIN-A");
-		
-		LogicalAddresseeRecordType logicalAddresseeRecordType = new LogicalAddresseeRecordType();
-		logicalAddresseeRecordType.setLogicalAddress("HSA_ID_A");
-		logicalAddresseeRecordType.getFilter().add(filterType);
+		List<Subscriber> list = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A");
+		ProcessNotificationFilter.setFilters(list);
 
-		List<LogicalAddresseeRecordType> filters = new ArrayList<LogicalAddresseeRecordType>();
-		filters.add(logicalAddresseeRecordType);
-		
-		ProcessNotificationFilter.setFilters(filters);
 		ProcessNotificationType pn = ProcessNotificationFilter.filter(processNotificationType, "HSA_ID_A");
 		
 		assertSame(1, pn.getEngagementTransaction().size());
@@ -89,51 +78,59 @@ public class ProcessNotificationFilterTest {
 	@Test
 	public void filter_with_servicedomain_and_categorization() {
 		
-		// Filter that should match 
-		FilterType filterType = new FilterType();
-		filterType.setServiceDomain("SERVICEDOMAIN-A");
-		filterType.getCategorization().add("CATEGORY-A");
-		filterType.getCategorization().add("UNREALTED-CATEGORY");
-		
 		// Filter that should not match... 
 		FilterType filterType2 = new FilterType();
 		filterType2.setServiceDomain("SERVICEDOMAIN-X");
 		filterType2.getCategorization().add("CATEGORY-A");
 		filterType2.getCategorization().add("CATEGORY-X");
 		
-		LogicalAddresseeRecordType logicalAddresseeRecordType = new LogicalAddresseeRecordType();
-		logicalAddresseeRecordType.setLogicalAddress("HSA_ID_A");
-		logicalAddresseeRecordType.getFilter().add(filterType);
-		logicalAddresseeRecordType.getFilter().add(filterType2);
+		// Create a subscriber with a matching filter with servicedomain and categorization
+		List<Subscriber> list = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A", "CATEGORY-A", "CATEGORY-UNKNOWN");
 		
-		List<LogicalAddresseeRecordType> filters = new ArrayList<LogicalAddresseeRecordType>();
-		filters.add(logicalAddresseeRecordType);
+		// Add filter that should not match
+		list.get(0).getFilterList().add(filterType2);
+
+		// Set the filters
+		ProcessNotificationFilter.setFilters(list);
 		
-		ProcessNotificationFilter.setFilters(filters);
+		// Filter
 		ProcessNotificationType pn = ProcessNotificationFilter.filter(processNotificationType, "HSA_ID_A");
 		
 		assertSame(1, pn.getEngagementTransaction().size());
 		assertSame(et1.getEngagement(), pn.getEngagementTransaction().get(0).getEngagement());
 	}
 	
+	
 	@Test
-	public void filter_with_wrong_servicedomain() {
+	public void filter_with_wrong_category() {
 		
-		FilterType filterType = new FilterType();
-		filterType.setServiceDomain("SERVICEDOMAIN-A");
-		filterType.getCategorization().add("UNREALTED-CATEGORY");
+		// Create a subscriber with nonmatching categorization
+		List<Subscriber> list = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A", "CATEGORY-UNKNOWN");
+		ProcessNotificationFilter.setFilters(list);
+
 		
-		LogicalAddresseeRecordType logicalAddresseeRecordType = new LogicalAddresseeRecordType();
-		logicalAddresseeRecordType.setLogicalAddress("HSA_ID_A");
-		logicalAddresseeRecordType.getFilter().add(filterType);
+		ProcessNotificationType pn = ProcessNotificationFilter.filter(processNotificationType, "HSA_ID_A");
+		assertSame(0, pn.getEngagementTransaction().size());
+	}
+	
+	
+	/**
+	 * Verify that filtering works when there is more than one subscriber (logialaddress)
+	 */
+	@Test
+	public void filter_with_multiple_subscribers_set() {
 		
-		List<LogicalAddresseeRecordType> filters = new ArrayList<LogicalAddresseeRecordType>();
-		filters.add(logicalAddresseeRecordType);
+		// Create two subscriber with matching filters
+		List<Subscriber> list = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A", "CATEGORY-A");
+		list.add(FilterCreator.createOneSubscriber("HSA_ID_B", "SERVICEDOMAIN-A", "CATEGORY-A").get(0));
 		
-		ProcessNotificationFilter.setFilters(filters);
+		ProcessNotificationFilter.setFilters(list);
+		
+		// Filter
 		ProcessNotificationType pn = ProcessNotificationFilter.filter(processNotificationType, "HSA_ID_A");
 		
-		assertSame(0, pn.getEngagementTransaction().size());
+		assertSame(1, pn.getEngagementTransaction().size());
+		assertSame(et1.getEngagement(), pn.getEngagementTransaction().get(0).getEngagement());
 	}
 	
 }

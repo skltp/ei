@@ -136,34 +136,47 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 
 	private List<String> getLogicalAdresses(MuleContext muleContext) throws MuleException {
 		
-		// FIXME. Cache result in a local file and get if from the file if the service doesn't respond.
 		log.info("Looking up logical addresses for dynamic notify flows");
 		List<String> logicalAdresses = new ArrayList<String>();
 		try {
+
 			MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
 			GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
 			
-			// Get all logicalAddresses
-			for(LogicalAddresseeRecordType logicalAddresseeType : logicalAddressesResponse.getLogicalAddressRecord()) {
-				logicalAdresses.add(logicalAddresseeType.getLogicalAddress());
+			List<Subscriber> subscribers = new ArrayList<Subscriber>();
+			for (LogicalAddresseeRecordType record : logicalAddressesResponse.getLogicalAddressRecord()) {
+				
+				// Create a subscriber for this logicaladdress
+				subscribers.add(new Subscriber(record.getLogicalAddress(), record.getFilter()));
+				
+				// Add the logicaladdress to list of logicaladdresses
+				logicalAdresses.add(record.getLogicalAddress());
 			}
 			
-			// Set the filter for later use in the process notification filters
-			ProcessNotificationFilter.setFilters(logicalAddressesResponse.getLogicalAddressRecord());
+			
+			subscriberCache.initialize(subscribers);
+			subscriberCache.saveToLocalCopy();
 
 		} catch (Exception e) {
+			
 			log.warn("Faild finding logical addresses, err: {}", e.getMessage());
+			log.warn("Trying to restore cache from from file");
+			
 			logicalAdresses = new ArrayList<String>();
+			subscriberCache.restoreFromLocalCopy();
+			
+			// Get all logialAddresses
+			for(Subscriber s : subscriberCache.getSubscribers()) {
+				logicalAdresses.add(s.getLogicalAdress());
+			}
+			
 		}
+		
+		// Set the filter for later use in the process notification filters
+		ProcessNotificationFilter.setFilters(subscriberCache.getSubscribers());
+		
 		log.info("Found {} logical addresses for dynamic notify flows", logicalAdresses.size());
 
-		// Initialize the cache
-		List<Subscriber> subscribers = new ArrayList<Subscriber>();
-		for (String logicalAdress : logicalAdresses) {
-			subscribers.add(new Subscriber(logicalAdress));
-		}
-		subscriberCache.initialize(subscribers);
-		
 		return logicalAdresses;
 	}
 

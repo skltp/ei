@@ -8,5 +8,7 @@ public interface SubscriberCache {
 	boolean isInitialized();
 	void reset();
 	void initialize(List<Subscriber> subscribers);
-
+	void saveToLocalCopy();
+	void restoreFromLocalCopy();
+	
 }
