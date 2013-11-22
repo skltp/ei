@@ -45,7 +45,6 @@ import org.springframework.context.ApplicationContextAware;
 
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.LogicalAddresseeRecordType;
-import se.skltp.ei.intsvc.notify.ProcessNotificationFilter;
 import se.skltp.ei.intsvc.subscriber.api.Subscriber;
 import se.skltp.ei.intsvc.subscriber.api.SubscriberCache;
 
@@ -171,9 +170,6 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 			}
 			
 		}
-		
-		// Set the filter for later use in the process notification filters
-		ProcessNotificationFilter.setFilters(subscriberCache.getSubscribers());
 		
 		log.info("Found {} logical addresses for dynamic notify flows", logicalAdresses.size());
 
