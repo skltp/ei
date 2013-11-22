@@ -37,8 +37,6 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
-import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
-import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class UpdateServiceIntegrationTest extends AbstractTestCase {

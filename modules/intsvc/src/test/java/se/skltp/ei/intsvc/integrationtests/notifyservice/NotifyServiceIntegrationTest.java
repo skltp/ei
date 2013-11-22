@@ -20,6 +20,7 @@
 package se.skltp.ei.intsvc.integrationtests.notifyservice;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +28,13 @@ import java.util.List;
 import javax.jms.JMSException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.module.client.MuleClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
-
 
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
@@ -163,10 +164,10 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
      * The two remaining subscribers should get 1 message each.
      * 
      * @throws JMSException
+     * @throws MuleException 
      */
     @Test
-    @Ignore
-    public void filter_should_remove_one_message_for_1_subscriber() throws JMSException {
+    public void filter_should_remove_one_message_for_1_subscriber() throws JMSException, MuleException {
     	
 		long residentId = 1212121212L;
 		
@@ -186,7 +187,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		ProcessNotificationFilter.setFilters(filters);
 
 		
-		doOneTest(createUdateRequest);
+		doOneTestWithActiveFilter(createUdateRequest);
 
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
@@ -201,10 +202,10 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
      * Verifies that only subscriber gets a message
      * 
      * @throws JMSException
+     * @throws MuleException 
      */
     @Test
-    @Ignore
-    public void filter_should_one_send_message_to_1_subscriber() throws JMSException {
+    public void filter_should_one_send_message_to_1_subscriber() throws JMSException, MuleException {
     	
 		long residentId = 1212121212L;
 		
@@ -234,7 +235,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		// Set filters
 		ProcessNotificationFilter.setFilters(filters);
 		
-		doOneTest(createUdateRequest);
+		doOneTestWithActiveFilter(createUdateRequest);
 
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
@@ -256,12 +257,43 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 			mr = dispatchAndWaitForServiceComponent("jms://" + queueName + "?connector=soitoolkit-jms-connector", requestXml, null, "process-notification-teststub-service", EI_TEST_TIMEOUT);
 		}
 
-		// TODO: How to verify that all three got their notifications?
-		// Check log-queue?
-		
 		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)mr.getPayload();
 		assertEquals( ResultCodeEnum.OK, nr.getResultCode());
+	}
+	
 
+	/**
+	 * Variant of doOneTest where we expect that at least one of the teststubs will not be called due to the filter in place.
+	 * Instead of having to wait for a timeout we simply monitor the number of remaing messages on the notificaton queues and return when they are down to zero.
+	 * 
+	 * @param request
+	 * @throws JMSException
+	 */
+	private void doOneTestWithActiveFilter(final UpdateType request) throws JMSException, MuleException {
+
+		MuleClient muleClient = new MuleClient(muleContext);
+		
+		// Simulate the sending of notifications from the processing service
+		String requestXml = jabxUtil.marshal(of.createUpdate(request));
+		List<Subscriber> subscribers = subscriberCache.getSubscribers();
+		for (Subscriber subscriber : subscribers) {
+			String queueName = subscriber.getNotificationQueueName();
+
+			// Perform the actual dispatch without waiting
+			muleClient.dispatch("jms://" + queueName + "?connector=soitoolkit-jms-connector", requestXml, null);
+		}
+		// Ensure that there now are some messages to be processes on the notification queues 
+		// (could be a timing problem, i.e. all messages are already processed now, if the workers are really super fast but that is more of an theoretical exercise...)
+		assertFalse(0 == getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size());
+
+		// Wait for the messages to be processed
+		for (int i = 0; i < 5; i++) {
+			if (0 == getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size()) break;
+			waitForBackgroundProcessing();
+		}
+
+		// If the messages are still there we better throw an assert-exception now
+		assertEquals(0, getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size());
 	}
 	
 

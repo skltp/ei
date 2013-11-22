@@ -21,7 +21,6 @@ package se.skltp.ei.intsvc.integrationtests.notificationservice;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
 
 import javax.jms.JMSException;
 
@@ -37,13 +36,9 @@ import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
-import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
-import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
-import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
-import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class NotificationServiceIntegrationTest extends AbstractTestCase {
