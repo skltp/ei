@@ -55,9 +55,6 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
 		<!-- Based on the incoming message set a variable EI-NOTIFICATION-QUEUE to the name of the queue to use and set the actual payload -->
 	    <custom-transformer doc:name="Set queue-name and payload" class="se.skltp.ei.intsvc.process.SetQueueAndPayloadTransformer" />
 
-<!-- 		<custom-filter class="se.skltp.ei.intsvc.notify.FilterEmptyNotifications" doc:name="Filter empty notifications"> -->
-<!--         </custom-filter> -->
-
 
 		<!-- Post he message to the queue in the varaible EI-NOTIFICATION-QUEUE -->
         <jms:outbound-endpoint 

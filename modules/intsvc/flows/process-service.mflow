@@ -64,7 +64,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="process-service" entity-id="d5d5c5a1-827f-4328-8055-3f307d45b1f7">
+    <flow SubFlow="false" name="process-service" entity-id="8845506a-fd64-499d-a4aa-99ac093853a7">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
