@@ -73,5 +73,17 @@ public class FilterCreator {
 	}
 	
 	
+	/**
+	 * Creates a filter with a serviceDomain and zero or more categories
+	 * 
+	 * @param serviceDomain
+	 * @param categorizations
+	 * @return A list of 1 FilterType
+	 */
+	public static List<FilterType> createFilterWithList(String serviceDomain, String ...categorizations) {
+		FilterType createFilter = createFilter(serviceDomain, categorizations);
+		return createFilterList(createFilter);
+	}
+	
 	
 }
