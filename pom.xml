@@ -11,14 +11,14 @@
     
     <groupId>se.skltp.ei</groupId>
     <artifactId>skltp-ei-parent</artifactId>
-    <version>1.1.0-RC1</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
     <name>skltp-ei-parent</name>
 
     <scm>
-        <connection>scm:svn:https://skltp.googlecode.com/svn/tp/ei/tags/skltp-ei-parent-1.1.0-RC1</connection>
-        <developerConnection>scm:svn:https://skltp.googlecode.com/svn/tp/ei/tags/skltp-ei-parent-1.1.0-RC1</developerConnection>
-        <url>https://skltp.googlecode.com/svn/tp/ei/tags/skltp-ei-parent-1.1.0-RC1</url>
+        <connection>scm:svn:https://skltp.googlecode.com/svn/tp/ei/tags/skltp-ei-parent-1.1.0</connection>
+        <developerConnection>scm:svn:https://skltp.googlecode.com/svn/tp/ei/tags/skltp-ei-parent-1.1.0</developerConnection>
+        <url>https://skltp.googlecode.com/svn/tp/ei/tags/skltp-ei-parent-1.1.0</url>
     </scm>
     
 	<modules>

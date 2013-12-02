@@ -21,13 +21,13 @@ package se.skltp.ei.intsvc.integrationtests.notifyservice;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import javax.jms.JMSException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
@@ -40,6 +40,7 @@ import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.intsvc.integrationtests.notifyservice.util.FilterCreator;
 import se.skltp.ei.intsvc.subscriber.api.Subscriber;
@@ -53,6 +54,8 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	 
 	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
 	private static final ObjectFactory of = new ObjectFactory();
+	
+	private static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
 
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -69,6 +72,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
 	  		"skltp-ei-svc-spring-context.xml," +
+	  		"process-service.xml," + 
 	        "get-logical-addressees-service.xml," + 
 	        "teststub-services/init-dynamic-flows.xml," +
 	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
@@ -94,6 +98,14 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     	if (subscriberCache == null) {
     		subscriberCache = muleContext.getRegistry().lookupObject(SubscriberCache.class);
     	}
+
+    	// Remove all filers for all subscribers
+    	for(Subscriber s : subscriberCache.getSubscribers()) {
+    		s.getFilterList().clear();
+    	}
+		
+		// Delete previous captured logicalAddresses
+		ProcessNotificationTestProducer.clearLastLogicalAddresses();
     	
     	// Clear queues used for the tests
 		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE);
@@ -126,10 +138,10 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
      * the the other two subscribers. 
      * 
      * @throws JMSException
+     * @throws MuleException 
      */
     @Test
-    @Ignore
-    public void servicedomain_filtering_OK() throws JMSException {
+    public void servicedomain_filtering_OK() throws JMSException, MuleException {
     	
 		long residentId = 1212121212L;
 		
@@ -138,17 +150,23 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
 		
 		// Create one subscriber with one filter
-		List<Subscriber> subscriberList = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A");
-//		ProcessNotificationFilter.setFilters(subscriberList);
+		List<FilterType> createFilterList = FilterCreator.createFilterWithList("SERVICEDOMAIN-A");
+		subscriberCache.getSubscribers().get(0).getFilterList().addAll(createFilterList);
 		
-		doOneTest(createUdateRequest);
+		doOneTestWithActiveFilterToProcessQueue(createUdateRequest);
 
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
 		
-		// Expect no error logs and 3 * 3 info log entries
+		// Expect no error logs and 4 (processing-service) + 3 * 3 info log entries
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);
-		assertQueueDepth(INFO_LOG_QUEUE, 9);
+		assertQueueDepth(INFO_LOG_QUEUE, 13);
+
+
+		// ProcessNotificationTestProducer should be called once per logicalAddress
+		List<String> lastLogialAddresses = ProcessNotificationTestProducer.getLastLogialAddresses();
+		assertEquals(3, lastLogialAddresses.size());
+		
     }
     
     
@@ -160,7 +178,6 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
      * @throws MuleException 
      */
     @Test
-    @Ignore
     public void filter_should_remove_one_message_for_1_subscriber() throws JMSException, MuleException {
     	
 		long residentId = 1212121212L;
@@ -172,17 +189,24 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		
 		
 		// Create one subscriber with one filter
-		List<Subscriber> subscriberList = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A", "CATEGORY-B");
-//		ProcessNotificationFilter.setFilters(subscriberList);
+		List<FilterType> createFilterList = FilterCreator.createFilterWithList("SERVICEDOMAIN-A", "CATEGORY-B");
+		subscriberCache.getSubscribers().get(0).getFilterList().addAll(createFilterList);
 		
-		doOneTestWithActiveFilter(createUdateRequest);
+		doOneTestWithActiveFilterToProcessQueue(createUdateRequest);
+		
 
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
 		
-		// Expect no error logs and 7 info log entries
+		// Expect no error logs and 9 (4 from process-service) info log entries
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);
-		assertQueueDepth(INFO_LOG_QUEUE, 7);
+		assertQueueDepth(INFO_LOG_QUEUE, 9);
+		
+		List<String> lastLogialAddresses = ProcessNotificationTestProducer.getLastLogialAddresses();
+		assertEquals(2, lastLogialAddresses.size());
+		
+		// No messages for HSA_ID_A
+		assertFalse(lastLogialAddresses.contains("HSA_ID_A"));
     }
     
 
@@ -193,7 +217,6 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
      * @throws MuleException 
      */
     @Test
-    @Ignore
     public void filter_should_one_send_message_to_1_subscriber() throws JMSException, MuleException {
     	
 		long residentId = 1212121212L;
@@ -203,23 +226,30 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
 		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
 		
-		// Create three subscriber with a filter each. Only subscriber HSA_ID_A should
-		// get a message.
-		List<Subscriber> subscriberList = FilterCreator.createOneSubscriber("HSA_ID_A", "SERVICEDOMAIN-A", "CATEGORY-A");
-		subscriberList.add(FilterCreator.createOneSubscriber("HSA_ID_B", "SERVICEDOMAIN-B").get(0));
-		subscriberList.add(FilterCreator.createOneSubscriber("HSA_ID_C", "SERVICEDOMAIN-C").get(0));
-		
-//		ProcessNotificationFilter.setFilters(subscriberList);
 
+		// Create three subscriber with a filter each. Only subscriber HSA_ID_A should get a message.
+		List<FilterType> createFilterList1 = FilterCreator.createFilterWithList("SERVICEDOMAIN-A", "CATEGORY-A");
+		List<FilterType> createFilterList2 = FilterCreator.createFilterWithList("SERVICEDOMAIN-B");
+		List<FilterType> createFilterList3 = FilterCreator.createFilterWithList("SERVICEDOMAIN-C");
 		
-		doOneTestWithActiveFilter(createUdateRequest);
-
+		subscriberCache.getSubscribers().get(0).getFilterList().addAll(createFilterList1);
+		subscriberCache.getSubscribers().get(1).getFilterList().addAll(createFilterList2);
+		subscriberCache.getSubscribers().get(2).getFilterList().addAll(createFilterList3);
+		
+		doOneTestWithActiveFilterToProcessQueue(createUdateRequest);
+		
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
 		
 		// Expect no error logs and 5 info log entries
 		assertQueueDepth(ERROR_LOG_QUEUE, 0);
 		assertQueueDepth(INFO_LOG_QUEUE, 5);
+		
+		List<String> lastLogialAddresses = ProcessNotificationTestProducer.getLastLogialAddresses();
+		assertEquals(1, lastLogialAddresses.size());
+		
+		// Only HSA_ID_A should got a message
+		assertTrue(lastLogialAddresses.contains("HSA_ID_A"));
     }
     
     
@@ -239,38 +269,36 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	}
 	
 
+	
 	/**
 	 * Variant of doOneTest where we expect that at least one of the teststubs will not be called due to the filter in place.
-	 * Instead of having to wait for a timeout we simply monitor the number of remaing messages on the notificaton queues and return when they are down to zero.
+	 * Instead of having to wait for a timeout we simply monitor the number of remaing messages on the processing queue and 
+	 * notificaton queues and return when they are down to zero.
 	 * 
 	 * @param request
 	 * @throws JMSException
 	 */
-	private void doOneTestWithActiveFilter(final UpdateType request) throws JMSException, MuleException {
+	private void doOneTestWithActiveFilterToProcessQueue(final UpdateType request) throws JMSException, MuleException {
 
 		MuleClient muleClient = new MuleClient(muleContext);
 		
-		// Simulate the sending of notifications from the processing service
+		// Simulate the sending of notifications to the processing service
 		String requestXml = jabxUtil.marshal(of.createUpdate(request));
-		List<Subscriber> subscribers = subscriberCache.getSubscribers();
-		for (Subscriber subscriber : subscribers) {
-			String queueName = subscriber.getNotificationQueueName();
-
-			// Perform the actual dispatch without waiting
-			muleClient.dispatch("jms://" + queueName + "?connector=soitoolkit-jms-connector", requestXml, null);
-		}
-		// Ensure that there now are some messages to be processes on the notification queues 
-		// (could be a timing problem, i.e. all messages are already processed now, if the workers are really super fast but that is more of an theoretical exercise...)
-		assertFalse(0 == getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size());
-
+		muleClient.dispatch("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null);
+		
 		// Wait for the messages to be processed
 		for (int i = 0; i < 5; i++) {
-			if (0 == getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size()) break;
+			
+			int notify_queues = getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size();
+			int queue = getJmsUtil().browseMessagesOnQueue(PROCESS_QUEUE).size();
+			
+			if (queue == 0 && notify_queues == 0) {
+				break;
+			} 
+			
 			waitForBackgroundProcessing();
 		}
 
-		// If the messages are still there we better throw an assert-exception now
-		assertEquals(0, getJmsUtil().browseMessagesOnQueue(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*").size());
 	}
 	
 

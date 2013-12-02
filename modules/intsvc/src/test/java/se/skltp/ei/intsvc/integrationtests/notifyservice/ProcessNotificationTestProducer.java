@@ -19,6 +19,9 @@
  */
 package se.skltp.ei.intsvc.integrationtests.notifyservice;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jws.WebService;
 
 import org.slf4j.Logger;
@@ -44,12 +47,17 @@ public class ProcessNotificationTestProducer implements ProcessNotificationRespo
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
 
 	private static Object lastPaylaod = null;
+	private static List<String> lastLogialAddresses = new ArrayList<String>();
 	
 	@Override
 	public ProcessNotificationResponseType processNotification(String logicalAddress, ProcessNotificationType request) {
 
 		log.info("ProcessNotificationTestProducer received a notification request with {} transactions for logical-address {}", request.getEngagementTransaction().size(), logicalAddress);
 
+		// Save the logicalAddress for later use by integration tests
+		lastLogialAddresses.add(logicalAddress);
+		
+		
 		lastPaylaod = request;
 
         // Force a timeout if timeout Id
@@ -71,5 +79,13 @@ public class ProcessNotificationTestProducer implements ProcessNotificationRespo
 
 	public static Object getLastPayload() {
 		return lastPaylaod;
+	}
+	
+	public static List<String> getLastLogialAddresses() {
+		return lastLogialAddresses;
+	}
+	
+	public static void clearLastLogicalAddresses() {
+		lastLogialAddresses.clear();
 	}
 }
