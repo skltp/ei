@@ -139,9 +139,15 @@ public class SubscriberCacheImpl implements SubscriberCache {
         		is = new FileInputStream(filePath);
         		pc = (PersistentCache) JAXB.unmarshal(is);
         		
-        		this.subscribers = pc.subscribers;
+        		if (pc.subscribers != null) {
+        			
+        			this.subscribers = pc.subscribers;
+        			log.info("Succesfully loaded EI subscribers to local cache: " + filePath);
+        			
+        		} else {
+        			log.warn("There is no EI subscribers available in local cache: " + filePath);
+        		}
         		
-        		log.info("Succesfully loaded EI subscribers to local cache: " + filePath);
         		
         	} else {
         		log.error("Failed to load EI subscribers from local cache, no such file:" + filePath);

@@ -3,6 +3,7 @@ package se.skltp.ei.intsvc.subscriber.impl;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
@@ -85,4 +86,28 @@ public class SubscriberCacheImplTest {
 		assertEquals(list.get(0).getFilterList().get(0).getCategorization().get(0), subscriberListFromFile.getSubscribers().get(0).getFilterList().get(0).getCategorization().get(0));
 		
 	}
+	
+	
+	/**
+	 * Verifies that we got the same content back when we read it from file
+	 */
+	@Test
+	public void test_reading_empty_cache_file() {
+		
+		// Write to cache (empty)
+		SubscriberCacheImpl subscriberCacheImpl = new SubscriberCacheImpl();
+		subscriberCacheImpl.initialize(new ArrayList<Subscriber>());
+		subscriberCacheImpl.setFilePath(FILEPATH);
+		subscriberCacheImpl.saveToLocalCopy();
+		subscriberCacheImpl = null;
+	
+		// Read from cache
+		SubscriberCacheImpl subscriberListFromFile = new SubscriberCacheImpl();
+		subscriberListFromFile.setFilePath(FILEPATH);
+		subscriberListFromFile.restoreFromLocalCopy();
+		
+		// There should not be any subscribers in the list
+		assertTrue(subscriberListFromFile.getSubscribers().isEmpty());
+	}
+	
 }
