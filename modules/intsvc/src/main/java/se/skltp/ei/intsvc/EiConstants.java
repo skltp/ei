@@ -2,6 +2,7 @@ package se.skltp.ei.intsvc;
 
 public interface EiConstants {
 
-	public static final String X_RIVTA_ORIGINAL_SERVICE_CONSUMER_HSA_ID = "x-rivta-original-serviceconsumer-hsaid";
+	//Http header x-vp-sender-id, for EI to use when acting consumer towards VP. 
+	public static final String X_VP_SENDER_ID = "x-vp-sender-id";
 	
 }

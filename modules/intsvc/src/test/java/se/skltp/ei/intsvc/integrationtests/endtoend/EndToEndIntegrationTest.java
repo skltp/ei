@@ -137,8 +137,8 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		assertQueueDepth(INFO_LOG_QUEUE, 16);
 
 		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
-    	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastOriginalConsumer());
-    	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastOriginalConsumer());
+    	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastConsumer());
+    	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastConsumer());
     }
 
 	/**
@@ -176,8 +176,8 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		assertQueueDepth(INFO_LOG_QUEUE, 16);
 		
 		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
-    	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastOriginalConsumer());
-    	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastOriginalConsumer());
+    	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastConsumer());
+    	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastConsumer());
     }
     
     

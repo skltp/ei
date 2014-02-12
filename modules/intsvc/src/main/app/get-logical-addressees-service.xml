@@ -37,7 +37,8 @@
             <spring-object bean="create-get-logical-addressees-request-bean"/>
         </component>
 
- 		<set-property propertyName="x-rivta-original-serviceconsumer-hsaid" value="${EI_HSA_ID}" doc:name="x-rivta-original-serviceconsumer-hsaid" />
+ 		<!-- Propagate x-vp-sender-id as an outbound property, value is the hsa id of EI to be used when invoking VP  -->
+ 		<set-property propertyName="x-vp-sender-id" value="${EI_HSA_ID}" doc:name="propagate x-vp-sender-id when invoking GetLogicalAddresseesByServiceContract" />
 
         <http:outbound-endpoint 
             connector-ref="soitoolkit-http-connector"

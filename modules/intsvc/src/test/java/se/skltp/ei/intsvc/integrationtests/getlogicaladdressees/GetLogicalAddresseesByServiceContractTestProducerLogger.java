@@ -14,7 +14,7 @@ public class GetLogicalAddresseesByServiceContractTestProducerLogger extends Abs
 
 	private static final Logger log = LoggerFactory.getLogger(GetLogicalAddresseesByServiceContractTestProducerLogger.class);
 
-	private static String lastOriginalConsumer = null;
+	private static String lastConsumer = null;
 	
 	@Override
 	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {
@@ -22,14 +22,14 @@ public class GetLogicalAddresseesByServiceContractTestProducerLogger extends Abs
 		@SuppressWarnings("unchecked")
 		Map<String, Object> httpHeaders = (Map<String, Object>)message.getInboundProperty("http.headers");
 		
-		String orgConsumer = (String)httpHeaders.get(EiConstants.X_RIVTA_ORIGINAL_SERVICE_CONSUMER_HSA_ID);
-		log.info("Test producer called with {}: {}", EiConstants.X_RIVTA_ORIGINAL_SERVICE_CONSUMER_HSA_ID, orgConsumer);
-		lastOriginalConsumer = orgConsumer;
+		String consumer = (String)httpHeaders.get(EiConstants.X_VP_SENDER_ID);
+		log.info("Test producer called with {}: {}", EiConstants.X_VP_SENDER_ID, consumer);
+		lastConsumer = consumer;
 
 		return message;
 	}
 
-	public static String getLastOriginalConsumer() {
-		return lastOriginalConsumer;
+	public static String getLastConsumer() {
+		return lastConsumer;
 	}
 }

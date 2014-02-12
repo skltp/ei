@@ -14,12 +14,12 @@
             <property name="lazy-init"/>
             <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
             <property name="id"/>
-            <property name="primary"/>
             <property name="name" value="create-get-logical-addressees-request-bean"/>
+            <property name="primary"/>
             <property name="autowire"/>
             <property name="destroy-method"/>
-            <property name="auxiliary;index" value="2"/>
             <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="2"/>
             <property name="depends-on"/>
             <property-collection name="@http://www.springframework.org/schema/beans/property;0">
                 <property name="name" value="logicalAddress"/>
@@ -29,10 +29,11 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="get-logical-addressees-service" entity-id="176b9b78-ca18-46b9-a8c3-2fc171857df3">
+    <flow SubFlow="false" name="get-logical-addressees-service" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="42387bee-0a71-47d2-aa78-b686d98ad5d3">
         <properties>
-            <property name="processingStrategy"/>
+            <property name="initialState"/>
             <property name="processingStrategy2"/>
+            <property name="processingStrategy"/>
             <property name="bussinessEventsLabel"/>
             <property name="tracking:enable-default-events"/>
             <property name="auxiliary;index" value="4"/>
@@ -42,19 +43,19 @@
             <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="VM" type="http://www.mulesoft.org/schema/mule/vm/endpoint" entity-id="VM#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
+                    <property name="businessEventsLabel"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="tracking:enable-default-events"/>
                     <property name="ref"/>
                     <property name="transformer-refs" value="logMsgIn"/>
                     <property name="address" value="vm://get-logical-addressees"/>
-                    <property name="businessEventsLabel"/>
-                    <property name="encoding"/>
                     <property name="path"/>
+                    <property name="encoding"/>
                     <property name="responseTransformer-refs" value="logRespOut"/>
-                    <property name="disableTransportTransformer"/>
-                    <property name="mimeType"/>
-                    <property name="responseTimeout"/>
-                    <property name="tracking:enable-default-events"/>
                     <property name="auxiliary;index" value="5"/>
-                    <property name="exchange-pattern" value="request-response"/>
+                    <property name="responseTimeout"/>
+                    <property name="mimeType"/>
                     <property name="connector-ref"/>
                 </properties>
             </endpoint>
@@ -70,10 +71,10 @@
                     </property-collection>
                 </properties>
             </pattern>
-            <pattern name="x-rivta-original-serviceconsumer-hsaid" type="http://www.mulesoft.org/schema/mule/core/properties-transformer" entity-id="Property#1">
+            <pattern name="propagate x-vp-sender-id when invoking GetLogicalAddresseesByServiceContract" type="http://www.mulesoft.org/schema/mule/core/properties-transformer" entity-id="Property#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
-                    <property name="propertyName" value="x-rivta-original-serviceconsumer-hsaid"/>
+                    <property name="propertyName" value="x-vp-sender-id"/>
                     <property name="value" value="${EI_HSA_ID}"/>
                     <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/core/set-property"/>
                     <property name="auxiliary;index" value="8"/>
@@ -102,9 +103,9 @@
                     <property name="responseTransformer-refs" value="logRespIn"/>
                     <property name="method"/>
                     <property name="user"/>
+                    <property name="auxiliary;index" value="9"/>
                     <property name="responseTimeout" value="${SERVICE_TIMEOUT_MS}"/>
                     <property name="mimeType"/>
-                    <property name="auxiliary;index" value="9"/>
                     <property name="connector-ref" value="soitoolkit-http-connector"/>
                 </properties>
             </endpoint>
