@@ -37,8 +37,14 @@
             <spring-object bean="create-get-logical-addressees-request-bean"/>
         </component>
 
- 		<!-- Propagate x-vp-sender-id as an outbound property, value is the hsa id of EI to be used when invoking VP  -->
+ 		<!-- 
+ 			Propagate x-vp-sender-id as an outbound property, value is the hsa id of EI to be used when invoking VP.
+ 			Propagate x-vp-instance-id as an outbound property, value is set as an id of the invoked VP.
+ 			
+ 			These two headers are dependent on each other in a way that when using x-vp-sender-id against VP, VP will check for a valid x-vp-instance-id.
+ 		-->
  		<set-property propertyName="x-vp-sender-id" value="${EI_HSA_ID}" doc:name="propagate x-vp-sender-id when invoking GetLogicalAddresseesByServiceContract" />
+ 		<set-property propertyName="x-vp-instance-id" value="${VP_INSTANCE_ID}" doc:name="propagate x-vp-instance-id when invoking GetLogicalAddresseesByServiceContract" />
 
         <http:outbound-endpoint 
             connector-ref="soitoolkit-http-connector"

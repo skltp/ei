@@ -15,6 +15,7 @@ public class ProcessNotificationTestProducerLogger extends AbstractMessageTransf
 	private static final Logger log = LoggerFactory.getLogger(ProcessNotificationTestProducerLogger.class);
 
 	private static String lastConsumer = null;
+	private static String lastVpInstance = null;
 	
 	@Override
 	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {
@@ -25,11 +26,19 @@ public class ProcessNotificationTestProducerLogger extends AbstractMessageTransf
 		String consumer = (String)httpHeaders.get(EiConstants.X_VP_SENDER_ID);
 		log.info("Test producer called with {}: {}", EiConstants.X_VP_SENDER_ID, consumer);
 		lastConsumer = consumer;
+		
+		String vpInstance = (String)httpHeaders.get(EiConstants.X_VP_INSTANCE_ID);
+		log.info("Test producer called with {}: {}", EiConstants.X_VP_INSTANCE_ID, vpInstance);
+		lastVpInstance = vpInstance;
 
 		return message;
 	}
 
 	public static String getLastConsumer() {
 		return lastConsumer;
+	}
+
+	public static String getLastVpInstance() {
+		return lastVpInstance;
 	}
 }

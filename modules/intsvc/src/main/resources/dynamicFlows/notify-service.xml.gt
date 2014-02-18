@@ -51,10 +51,16 @@
         <component>
             <spring-object bean="create-process-notification-request-bean-${LOGICAL_ADDRESS}"/>
         </component>
-
-		<!-- Propagate x-vp-sender-id as an outbound property, value is the hsa id of EI to be used when invoking VP  -->
- 		<set-property propertyName="x-vp-sender-id" value="${EI_HSA_ID}" doc:name="propagate x-vp-sender-id when invoking ProcessNotification" />
         
+        <!-- 
+ 			Propagate x-vp-sender-id as an outbound property, value is the hsa id of EI to be used when invoking VP.
+ 			Propagate x-vp-instance-id as an outbound property, value is set as an id of the invoked VP.
+ 			
+ 			These two headers are dependent on each other in a way that when using x-vp-sender-id against VP, VP will check for a valid x-vp-instance-id.
+ 		-->
+ 		<set-property propertyName="x-vp-sender-id" value="${EI_HSA_ID}" doc:name="propagate x-vp-sender-id when invoking ProcessNotification" />
+ 		<set-property propertyName="x-vp-instance-id" value="${VP_INSTANCE_ID}" doc:name="propagate x-vp-instance-id when invoking ProcessNotification" />
+    
         <http:outbound-endpoint 
             connector-ref="soitoolkit-http-connector"
             address="${NOTIFY_OUTBOUND_URL}" 

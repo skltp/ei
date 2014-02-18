@@ -15,6 +15,8 @@ public class GetLogicalAddresseesByServiceContractTestProducerLogger extends Abs
 	private static final Logger log = LoggerFactory.getLogger(GetLogicalAddresseesByServiceContractTestProducerLogger.class);
 
 	private static String lastConsumer = null;
+	private static String lastVpInstance = null;
+	
 	
 	@Override
 	public Object transformMessage(MuleMessage message, String outputEncoding) throws TransformerException {
@@ -25,6 +27,10 @@ public class GetLogicalAddresseesByServiceContractTestProducerLogger extends Abs
 		String consumer = (String)httpHeaders.get(EiConstants.X_VP_SENDER_ID);
 		log.info("Test producer called with {}: {}", EiConstants.X_VP_SENDER_ID, consumer);
 		lastConsumer = consumer;
+		
+		String vpInstance = (String)httpHeaders.get(EiConstants.X_VP_INSTANCE_ID);
+		log.info("Test producer called with {}: {}", EiConstants.X_VP_INSTANCE_ID, vpInstance);
+		lastVpInstance = vpInstance;
 
 		return message;
 	}
@@ -32,4 +38,9 @@ public class GetLogicalAddresseesByServiceContractTestProducerLogger extends Abs
 	public static String getLastConsumer() {
 		return lastConsumer;
 	}
+
+	public static String getLastVpInstance() {
+		return lastVpInstance;
+	}
+	
 }

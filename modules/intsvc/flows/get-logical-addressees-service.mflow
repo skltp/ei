@@ -29,7 +29,7 @@
             </property-collection>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="get-logical-addressees-service" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="42387bee-0a71-47d2-aa78-b686d98ad5d3">
+    <flow SubFlow="false" name="get-logical-addressees-service" type="http://www.mulesoft.org/schema/mule/core/flow" entity-id="2e2e048a-96d3-439c-ba19-ae659e87b34a">
         <properties>
             <property name="initialState"/>
             <property name="processingStrategy2"/>
@@ -80,6 +80,15 @@
                     <property name="auxiliary;index" value="8"/>
                 </properties>
             </pattern>
+            <pattern name="propagate x-vp-instance-id when invoking GetLogicalAddresseesByServiceContract" type="http://www.mulesoft.org/schema/mule/core/properties-transformer" entity-id="Property#2">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="propertyName" value="x-vp-instance-id"/>
+                    <property name="value" value="${VP_INSTANCE_ID}"/>
+                    <property name="org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute" value="http://www.mulesoft.org/schema/mule/core/set-property"/>
+                    <property name="auxiliary;index" value="9"/>
+                </properties>
+            </pattern>
             <endpoint direction="Outbound" message-exchange-pattern="RequestResponse" name="HTTP" type="http://www.mulesoft.org/schema/mule/http/endpoint" entity-id="HTTP#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
@@ -103,13 +112,13 @@
                     <property name="responseTransformer-refs" value="logRespIn"/>
                     <property name="method"/>
                     <property name="user"/>
-                    <property name="auxiliary;index" value="9"/>
+                    <property name="auxiliary;index" value="10"/>
                     <property name="responseTimeout" value="${SERVICE_TIMEOUT_MS}"/>
                     <property name="mimeType"/>
                     <property name="connector-ref" value="soitoolkit-http-connector"/>
                 </properties>
             </endpoint>
-            <unknown description="false" index="11" entity-id="unknown#1">
+            <unknown description="false" index="12" entity-id="unknown#1">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <content>&lt;custom-exception-strategy xmlns=&quot;http://www.mulesoft.org/schema/mule/core&quot; class=&quot;org.soitoolkit.commons.mule.error.ServiceExceptionStrategy&quot;/&gt;</content>
             </unknown>

@@ -58,6 +58,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
+    private static final String VP_INSTANCE_ID = rb.getString("VP_INSTANCE_ID");
     private static final String OWNER = rb.getString("EI_HSA_ID");
         
 	@SuppressWarnings("unused")
@@ -136,9 +137,15 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		// Expect 14 info log entries, 3 from update-service, 1+3 from process-service and 3*3 from the three notify-services
 		assertQueueDepth(INFO_LOG_QUEUE, 16);
 
-		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
-    	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastConsumer());
+		/*
+		 *  Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with 
+		 *  the EI HSA-ID as the callers logical address.
+		 *  Verify correct VP instance id is provided in outgoing calls from EI to VP.
+		 */
+		assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastConsumer());
+    	assertEquals(VP_INSTANCE_ID, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastVpInstance());
     	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastConsumer());
+    	assertEquals(VP_INSTANCE_ID, ProcessNotificationTestProducerLogger.getLastVpInstance());
     }
 
 	/**
@@ -175,9 +182,15 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		// Expect 14 info log entries, 3 from update-service, 1+3 from process-service and 3*3 from the three notify-services
 		assertQueueDepth(INFO_LOG_QUEUE, 16);
 		
-		// Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with the EI HSA-ID as the callers logical address
+		/*
+		 *  Verify that both the GetLogicalAddresseesByServiceContract service and the ProcessNotificationTestProducerLogger was called with 
+		 *  the EI HSA-ID as the callers logical address.
+		 *  Verify correct VP instance id is provided in outgoing calls from EI to VP.
+		 */
     	assertEquals(LOGICAL_ADDRESS, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastConsumer());
+    	assertEquals(VP_INSTANCE_ID, GetLogicalAddresseesByServiceContractTestProducerLogger.getLastVpInstance());
     	assertEquals(LOGICAL_ADDRESS, ProcessNotificationTestProducerLogger.getLastConsumer());
+    	assertEquals(VP_INSTANCE_ID, ProcessNotificationTestProducerLogger.getLastVpInstance());
     }
     
     
