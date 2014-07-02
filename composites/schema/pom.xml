@@ -64,9 +64,9 @@
 
    	<dependencies>
     	<dependency>
-  			<groupId>se.rivta.infrastructure.itintegration</groupId>
-  			<artifactId>ServiceContracts_infrastructure_itintegration_registry</artifactId>
-  			<version>2.0-RC4</version>
+        <groupId>se.rivta.infrastructure.itintegration</groupId>
+        <artifactId>ServiceContracts_infrastructure_itintegration_registry</artifactId>
+        <version>2.0_RC6</version>
 		</dependency>
     </dependencies>
 
