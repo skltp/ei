@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mule-configuration xmlns="http://www.mulesoft.com/tooling/messageflow" name="mule-config">
+    <global-element name="Import" type="http://www.springframework.org/schema/beans/import" entity-id="Import#1">
+        <properties>
+            <property name="resource" value="classpath:skltp-ei-svc-spring-context.xml"/>
+            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="2"/>
+        </properties>
+    </global-element>
+    <global-element name="Import" type="http://www.springframework.org/schema/beans/import" entity-id="Import#2">
+        <properties>
+            <property name="resource" value="classpath:ei-common.xml"/>
+            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="3"/>
+        </properties>
+    </global-element>
+    <global-element name="Import" type="http://www.springframework.org/schema/beans/import" entity-id="Import#3">
+        <properties>
+            <property name="resource" value="classpath:update-service.xml"/>
+            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="4"/>
+        </properties>
+    </global-element>
+    <global-element name="Import" type="http://www.springframework.org/schema/beans/import" entity-id="Import#4">
+        <properties>
+            <property name="resource" value="classpath:notification-service.xml"/>
+            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="5"/>
+        </properties>
+    </global-element>
+    <global-element name="Import" type="http://www.springframework.org/schema/beans/import" entity-id="Import#5">
+        <properties>
+            <property name="resource" value="classpath:PingForConfiguration-rivtabp21-service.xml"/>
+            <property name="auxiliary;wrappedIn" value="beans@spring@http://www.springframework.org/schema/beans"/>
+            <property name="auxiliary;wrapIn" value="1"/>
+            <property name="auxiliary;index" value="6"/>
+        </properties>
+    </global-element>
+</mule-configuration>

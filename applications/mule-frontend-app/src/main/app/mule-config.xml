@@ -14,6 +14,7 @@
         <spring:import resource="classpath:ei-common.xml"/>
         <spring:import resource="classpath:update-service.xml"/>
         <spring:import resource="classpath:notification-service.xml"/>
+        <spring:import resource="classpath:PingForConfiguration-rivtabp21-service.xml"/>
     </spring:beans>
 
 </mule>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:https="http://www.mulesoft.org/schema/mule/https"
+    xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
+    xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:spring="http://www.springframework.org/schema/beans"
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+    xsi:schemaLocation="
+		http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-current.xsd
+		http://www.mulesoft.org/schema/mule/core	http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/https	http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+		http://www.mulesoft.org/schema/mule/cxf		http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
+	" >
+	
+	<spring:bean name="ping-for-configuration-ws-bean" class="se.skltp.ei.monitoring.PingForconfigurationWSBean">
+        <spring:property name="appName" value="${APPLICATION_NAME_FRONTEND}" />
+    </spring:bean>
+	
+	<flow name="PingForConfiguration-1-rivtabp21-flow" >
+
+        <inbound-endpoint
+	            name="PingForConfiguration-1-rivtabp21-service"
+	            address="${PINGFORCONFIGURATION_INBOUND_ENDPOINT_FRONTEND}"
+	            exchange-pattern="request-response">
+	    </inbound-endpoint>
+ 
+        <cxf:jaxws-service serviceClass="se.skltp.ei.monitoring.PingForconfigurationWSBean"/>
+       
+       	<component>
+           <spring-object bean="ping-for-configuration-ws-bean"/>
+        </component>
+    </flow>
+
+</mule>

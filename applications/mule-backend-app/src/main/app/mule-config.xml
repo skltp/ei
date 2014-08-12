@@ -15,6 +15,7 @@
         <spring:import resource="classpath:process-service.xml"/>
         <spring:import resource="classpath:find-content-service.xml"/>
         <spring:import resource="classpath:get-logical-addressees-service.xml"/>
+        <spring:import resource="classpath:PingForConfiguration-rivtabp21-service-checkdb.xml"/>
     </spring:beans>
 
 </mule>

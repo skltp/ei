@@ -33,7 +33,7 @@ public class EiMuleServer {
  
 
 	private static final Logger logger = LoggerFactory.getLogger(EiMuleServer.class);
-    private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
+    private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config","ei-config-override");
 
 	public static void main(String[] args) throws Exception {
 	

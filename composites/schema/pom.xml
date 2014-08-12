@@ -29,9 +29,6 @@
                             <sourceRoot>${basedir}/target/generated-sources/wsdl</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/META-INF/wsdl/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl</wsdl>
-                                </wsdlOption>
-                                <wsdlOption>
                                     <wsdl>${basedir}/src/main/resources/META-INF/wsdl/wrapped-vagvalsinfo-sokvagvalsinfo-1.0.wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
@@ -72,6 +69,13 @@
             <artifactId>ServiceContracts_infrastructure_itintegration_registry</artifactId>
             <version>2.0-RC1</version>
         </dependency>
+        
+        <!-- itintegration monitoring schemas för PingForConfiguration -->
+		<dependency>
+		  	<groupId>se.skltp.itintegration.monitoring</groupId>
+  			<artifactId>ServiceContracts_itintegration_monitoring</artifactId>
+			<version>1.0</version>
+		</dependency>
     </dependencies>
 
 <!--
