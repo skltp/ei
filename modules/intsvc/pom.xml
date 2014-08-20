@@ -18,7 +18,12 @@
         <spring.version>3.1.1.RELEASE</spring.version>
     </properties>
     
-	<dependencies>	
+	<dependencies>
+		<dependency>
+			<groupId>se.skltp.commons</groupId>
+			<artifactId>tp-commons-mule</artifactId>
+			<version>1.0.0</version>
+		</dependency>
     
 		<dependency>
 		    <groupId>se.skltp.ei</groupId>

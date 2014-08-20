@@ -119,10 +119,8 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     <rest-router:config />
 
     <spring:beans>
-        <spring:bean name="soitoolkit.eventLogger" class="se.skltp.ei.intsvc.log.CustomEventLogger" primary="true">
-            <spring:property name="infoEventQueue" value="${SOITOOLKIT_LOG_INFO_QUEUE}"/>
-            <spring:property name="errorEventQueue" value="${SOITOOLKIT_LOG_ERROR_QUEUE}"/>
-        </spring:bean>
+    	<!-- import the common logger config -->
+    	<spring:import resource="classpath:tp-commons-mule-logging.xml" />
     </spring:beans>
 
     <message-properties-transformer name="setJsonContentType" scope="outbound">
