@@ -87,7 +87,10 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		// Use dispatchAndWaitForDelivery() and a custom Dispatcher to ensure that the listener on the queue is registered before the web service call is made
         MuleMessage response = dispatchAndWaitForDelivery(new DoOneTestDispatcher(request), "jms://" + PROCESS_QUEUE, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 
-        // Compare the notified message with the request message, they should be the same
+        // Compare the notified message with the request message, they should be the same except that the owner has been set 
+        for (EngagementTransactionType ett : request.getEngagementTransaction()) {
+        	ett.getEngagement().setOwner(OWNER);
+        }
         assertUpdateRequest(request, response);
 
 		// Expect no error logs and three info log entries

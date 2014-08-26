@@ -27,6 +27,7 @@
 
         <!-- Bean that expose a Web Service -->
         <spring:bean name="update-ws-bean" class="se.skltp.ei.intsvc.update.UpdateWSBean">
+        	<spring:property name="owner" value="${EI_HSA_ID}"/>
             <spring:property name="blBean" ref="update-validation-bean"/>
         </spring:bean>
         

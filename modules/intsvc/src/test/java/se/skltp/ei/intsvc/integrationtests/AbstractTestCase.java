@@ -216,6 +216,8 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 		for (int i = 0; i < residentIds.length; i++) {
 			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
 			request.getEngagementTransaction().add(et);
+			// owner must not be set for Update, will be set by the Index that owns the info
+			et.getEngagement().setOwner(null);
 		}
 		
 		return request;
