@@ -3,3 +3,4 @@
 .settings
 .studio
 target
+*.class
