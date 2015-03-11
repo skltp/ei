@@ -66,7 +66,10 @@ class Generator {
     // --- --------------------------------------------------------------------
 
     // local database with 10 million rows    
-    def eiDB = Sql.newInstance("jdbc:mysql://localhost:3306/ei10millioner", "root", "", "com.mysql.jdbc.Driver")
+    // def eiDB = Sql.newInstance("jdbc:mysql://localhost:3306/ei10miljoner", "root", "", "com.mysql.jdbc.Driver")
+    
+    // mats database with 250 million rows
+    def eiDB = Sql.newInstance("jdbc:mysql://192.168.0.135:3306/ei250miljoner", "newuser", "password", "com.mysql.jdbc.Driver")
     
     // database data:
 
