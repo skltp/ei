@@ -4,3 +4,4 @@
 .studio
 target
 *.class
+modules/intsvc/tests/scale/data
