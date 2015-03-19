@@ -101,7 +101,7 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 				
 				add(flowConfigs);
 
-				log.info("{} flows started", flowConfigs.size());
+				log.info("{} flows started", logicalAdresses != null ? logicalAdresses.size() : 0);
 
 			} catch (Exception e) {
 				throw new RuntimeException(e);
