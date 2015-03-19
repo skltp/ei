@@ -23,7 +23,7 @@
         name="skltp-ei-jms-notify-connector"
         connectionFactory-ref="soitoolkit-jms-connection-factory"
         persistentDelivery="true"
-        numberOfConsumers="${SOITOOLKIT_MULE_AMQ_NO_OF_CONSUMERS}"
+        numberOfConsumers="${NOTIFY_AMQ_NO_OF_CONSUMERS}"
         maxRedelivery="-1"
         specification="1.1" 
         disableTemporaryReplyToDestinations="true" 

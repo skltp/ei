@@ -128,7 +128,7 @@ public class LoadTestIntegrationTest extends AbstractTestCase {
 	        "update-service.xml," + 
 	        "notification-service.xml," + 
 	        "process-service.xml," + 
-//	        "teststub-services/init-dynamic-flows.xml," +
+//	        "init-dynamic-flows.xml," +
 	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
 	        "teststub-services/process-notification-teststub-service.xml";
     }

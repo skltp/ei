@@ -97,7 +97,7 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 				List<String> logicalAdresses = getLogicalAdresses(notification.getMuleContext());
 				List<String> flowConfigs = new CreateDynamicFlows(logicalAdresses).getContextConfiguration();
 
-				log.info("Starting {} flows...", flowConfigs.size());
+				log.info("Starting {} flows...", logicalAdresses != null ? logicalAdresses.size() : 0);
 				
 				add(flowConfigs);
 

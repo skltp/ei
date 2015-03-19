@@ -74,7 +74,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	  		"skltp-ei-svc-spring-context.xml," +
 	  		"process-service.xml," + 
 	        "get-logical-addressees-service.xml," + 
-	        "teststub-services/init-dynamic-flows.xml," +
+	        "init-dynamic-flows.xml," +
 	        "teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml," +
 	        "teststub-services/process-notification-teststub-service.xml";
     }
