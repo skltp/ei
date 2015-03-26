@@ -24,8 +24,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,7 +36,6 @@ import riv.itintegration.engagementindex.processnotificationresponder._1.Process
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
-import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
 import se.skltp.ei.svc.service.api.EiException;
@@ -74,8 +71,6 @@ public class ProcessBeanTest {
     public void tearDown() {
     }
 
-//TODO Add more tests now that we return a list of engagemenst instead of always a static String!    
-    
     /**
      * R1 test with n engagements
      */
@@ -83,8 +78,8 @@ public class ProcessBeanTest {
     public void labb_r1_update_positive() throws Exception {
 
         UpdateType request = new UpdateType();
-        List<Engagement> resultList = BEAN.update(null, request );
-        assertEquals(0, resultList.size());
+        UpdateResponseType r = BEAN.update(null, request );
+        assertEquals(ResultCodeEnum.OK, r.getResultCode());
     }
 
     /**
@@ -100,8 +95,8 @@ public class ProcessBeanTest {
 		request.getEngagementTransaction().add(et1);
 		request.getEngagementTransaction().add(et2);
         
-		List<Engagement> resultList = BEAN.update(null, request);
-        assertEquals(2, resultList.size());
+        UpdateResponseType r = BEAN.update(null, request);
+        assertEquals(ResultCodeEnum.OK, r.getResultCode());
     }
     
 
@@ -337,8 +332,8 @@ public class ProcessBeanTest {
 		request.getEngagementTransaction().add(et1);
 		request.getEngagementTransaction().add(et2);
         
-		List<Engagement> resultList = BEAN.processNotification(null, request);
-        assertEquals(2, resultList.size());
+        ProcessNotificationResponseType r = BEAN.processNotification(null, request);
+        assertEquals(ResultCodeEnum.OK, r.getResultCode());
     }
     
 
