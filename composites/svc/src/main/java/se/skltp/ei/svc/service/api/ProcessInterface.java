@@ -19,6 +19,9 @@
  */
 package se.skltp.ei.svc.service.api;
 
+import java.util.List;
+
+import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
@@ -53,9 +56,9 @@ public interface ProcessInterface {
      * @param header the header
      * @param parameters the update request parameters
      *
-     * @return an update response, which always is OK
+     * @return a list of EngagementTransactions
      */
-    UpdateResponseType update(Header header, UpdateType parameters); 
+    List<EngagementTransactionType> update(Header header, UpdateType parameters); 
 
     /**
      * Validates a process notification request without having to touch the database.
@@ -72,9 +75,11 @@ public interface ProcessInterface {
      * On any type of error a {@link RuntimeException} shall be expected.
      * 
      * @param header the header
-     * @param parameters the process notification response, which always is OK
+     * @param parameters the process notification request
+     * 
+     * @return a list of EngagementTransactions
      */
-    ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType parameters);
+    List<EngagementTransactionType> processNotification(Header header, ProcessNotificationType parameters);
 
     /**
      * Filters out engagement records with the same owner (origin) as this instance, 

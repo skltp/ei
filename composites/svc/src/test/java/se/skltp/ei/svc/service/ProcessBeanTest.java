@@ -24,6 +24,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -78,8 +80,8 @@ public class ProcessBeanTest {
     public void labb_r1_update_positive() throws Exception {
 
         UpdateType request = new UpdateType();
-        UpdateResponseType r = BEAN.update(null, request );
-        assertEquals(ResultCodeEnum.OK, r.getResultCode());
+        List<EngagementTransactionType> resultList = BEAN.update(null, request );
+        assertEquals(0, resultList.size());
     }
 
     /**
@@ -95,8 +97,8 @@ public class ProcessBeanTest {
 		request.getEngagementTransaction().add(et1);
 		request.getEngagementTransaction().add(et2);
         
-        UpdateResponseType r = BEAN.update(null, request);
-        assertEquals(ResultCodeEnum.OK, r.getResultCode());
+		List<EngagementTransactionType> resultList = BEAN.update(null, request);
+        assertEquals(2, resultList.size());
     }
     
 
@@ -332,8 +334,8 @@ public class ProcessBeanTest {
 		request.getEngagementTransaction().add(et1);
 		request.getEngagementTransaction().add(et2);
         
-        ProcessNotificationResponseType r = BEAN.processNotification(null, request);
-        assertEquals(ResultCodeEnum.OK, r.getResultCode());
+		List<EngagementTransactionType> resultList = BEAN.processNotification(null, request);
+        assertEquals(2, resultList.size());
     }
     
 

@@ -223,7 +223,7 @@ public class ProcessBean implements ProcessInterface {
      */
     @Override
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
-    public UpdateResponseType update(Header header, UpdateType request) {
+    public List<EngagementTransactionType> update(Header header, UpdateType request) {
         LOG.debug("The svc.update service is called");
 
         // Separate deletes from the saves...
@@ -255,7 +255,8 @@ public class ProcessBean implements ProcessInterface {
         // Perform the save
         engagementRepository.save(saveList);  	
 
-        return RESPONSE_OK;
+        // Return a list of EngagementTransactions for now, we will remove duplicate add/updates later
+        return engagementTransactions;
     }
 
     /**
@@ -272,7 +273,7 @@ public class ProcessBean implements ProcessInterface {
      */
     @Override
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
-    public ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType request) {
+    public List<EngagementTransactionType> processNotification(Header header, ProcessNotificationType request) {
         LOG.debug("The svc.processNotification service is called");
 
         // Separate deletes from the saves...
@@ -315,8 +316,9 @@ public class ProcessBean implements ProcessInterface {
 
         // Perform the save
         engagementRepository.save(saveList);
-
-        return NOTIFICATION_RESPONSE_OK;
+        
+        // Return a list of EngagementTransactions for now, we will remove duplicate add/updates later
+        return engagementTransactions;
     }
 
 
