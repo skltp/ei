@@ -67,7 +67,7 @@ public class ProcessBean implements ProcessInterface {
     private EngagementRepository engagementRepository;
 	private List<String> updateNotificationNotAllowedHsaIdList;
 
-
+/*
     private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
         @Override
         public ResultCodeEnum getResultCode() {
@@ -81,7 +81,7 @@ public class ProcessBean implements ProcessInterface {
             return ResultCodeEnum.OK;
         }
     };
-
+*/
 
     public void setOwner(String owner) {
         this.owner = owner;
@@ -223,7 +223,7 @@ public class ProcessBean implements ProcessInterface {
      */
     @Override
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
-    public UpdateResponseType update(Header header, UpdateType request) {
+    public List<Engagement> update(Header header, UpdateType request) {
         LOG.debug("The svc.update service is called");
 
         // Separate deletes from the saves...
@@ -255,7 +255,15 @@ public class ProcessBean implements ProcessInterface {
         // Perform the save
         engagementRepository.save(saveList);  	
 
-        return RESPONSE_OK;
+        // Create a new list that consists of additions and deletes for now, later we will remove duplicates
+        List<Engagement> returnList = new ArrayList<Engagement>();
+        if (saveList != null) {
+        	returnList.addAll(saveList);
+        }
+        if (deleteList != null) {
+        	returnList.addAll(deleteList);
+        }
+        return returnList;
     }
 
     /**
@@ -272,7 +280,7 @@ public class ProcessBean implements ProcessInterface {
      */
     @Override
     @Transactional(isolation=Isolation.READ_UNCOMMITTED)
-    public ProcessNotificationResponseType processNotification(Header header, ProcessNotificationType request) {
+    public List<Engagement> processNotification(Header header, ProcessNotificationType request) {
         LOG.debug("The svc.processNotification service is called");
 
         // Separate deletes from the saves...
@@ -316,7 +324,15 @@ public class ProcessBean implements ProcessInterface {
         // Perform the save
         engagementRepository.save(saveList);
 
-        return NOTIFICATION_RESPONSE_OK;
+        // Create a new list that consists of additions and deletes for now, later we will remove duplicates
+        List<Engagement> returnList = new ArrayList<Engagement>();
+        if (saveList != null) {
+        	returnList.addAll(saveList);
+        }
+        if (deleteList != null) {
+        	returnList.addAll(deleteList);
+        }
+        return returnList;
     }
 
 
