@@ -67,6 +67,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		<spring:property name="filePath" value="${LOCAL_EI_SUBSCRIBER_CACHE}" />
 	</spring:bean>
 
+	<configuration>
+		<default-threading-profile poolExhaustedAction="ABORT" maxThreadsActive="${EI_DEFAULT_MAX_THREADS_ACTIVE}" maxThreadsIdle="${EI_DEFAULT_MAX_THREADS_IDLE}" threadTTL="${EI_DEFAULT_MAX_THREADS_TTL}"/>
+	</configuration>
+	
 	<spring:beans profile="default">
         <!-- Connectors et al that are specific for different environment specific config-files (local unit-test, integration-test or production environments) -->
 
