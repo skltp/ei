@@ -38,8 +38,8 @@ import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
-import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
-import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory;
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.intsvc.integrationtests.notifyservice.util.FilterCreator;
@@ -52,7 +52,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(NotifyServiceIntegrationTest.class);
 	 
-	private static final JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
+	private static final JaxbUtil jabxUtil = new JaxbUtil(ProcessNotificationType.class);
 	private static final ObjectFactory of = new ObjectFactory();
 	
 	private static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
@@ -99,7 +99,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     		subscriberCache = muleContext.getRegistry().lookupObject(SubscriberCache.class);
     	}
 
-    	// Remove all filers for all subscribers
+    	// Remove all filters for all subscribers
     	for(Subscriber s : subscriberCache.getSubscribers()) {
     		s.getFilterList().clear();
     	}
@@ -122,7 +122,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     	
 		long residentId = 1212121212L;
 		
-		doOneTest(createUdateRequest(residentId));
+		doOneTest(createProcessNotificationRequest(residentId));
 
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
@@ -145,15 +145,15 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     	
 		long residentId = 1212121212L;
 		
-		UpdateType createUdateRequest = createUdateRequest(residentId);
-		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
-		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
+		ProcessNotificationType createProcessNotificationRequest = createProcessNotificationRequest(residentId);
+		createProcessNotificationRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
+		createProcessNotificationRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
 		
 		// Create one subscriber with one filter
 		List<FilterType> createFilterList = FilterCreator.createFilterWithList("SERVICEDOMAIN-A");
 		subscriberCache.getSubscribers().get(0).getFilterList().addAll(createFilterList);
 		
-		doOneTestWithActiveFilterToProcessQueue(createUdateRequest);
+		doOneTestWithActiveFilterToProcessQueue(createProcessNotificationRequest);
 
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
@@ -164,8 +164,8 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 
 
 		// ProcessNotificationTestProducer should be called once per logicalAddress
-		List<String> lastLogialAddresses = ProcessNotificationTestProducer.getLastLogialAddresses();
-		assertEquals(3, lastLogialAddresses.size());
+		List<String> lastLogicalAddresses = ProcessNotificationTestProducer.getLastLogialAddresses();
+		assertEquals(3, lastLogicalAddresses.size());
 		
     }
     
@@ -183,16 +183,15 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		long residentId = 1212121212L;
 		
 		// Create request and set correct serviceDomain and categorization
-		UpdateType createUdateRequest = createUdateRequest(residentId);
-		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
-		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
-		
+		ProcessNotificationType createProcessNotificationRequest = createProcessNotificationRequest(residentId);
+		createProcessNotificationRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
+		createProcessNotificationRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");		
 		
 		// Create one subscriber with one filter
 		List<FilterType> createFilterList = FilterCreator.createFilterWithList("SERVICEDOMAIN-A", "CATEGORY-B");
 		subscriberCache.getSubscribers().get(0).getFilterList().addAll(createFilterList);
 		
-		doOneTestWithActiveFilterToProcessQueue(createUdateRequest);
+		doOneTestWithActiveFilterToProcessQueue(createProcessNotificationRequest);
 		
 
 		// Wait a short while for all background processing to complete
@@ -222,10 +221,9 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		long residentId = 1212121212L;
 		
 		// Create request and set correct serviceDomain and categorization
-		UpdateType createUdateRequest = createUdateRequest(residentId);
-		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
-		createUdateRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");
-		
+		ProcessNotificationType createProcessNotificationRequest = createProcessNotificationRequest(residentId);
+		createProcessNotificationRequest.getEngagementTransaction().get(0).getEngagement().setServiceDomain("SERVICEDOMAIN-A");
+		createProcessNotificationRequest.getEngagementTransaction().get(0).getEngagement().setCategorization("CATEGORY-A");				
 
 		// Create three subscriber with a filter each. Only subscriber HSA_ID_A should get a message.
 		List<FilterType> createFilterList1 = FilterCreator.createFilterWithList("SERVICEDOMAIN-A", "CATEGORY-A");
@@ -236,7 +234,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 		subscriberCache.getSubscribers().get(1).getFilterList().addAll(createFilterList2);
 		subscriberCache.getSubscribers().get(2).getFilterList().addAll(createFilterList3);
 		
-		doOneTestWithActiveFilterToProcessQueue(createUdateRequest);
+		doOneTestWithActiveFilterToProcessQueue(createProcessNotificationRequest);
 		
 		// Wait a short while for all background processing to complete
 		waitForBackgroundProcessing();
@@ -253,10 +251,10 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     }
     
     
-	private void doOneTest(final UpdateType request) throws JMSException {
+	private void doOneTest(final ProcessNotificationType request) throws JMSException {
 
 		// Simulate the sending of notifications from the processing service
-		String requestXml = jabxUtil.marshal(of.createUpdate(request));
+		String requestXml = jabxUtil.marshal(of.createProcessNotification(request));
 		List<Subscriber> subscribers = subscriberCache.getSubscribers();
 		MuleMessage mr = null;
 		for (Subscriber subscriber : subscribers) {
@@ -278,12 +276,12 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	 * @param request
 	 * @throws JMSException
 	 */
-	private void doOneTestWithActiveFilterToProcessQueue(final UpdateType request) throws JMSException, MuleException {
+	private void doOneTestWithActiveFilterToProcessQueue(final ProcessNotificationType request) throws JMSException, MuleException {
 
 		MuleClient muleClient = new MuleClient(muleContext);
 		
 		// Simulate the sending of notifications to the processing service
-		String requestXml = jabxUtil.marshal(of.createUpdate(request));
+		String requestXml = jabxUtil.marshal(of.createProcessNotification(request));
 		muleClient.dispatch("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null);
 		
 		// Wait for the messages to be processed

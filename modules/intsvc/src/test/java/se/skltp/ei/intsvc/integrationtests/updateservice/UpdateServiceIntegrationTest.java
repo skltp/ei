@@ -82,7 +82,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
     @Test
     public void update_OK() {
     	
-		UpdateType request = createUdateRequest(1212121212L);
+		UpdateType request = createUdateRequest(null, 1212121212L);
 		
 		// Use dispatchAndWaitForDelivery() and a custom Dispatcher to ensure that the listener on the queue is registered before the web service call is made
         MuleMessage response = dispatchAndWaitForDelivery(new DoOneTestDispatcher(request), "jms://" + PROCESS_QUEUE, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
@@ -107,7 +107,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
     @Test
     public void update_R1_ERR_duplicate_tx_found() {
 		
-		UpdateType request = createUdateRequest(1111111111L, 1111111111L);
+		UpdateType request = createUdateRequest(null, 1111111111L, 1111111111L);
 		String expectedError = "EI002: EngagementTransaction #1 and #2 have the same key. That is not allowed. See rule for Update-R1 in service contract";
 
 		try {
@@ -135,7 +135,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
     @Test
     public void update_R7_ERR_owner_dont_match_logicaladdress() {
 		
-		UpdateType request = createUdateRequest(1111111111L);
+		UpdateType request = createUdateRequest(null, 1111111111L);
 		String expectedError = "EI003: Invalid routing. Logical address is wrongLogicalAddress but the owner is " + OWNER + ". They must be the same. See rule for Update-R7 in service contract";
 
 		try {
@@ -199,7 +199,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
     @Test
     public void update_ERR_mandatory_fields_are_missing() {
 		
-		UpdateType request = createUdateRequest(1111111111L);
+		UpdateType request = createUdateRequest(null, 1111111111L);
 		request.getEngagementTransaction().get(0).getEngagement().setBusinessObjectInstanceIdentifier(null);
 	
 		

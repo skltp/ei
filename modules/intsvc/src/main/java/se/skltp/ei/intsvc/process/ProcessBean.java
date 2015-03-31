@@ -19,10 +19,14 @@
  */
 package se.skltp.ei.intsvc.process;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 
+import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.service.api.ProcessInterface;
@@ -44,19 +48,21 @@ public class ProcessBean {
      * @param parameters
      * @return
      */
-    public String process(String requestStr) {
+    public List<EngagementTransactionType> process(String requestStr) {
     	
     	LOG.debug("Received the request: {}", requestStr);
 
     	// FIXME: Add header to the call to the business layer!
 		Object requestJaxb = jabxUtil.unmarshal(requestStr);
+		List<EngagementTransactionType> listEngagements = new ArrayList<EngagementTransactionType>();
     	if (requestJaxb instanceof UpdateType) {
-    		blBean.update(null, (UpdateType)requestJaxb);
+    		listEngagements.addAll(blBean.update(null, (UpdateType)requestJaxb));
     	} else {
-    		blBean.processNotification(null, (ProcessNotificationType)requestJaxb);
+    		listEngagements.addAll(blBean.processNotification(null, (ProcessNotificationType)requestJaxb));
     	}
 
-    	return requestStr;
+    	// Error handling? Return list of <EngagementTransaction> with duplicates removed
+    	
+    	return listEngagements;
     }
-
 }

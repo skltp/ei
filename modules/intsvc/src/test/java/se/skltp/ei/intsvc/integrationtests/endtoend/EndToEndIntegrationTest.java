@@ -114,7 +114,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
 		
-		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestUpdateDispatcher(createUdateRequest(residentId)), "process-notification-teststub-service", EI_TEST_TIMEOUT);
+		MuleMessage r = dispatchAndWaitForServiceComponent(new DoOneTestUpdateDispatcher(createUdateRequest(null, residentId)), "process-notification-teststub-service", EI_TEST_TIMEOUT);
         
 		ProcessNotificationResponseType nr = (ProcessNotificationResponseType)r.getPayload();
 		assertEquals(ResultCodeEnum.OK, nr.getResultCode());
@@ -245,7 +245,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     @Test
     public void endToEnd_update_ERR_timeout_in_subscriber() {
 
-		UpdateType request = createUdateRequest(ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
+		UpdateType request = createUdateRequest(null, ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
 		new DoOneTestUpdateDispatcher(request).doDispatch();
 		Exception e = waitForException(SERVICE_TIMOUT_MS + 2000);
 

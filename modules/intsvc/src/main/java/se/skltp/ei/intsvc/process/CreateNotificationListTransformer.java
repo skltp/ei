@@ -40,19 +40,8 @@ public class CreateNotificationListTransformer extends AbstractMessageTransforme
     	log.debug("msg: {}", msg);
     	
     	// Unmarshal payload
-    	UpdateType update = null;
-    	ProcessNotificationType process = null;
-    	List<EngagementTransactionType> engagements;
-    	
-    	// Get the list of engagements from the update or processnotification request
-		Object requestJaxb = jabxUtil.unmarshal((String)msg);
-    	if (requestJaxb instanceof UpdateType) {
-    		update = (UpdateType)requestJaxb;
-    		engagements = new ArrayList<EngagementTransactionType>(update.getEngagementTransaction());
-    	} else { 
-    		process = (ProcessNotificationType)requestJaxb;
-    		engagements = new ArrayList<EngagementTransactionType>(process.getEngagementTransaction());
-    	}
+    	ProcessNotificationType process = new ProcessNotificationType();
+    	List<EngagementTransactionType> engagements = (List<EngagementTransactionType>)msg;
 
     	List<Subscriber> subscribers = subscriberCache.getSubscribers();    	
 
@@ -61,22 +50,13 @@ public class CreateNotificationListTransformer extends AbstractMessageTransforme
     		
     		int msgCount = 0;
     		
-    		if (update != null) {
-    			update.getEngagementTransaction().clear();
-        		update.getEngagementTransaction().addAll(subscriber.filter(engagements));
-        		
-        		msgCount = update.getEngagementTransaction().size();
-        		
-        		msg = jabxUtil.marshal(objectFactoryUpdate.createUpdate(update));
-        		
-    		} else if (process != null) {
-    			process.getEngagementTransaction().clear();
-    			process.getEngagementTransaction().addAll(subscriber.filter(engagements));
+    		// all outgoing payload is ProcessNotifications!
+    		process.getEngagementTransaction().clear();
+    		process.getEngagementTransaction().addAll(subscriber.filter(engagements));
     			
-    			msgCount = process.getEngagementTransaction().size();
+    		msgCount = process.getEngagementTransaction().size();
     			
-        		msg = jabxUtil.marshal(objectFactoryProcessNotification.createProcessNotification(process));
-    		}
+        	msg = jabxUtil.marshal(objectFactoryProcessNotification.createProcessNotification(process));
     		
     		// Only add the payload if there is any messages to send
     		if (msgCount > 0) {

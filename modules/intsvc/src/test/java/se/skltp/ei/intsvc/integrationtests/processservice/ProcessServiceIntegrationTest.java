@@ -121,12 +121,13 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 	 * @throws JMSException 
 	 */
     @Test
-    public void process_update_OK() throws JMSException {
-    	
+    public void process_update_OK() throws JMSException {   	
     	// Setup testdata
 		long residentId = 1212121212L;
 		String fullResidentId = "19" + residentId;
-		String requestXml = jabxUtil.marshal(update_of.createUpdate(createUdateRequest(residentId)));
+		String requestXml = jabxUtil.marshal(update_of.createUpdate(createUdateRequest(OWNER, residentId)));
+		// Create a response that is wrapped as a ProcessNotification, with owner set to me
+		String responseXml = jabxUtil.marshal(processNotification_of.createProcessNotification(createProcessNotificationResponse(OWNER, residentId)));
 
 		// Setup a test-subscriber on the notification-queues
 		MessageConsumer consumer = setupListener(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*", this);
@@ -135,8 +136,8 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 			// Send an update message to the process-service and wait for a publish on one of the notification queues
 			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 			
-	        // Compare the notified message with the request message, they should be the same
-			assertRequest(requestXml, response);
+	        // Compare the notified message with the request message, the main part should be the same but the notified message will be wrapped as a ProcessNotification
+			assertRequest(responseXml, response);
 	
 			// Verify that we got something in the database as well
 	        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
@@ -155,6 +156,52 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 			
 			// Finally verify that we got the expected notification to our own subscriber
 			assertNotNull("No processNotification received", processNotificationMessage);
+			assertRequest(responseXml, processNotificationMessage);
+		
+		} finally {
+			removeListener(consumer);
+		}
+    }
+
+	// FIXME - ML: Add PN tests with and without owner = me! ?? Owner is always set by the preceeding flow!
+    
+	/**
+	 * Perform a test that is expected to return one hit
+	 * @throws JMSException 
+	 */
+    @Test
+    public void process_notification_OK() throws JMSException {
+    	
+    	// Setup testdata
+		long residentId = 1212121212L;
+		String fullResidentId = "19" + residentId;
+		String requestXml = jabxUtil.marshal(processNotification_of.createProcessNotification(createProcessNotificationRequest(residentId)));
+
+		// Setup a test-subscriber on the notification-queues
+		MessageConsumer consumer = setupListener(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*", this);
+
+		try {
+
+			// Send an update message to the process-service and wait for a publish on one of the notification queues
+			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+	
+	        // Compare the notified message with the request message, they should be the same
+			assertRequest(requestXml, response);
+	
+			// Verify that we got something in the database as well
+	        List<Engagement> result = (List<Engagement>) engagementRepository.findAll();
+	        assertEquals(1, result.size());
+	        assertThat(result.get(0).getBusinessKey().getRegisteredResidentIdentification(), is(fullResidentId));
+	
+			// Expect no error logs and four (1 in + 3 out) info log entries
+			assertQueueDepth(ERROR_LOG_QUEUE, 0);
+			assertQueueDepth(INFO_LOG_QUEUE, 4);
+	
+			// Assert that the response is the only message on the queue
+			assertQueueDepth(PROCESS_QUEUE, 0);
+			
+			// Finally verify that we got the expected notification to our own subscriber
+			assertNotNull("No processNotification received", processNotificationMessage);
 			assertRequest(requestXml, processNotificationMessage);
 		
 		} finally {
@@ -162,14 +209,12 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		}
     }
 
-	// FIXME - ML: Add PN tests with and without owner = me!
-
 	/**
-	 * Perform a test that is expected to return one hit
+	 * Perform a test that is expected not to return a hit due to owner == me
 	 * @throws JMSException 
 	 */
     @Test
-    public void process_notification_OK() throws JMSException {
+    public void process_notification_owner_is_me_OK() throws JMSException {
     	
     	// Setup testdata
 		long residentId = 1212121212L;

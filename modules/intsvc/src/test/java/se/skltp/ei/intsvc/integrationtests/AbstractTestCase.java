@@ -209,20 +209,26 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 		}
     }        
     
-	protected UpdateType createUdateRequest(long... residentIds) {
+	/*
+	 * An incoming Update can have the owner field set depending om which test service that is used!
+	 * Owner should not be set when using update for the update-service but it should be set for the process-service. 
+	 */
+	protected UpdateType createUdateRequest(String owner, long... residentIds) {
 
 		UpdateType request = new UpdateType();
 
 		for (int i = 0; i < residentIds.length; i++) {
 			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
 			request.getEngagementTransaction().add(et);
-			// owner must not be set for Update, will be set by the Index that owns the info
-			et.getEngagement().setOwner(null);
+			et.getEngagement().setOwner(owner);
 		}
 		
 		return request;
     }
 	
+	/*
+	 * An incoming ProcessNotification request has the owner value set to me or another instance!
+	 */
 	protected ProcessNotificationType createProcessNotificationRequest(long... residentIds) {
 
 		ProcessNotificationType request = new ProcessNotificationType();
@@ -234,7 +240,23 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 		
 		return request;
     }
-	
+
+	/*
+	 * A resulting ProcessNotification should always have the owner set to me!
+	 */
+	protected ProcessNotificationType createProcessNotificationResponse(String owner, long... residentIds ) {
+
+		ProcessNotificationType request = new ProcessNotificationType();
+
+		for (int i = 0; i < residentIds.length; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
+			request.getEngagementTransaction().add(et);
+			et.getEngagement().setOwner(owner);
+		}
+		
+		return request;
+    }
+
 	protected void waitForBackgroundProcessing() {
 		try {
 			Thread.sleep(EI_SHORT_WAITTIME);
