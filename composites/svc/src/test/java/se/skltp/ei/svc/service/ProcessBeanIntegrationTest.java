@@ -289,9 +289,104 @@ public class ProcessBeanIntegrationTest {
         assertThat(foundEngagement.getOwner(), equalTo(OWNER));
     }
     
+    @Test
+    public void update_Robusthet_most_recent_content_propagate_new_create() {
+         // Create a request
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        request.getEngagementTransaction().add(et1);
 
-    /*** Test for ProcessNotification logic ***/
+        List<EngagementTransactionType> processList = BEAN.update(null, request);
+
+        // Validate the length of the list
+        assertEquals(1, processList.size());
+    }
+
+    @Test
+    public void update_Robusthet_most_recent_content_propagate_delete_flag() {
+         // Create a request
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        et1.setDeleteFlag(true);
+        request.getEngagementTransaction().add(et1);
+
+        List<EngagementTransactionType> processList = BEAN.update(null, request);
+
+        // Validate the length of the list
+        assertEquals(1, processList.size());
+    }
+
+    @Test
+    public void update_Robusthet_most_recent_content_propagate_update_first_is_null() {
+         // Create a request
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        
+        // Do an update twice, second call should not generate a notification
+        BEAN.update(null, request);
+
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        List<EngagementTransactionType> processList = BEAN.update(null, request);
+
+        // Validate the length of the list
+        assertEquals(1, processList.size());
+    }
+
+    @Test
+    public void update_Robusthet_most_recent_content_propagate_update_second_is_null() {
+         // Create a request
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        request.getEngagementTransaction().add(et1);
+        
+        // Do an update twice, second call should not generate a notification
+        BEAN.update(null, request);
+
+        et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().clear();
+        request.getEngagementTransaction().add(et1);
+        List<EngagementTransactionType> processList = BEAN.update(null, request);
+
+        // Validate the length of the list
+        assertEquals(1, processList.size());
+    }
+
     
+    @Test
+    public void update_Robusthet_most_recent_content_no_propagate_update_same_values() {
+         // Create a request
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        request.getEngagementTransaction().add(et1);
+        
+        // Do an update twice, second call should not generate a notification
+        BEAN.update(null, request);
+        List<EngagementTransactionType> processList = BEAN.update(null, request);
+
+        // Validate the length of the list
+        assertEquals(0, processList.size());
+    }
+
+    @Test
+    public void update_Robusthet_most_recent_content_no_propagate_update_both_are_null() {
+         // Create a request
+        UpdateType request = new UpdateType();
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+        request.getEngagementTransaction().add(et1);
+        
+        // Do an update twice, second call should not generate a notification
+        BEAN.update(null, request);
+        List<EngagementTransactionType> processList = BEAN.update(null, request);
+
+        // Validate the length of the list
+        assertEquals(0, processList.size());
+    }
+    
+    /*** Test for ProcessNotification logic ***/    
     
     @Test
     public void processNotification_R1_OK_owner_should_be_saved() {
@@ -508,7 +603,5 @@ public class ProcessBeanIntegrationTest {
     	}
     	
     	return "";
-    }
-    
-    
+    }    
 }

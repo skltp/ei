@@ -30,6 +30,7 @@ import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,6 +53,7 @@ import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
+import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 /**
  * Updates engagement index with either update or process notification requests.
@@ -247,6 +249,41 @@ public class ProcessBean implements ProcessInterface {
             }
         }
 
+        // Create a list of EngagementTransactions that we will use as a base for Notifications
+        final List<EngagementTransactionType> notificationTransactions = new ArrayList<EngagementTransactionType>();
+        
+        // Get a hashmap with data for most_recent_content
+        Map<String, Date>existingContent = getEngagementsThatExistsWithContent(request);
+        
+        // Loop over our incoming list of data and move data to new list if a notification should be sent
+        for (final EngagementTransactionType inEngagementTransaction : engagementTransactions) {
+
+            EngagementType inET = inEngagementTransaction.getEngagement();
+            inET.setOwner(this.owner); // According to R6 owner should always be set to owner of the index
+            
+            // If delete flag is set add it to notificationList
+            if (inEngagementTransaction.isDeleteFlag()) {
+            	notificationTransactions.add(inEngagementTransaction);
+            } else {
+            	// Check if we find this record in our map
+            	Engagement inEngagement = toEntity(inET); 
+            	if (existingContent.containsKey(inEngagement.getId())) {
+            		// Check if most_recent_content has changed, it could be NULL
+            		String inValue = inEngagement.getMostRecentContent() == null ? "null":EntityTransformer.forrmatDate(inEngagement.getMostRecentContent());
+            		String dbValue = existingContent.get(inEngagement.getId()) == null ? "null":EntityTransformer.forrmatDate(existingContent.get(inEngagement.getId()));
+            		
+            		if (inValue.equalsIgnoreCase(dbValue) ) {
+            			// Don't add to processNotification list!
+            			continue;
+            		} else {
+                		notificationTransactions.add(inEngagementTransaction);
+            		}
+            	} else {
+            		notificationTransactions.add(inEngagementTransaction);
+            	}
+            }
+        }
+                
         // Perform the delete if any
         if (deleteList != null) {
             engagementRepository.delete(deleteList);
@@ -254,9 +291,9 @@ public class ProcessBean implements ProcessInterface {
 
         // Perform the save
         engagementRepository.save(saveList);  	
-
-        // Return a list of EngagementTransactions for now, we will remove duplicate add/updates later
-        return engagementTransactions;
+        
+        // Return a list of EngagementTransactions for notification to subscribers
+        return notificationTransactions;
     }
 
     /**
@@ -367,5 +404,27 @@ public class ProcessBean implements ProcessInterface {
         }
     }
 
+    public Map<String, Date> getEngagementsThatExistsWithContent(UpdateType request) {
+
+        final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
+        final List<String> ids = new ArrayList<String>(engagementTransactions.size());
+
+        for (final EngagementTransactionType engagementTransaction : engagementTransactions) {
+            EngagementType et = engagementTransaction.getEngagement();
+            ids.add(toEntity(et, this.owner).getId());
+        }
+
+        // The request fail if findByIdIn receives an empty list
+        if (ids.size() == 0) {
+            return Collections.emptyMap();
+        } else {
+        	// Create a new HashMap with id as key and most_recent_time as value
+        	HashMap<String, Date> returnMap = new HashMap<String,Date>();
+        	for (Engagement engagement :engagementRepository.findByIdIn(ids) ) {
+        		returnMap.put(engagement.getId(), engagement.getMostRecentContent());
+        	}
+            return returnMap;
+        }
+    }
 
 }
