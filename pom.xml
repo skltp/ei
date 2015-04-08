@@ -11,7 +11,7 @@
 
     <groupId>se.skltp.ei</groupId>
     <artifactId>skltp-ei-parent</artifactId>
-    <version>1.2.1-RC2</version>
+    <version>1.2.1-RC3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>skltp-ei-parent</name>
 
@@ -19,7 +19,7 @@
 			<url>http://github.com/skltp/ei</url>
 			<connection>scm:git:git://github.com/skltp/ei.git</connection>
 			<developerConnection>scm:git:git://github.com/skltp/ei.git</developerConnection>
-			<tag>v1.2.1-RC2</tag>
+			<tag>HEAD</tag>
     </scm>
 
     <repositories>
