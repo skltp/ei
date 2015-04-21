@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.soitoolkit.commons.poms</groupId>
-        <artifactId>soitoolkit-default-parent</artifactId>
-        <version>0.6.1</version>
-    </parent>
+  <parent>
+    <groupId>org.soitoolkit.commons.poms</groupId>
+    <artifactId>soitoolkit-default-parent</artifactId>
+    <version>0.6.1</version>
+  </parent>
 
-    <groupId>se.skltp.ei</groupId>
-    <artifactId>skltp-ei-parent</artifactId>
-    <version>1.2.1-RC3-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>skltp-ei-parent</name>
+  <groupId>se.skltp.ei</groupId>
+  <artifactId>skltp-ei-parent</artifactId>
+  <version>1.2.1-RC3-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>skltp-ei-parent</name>
 
-    <scm>
-			<url>http://github.com/skltp/ei</url>
-			<connection>scm:git:git://github.com/skltp/ei.git</connection>
-			<developerConnection>scm:git:git://github.com/skltp/ei.git</developerConnection>
-			<tag>HEAD</tag>
-    </scm>
+  <scm>
+    <url>http://github.com/skltp/ei</url>
+    <connection>scm:git:git://github.com/skltp/ei.git</connection>
+    <developerConnection>scm:git:git://github.com/skltp/ei.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
 
-    <repositories>
+  <repositories>
     <!-- Sonatype staging repo added to be able to build VP using artifacts
       not yet pushed to central maven. In this specific case its about
       new version of itintegration registry constracts.
@@ -31,44 +33,45 @@
             <artifactId>ServiceContracts_infrastructure_itintegration_registry</artifactId>
             <version>2.0-RC2</version>
          -->
-      <repository>
-        <id>sonatype-nexus-staging-repository</id>
-        <url>https://oss.sonatype.org/content/repositories/staging/</url>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-      </repository>
-    </repositories>
+    <repository>
+      <id>sonatype-nexus-staging-repository</id>
+      <url>https://oss.sonatype.org/content/repositories/staging/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
-	<modules>
-		<module>composites/schema</module>
-		<module>composites/svc</module>
-		<module>modules/intsvc</module>
-        <module>applications/mule-backend-app</module>
-        <module>applications/mule-frontend-app</module>
-	</modules>
+  <modules>
+    <module>composites/schema</module>
+    <module>composites/svc</module>
+    <module>modules/intsvc</module>
+    <module>applications/mule-backend-app</module>
+    <module>applications/mule-frontend-app</module>
+    <!-- <module>test/non-functional/Gatling</module> -->
+  </modules>
 
   <build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.5.1</version>
-						<configuration>
-								<autoVersionSubmodules>true</autoVersionSubmodules>
-								<tagNameFormat>v@{project.version}</tagNameFormat>
-								<pushChanges>false</pushChanges>
-								<localCheckout>true</localCheckout>
-						</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.1</version>
+          <configuration>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <tagNameFormat>v@{project.version}</tagNameFormat>
+            <pushChanges>false</pushChanges>
+            <localCheckout>true</localCheckout>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
-	<version>1.10.b1</version>
+        <version>1.10.b1</version>
         <configuration>
           <properties>
             <year>2013</year>
@@ -76,7 +79,7 @@
             <product>SKLTP</product>
           </properties>
           <strictCheck>true</strictCheck>
-	  <header>http://skltp.googlecode.com/svn/tp/docs/license-header-template.txt</header>
+          <header>http://skltp.googlecode.com/svn/tp/docs/license-header-template.txt</header>
           <encoding>UTF-8</encoding>
           <includes>
             <include>src/main/**</include>
@@ -87,7 +90,7 @@
             <exclude>**/*.wsdl</exclude>
             <exclude>**/*.dtd</exclude>
           </excludes>
-	  <useDefaultExcludes>true</useDefaultExcludes>
+          <useDefaultExcludes>true</useDefaultExcludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>
           </mapping>
