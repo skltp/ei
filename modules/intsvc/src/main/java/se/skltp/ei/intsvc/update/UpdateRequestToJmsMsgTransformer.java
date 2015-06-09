@@ -31,6 +31,21 @@ public class UpdateRequestToJmsMsgTransformer extends AbstractMessageTransformer
 
 	private static JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
 	private static ObjectFactory of = new ObjectFactory();
+    private String processQueue;
+    private String collectQueue;
+    private int collectTreshold;
+
+    public void setProcessQueue(String processQueue) {
+		this.processQueue = processQueue;
+	}
+
+	public void setCollectQueue(String collectQueue) {
+		this.collectQueue = collectQueue;
+	}
+
+	public void setCollectTreshold(int collectTreshold) {
+		this.collectTreshold = collectTreshold;
+	}
 	
 	@Override
 	public Object transformMessage(MuleMessage message, String encoding) throws TransformerException {
@@ -42,6 +57,14 @@ public class UpdateRequestToJmsMsgTransformer extends AbstractMessageTransformer
 		
 		message.setPayload(jmsMsg);
 		message.setOutboundProperty("logicalAddress", logicalAddress);
+
+		// Decide which queue to use depending on message size
+		int numberOfPostsInMessage = request.getEngagementTransaction().size();
+		if (numberOfPostsInMessage <= collectTreshold) {
+			message.setInvocationProperty("EI-POSTUPDATE-QUEUE", collectQueue);			
+		} else {
+			message.setInvocationProperty("EI-POSTUPDATE-QUEUE", processQueue);
+		}
 
 		return message;
 	}

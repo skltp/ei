@@ -74,9 +74,10 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 
     protected static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 	protected static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
+	protected static final String COLLECT_QUEUE = rb.getString("COLLECT_QUEUE");
 	protected static final String INFO_LOG_QUEUE  = rb.getString("SOITOOLKIT_LOG_INFO_QUEUE");
 	protected static final String ERROR_LOG_QUEUE = rb.getString("SOITOOLKIT_LOG_ERROR_QUEUE");
-
+	
 	private AbstractJmsTestUtil jmsUtil = null;
 
 	public AbstractTestCase() {
