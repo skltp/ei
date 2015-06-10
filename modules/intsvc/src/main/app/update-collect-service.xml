@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans-current.xsd
+		http://www.mulesoft.org/schema/mule/core      http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	">
+
+	<spring:bean name="collectMessageCollectionStrategy"
+			class="se.skltp.ei.intsvc.update.collect.MessageCollectionStrategyImpl">
+		<spring:property name="maxBufferAgeMillis" value="${COLLECT_MAX_BUFFER_AGE_MILLIS}" />
+		<spring:property name="maxRecordsInCollectedMessage" value="${COLLECT_MAX_RECORDS_IN_COLLECTED_MESSAGES}" />
+		<spring:property name="maxBufferedRecords" value="${COLLECT_MAX_BUFFERED_RECORDS}" />
+	</spring:bean>
+
+	<spring:bean name="collectJmsMessageCollectionController"
+			class="se.skltp.ei.intsvc.update.collect.JmsMessageCollectionController"
+			init-method="init">
+		<spring:property name="messageCollectionStrategy" ref="collectMessageCollectionStrategy" />
+		<spring:property name="queueConnectionFactory" ref="soitoolkit-jms-connection-factory" />
+		<spring:property name="jmsInputQueue" value="${COLLECT_QUEUE}" />
+		<spring:property name="jmsOutputQueue" value="${PROCESS_QUEUE}" />
+		<spring:property name="jmsErrorQueue" value="${COLLECT_ERROR_QUEUE}" />
+		<spring:property name="jmsReceiveTimeoutMillis" value="${COLLECT_JMS_RECEIVE_TIMEOUT_MILLIS}" />
+	</spring:bean>
+
+</mule>
