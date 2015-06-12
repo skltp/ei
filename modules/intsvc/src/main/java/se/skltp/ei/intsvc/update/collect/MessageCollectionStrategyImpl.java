@@ -19,17 +19,30 @@
  */
 package se.skltp.ei.intsvc.update.collect;
 
+import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
+
+import riv.itintegration.engagementindex._1.EngagementTransactionType;
+import riv.itintegration.engagementindex._1.EngagementType;
+import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
+import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import se.skltp.ei.svc.entity.model.Engagement;
+import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 public class MessageCollectionStrategyImpl implements MessageCollectionStrategy {
 	private static Logger log = LoggerFactory
 			.getLogger(MessageCollectionStrategyImpl.class);
 
+	private static JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
+	private static riv.itintegration.engagementindex.updateresponder._1.ObjectFactory objectFactoryUpdate = new riv.itintegration.engagementindex.updateresponder._1.ObjectFactory();
+	
 	private long bufferAgeMillis;
 	/**
 	 * How long we are allowed to buffer records from messages before we must
@@ -46,7 +59,7 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	 * collection if we remove duplicates.
 	 */
 	private int maxBufferedRecords = maxRecordsInCollectedMessage * 3;
-	private HashMap<String, String> buffer = new HashMap<String, String>(
+	private HashMap<String, EngagementTransactionType> buffer = new HashMap<String, EngagementTransactionType>(
 			maxBufferedRecords);
 	private int statisticsTotalNrAddedMessages;
 	private int statisticsTotalNrAddedRecords;
@@ -71,12 +84,54 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 			bufferAgeMillis = System.currentTimeMillis();
 		}
 
-		// TODO: parse XML and handle duplicates, currently only demo impl where
-		// one message = one record
-		int preAddBufferSize = buffer.size();
+		// Unmarshal message
+		UpdateType updateRecord = (UpdateType)jabxUtil.unmarshal(message);
+
+		// Find all records in message
+		List<EngagementTransactionType> engagementTransactions = updateRecord.getEngagementTransaction();
+		for (final EngagementTransactionType newEngagementTransaction : engagementTransactions) {
+			// Read one engagement and create key for this engagement
+			EngagementType newEngagement = newEngagementTransaction.getEngagement();
+			boolean newIsDeleteFlag = newEngagementTransaction.isDeleteFlag();
+	        Engagement newEngagementEntity = toEntity(newEngagement);
+	                
+	        // Check if we already have an engagement in our buffer with this key
+	        if (buffer.containsKey(newEngagementEntity.getId())) {
+	        	// Engagement found in buffer
+	        	if (newIsDeleteFlag) {
+	        		// A delete overrides previously stored engagement
+	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+	        		//? increase statisticsTotalNrAddedRecords ??
+	        	} else {
+	        		// Check if incoming record contains a more recent time value
+	        		EngagementTransactionType oldEngagementTransaction = buffer.get(newEngagementEntity.getId());
+	    	        Engagement oldEngagementEntity = toEntity(oldEngagementTransaction.getEngagement());
+
+	        		long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.forrmatDate(newEngagementEntity.getMostRecentContent()));
+            		long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.forrmatDate(oldEngagementEntity.getMostRecentContent()));
+            		
+              		if (oldMostRecentContent == 0 && newMostRecentContent != 0) {
+            			// Replace with engagement that has a value
+    	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
+            		} else if (newMostRecentContent == 0) {
+            			// Dont replace anything!
+                		continue;
+            		} else if (newMostRecentContent > oldMostRecentContent) {
+            			// Replace with newer content
+    	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
+            		}
+	        	}	        	
+	        } else {
+	        	// No engagement exist in buffer with this key, store it!
+	        	statisticsTotalNrAddedRecords++;
+	    		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+	        }
+		}
+		
+		// Update counter of processed messages
 		statisticsTotalNrAddedMessages++;
-		statisticsTotalNrAddedRecords++;
-		buffer.put(message, message);
+
+		int preAddBufferSize = buffer.size();
 
 		if (log.isDebugEnabled()) {
 			log.debug(
@@ -98,7 +153,7 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	public List<CollectedMessage> getCollectedMessagesAndClearBuffer() {
 		List<CollectedMessage> collMsgs = new ArrayList<CollectedMessage>();
 
-		List<String> records = new ArrayList<String>();
+		List<EngagementTransactionType> records = new ArrayList<EngagementTransactionType>();
 		int totalCount = 0;
 		for (String key : buffer.keySet()) {
 			totalCount++;
@@ -117,13 +172,16 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 		return collMsgs;
 	}
 
-	private CollectedMessage buildCollectedMessage(List<String> records) {
+	private CollectedMessage buildCollectedMessage(List<EngagementTransactionType> records) {
 		CollectedMessage collMsg = new CollectedMessage();
-		StringBuilder sb = new StringBuilder();
-		for (String rec : records) {
-			sb.append(rec);
+    	
+		UpdateType updateRequest = new UpdateType();
+
+		for (EngagementTransactionType engagementTransaction : records) {
+			updateRequest.getEngagementTransaction().add(engagementTransaction);
 		}
-		collMsg.setPayload(sb.toString());
+
+		collMsg.setPayload(jabxUtil.marshal(objectFactoryUpdate.createUpdate(updateRequest)));
 		return collMsg;
 	}
 
