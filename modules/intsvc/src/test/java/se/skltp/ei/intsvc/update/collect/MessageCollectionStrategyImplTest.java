@@ -25,11 +25,18 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 
+import riv.itintegration.engagementindex._1.EngagementTransactionType;
+import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
+import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.update.collect.MessageCollectionStrategyImpl;
+import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 
 public class MessageCollectionStrategyImplTest {
 	private MessageCollectionStrategyImpl impl;
+	private static JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
+	private static ObjectFactory of = new ObjectFactory();
 
 	@Before
 	public void setUp() {
@@ -37,22 +44,101 @@ public class MessageCollectionStrategyImplTest {
 	}
 
 	@Test
-	public void testCollectMessage() {
-		testGetCollectedMessagesAndClearBuffer();
-	}
-
-	private void testGetCollectedMessagesAndClearBuffer() {
+	public void testCollectMessage1Records() {
 		impl.setMaxRecordsInCollectedMessage(2);
 		assertEquals("buffer should be empty at start", 0, impl
 				.getCollectedMessagesAndClearBuffer().size());
-		impl.collectMessage("A");
-		impl.collectMessage("B");
-		impl.collectMessage("C");
+		impl.collectMessage(createMessage("", false, 1212121212));
+		impl.collectMessage(createMessage("", false, 1313131313));
+		impl.collectMessage(createMessage("", false, 1414141414));
 		assertEquals(2, impl.getCollectedMessagesAndClearBuffer().size());
-		impl.collectMessage("D");
+		impl.collectMessage(createMessage(null, false, 1515151515));
 		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
 	}
 
+	@Test
+	public void testCollectMessages2Records() {
+		impl.setMaxRecordsInCollectedMessage(3);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("", false, 1212121201, 1212121202));
+		impl.collectMessage(createMessage("", false, 1212121203, 1212121204));
+		impl.collectMessage(createMessage("", false, 1212121205, 1212121206));
+		assertEquals(2, impl.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("", false, 1212121207, 1212121208));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+
+	@Test
+	public void testCollectMessagesWithDuplicateRecords() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("", false, 1212121212));
+		impl.collectMessage(createMessage("", false, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}	
+	
+	@Test
+	public void testCollectMessagesWithDifferentMostRecentTimes_1() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("20150610120001", false, 1212121212));
+		impl.collectMessage(createMessage("", false, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+
+	@Test
+	public void testCollectMessagesWithDifferentMostRecentTimes_2() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("20150610120001", false, 1212121212));
+		impl.collectMessage(createMessage("20150610120002", false, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+
+	@Test
+	public void testCollectMessagesWithDifferentMostRecentTimes_3() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("20150610120001", false, 1212121212));
+		impl.collectMessage(createMessage("20150610110001", false, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+
+	@Test
+	public void testCollectMessagesWithDifferentMostRecentTimes_4() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("", false, 1212121212));
+		impl.collectMessage(createMessage("20150610110001", false, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+
+	@Test
+	public void testCollectMessagesWithDifferentMostRecentTimes_5() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("", false, 1212121212));
+		impl.collectMessage(createMessage("", false, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+	
+	@Test
+	public void testCollectMessagesWithDeleteFlag() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createMessage("", true, 1212121212));
+		impl.collectMessage(createMessage("20150610120001", false, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+		
 	@Test
 	public void testIsCollectedMessagesReadyToBeTransmitted() {
 		impl.setMaxBufferedRecords(2);
@@ -61,7 +147,7 @@ public class MessageCollectionStrategyImplTest {
 		assertFalse("buffer with records should NOT be transmitted if empty",
 				impl.isCollectedMessagesReadyToBeTransmitted());
 
-		impl.collectMessage("A");
+		impl.collectMessage(createMessage(null, false, 1212121212));
 		assertTrue("buffer with records should be transmitted if timeout",
 				impl.isCollectedMessagesReadyToBeTransmitted());
 
@@ -70,7 +156,7 @@ public class MessageCollectionStrategyImplTest {
 				"buffer with records should NOT be transmitted until full OR timeout",
 				impl.isCollectedMessagesReadyToBeTransmitted());
 
-		impl.collectMessage("B");
+		impl.collectMessage(createMessage(null, false, 1313131313));
 		assertTrue("buffer should be transmitted if full",
 				impl.isCollectedMessagesReadyToBeTransmitted());
 
@@ -79,5 +165,24 @@ public class MessageCollectionStrategyImplTest {
 		assertFalse("buffer should NOT be transmitted if empty",
 				impl.isCollectedMessagesReadyToBeTransmitted());
 	}
-
+	
+	/*
+	 * Create message as a String for Update request. Copy from AbstractTestCase for now...
+	 * Most recent time has the following format YYYYMMDDhhmmss
+	 */
+	protected String createMessage(String mostRecentTime, boolean deleteFlag, long... residentIds) {
+		UpdateType request = new UpdateType();
+		for (int i = 0; i < residentIds.length; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
+			et.setDeleteFlag(deleteFlag);
+			if (mostRecentTime != null && mostRecentTime.length() > 0 ) {
+				// Set most recent time in data!
+				et.getEngagement().setMostRecentContent(mostRecentTime);
+			}
+				
+			request.getEngagementTransaction().add(et);
+		}
+		
+		return jabxUtil.marshal(of.createUpdate(request));
+    }
 }
