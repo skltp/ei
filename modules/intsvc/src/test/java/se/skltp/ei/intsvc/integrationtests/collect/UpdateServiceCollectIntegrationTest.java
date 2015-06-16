@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package se.skltp.ei.intsvc.integrationtests.updateservice;
+package se.skltp.ei.intsvc.integrationtests.collect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -37,13 +37,14 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
+import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
-public class UpdateServiceCollectCompressIntegrationTest extends AbstractTestCase {
+public class UpdateServiceCollectIntegrationTest extends AbstractTestCase {
 
 	@SuppressWarnings("unused")
-	private static final Logger LOG = LoggerFactory.getLogger(UpdateServiceCollectCompressIntegrationTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(UpdateServiceCollectIntegrationTest.class);
 	 	
 	@SuppressWarnings("unused")
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
@@ -55,10 +56,9 @@ public class UpdateServiceCollectCompressIntegrationTest extends AbstractTestCas
 
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
-//	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
 	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("UPDATE_WEB_SERVICE_URL");
   
-	public UpdateServiceCollectCompressIntegrationTest() {
+	public UpdateServiceCollectIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
         setDisposeContextPerClass(true);
@@ -82,7 +82,7 @@ public class UpdateServiceCollectCompressIntegrationTest extends AbstractTestCas
     @After
     public void tearDown() throws Exception {
     	// Set treshold to original value
-    	System.setProperty("COLLECT_TRESHOLD", COLLECT_TRESHOLD_ORIGINAL);
+    	System.clearProperty("COLLECT_TRESHOLD");
     }
 
     

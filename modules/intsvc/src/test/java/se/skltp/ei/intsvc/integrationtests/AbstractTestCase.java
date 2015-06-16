@@ -228,6 +228,24 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
     }
 	
 	/*
+	 * Create message as a String for Update request. Set attributes deletFlag and most_recent_time for the request
+	 * Most recent time has the following format YYYYMMDDhhmmss
+	 */
+	protected String createUpdateTextMessage(String mostRecentTime, boolean deleteFlag, long... residentIds) {
+		UpdateType request = new UpdateType();
+		for (int i = 0; i < residentIds.length; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
+			et.setDeleteFlag(deleteFlag);
+			if (mostRecentTime != null && mostRecentTime.length() > 0 ) {
+				// Set most recent time in data!
+				et.getEngagement().setMostRecentContent(mostRecentTime);
+			}		
+			request.getEngagementTransaction().add(et);
+		}
+		return jabxUtil.marshal(update_of.createUpdate(request));
+    }
+
+	/*
 	 * An incoming ProcessNotification request has the owner value set to me or another instance!
 	 */
 	protected ProcessNotificationType createProcessNotificationRequest(long... residentIds) {
