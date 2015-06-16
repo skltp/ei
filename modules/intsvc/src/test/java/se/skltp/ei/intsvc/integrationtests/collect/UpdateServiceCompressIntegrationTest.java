@@ -45,12 +45,6 @@ public class UpdateServiceCompressIntegrationTest extends AbstractTestCase {
 	@SuppressWarnings("unused")
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
-	private static final String COLLECT_TRESHOLD_ORIGINAL = rb.getString("COLLECT_TRESHOLD");
-	private static final String COLLECT_JMS_RECEIVE_TIMEOUT_MILLIS_ORIGINAL = rb.getString("COLLECT_JMS_RECEIVE_TIMEOUT_MILLIS");
-	private static final String COLLECT_MAX_BUFFER_AGE_MILLIS_ORIGINAL = rb.getString("COLLECT_MAX_BUFFER_AGE_MILLIS");
-	private static final String COLLECT_MAX_RECORDS_IN_COLLECTED_MESSAGES_ORIGINAL = rb.getString("COLLECT_MAX_RECORDS_IN_COLLECTED_MESSAGES");
-	private static final String COLLECT_MAX_BUFFERED_RECORDS_ORIGINAL = rb.getString("COLLECT_MAX_BUFFERED_RECORDS");
-
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
 	
@@ -59,7 +53,6 @@ public class UpdateServiceCompressIntegrationTest extends AbstractTestCase {
         // Set to false if tests interfere with each other when Mule is started only once.
         setDisposeContextPerClass(true);
     }
-
 
     protected String getConfigResources() {
     	System.setProperty("COLLECT_TRESHOLD", "1");
@@ -116,7 +109,6 @@ public class UpdateServiceCompressIntegrationTest extends AbstractTestCase {
 		
 		String message3 = getJmsUtil().consumeOneTextMessage(PROCESS_QUEUE, 10000);
 		assert( ((UpdateType)jaxbUtil.unmarshal(message3)).getEngagementTransaction().size() == 1);
-
     }
 
     /**
@@ -140,14 +132,12 @@ public class UpdateServiceCompressIntegrationTest extends AbstractTestCase {
 		
 		UpdateType update = (UpdateType)jaxbUtil.unmarshal(message);
 
-		assert(update.getEngagementTransaction().get(0).getEngagement().getMostRecentContent().equalsIgnoreCase("20150611120002"));
-				
+		assert(update.getEngagementTransaction().get(0).getEngagement().getMostRecentContent().equalsIgnoreCase("20150611120002"));				
     }
 
     /**
 	 * Validate expected behavior of the compress-service with 5 posts with a delete in the middle that overrides later updates!
 	 */
-    @Ignore
     @Test
     public void compress_5_posts_to_1_message_with_delete_OK() {
     			
@@ -167,8 +157,50 @@ public class UpdateServiceCompressIntegrationTest extends AbstractTestCase {
 		UpdateType update = (UpdateType)jaxbUtil.unmarshal(message);
 
 		assert(update.getEngagementTransaction().get(0).isDeleteFlag());
-				
     }
+
+    /**
+	 * Validate expected behavior of the compress-service with 5 posts and null most_recent_time data!
+	 */
+    @Test
+    public void compress_2_posts_to_1_message_with_null_most_recent_time_last_OK() {
+    			
+		List<String> requestList = new ArrayList<String>();
+		requestList.add(createUpdateTextMessage("20150611120001", false, 1212121212L));
+		requestList.add(createUpdateTextMessage("", false, 1212121212L));
+
+		// Send messages to JMS queue
+		sendMessagesToCollectQueue(requestList);
+		
+		// Wait for messages to appear on PROCESS_QUEUE
+		String message = getJmsUtil().consumeOneTextMessage(PROCESS_QUEUE, 10000);
+		
+		UpdateType update = (UpdateType)jaxbUtil.unmarshal(message);
+
+		assert(update.getEngagementTransaction().get(0).getEngagement().getMostRecentContent().equalsIgnoreCase("20150611120001"));				
+    }
+
+    /**
+	 * Validate expected behavior of the compress-service with 5 posts and null most_recent_time data!
+	 */
+    @Test
+    public void compress_2_posts_to_1_message_with_null_most_recent_time_first_OK() {
+    			
+		List<String> requestList = new ArrayList<String>();
+		requestList.add(createUpdateTextMessage("", false, 1212121212L));
+		requestList.add(createUpdateTextMessage("20150611120001", false, 1212121212L));
+
+		// Send messages to JMS queue
+		sendMessagesToCollectQueue(requestList);
+		
+		// Wait for messages to appear on PROCESS_QUEUE
+		String message = getJmsUtil().consumeOneTextMessage(PROCESS_QUEUE, 10000);
+		
+		UpdateType update = (UpdateType)jaxbUtil.unmarshal(message);
+
+		assert(update.getEngagementTransaction().get(0).getEngagement().getMostRecentContent().equalsIgnoreCase("20150611120001"));				
+    }
+
     
     private void sendMessagesToCollectQueue(List<String> requestList) {
 		try {

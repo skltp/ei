@@ -106,19 +106,25 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	        		// Check if incoming record contains a more recent time value
 	        		EngagementTransactionType oldEngagementTransaction = buffer.get(newEngagementEntity.getId());
 	    	        Engagement oldEngagementEntity = toEntity(oldEngagementTransaction.getEngagement());
+	    	        boolean oldIsDeleteFlag = oldEngagementTransaction.isDeleteFlag();
 
 	        		long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.forrmatDate(newEngagementEntity.getMostRecentContent()));
             		long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.forrmatDate(oldEngagementEntity.getMostRecentContent()));
             		
-              		if (oldMostRecentContent == 0 && newMostRecentContent != 0) {
-            			// Replace with engagement that has a value
-    	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
-            		} else if (newMostRecentContent == 0) {
-            			// Dont replace anything!
-                		continue;
-            		} else if (newMostRecentContent > oldMostRecentContent) {
-            			// Replace with newer content
-    	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
+            		if (oldIsDeleteFlag) {
+            			// Don't replace!
+            			continue;
+            		} else {
+                  		if (oldMostRecentContent == 0 && newMostRecentContent != 0) {
+                			// Replace with engagement that has a value
+        	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
+                		} else if (newMostRecentContent == 0) {
+                			// Dont replace anything!
+                    		continue;
+                		} else if (newMostRecentContent > oldMostRecentContent) {
+                			// Replace with newer content
+        	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
+                		}            			
             		}
 	        	}	        	
 	        } else {
