@@ -31,7 +31,6 @@ import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.EngagementType;
-import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.service.impl.util.EntityTransformer;
@@ -59,10 +58,16 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	 * collection if we remove duplicates.
 	 */
 	private int maxBufferedRecords = maxRecordsInCollectedMessage * 3;
+	/**
+	 * How many messages we read and process to buffer before transmit (to limit
+	 * memory consumption for ongoing JMS transaction).
+	 */
+	private int maxCollectedMessages = maxRecordsInCollectedMessage * 10;
+
 	private HashMap<String, EngagementTransactionType> buffer = new HashMap<String, EngagementTransactionType>(
 			maxBufferedRecords);
-	private int statisticsTotalNrAddedMessages;
-	private int statisticsTotalNrAddedRecords;
+	private int totalNrAddedMessages;
+	private int totalNrAddedRecords;
 
 	public void setMaxBufferAgeMillis(long maxBufferAgeMillis) {
 		this.maxBufferAgeMillis = maxBufferAgeMillis;
@@ -74,6 +79,10 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 
 	public void setMaxBufferedRecords(int maxBufferedRecords) {
 		this.maxBufferedRecords = maxBufferedRecords;
+	}
+
+	public void setMaxCollectedMessages(int maxCollectedMessages) {
+		this.maxCollectedMessages = maxCollectedMessages;
 	}
 
 	@Override
@@ -129,13 +138,13 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	        	}	        	
 	        } else {
 	        	// No engagement exist in buffer with this key, store it!
-	        	statisticsTotalNrAddedRecords++;
+	        	totalNrAddedRecords++;
 	    		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
 	        }
 		}
 		
 		// Update counter of processed messages
-		statisticsTotalNrAddedMessages++;
+		totalNrAddedMessages++;
 
 		int preAddBufferSize = buffer.size();
 
@@ -143,8 +152,8 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 			log.debug(
 					"added record: duplicate: {}, buffer size: {}, total added msgs: {}, total added records: {}",
 					new Object[] { preAddBufferSize == buffer.size(),
-							buffer.size(), statisticsTotalNrAddedMessages,
-							statisticsTotalNrAddedRecords });
+							buffer.size(), totalNrAddedMessages,
+							totalNrAddedRecords });
 		}
 	}
 
@@ -152,7 +161,8 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	public boolean isCollectedMessagesReadyToBeTransmitted() {
 		return (System.currentTimeMillis() >= bufferAgeMillis
 				+ maxBufferAgeMillis && !buffer.isEmpty())
-				|| (buffer.size() >= maxBufferedRecords);
+				|| (buffer.size() >= maxBufferedRecords) 
+				|| (totalNrAddedMessages >= maxCollectedMessages );
 	}
 
 	@Override
@@ -193,8 +203,8 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 
 	private void clearBuffer() {
 		buffer.clear();
-		statisticsTotalNrAddedMessages = 0;
-		statisticsTotalNrAddedRecords = 0;
+		totalNrAddedMessages = 0;
+		totalNrAddedRecords = 0;
 	}
 
 }

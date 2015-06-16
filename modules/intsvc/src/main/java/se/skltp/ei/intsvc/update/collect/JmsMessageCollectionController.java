@@ -57,8 +57,6 @@ public class JmsMessageCollectionController implements Runnable {
 	private String jmsInputQueue = "skltp.ei.collect";
 	private String jmsOutputQueue = "skltp.ei.process";
 	private String jmsErrorQueue = "DLQ.skltp.ei.collect";
-	private String jmsUsername = "";
-	private String jmsPassword = "";
 	private long jmsReceiveTimeoutMillis = 30000;
 	private MessageCollectionStrategy messageCollectionStrategy;
 	private QueueConnectionFactory qcf;
@@ -95,7 +93,7 @@ public class JmsMessageCollectionController implements Runnable {
 
 	private void startMessageCollectionThread() {
 		try {
-			conn = qcf.createQueueConnection(jmsUsername, jmsPassword);
+			conn = qcf.createQueueConnection();
 			log.debug("got a JMS connection");
 			conn.start();
 			Thread t = new Thread(this, getClass().getName());

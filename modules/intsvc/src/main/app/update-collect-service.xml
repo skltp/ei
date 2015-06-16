@@ -11,6 +11,7 @@
 		<spring:property name="maxBufferAgeMillis" value="${COLLECT_MAX_BUFFER_AGE_MILLIS}" />
 		<spring:property name="maxRecordsInCollectedMessage" value="${COLLECT_MAX_RECORDS_IN_COLLECTED_MESSAGES}" />
 		<spring:property name="maxBufferedRecords" value="${COLLECT_MAX_BUFFERED_RECORDS}" />
+		<spring:property name="maxCollectedMessages" value="${COLLECT_MAX_COLLECTED_MESSAGES}" />
 	</spring:bean>
 
 	<spring:bean name="collectJmsMessageCollectionController"

@@ -71,6 +71,19 @@ public class MessageCollectionStrategyImplTest{
 	}
 
 	@Test
+	public void testCollect5Messages1Records() {
+		impl.setMaxCollectedMessages(3);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createUpdateTextMessage("", false, 1212121201, 1212121202));
+		impl.collectMessage(createUpdateTextMessage("", false, 1212121201, 1212121202));
+		impl.collectMessage(createUpdateTextMessage("", false, 1212121201, 1212121202));
+		impl.collectMessage(createUpdateTextMessage("", false, 1212121201, 1212121202));
+		assert(impl.isCollectedMessagesReadyToBeTransmitted());
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+
+	@Test
 	public void testCollectMessagesWithDuplicateRecords() {
 		impl.setMaxRecordsInCollectedMessage(1);
 		assertEquals("buffer should be empty at start", 0, impl
@@ -131,7 +144,7 @@ public class MessageCollectionStrategyImplTest{
 	}
 	
 	@Test
-	public void testCollectMessagesWithDeleteFlag() {
+	public void testCollectMessagesWithDeleteFlagFirst() {
 		impl.setMaxRecordsInCollectedMessage(1);
 		assertEquals("buffer should be empty at start", 0, impl
 				.getCollectedMessagesAndClearBuffer().size());
@@ -139,7 +152,17 @@ public class MessageCollectionStrategyImplTest{
 		impl.collectMessage(createUpdateTextMessage("20150610120001", false, 1212121212));
 		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
 	}
-		
+
+	@Test
+	public void testCollectMessagesWithDeleteFlagLast() {
+		impl.setMaxRecordsInCollectedMessage(1);
+		assertEquals("buffer should be empty at start", 0, impl
+				.getCollectedMessagesAndClearBuffer().size());
+		impl.collectMessage(createUpdateTextMessage("20150610120001", false, 1212121212));
+		impl.collectMessage(createUpdateTextMessage("", true, 1212121212));
+		assertEquals(1, impl.getCollectedMessagesAndClearBuffer().size());
+	}
+
 	@Test
 	public void testIsCollectedMessagesReadyToBeTransmitted() {
 		impl.setMaxBufferedRecords(2);
