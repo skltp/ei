@@ -74,9 +74,10 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 
     protected static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 	protected static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
+	protected static final String COLLECT_QUEUE = rb.getString("COLLECT_QUEUE");
 	protected static final String INFO_LOG_QUEUE  = rb.getString("SOITOOLKIT_LOG_INFO_QUEUE");
 	protected static final String ERROR_LOG_QUEUE = rb.getString("SOITOOLKIT_LOG_ERROR_QUEUE");
-
+	
 	private AbstractJmsTestUtil jmsUtil = null;
 
 	public AbstractTestCase() {
@@ -226,6 +227,24 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 		return request;
     }
 	
+	/*
+	 * Create message as a String for Update request. Set attributes deletFlag and most_recent_time for the request
+	 * Most recent time has the following format YYYYMMDDhhmmss
+	 */
+	protected String createUpdateTextMessage(String mostRecentTime, boolean deleteFlag, long... residentIds) {
+		UpdateType request = new UpdateType();
+		for (int i = 0; i < residentIds.length; i++) {
+			EngagementTransactionType et = GenServiceTestDataUtil.genEngagementTransaction(residentIds[i]);
+			et.setDeleteFlag(deleteFlag);
+			if (mostRecentTime != null && mostRecentTime.length() > 0 ) {
+				// Set most recent time in data!
+				et.getEngagement().setMostRecentContent(mostRecentTime);
+			}		
+			request.getEngagementTransaction().add(et);
+		}
+		return jabxUtil.marshal(update_of.createUpdate(request));
+    }
+
 	/*
 	 * An incoming ProcessNotification request has the owner value set to me or another instance!
 	 */

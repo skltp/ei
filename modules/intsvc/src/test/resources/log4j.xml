@@ -66,6 +66,10 @@
 	<logger name="se.skltp.ei">
 		<level value="INFO" />
 	</logger>
+
+	<logger name="se.skltp.ei.intsvc.update.collect">
+		<level value="DEBUG" />
+	</logger>
 	
 	<!-- Monitoring logs to separate log file, additivity makes sure not logged twice -->
     <logger name="se.skltp.ei.monitoring" additivity="false">

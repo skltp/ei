@@ -73,7 +73,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
     public void setUp() throws Exception {
 
     	// Clear queues used for the tests
-		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE, PROCESS_QUEUE);
+		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE, PROCESS_QUEUE, COLLECT_QUEUE);
     }
 
 	/**

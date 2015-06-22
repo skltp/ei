@@ -49,6 +49,27 @@ object Scenarios {
 				)
 	  	.pause(500 milliseconds, 1500 milliseconds)
 	}
+	
+	// Update engagement 1 OK
+	val format = new java.text.SimpleDateFormat("yyyyMMddHHmmss")
+	val timestamp = Iterator.continually(Map("timestamp" -> ( format.format(new java.util.Date()) )))
+	val pnr = csv("pnr.csv").circular
+	
+	val scn_Update_1_Duplicates_Ok = scenario("Update 1 DUPLICATES OK")	
+  		.during(Conf.testTimeSecs) {     
+    		feed(timestamp).feed(pnr)
+			.exec(
+				http("Update 1 Duplicates OK")
+				.post("/skltp-ei/update-service/v1")
+				.headers(Headers.updateHttp_header)
+				.body(ELFileBody("data/Update_1_DUPLICATES_OK.xml")).asXML
+				.check(status.is(200))
+				.check(xpath("soap:Envelope", List("soap" -> "http://schemas.xmlsoap.org/soap/envelope/")).exists)
+				.check(xpath("//pr:UpdateResponse", List("pr" ->"urn:riv:itintegration:engagementindex:UpdateResponder:1")).count.is(1))
+	            .check(xpath("//pr:ResultCode/text()", List("pr" ->"urn:riv:itintegration:engagementindex:UpdateResponder:1")).is("OK"))
+				)
+	  	.pause(19 seconds, 21 seconds)
+	}
 
 	// Update engagement 50 OK
 	val valueCitizen_50 = new AtomicInteger(1)

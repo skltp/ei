@@ -76,6 +76,12 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>LoadTestEI_Update_Duplicates_1</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_Duplicates_1</simulationClass>
+			</properties>
+		</profile>
+		<profile>
 			<id>LoadTestEI_Mix</id>
 			<properties>
 				<simulationClass>se.skltp.ei.LoadTestEI_Mix</simulationClass>

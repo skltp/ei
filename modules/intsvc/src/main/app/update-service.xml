@@ -57,11 +57,15 @@
 
         <set-payload value="#[variable:request]" doc:name="Set Payload"/>        
 
-        <custom-transformer class="se.skltp.ei.intsvc.update.UpdateRequestToJmsMsgTransformer" doc:name="Java"/>
+        <custom-transformer class="se.skltp.ei.intsvc.update.UpdateRequestToJmsMsgTransformer" doc:name="Java">
+        	<spring:property name="processQueue" value="${PROCESS_QUEUE}"/>
+        	<spring:property name="collectQueue" value="${COLLECT_QUEUE}"/>
+        	<spring:property name="collectTreshold" value="${COLLECT_TRESHOLD}"/>       	
+        </custom-transformer>
 
         <jms:outbound-endpoint 
             connector-ref="soitoolkit-jms-connector"
-            queue="${PROCESS_QUEUE}" 
+            queue="#[variable:EI-POSTUPDATE-QUEUE]"
             transformer-refs="logMsgOut" 
             doc:name="JMS"/>
  
