@@ -28,6 +28,6 @@ import scala.concurrent.duration._
 class LoadTestEI_Update_Duplicates_1 extends Simulation {
 
     setUp(
-		Scenarios.scn_Update_1_Duplicates_Ok.inject(rampUsers(Conf.noOfUsers) over (Scenarios.rampUpTimeSecs seconds)).protocols(Conf.httpConf)
+		Scenarios.scn_Update_1_Duplicates_Ok.inject(rampUsers(Conf.noOfUsers) over (1 second)).protocols(Conf.httpConf)
 	)
 }
