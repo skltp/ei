@@ -19,7 +19,7 @@
 			init-method="init">
 		<spring:property name="messageCollectionStrategy" ref="collectMessageCollectionStrategy" />
 		<spring:property name="queueConnectionFactory" ref="soitoolkit-jms-connection-factory" />
-		<spring:property name="jmsInputQueue" value="${COLLECT_QUEUE}" />
+		<spring:property name="jmsInputQueue" value="${COLLECT_QUEUE_WITH_CONSUMER_OPTIONS}" />
 		<spring:property name="jmsOutputQueue" value="${PROCESS_QUEUE}" />
 		<spring:property name="jmsErrorQueue" value="${COLLECT_ERROR_QUEUE}" />
 		<spring:property name="jmsReceiveTimeoutMillis" value="${COLLECT_JMS_RECEIVE_TIMEOUT_MILLIS}" />
