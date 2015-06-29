@@ -76,8 +76,12 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 
         <!-- TODO: Add import of environment specific configuration files here as required -->
         
-        <!-- Import the JMS-provider used in production here, embedded JMS providers used for integration tests are loaded by the *IntegratIonTest.java classes directly -->  
+        <!-- Import the JMS-provider used in production here, embedded JMS providers used for integration tests are loaded by the *IntegratIonTest.java classes directly -->
+        <!-- SKLTP-691: define an EI-specific AMQ-connector to configure redeliveryDelay (needed for
+            app-restart with message with redelivered-header set, or when message moves across AMQ network-of-brokers to another app-instance.   
         <spring:import resource="classpath:soitoolkit-mule-jms-connector-activemq-external.xml"/>
+        -->
+        <spring:import resource="classpath:ei-mule-jms-connector-activemq-external.xml"/>
     </spring:beans>
 	
 	<!-- Used by integration tests only -->
