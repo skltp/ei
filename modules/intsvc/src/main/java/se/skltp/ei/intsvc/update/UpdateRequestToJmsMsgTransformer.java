@@ -26,6 +26,7 @@ import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import se.skltp.ei.intsvc.EiConstants;
 
 public class UpdateRequestToJmsMsgTransformer extends AbstractMessageTransformer {
 
@@ -60,11 +61,17 @@ public class UpdateRequestToJmsMsgTransformer extends AbstractMessageTransformer
 
 		// Decide which queue to use depending on message size
 		int numberOfPostsInMessage = request.getEngagementTransaction().size();
-		if (numberOfPostsInMessage <= collectTreshold) {
-			message.setInvocationProperty("EI-POSTUPDATE-QUEUE", collectQueue);			
+		boolean useCollect = numberOfPostsInMessage <= collectTreshold;
+		if (useCollect) {
+			message.setInvocationProperty("EI-POSTUPDATE-QUEUE", collectQueue);
 		} else {
 			message.setInvocationProperty("EI-POSTUPDATE-QUEUE", processQueue);
 		}
+		
+		// add metadata for logging
+		message.setOutboundProperty(EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE, String.valueOf(numberOfPostsInMessage));
+		message.setOutboundProperty(EiConstants.EI_LOG_IS_UPDATE_ROUTED_VIA_COLLECT, String.valueOf(useCollect));
+		message.setOutboundProperty(EiConstants.EI_LOG_MESSAGE_TYPE, EiConstants.EI_LOG_MESSAGE_TYPE_UPDATE);
 
 		return message;
 	}

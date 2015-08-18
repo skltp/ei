@@ -146,14 +146,47 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         <spring:property name="jaxbContext" ref="jaxbContext"/>
     </custom-transformer>
 
+    <custom-transformer name="logMsgIn-to-process" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="msg-in"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+		<spring:property name="extraInfo">
+			<spring:map>
+				<spring:entry key="origConsumerId" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.EI_ORIGINAL_CONSUMER_ID]]"/>
+				<spring:entry key="nrRecords" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE]]"/>
+				<spring:entry key="msgType" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_MESSAGE_TYPE]]"/>
+				<spring:entry key="isViaCollect" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_IS_UPDATE_ROUTED_VIA_COLLECT]]"/>
+				<spring:entry key="collectNrMsgs" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_UPDATE_COLLECT_NR_MESSAGES]]"/>
+				<spring:entry key="collectNrRecords" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_UPDATE_COLLECT_NR_RECORDS]]"/>
+				<spring:entry key="collectBufAgeMs" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_UPDATE_COLLECT_BUFFER_AGE_MS]]"/>
+			</spring:map>
+		</spring:property>        
+    </custom-transformer>
+
     <custom-transformer name="logMsgOut" class="org.soitoolkit.commons.mule.log.LogTransformer">
 		<spring:property name="logType"     value="msg-out"/>
         <spring:property name="jaxbContext" ref="jaxbContext"/>
     </custom-transformer>
 
+    <custom-transformer name="logMsgOut-to-process" class="org.soitoolkit.commons.mule.log.LogTransformer">
+		<spring:property name="logType"     value="msg-out"/>
+        <spring:property name="jaxbContext" ref="jaxbContext"/>
+		<spring:property name="extraInfo">
+			<spring:map>
+				<spring:entry key="origConsumerId" value="#[message.outboundProperties[se.skltp.ei.intsvc.EiConstants.EI_ORIGINAL_CONSUMER_ID]]"/>
+				<spring:entry key="nrRecords" value="#[message.outboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE]]"/>
+				<spring:entry key="isViaCollect" value="#[message.outboundProperties[se.skltp.ei.intsvc.EiConstants.EI_LOG_IS_UPDATE_ROUTED_VIA_COLLECT]]"/>
+			</spring:map>
+		</spring:property>
+    </custom-transformer>
+
     <custom-transformer name="logReqIn" class="org.soitoolkit.commons.mule.log.LogTransformer">
 		<spring:property name="logType"     value="req-in"/>
         <spring:property name="jaxbContext" ref="jaxbContext"/>
+		<spring:property name="extraInfo">
+			<spring:map>
+				<spring:entry key="origConsumerId" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_RIVTA_ORIGINAL_CONSUMER_ID]]"/>
+			</spring:map>
+		</spring:property>
     </custom-transformer>
 
     <custom-transformer name="logReqOut" class="org.soitoolkit.commons.mule.log.LogTransformer">

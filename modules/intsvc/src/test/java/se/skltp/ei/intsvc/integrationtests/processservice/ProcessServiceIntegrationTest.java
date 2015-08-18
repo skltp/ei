@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -45,6 +46,7 @@ import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
+import se.skltp.ei.intsvc.EiConstants;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.intsvc.subscriber.api.Subscriber;
 import se.skltp.ei.intsvc.subscriber.api.SubscriberCache;
@@ -128,13 +130,22 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		String requestXml = jabxUtil.marshal(update_of.createUpdate(createUdateRequest(OWNER, residentId)));
 		// Create a response that is wrapped as a ProcessNotification, with owner set to me
 		String responseXml = jabxUtil.marshal(processNotification_of.createProcessNotification(createProcessNotificationResponse(OWNER, residentId)));
+		// add logging properties
+		HashMap<String, String> props = new HashMap<String, String>();
+		props.put(EiConstants.EI_ORIGINAL_CONSUMER_ID, "testConsumerHsaId");
+		props.put(EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE, "12");
+		props.put(EiConstants.EI_LOG_MESSAGE_TYPE, EiConstants.EI_LOG_MESSAGE_TYPE_UPDATE);
+		props.put(EiConstants.EI_LOG_IS_UPDATE_ROUTED_VIA_COLLECT, Boolean.TRUE.toString());
+		props.put(EiConstants.EI_LOG_UPDATE_COLLECT_NR_MESSAGES, "3");
+		props.put(EiConstants.EI_LOG_UPDATE_COLLECT_NR_RECORDS, "45");
+		props.put(EiConstants.EI_LOG_UPDATE_COLLECT_BUFFER_AGE_MS, "3100");
 
 		// Setup a test-subscriber on the notification-queues
 		MessageConsumer consumer = setupListener(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*", this);
 
 		try {
 			// Send an update message to the process-service and wait for a publish on one of the notification queues
-			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, props, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 			
 	        // Compare the notified message with the request message, the main part should be the same but the notified message will be wrapped as a ProcessNotification
 			assertRequest(responseXml, response);

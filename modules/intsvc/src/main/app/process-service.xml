@@ -36,7 +36,7 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
         <jms:inbound-endpoint 
             connector-ref="soitoolkit-jms-connector"
             queue="${PROCESS_QUEUE}" 
-            transformer-refs="logMsgIn" 
+            transformer-refs="logMsgIn-to-process" 
             doc:name="JMS">
             <jms:transaction action="ALWAYS_BEGIN"/>
         </jms:inbound-endpoint>

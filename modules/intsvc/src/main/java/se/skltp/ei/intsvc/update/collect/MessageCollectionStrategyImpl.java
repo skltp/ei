@@ -95,6 +95,11 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 
 		// Unmarshal message
 		UpdateType updateRecord = (UpdateType)jabxUtil.unmarshal(message);
+		
+		int preAddBufferSize = buffer.size();
+		// Update counter of processed messages
+		totalNrAddedMessages++;
+		totalNrAddedRecords += updateRecord.getEngagementTransaction().size();
 
 		// Find all records in message
 		List<EngagementTransactionType> engagementTransactions = updateRecord.getEngagementTransaction();
@@ -110,7 +115,6 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	        	if (newIsDeleteFlag) {
 	        		// A delete overrides previously stored engagement
 	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
-	        		//? increase statisticsTotalNrAddedRecords ??
 	        	} else {
 	        		// Check if incoming record contains a more recent time value
 	        		EngagementTransactionType oldEngagementTransaction = buffer.get(newEngagementEntity.getId());
@@ -137,17 +141,11 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
             		}
 	        	}	        	
 	        } else {
-	        	// No engagement exist in buffer with this key, store it!
-	        	totalNrAddedRecords++;
+	        	// No engagement exist in buffer with this key, store it!	        	
 	    		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
 	        }
 		}
 		
-		// Update counter of processed messages
-		totalNrAddedMessages++;
-
-		int preAddBufferSize = buffer.size();
-
 		if (log.isDebugEnabled()) {
 			log.debug(
 					"added record: duplicate: {}, buffer size: {}, total added msgs: {}, total added records: {}",
@@ -168,7 +166,8 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	@Override
 	public List<CollectedMessage> getCollectedMessagesAndClearBuffer() {
 		List<CollectedMessage> collMsgs = new ArrayList<CollectedMessage>();
-
+		
+		long currentBufferAgeMillis = System.currentTimeMillis() - bufferAgeMillis;
 		List<EngagementTransactionType> records = new ArrayList<EngagementTransactionType>();
 		int totalCount = 0;
 		for (String key : buffer.keySet()) {
@@ -176,7 +175,24 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 			records.add(buffer.get(key));
 			if (records.size() % maxRecordsInCollectedMessage == 0
 					|| totalCount == buffer.size()) {
-				collMsgs.add(buildCollectedMessage(records));
+				CollectedMessage cm = buildCollectedMessage(records);
+				collMsgs.add(cm); 
+				// add statistics, only add stats for collected messages to
+				// first collected message if there is more than one, we will
+				// average stats over all collected messages so the result
+				// will be correct
+				cm.setStatisticsBufferAgeMs(currentBufferAgeMillis);
+				cm.setStatisticsNrRecords(records.size());
+				if (collMsgs.size() == 1) {
+					cm.setStatisticsCollectedNrMessages(totalNrAddedMessages);
+					cm.setStatisticsCollectedNrRecords(totalNrAddedRecords);
+				}
+				else {
+					// all stats for the current buffer accounted for in the first collected message
+					cm.setStatisticsCollectedNrMessages(0);
+					cm.setStatisticsCollectedNrRecords(0);					
+				}
+				
 				records.clear();
 			}
 		}

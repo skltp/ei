@@ -48,6 +48,8 @@
             wsdlLocation="classpath:/TD_ENGAGEMENTINDEX_1_0_R/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
 
         <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
+        
+        <set-property propertyName="#[se.skltp.ei.intsvc.EiConstants.EI_ORIGINAL_CONSUMER_ID]" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_RIVTA_ORIGINAL_CONSUMER_ID]]" doc:name="Propagate consumer id"/>
  
         <component doc:name="Java">
             <spring-object bean="update-ws-bean"/>
@@ -66,7 +68,7 @@
         <jms:outbound-endpoint 
             connector-ref="soitoolkit-jms-connector"
             queue="#[variable:EI-POSTUPDATE-QUEUE]"
-            transformer-refs="logMsgOut" 
+            transformer-refs="logMsgOut-to-process" 
             doc:name="JMS"/>
  
         <set-payload value="#[variable:response]" doc:name="Set Payload"/>        

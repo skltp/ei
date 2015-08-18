@@ -26,6 +26,7 @@ import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 
 import riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
+import se.skltp.ei.intsvc.EiConstants;
 
 public class ProcessNotificationRequestToJmsMsgTransformer extends AbstractMessageTransformer {
 
@@ -42,7 +43,11 @@ public class ProcessNotificationRequestToJmsMsgTransformer extends AbstractMessa
 		
 		message.setPayload(jmsMsg);
 		message.setOutboundProperty("logicalAddress", logicalAddress);
-
+		
+		// add metadata for logging
+		message.setOutboundProperty(EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE, String.valueOf(request.getEngagementTransaction().size()));
+		message.setOutboundProperty(EiConstants.EI_LOG_MESSAGE_TYPE, EiConstants.EI_LOG_MESSAGE_TYPE_PROCESS_NOTIFICATION);
+		
 		return message;
 	}
 }

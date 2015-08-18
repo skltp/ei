@@ -50,6 +50,8 @@
             wsdlLocation="classpath:/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
 
         <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
+        
+        <set-property propertyName="#[se.skltp.ei.intsvc.EiConstants.EI_ORIGINAL_CONSUMER_ID]" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_RIVTA_ORIGINAL_CONSUMER_ID]]" doc:name="Propagate consumer id"/>        
  
         <component doc:name="Java">
             <spring-object bean="notification-ws-bean"/>
@@ -67,7 +69,7 @@
 		        <jms:outbound-endpoint 
 		            connector-ref="soitoolkit-jms-connector"
 		            queue="${PROCESS_QUEUE}" 
-		            transformer-refs="logMsgOut" 
+		            transformer-refs="logMsgOut-to-process" 
 		            doc:name="JMS"/>
 	        </when>
 	        <otherwise>

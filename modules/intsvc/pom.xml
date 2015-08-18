@@ -96,6 +96,14 @@
             </exclusions>
         </dependency>
 
+        <!-- mysql: test dependency to be able to run Mule-server in Eclipse with an external database -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.36</version>
+            <scope>test</scope>
+        </dependency>
+
 		<!-- Mockito -->
 		<dependency>
 			<groupId>org.mockito</groupId>

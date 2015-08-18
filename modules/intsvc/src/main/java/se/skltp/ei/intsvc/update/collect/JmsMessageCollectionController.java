@@ -34,6 +34,8 @@ import javax.jms.TextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import se.skltp.ei.intsvc.EiConstants;
+
 /**
  * Reads a number of messages (determined by a
  * <code>MessageCollectionStrategy</code>) from a JMS queue into a
@@ -45,14 +47,6 @@ import org.slf4j.LoggerFactory;
 public class JmsMessageCollectionController implements Runnable {
 	private static final Logger log = LoggerFactory
 			.getLogger(JmsMessageCollectionController.class);
-
-	// TODO: log statistics: for every output message:
-	// - number of processed input-messages
-	// - number of processed input-records
-	// - number of duplicates found
-	// - number of resulting messages
-	// - number of resulting output-records
-	// - corrId/sequence number if multiple output records
 
 	private String jmsInputQueue = "skltp.ei.collect";
 	private String jmsOutputQueue = "skltp.ei.process";
@@ -227,6 +221,18 @@ public class JmsMessageCollectionController implements Runnable {
 		for (CollectedMessage collMsg : collMsgs) {
 			log.debug("sending msg to output queue: {}", jmsOutputQueue);
 			outMsg.setText(collMsg.getPayload());
+			
+			// add properties and statistics for logging
+			// origConsumerId: set to "collect" since multiple servcie consumers can have contributed to the resulting message 
+			outMsg.setStringProperty(EiConstants.EI_ORIGINAL_CONSUMER_ID, "collect");
+			outMsg.setStringProperty(EiConstants.EI_LOG_MESSAGE_TYPE, EiConstants.EI_LOG_MESSAGE_TYPE_UPDATE);
+			outMsg.setStringProperty(EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE, String.valueOf(collMsg.getStatisticsNrRecords()));
+			
+			outMsg.setStringProperty(EiConstants.EI_LOG_IS_UPDATE_ROUTED_VIA_COLLECT, String.valueOf(Boolean.TRUE));
+			outMsg.setStringProperty(EiConstants.EI_LOG_UPDATE_COLLECT_NR_MESSAGES, String.valueOf(collMsg.getStatisticsCollectedNrMessages()));
+			outMsg.setStringProperty(EiConstants.EI_LOG_UPDATE_COLLECT_NR_RECORDS, String.valueOf(collMsg.getStatisticsCollectedNrRecords()));
+			outMsg.setStringProperty(EiConstants.EI_LOG_UPDATE_COLLECT_BUFFER_AGE_MS, String.valueOf(collMsg.getStatisticsBufferAgeMs()));
+			
 			producer.send(outMsg);
 		}
 	}

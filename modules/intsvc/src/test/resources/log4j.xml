@@ -31,6 +31,10 @@
 		<level value="TRACE" />
 	</logger>
 
+	<logger name="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+		<level value="TRACE" />
+	</logger>	
+
 	<logger name="org.springframework.core.io.support.PropertiesLoaderSupport">
 		<level value="INFO" />
 	</logger>

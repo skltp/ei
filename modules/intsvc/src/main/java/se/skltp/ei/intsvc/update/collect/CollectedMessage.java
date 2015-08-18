@@ -19,7 +19,6 @@
  */
 package se.skltp.ei.intsvc.update.collect;
 
-import java.util.Map;
 
 /**
  * Contains a number of collected messages in payload, the metadata map can be
@@ -32,7 +31,22 @@ import java.util.Map;
  */
 public class CollectedMessage {
 	private String payload;
-	private Map<String, String> metadata;
+	/**
+	 * The number of records in the payload.
+	 */
+	private int statisticsNrRecords;
+	/**
+	 * The total number of messages collected into this message.
+	 */
+	private int statisticsCollectedNrMessages;
+	/**
+	 * The total numer of records collected into this message.
+	 */
+	private int statisticsCollectedNrRecords;
+	/**
+	 * The buffer age in milliseconds for this message.
+	 */
+	private long statisticsBufferAgeMs;
 
 	public String getPayload() {
 		return payload;
@@ -42,11 +56,37 @@ public class CollectedMessage {
 		this.payload = payload;
 	}
 
-	public Map<String, String> getMetadata() {
-		return metadata;
+	public int getStatisticsNrRecords() {
+		return statisticsNrRecords;
 	}
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
+	public void setStatisticsNrRecords(int statisticsNrRecords) {
+		this.statisticsNrRecords = statisticsNrRecords;
 	}
+
+	public int getStatisticsCollectedNrMessages() {
+		return statisticsCollectedNrMessages;
+	}
+
+	public void setStatisticsCollectedNrMessages(
+			int statisticsCollectedNrMessages) {
+		this.statisticsCollectedNrMessages = statisticsCollectedNrMessages;
+	}
+
+	public int getStatisticsCollectedNrRecords() {
+		return statisticsCollectedNrRecords;
+	}
+
+	public void setStatisticsCollectedNrRecords(int statisticsCollectedNrRecords) {
+		this.statisticsCollectedNrRecords = statisticsCollectedNrRecords;
+	}
+
+	public long getStatisticsBufferAgeMs() {
+		return statisticsBufferAgeMs;
+	}
+
+	public void setStatisticsBufferAgeMs(long statisticsBufferAgeMs) {
+		this.statisticsBufferAgeMs = statisticsBufferAgeMs;
+	}
+
 }
