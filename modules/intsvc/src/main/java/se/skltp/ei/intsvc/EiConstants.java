@@ -22,7 +22,7 @@ public interface EiConstants {
 	 * the dashes in X_RIVTA_ORIGINAL_CONSUMER_ID is not allowed in JMS properties and will
 	 * be replaced by Mule in runtime.
 	 */
-	public static final String EI_ORIGINAL_CONSUMER_ID = "origConsumerId";
+	public static final String EI_ORIGINAL_CONSUMER_ID = "originalServiceconsumerHsaid";
 	/**
 	 * Property name for logging metadata.
 	 */	
