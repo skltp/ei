@@ -35,6 +35,11 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 public interface ProcessInterface {
 
     /**
+     * Defines the minimum number of allowed engagement records in a request.
+     */
+    int MIN_NUMBER_OF_ENGAGEMENTS = 1;
+
+    /**
      * Defines the maximum number of allowed engagement records in a request.
      */
     int MAX_NUMBER_OF_ENGAGEMENTS = 1000;

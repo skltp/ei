@@ -156,7 +156,36 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		// Expect nothing on the processing queue due to the error
 		assertQueueDepth(PROCESS_QUEUE, 0);
     }
-    
+
+    /**
+     * Verifies that we get an error message when a request contains too few engagements.
+     */
+    @Test
+    public void update_ERR_min_number_of_engagements() {
+		
+		UpdateType request = new UpdateType();
+		
+		String expectedError = "EI000: A technical error has occurred, error message: The request contains less than 1 engagements. Minium number of engagements per request is 1.";
+
+		try {
+			// Call the update web service without waiting for an asynch event since we expect the web service to return an error directly without triggering any asynch processing
+			new DoOneTestDispatcher(request).doDispatch();
+			fail("Expected exception here");
+
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
+			assertEquals("javax.xml.ws.soap.SOAPFaultException: " + expectedError, e.toString());
+		};
+
+		// Expect one error log and info log entry
+		assertQueueDepth(ERROR_LOG_QUEUE, 1);
+		assertQueueContainsMessage(ERROR_LOG_QUEUE, expectedError);
+		assertQueueDepth(INFO_LOG_QUEUE, 1);
+
+		// Expect nothing on the processing queue due to the error
+		assertQueueDepth(PROCESS_QUEUE, 0);
+    }
+
     /**
      * Verifies that we get an error message when a request contains too many engagements.
      */
