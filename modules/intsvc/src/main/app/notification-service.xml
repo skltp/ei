@@ -41,17 +41,21 @@
             address="${NOTIFICATION_WEB_SERVICE_URL}"  
             connector-ref="soitoolkit-http-connector"
             exchange-pattern="request-response"
-            transformer-refs="logReqIn"
             responseTransformer-refs="logRespOut" doc:name="Generic"/>
 
+        <!-- logging properties -->
+        <set-property propertyName="#[se.skltp.ei.intsvc.EiConstants.EI_ORIGINAL_CONSUMER_ID]" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_RIVTA_ORIGINAL_CONSUMER_ID]]" doc:name="Propagate consumer id"/>
+        <set-session-variable variableName="#[org.soitoolkit.commons.mule.core.PropertyNames.SOITOOLKIT_CORRELATION_ID]" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_SKLTP_CORRELATION_ID]]" doc:name="Save correlation id in scope for logging to pick it up"/>
+        <set-property propertyName="#[org.soitoolkit.commons.mule.core.PropertyNames.SOITOOLKIT_CORRELATION_ID]" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_SKLTP_CORRELATION_ID]]" doc:name="Propagate correlation id"/>
+        
+        <transformer ref="logReqIn"/>
+        
         <cxf:jaxws-service
             namespace="urn:riv:itintegration:engagementindex:ProcessNotification:1:rivtabp21"
             serviceClass="se.skltp.ei.intsvc.notification.NotificationWSBean"
             wsdlLocation="classpath:/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl" doc:name="SOAP"/>
 
         <set-variable variableName="request" value="#[payload]" doc:name="Variable"/>
-        
-        <set-property propertyName="#[se.skltp.ei.intsvc.EiConstants.EI_ORIGINAL_CONSUMER_ID]" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_RIVTA_ORIGINAL_CONSUMER_ID]]" doc:name="Propagate consumer id"/>        
  
         <component doc:name="Java">
             <spring-object bean="notification-ws-bean"/>

@@ -20,6 +20,7 @@
 package se.skltp.ei.intsvc.update.collect;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.jms.DeliveryMode;
 import javax.jms.JMSException;
@@ -33,6 +34,7 @@ import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.soitoolkit.commons.mule.core.PropertyNames;
 
 import se.skltp.ei.intsvc.EiConstants;
 
@@ -223,8 +225,10 @@ public class JmsMessageCollectionController implements Runnable {
 			outMsg.setText(collMsg.getPayload());
 			
 			// add properties and statistics for logging
-			// origConsumerId: set to "collect" since multiple servcie consumers can have contributed to the resulting message 
+			// origConsumerId: set to "collect" since multiple service consumers can have contributed to the resulting message 
 			outMsg.setStringProperty(EiConstants.EI_ORIGINAL_CONSUMER_ID, "collect");
+			// create a new correlationId for collect, multiple service consumers can have contributed to the resulting message
+			outMsg.setStringProperty(PropertyNames.SOITOOLKIT_CORRELATION_ID, UUID.randomUUID().toString());
 			outMsg.setStringProperty(EiConstants.EI_LOG_MESSAGE_TYPE, EiConstants.EI_LOG_MESSAGE_TYPE_UPDATE);
 			outMsg.setStringProperty(EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE, String.valueOf(collMsg.getStatisticsNrRecords()));
 			

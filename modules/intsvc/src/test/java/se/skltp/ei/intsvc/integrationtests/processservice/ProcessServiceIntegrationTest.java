@@ -40,6 +40,7 @@ import org.mule.api.MuleMessage;
 import org.mule.context.notification.EndpointMessageNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.soitoolkit.commons.mule.core.PropertyNames;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
@@ -88,6 +89,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
     private EngagementRepository engagementRepository;
     private SubscriberCache subscriberCache;
     private String lastSubscriberQueueName; // Used to listen for messages arriving to the last component in the tests below, i.e. knowing when the asynch processing is complete
+    private HashMap<String, String> inboundProps = new HashMap<String, String>();
 
     @Before
     public void setUp() throws Exception {
@@ -116,6 +118,16 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
     	
     	// Clear queues used for the tests
 		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE, PROCESS_QUEUE);
+		
+		// add logging properties
+		inboundProps.put(EiConstants.EI_ORIGINAL_CONSUMER_ID, "testConsumerHsaId");
+		inboundProps.put(PropertyNames.SOITOOLKIT_CORRELATION_ID, "correlationId-123");
+		inboundProps.put(EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE, "12");
+		inboundProps.put(EiConstants.EI_LOG_MESSAGE_TYPE, EiConstants.EI_LOG_MESSAGE_TYPE_UPDATE);
+		inboundProps.put(EiConstants.EI_LOG_IS_UPDATE_ROUTED_VIA_COLLECT, Boolean.TRUE.toString());
+		inboundProps.put(EiConstants.EI_LOG_UPDATE_COLLECT_NR_MESSAGES, "3");
+		inboundProps.put(EiConstants.EI_LOG_UPDATE_COLLECT_NR_RECORDS, "45");
+		inboundProps.put(EiConstants.EI_LOG_UPDATE_COLLECT_BUFFER_AGE_MS, "3100");		
 	}
 
 	/**
@@ -130,22 +142,13 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		String requestXml = jabxUtil.marshal(update_of.createUpdate(createUdateRequest(OWNER, residentId)));
 		// Create a response that is wrapped as a ProcessNotification, with owner set to me
 		String responseXml = jabxUtil.marshal(processNotification_of.createProcessNotification(createProcessNotificationResponse(OWNER, residentId)));
-		// add logging properties
-		HashMap<String, String> props = new HashMap<String, String>();
-		props.put(EiConstants.EI_ORIGINAL_CONSUMER_ID, "testConsumerHsaId");
-		props.put(EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE, "12");
-		props.put(EiConstants.EI_LOG_MESSAGE_TYPE, EiConstants.EI_LOG_MESSAGE_TYPE_UPDATE);
-		props.put(EiConstants.EI_LOG_IS_UPDATE_ROUTED_VIA_COLLECT, Boolean.TRUE.toString());
-		props.put(EiConstants.EI_LOG_UPDATE_COLLECT_NR_MESSAGES, "3");
-		props.put(EiConstants.EI_LOG_UPDATE_COLLECT_NR_RECORDS, "45");
-		props.put(EiConstants.EI_LOG_UPDATE_COLLECT_BUFFER_AGE_MS, "3100");
 
 		// Setup a test-subscriber on the notification-queues
 		MessageConsumer consumer = setupListener(Subscriber.NOTIFICATION_QUEUE_PREFIX + "*", this);
 
 		try {
 			// Send an update message to the process-service and wait for a publish on one of the notification queues
-			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, props, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, inboundProps, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 			
 	        // Compare the notified message with the request message, the main part should be the same but the notified message will be wrapped as a ProcessNotification
 			assertRequest(responseXml, response);
@@ -194,7 +197,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		try {
 
 			// Send an update message to the process-service and wait for a publish on one of the notification queues
-			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, inboundProps, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 	
 	        // Compare the notified message with the request message, they should be the same
 			assertRequest(requestXml, response);
@@ -238,7 +241,7 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 		try {
 
 			// Send an update message to the process-service and wait for a publish on one of the notification queues
-			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, null, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
+			MuleMessage response = dispatchAndWaitForDelivery("jms://" + PROCESS_QUEUE + "?connector=soitoolkit-jms-connector", requestXml, inboundProps, "jms://" + lastSubscriberQueueName, EndpointMessageNotification.MESSAGE_DISPATCH_END, EI_TEST_TIMEOUT);
 	
 	        // Compare the notified message with the request message, they should be the same
 			assertRequest(requestXml, response);
@@ -272,8 +275,9 @@ public class ProcessServiceIntegrationTest extends AbstractTestCase implements M
 	public void onMessage(Message message) {
     	processNotificationMessage = (TextMessage)message;
     	try {
-			System.err.println("GOT message: " + processNotificationMessage.getText());
-			System.err.println("ON QUEUE: " + message.getJMSDestination());
+			System.out.println("GOT message: " + processNotificationMessage.getText());
+			System.out.println("  ON QUEUE: " + message.getJMSDestination());
+			System.out.println("  correlationId: " + message.getStringProperty(PropertyNames.SOITOOLKIT_CORRELATION_ID));
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}
