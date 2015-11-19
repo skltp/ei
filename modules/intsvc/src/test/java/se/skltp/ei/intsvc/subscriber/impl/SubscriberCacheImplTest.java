@@ -15,7 +15,7 @@ import se.skltp.ei.intsvc.subscriber.api.Subscriber;
 
 public class SubscriberCacheImplTest {
 	
-	public final String FILEPATH = System.getProperty("java.io.tmpdir") + File.pathSeparator + "ei_cache_test";
+	public final String FILEPATH = System.getProperty("java.io.tmpdir") + File.separator + "ei_cache_test";
 	
 	private List<Subscriber> list;
 	
