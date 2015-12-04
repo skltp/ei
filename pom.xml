@@ -21,6 +21,11 @@
     <developerConnection>scm:git:git://github.com/skltp/ei.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
+  
+  <properties>
+  	<sonar.host.url>http://localhost:9000</sonar.host.url>
+	<sonar.jdbc.url>jdbc:jtds:sqlserver://localhost;databaseName=sonar;SelectMethod=Cursor</sonar.jdbc.url>
+  </properties>
 
   <repositories>
     <!-- Sonatype staging repo added to be able to build VP using artifacts
@@ -63,6 +68,11 @@
             <localCheckout>true</localCheckout>
           </configuration>
         </plugin>
+        <plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>2.7.1</version>
+		</plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -95,6 +105,11 @@
           <useDefaultMapping>true</useDefaultMapping>
         </configuration>
       </plugin>
+      <plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>sonar-maven-plugin</artifactId>
+		<version>2.7.1</version>
+	  </plugin>
     </plugins>
   </build>
 </project>
