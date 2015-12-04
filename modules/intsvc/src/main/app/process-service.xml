@@ -54,7 +54,8 @@ http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mul
 
 		<!-- Based on the incoming message set a variable EI-NOTIFICATION-QUEUE to the name of the queue to use and set the actual payload -->
 	    <custom-transformer doc:name="Set queue-name and payload" class="se.skltp.ei.intsvc.process.SetQueueAndPayloadTransformer" />
-
+	    
+	    <set-property propertyName="soitoolkit_correlationId" value="#[message.inboundProperties['soitoolkit_correlationId']]" doc:name="propagate correlationId" />
 
 		<!-- Post he message to the queue in the varaible EI-NOTIFICATION-QUEUE -->
         <jms:outbound-endpoint 

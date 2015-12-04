@@ -18,7 +18,11 @@ public interface EiConstants {
 	 */
 	public static final String X_RIVTA_ORIGINAL_CONSUMER_ID = "x-rivta-original-serviceconsumer-hsaid";
 	/**
-	 * Prooperty name for propagating X_RIVTA_ORIGINAL_CONSUMER_ID within EI over JMS queues,
+	 * The SKLTP correlation id header.
+	 */
+	public static final String X_SKLTP_CORRELATION_ID = "x-skltp-correlation-id";
+	/**
+	 * Property name for propagating X_RIVTA_ORIGINAL_CONSUMER_ID within EI over JMS queues,
 	 * the dashes in X_RIVTA_ORIGINAL_CONSUMER_ID is not allowed in JMS properties and will
 	 * be replaced by Mule in runtime.
 	 */

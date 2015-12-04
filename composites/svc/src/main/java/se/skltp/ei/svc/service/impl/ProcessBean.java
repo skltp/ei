@@ -123,7 +123,9 @@ public class ProcessBean implements ProcessInterface {
      * @param ownerCheck true if mandatory owner check shall be carried out as well, otherwise false.
      */
     private void validateEngagementTransactions(final List<EngagementTransactionType> engagementTransactions, boolean ownerCheck) {
-        validateMaxLength(engagementTransactions);
+        validateMinLength(engagementTransactions);
+    	
+    	validateMaxLength(engagementTransactions);
 
         final Map<String, Integer> hashCodes = new HashMap<String, Integer>(engagementTransactions.size());
         int hashCodeIndex = 0;
@@ -147,7 +149,7 @@ public class ProcessBean implements ProcessInterface {
         }
     }
 
-    private void validateTransactionLogicalAdressAndSourceSystem(int etIndex, EngagementType et) {
+	private void validateTransactionLogicalAdressAndSourceSystem(int etIndex, EngagementType et) {
     	
     	// If no black-list is set then simply bail out without any validations
     	if (updateNotificationNotAllowedHsaIdList == null) return;
@@ -212,6 +214,14 @@ public class ProcessBean implements ProcessInterface {
                     MAX_NUMBER_OF_ENGAGEMENTS + " engagements. Maximum number of engagements per request is " + MAX_NUMBER_OF_ENGAGEMENTS + ".");
         }
     }
+
+    // Update/processNotification - min 1 engagement per request
+    private void validateMinLength(List<EngagementTransactionType> engagementTransactions) {
+		if (engagementTransactions.size() < MIN_NUMBER_OF_ENGAGEMENTS) {
+            throw EI000_TECHNICAL_ERROR.createException("The request contains less than " + 
+                    MIN_NUMBER_OF_ENGAGEMENTS + " engagements. Minium number of engagements per request is " + MIN_NUMBER_OF_ENGAGEMENTS + ".");			
+		}
+	}
 
 
     /**

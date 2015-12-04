@@ -152,7 +152,11 @@ public class ProcessBeanTest {
     @Test
     public void update_r7_positive_owner_matches_logicaladdress() throws Exception {
     	try {
-    		BEAN.validateUpdate(HEADER, new UpdateType());
+            UpdateType request = new UpdateType();
+            EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+            request.getEngagementTransaction().add(et1);
+            
+    		BEAN.validateUpdate(HEADER, request);
 		} catch (EiException e) {
 			fail("Expected ok, not excpetion");
 		}
@@ -207,7 +211,20 @@ public class ProcessBeanTest {
 			assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
 		}
     }
-    
+
+    @Test
+    public void update_ERR_min_number_of_engagements() throws Exception {
+    	
+		UpdateType request = new UpdateType();
+
+    	try {   		
+    		BEAN.validateUpdate(HEADER, request);	
+    		fail("Test Failed - No EIException thrown");
+    		
+		} catch (EiException e) {
+			assertEquals(EiErrorCodeEnum.EI000_TECHNICAL_ERROR.getErrorCode(), e.getCode());
+		}
+    }
     
     /**
      * Validates that all mandatory fields is supplied in an engagement.

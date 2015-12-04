@@ -19,11 +19,19 @@
  */
 package se.skltp.ei.intsvc.integrationtests;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.message.Message;
+
+import se.skltp.ei.intsvc.EiConstants;
 
 public abstract class AbstractTestConsumer<ServiceInterface> {
-
-	public static final String SAMPLE_ORIGINAL_CONSUMER_HSAID = "sample-original-consumer-hsaid";
 	
 	protected ServiceInterface _service = null;	
 
@@ -52,7 +60,14 @@ public abstract class AbstractTestConsumer<ServiceInterface> {
 		}
         */
 
-		_service = proxyFactory.create(getServiceType()); 
+		_service = proxyFactory.create(getServiceType());
+
+		// add http-headers to request
+		Client proxy = ClientProxy.getClient(_service);
+		Map<String, List<String>> headers = new HashMap<String, List<String>>();
+		headers.put(EiConstants.X_RIVTA_ORIGINAL_CONSUMER_ID, Arrays.asList("testOriginalConsumerId-1"));
+		headers.put(EiConstants.X_SKLTP_CORRELATION_ID, Arrays.asList("testSkltpCorrelationId-1"));
+		proxy.getRequestContext().put(Message.PROTOCOL_HEADERS, headers);
 	}
 
     Class<ServiceInterface> getServiceType() {

@@ -16,7 +16,20 @@
     
     <properties>
         <spring.version>3.1.1.RELEASE</spring.version>
+        <commons-collections.mule.version>3.2.1</commons-collections.mule.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- manage version of commons-collections, Mule 3.3.1 requires commons-collections 3.2.1 to work -->
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.mule.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 
 	<dependencies>
 		<dependency>

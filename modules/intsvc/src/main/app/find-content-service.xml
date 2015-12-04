@@ -21,13 +21,16 @@
     <spring:bean name="find-content-ws-bean" class="se.skltp.ei.intsvc.findcontent.FindContentWSBean">
         <spring:property name="blBean" ref="find-content-bl-bean" />
     </spring:bean>
-
+    
+    <message-properties-transformer name="findContentCorrelationIdTrf" scope="session">
+    	<add-message-property key="soitoolkit_correlationId" value="#[message.inboundProperties[se.skltp.ei.intsvc.EiConstants.X_SKLTP_CORRELATION_ID]]"/>
+    </message-properties-transformer>
 
 	<!-- FindContent Web Service -->
 	<simple-service 
 		name="find-content-web-service"
         address="${FIND_CONTENT_WEB_SERVICE_URL}?connector=soitoolkit-http-connector" 
-        transformer-refs="logReqIn"
+        transformer-refs="findContentCorrelationIdTrf logReqIn"
         responseTransformer-refs="logRespOut"
         type="jax-ws">
         <component>

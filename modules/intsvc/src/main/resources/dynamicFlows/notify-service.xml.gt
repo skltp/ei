@@ -61,6 +61,7 @@
  		-->
  		<set-property propertyName="x-vp-sender-id" value="${EI_HSA_ID}" doc:name="propagate x-vp-sender-id when invoking ProcessNotification" />
  		<set-property propertyName="x-vp-instance-id" value="${VP_INSTANCE_ID}" doc:name="propagate x-vp-instance-id when invoking ProcessNotification" />
+ 		<set-property propertyName="#[se.skltp.ei.intsvc.EiConstants.X_SKLTP_CORRELATION_ID]" value="#[message.inboundProperties[org.soitoolkit.commons.mule.core.PropertyNames.SOITOOLKIT_CORRELATION_ID]]" doc:name="Propagate correlation id"/>
     
         <http:outbound-endpoint 
             connector-ref="soitoolkit-http-connector"

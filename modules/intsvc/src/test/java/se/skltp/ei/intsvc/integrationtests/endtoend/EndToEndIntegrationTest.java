@@ -72,7 +72,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     public EndToEndIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
-        setDisposeContextPerClass(true);
+        setDisposeContextPerClass(false);
     }
 
     protected String getConfigResources() {
