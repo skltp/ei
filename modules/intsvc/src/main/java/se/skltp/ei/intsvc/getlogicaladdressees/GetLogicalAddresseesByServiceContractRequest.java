@@ -19,6 +19,8 @@
  */
 package se.skltp.ei.intsvc.getlogicaladdressees;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,28 +31,22 @@ public class GetLogicalAddresseesByServiceContractRequest {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GetLogicalAddresseesByServiceContractRequest.class);
 
-    private String logicalAddress = null;
-    
-    public void setLogicalAddress(String logicalAddress) {
-    	this.logicalAddress = logicalAddress;
-    }
-    
     /**
      *
      * @param requestStr
      * @return
      */
-    public Object[] createGetLogicalAddresseesByServiceContractRequest(String requestStr) {
+    public Object[] createGetLogicalAddresseesByServiceContractRequest(Map<String, String> messageProperties) {
     	
-    	LOG.debug("Received the request: {}", requestStr);
+    	LOG.debug("Received the request: {}", messageProperties);
 
     	GetLogicalAddresseesByServiceContractType getReq = new GetLogicalAddresseesByServiceContractType(); 
-    	getReq.setServiceConsumerHsaId(logicalAddress);
+    	getReq.setServiceConsumerHsaId(messageProperties.get("LOGICAL_ADDRESS"));
     	ServiceContractNamespaceType ns = new ServiceContractNamespaceType();
-    	ns.setServiceContractNamespace("urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1");
+    	ns.setServiceContractNamespace(messageProperties.get("SERVICE_CONTRACT"));
 		getReq.setServiceContractNameSpace(ns);
     	
-		Object[] request = new Object[] {logicalAddress, getReq};
+		Object[] request = new Object[] { messageProperties.get("LOGICAL_ADDRESS"), getReq };
 		return request;
     }
 }

@@ -21,8 +21,10 @@ package se.skltp.ei.intsvc.dynamicFlows;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleException;
@@ -40,6 +42,7 @@ import org.mule.context.notification.MuleContextNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -69,6 +72,9 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 	static boolean stopping = false;
 	
 	private MuleContext dynamicContext;
+	
+	@Value("${VP_HSA_ID}")
+	private String logicalAddress;
 
 	private SubscriberCache subscriberCache;
 	public void setSubscriberCache (SubscriberCache subscriberCache) {
@@ -138,8 +144,11 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 		log.info("Looking up logical addresses for dynamic notify flows");
 		List<String> logicalAdresses = new ArrayList<String>();
 		try {
-
-			MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
+			Map<String, String> messageProperties = new HashMap<String, String>();
+			messageProperties.put("LOGICAL_ADDRESS", logicalAddress);
+			messageProperties.put("SERVICE_CONTRACT", "urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1");
+			
+			MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", messageProperties, null);
 			GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
 			
 			List<Subscriber> subscribers = new ArrayList<Subscriber>();

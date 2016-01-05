@@ -19,6 +19,9 @@
  */
 package se.skltp.ei.intsvc.integrationtests.getlogicaladdressees;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -47,6 +50,7 @@ public class GetLogicalAddresseesByServiceContractTestProducer implements GetLog
     private static final RecursiveResourceBundle rb = new RecursiveResourceBundle("ei-config");
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
 	private static final String EXPECTED_SERVICECONTRACT = "urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1";
+	private static final String GETTIMESLOTS_SERVICECONTRACT = "urn:riv:scheduling:timebooking:GetTimeSlots:1";
 
 
     private void forceTimeout() {
@@ -69,18 +73,25 @@ public class GetLogicalAddresseesByServiceContractTestProducer implements GetLog
         if (TEST_ID_FAULT_TIMEOUT.equals(parameters.getServiceConsumerHsaId())) forceTimeout();
         
         GetLogicalAddresseesByServiceContractResponseType response = new GetLogicalAddresseesByServiceContractResponseType();
-        if(!EXPECTED_SERVICECONTRACT.equals(parameters.getServiceContractNameSpace().getServiceContractNamespace())){
-            return response; 
-        }
         
+        List<String> logicalAddressList = new ArrayList<String>();
         
-        String[] hsa_ids = {"HSA_ID_A", "HSA_ID_B", "HSA_ID_C"};
+        if(EXPECTED_SERVICECONTRACT.equals(parameters.getServiceContractNameSpace().getServiceContractNamespace())){
+        	logicalAddressList.add("HSA_ID_A");
+        	logicalAddressList.add("HSA_ID_B");
+        	logicalAddressList.add("HSA_ID_C");
+        } else if (GETTIMESLOTS_SERVICECONTRACT.equals(parameters.getServiceContractNameSpace().getServiceContractNamespace())) {
+        	logicalAddressList.add("SE100200400-600");
+        	logicalAddressList.add("SE100200400-700");
+        	logicalAddressList.add("SE100200400-800");
+        	logicalAddressList.add("SE100200400-900");
+        }         
         
-        for(int i = 0; i < hsa_ids.length; i++) {
+        for (String item : logicalAddressList) {
             LogicalAddresseeRecordType logicalAddresseeRecordType = new LogicalAddresseeRecordType();
-            logicalAddresseeRecordType.setLogicalAddress(hsa_ids[i]);
+            logicalAddresseeRecordType.setLogicalAddress(item);
             
-            response.getLogicalAddressRecord().add(i, logicalAddresseeRecordType);
+            response.getLogicalAddressRecord().add(logicalAddresseeRecordType);
         }
         
         

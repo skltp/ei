@@ -21,12 +21,18 @@ package se.skltp.ei.intsvc.integrationtests.getlogicaladdressees;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
 
+
+
+import org.springframework.beans.factory.annotation.Value;
 
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
 import se.skltp.ei.intsvc.EiMuleServer;
@@ -47,6 +53,8 @@ public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
 	@SuppressWarnings("unused")
 	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("FIND_CONTENT_WEB_SERVICE_URL");
+	
+	private String logicalAddress = rb.getString("VP_HSA_ID");;
   
     public GetLogicalAddresseesIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
@@ -75,8 +83,11 @@ public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
 	 */
     @Test
     public void getLogicalAddresses_Ok() throws MuleException {
-    	
-    	MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
+    	Map<String, String> messageProperties = new HashMap<String, String>();
+		messageProperties.put("LOGICAL_ADDRESS", logicalAddress);
+		messageProperties.put("SERVICE_CONTRACT", "urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1");
+		
+    	MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", messageProperties, null);
     	GetLogicalAddresseesByServiceContractResponseType logicalAddresses = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
 
     	assertEquals(3, logicalAddresses.getLogicalAddressRecord().size());

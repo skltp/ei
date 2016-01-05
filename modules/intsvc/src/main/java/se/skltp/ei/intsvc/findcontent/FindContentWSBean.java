@@ -19,19 +19,33 @@
  */
 package se.skltp.ei.intsvc.findcontent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.mule.api.MuleContext;
+import org.mule.api.MuleException;
+import org.mule.api.MuleMessage;
+import org.mule.api.context.MuleContextAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex.findcontent._1.rivtabp21.FindContentResponderInterface;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
+import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
+import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.LogicalAddresseeRecordType;
 import se.skltp.ei.svc.service.api.FindContentInterface;
 
-public class FindContentWSBean implements FindContentResponderInterface {
+public class FindContentWSBean implements FindContentResponderInterface, MuleContextAware {
 
     @SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(FindContentWSBean.class);
-
+    
+    private MuleContext muleContext;
     private FindContentInterface blBean = null;
     
     public void setBlBean(FindContentInterface blBean) {
@@ -46,6 +60,43 @@ public class FindContentWSBean implements FindContentResponderInterface {
      */
     @Override
     public FindContentResponseType findContent(String logicalAddress, FindContentType parameters) {
-    	return blBean.findContent(null, parameters);
+    	FindContentResponseType findContentRespType = blBean.findContent(null, parameters);
+    	List<String> accessibleLogicalAddresses = getAccessibleLogicalAdresses(logicalAddress, parameters.getServiceContract());
+    	
+    	Iterator<EngagementType> iterator = findContentRespType.getEngagement().iterator();
+    	while (iterator.hasNext()) {
+    		String lAddress = iterator.next().getLogicalAddress();
+    		if (!accessibleLogicalAddresses.contains(lAddress)) {
+    			iterator.remove();
+    			LOG.warn("No authorization to access logical address: " + lAddress);
+    		}
+    	}
+    	return findContentRespType;
     }
+    
+	@Override
+	public void setMuleContext(MuleContext context) {
+		this.muleContext = context;		
+	}
+	
+	private List<String> getAccessibleLogicalAdresses(String logicalAddress, String serviceContract) {
+		Map<String, String> messageProperties = new HashMap<String, String>();
+		messageProperties.put("LOGICAL_ADDRESS", logicalAddress);
+		messageProperties.put("SERVICE_CONTRACT", serviceContract);
+		
+		List<String> logicalAdresses = new ArrayList<String>();
+		MuleMessage response = null;
+		try {
+			response = muleContext.getClient().send("vm://get-logical-addressees", messageProperties, null);
+			
+			GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType) response.getPayload();
+			for (LogicalAddresseeRecordType record : logicalAddressesResponse.getLogicalAddressRecord()) {
+				logicalAdresses.add(record.getLogicalAddress());
+			}
+		} catch (MuleException e) {
+			LOG.error("Unable to request service GetLogicalAddressesByServiceContract with parameters: " + messageProperties, e.getMessage());
+		}		
+		
+		return logicalAdresses;
+	}
 }

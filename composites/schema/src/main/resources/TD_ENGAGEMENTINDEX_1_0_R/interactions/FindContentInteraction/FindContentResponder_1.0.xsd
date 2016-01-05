@@ -28,6 +28,7 @@
       <xs:element name='registeredResidentIdentification' type='core:RegisteredResidentIdentificationType' minOccurs='1'/>
       <xs:element name='serviceDomain' type='xs:anyURI' minOccurs='1'/>
       <xs:element name='categorization' type='xs:string' minOccurs='0'/>
+      <xs:element name='serviceContract' type='xs:string' minOccurs='0'/>
       <xs:element name='logicalAddress' type='xs:string' minOccurs='0'/>
       <xs:element name='businessObjectInstanceIdentifier' type='xs:string' minOccurs='0'/>
       <xs:element name='clinicalProcessInterestId' type='core:ClinicalProcessInterestIdType' minOccurs='0'/>
