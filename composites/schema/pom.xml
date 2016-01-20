@@ -11,9 +11,6 @@
     <artifactId>skltp-ei-composite-schema</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    <properties>
-        <apache.cxf.version>2.5.1</apache.cxf.version>
-    </properties>
 
     <build>
         <plugins>
@@ -48,14 +45,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
@@ -78,20 +67,4 @@
 		</dependency>
     </dependencies>
 
-<!--
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>${apache.cxf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId>
-            <version>${apache.cxf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
- -->
 </project>

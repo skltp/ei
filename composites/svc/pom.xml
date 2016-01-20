@@ -13,23 +13,6 @@
     <artifactId>skltp-ei-composite-svc</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    
-    <properties>
-        <spring.version>3.1.1.RELEASE</spring.version>
-        <commons-collections.mule.version>3.2.1</commons-collections.mule.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- manage version of commons-collections, Mule 3.3.1 requires commons-collections 3.2.1 to work -->
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons-collections.mule.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 
 	<dependencies>
 		<dependency>
@@ -41,7 +24,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>1.1.0.RELEASE</version>
+            <version>1.9.0.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -136,13 +119,10 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-            <type>jar</type>
         </dependency>
 
 		<!-- TEST DEPENDENCIES -->

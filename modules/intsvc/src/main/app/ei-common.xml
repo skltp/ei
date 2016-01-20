@@ -9,7 +9,6 @@
 	xmlns:management="http://www.mulesoft.org/schema/mule/management"
 	xmlns:json="http://www.mulesoft.org/schema/mule/json"
 	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:rest-router="http://www.mulesoft.org/schema/mule/rest-router"
 	xmlns:mulexml="http://www.mulesoft.org/schema/mule/xml"
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
@@ -19,7 +18,6 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		http://www.mulesoft.org/schema/mule/management http://www.mulesoft.org/schema/mule/management/current/mule-management.xsd
 		http://www.mulesoft.org/schema/mule/json       http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
 		http://www.mulesoft.org/schema/mule/scripting  http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
-		http://www.mulesoft.org/schema/mule/rest-router       http://www.mulesoft.org/schema/mule/rest-router/current/mule-rest-router.xsd
 		http://www.mulesoft.org/schema/mule/xml        http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
 	">
 
@@ -112,9 +110,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     <!-- FIXME: The NullSessionHandler should be part of soi-toolkits standard http connector -->
     <http:connector name="soitoolkit-http-connector" sendTcpNoDelay="true" >
         <service-overrides sessionHandler="org.mule.session.NullSessionHandler" />
-    </http:connector>  
-
-    <rest-router:config />
+    </http:connector>
 
     <spring:beans>
     	<!-- import the common logger config -->

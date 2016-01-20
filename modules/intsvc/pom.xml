@@ -13,10 +13,6 @@
     <artifactId>skltp-ei-module-intsvc</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-
-    <properties>
-        <spring.version>3.1.1.RELEASE</spring.version>
-    </properties>
     
 	<dependencies>
 		<dependency>
@@ -37,17 +33,9 @@
             <version>${soitoolkit.version}</version>
         </dependency>
 
-<!-- 
-		<dependency>
-		  <groupId>org.soitoolkit.commons.components</groupId>
-			<artifactId>soitoolkit-studio-components</artifactId>
-			<version>${soitoolkit.version}</version>
-		</dependency>
- -->
-
 		<dependency>
 			<groupId>org.soitoolkit.commons.poms.mule-dependencies</groupId>
-			<artifactId>soitoolkit-mule-3.3.1-dependencies</artifactId>
+			<artifactId>soitoolkit-mule-3.7.0-dependencies</artifactId>
 			<version>${soitoolkit.version}</version>
 			<type>pom</type>
 			<exclusions>
@@ -71,14 +59,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.10</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
 
@@ -104,13 +85,6 @@
             <scope>test</scope>
         </dependency>
 
-		<!-- Mockito -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<scope>test</scope>
-			<version>1.8.5</version>
-		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -129,7 +103,7 @@
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
 			<scope>test</scope>
-            <version>1.1</version>
+            <version>1.5</version>
         </dependency>
     
   </dependencies> 
@@ -145,7 +119,24 @@
             </resource>
         </resources>
 
-		<plugins>   
+		<plugins>
+            <!-- setup/debug of dependencies: dump all dependencies for inspection into dir target/dependency -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <!--
+                        <phase>package</phase>
+                        -->
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <!-- Add mule-nature to the eclipse-.project-file -->
                 <artifactId>maven-eclipse-plugin</artifactId>
