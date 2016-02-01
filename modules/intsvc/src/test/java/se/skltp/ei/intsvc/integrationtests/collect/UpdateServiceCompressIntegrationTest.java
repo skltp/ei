@@ -63,6 +63,7 @@ public class UpdateServiceCompressIntegrationTest extends AbstractTestCase {
 		return 
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
+	  		"skltp-ei-svc-spring-context.xml," +
 	  		"update-service.xml," +
 	        "update-collect-service.xml";
     }
@@ -209,7 +210,7 @@ public class UpdateServiceCompressIntegrationTest extends AbstractTestCase {
 	
 			// Perform the actual dispatch
 			for (String request : requestList) {
-				muleClient.dispatch("jms://" + COLLECT_QUEUE, request, null);
+				muleClient.dispatch("jms://" + COLLECT_QUEUE + "?connector=soitoolkit-jms-connector", request, null);
 			}
 		} catch (MuleException e) {
 			throw new RuntimeException(e);

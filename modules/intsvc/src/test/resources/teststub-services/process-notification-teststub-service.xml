@@ -4,22 +4,30 @@
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 		http://www.mulesoft.org/schema/mule/core    http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/http    http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 		http://www.mulesoft.org/schema/mule/cxf     http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 		http://www.mulesoft.org/schema/mule/jms     http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 	">
 
- 	<custom-transformer name="process-notification-teststub-logger" class="se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducerLogger"/>
- 	
-	<simple-service 
-		name="process-notification-teststub-service"
-        address="${NOTIFY_TESTSTUB_URL}?connector=soitoolkit-http-connector" 
-        component-class="se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer"
-        transformer-refs="process-notification-teststub-logger"
-        type="jax-ws" />
+    <flow name="process-notification-teststub-service">
+        <http:inbound-endpoint
+            connector-ref="soitoolkit-http-connector"
+            address="${NOTIFY_TESTSTUB_URL}" 
+            exchange-pattern="request-response">
+        </http:inbound-endpoint>
+
+        <custom-transformer class="se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducerLogger"/>
+
+        <cxf:jaxws-service serviceClass="riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderInterface"/>
+        
+        <component class="se.skltp.ei.intsvc.integrationtests.notifyservice.ProcessNotificationTestProducer"/>
+    </flow>
+
  
 </mule>
