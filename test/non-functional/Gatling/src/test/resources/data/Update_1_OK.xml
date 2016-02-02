@@ -1,6 +1,6 @@
 <soapenv:Envelope xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:UpdateResponder:1" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
    <soapenv:Header>
-      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+      <urn:LogicalAddress>5565594230</urn:LogicalAddress>
    </soapenv:Header>
    <soapenv:Body>
       <urn1:Update>
