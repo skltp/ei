@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -56,6 +57,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
 	private static final ObjectFactory of = new ObjectFactory();
 	
 	private static final String PROCESS_QUEUE = rb.getString("PROCESS_QUEUE");
+	private static final String LOCAL_EI_SUBSCRIBER_CACHE = rb.getString("LOCAL_EI_SUBSCRIBER_CACHE");
 
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -67,6 +69,7 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
         setDisposeContextPerClass(true);
     }
 
+    @Override
     protected String getConfigResources() {
 		return 
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
@@ -82,11 +85,16 @@ public class NotifyServiceIntegrationTest extends AbstractTestCase {
     private EngagementRepository engagementRepository;
 
 	private SubscriberCache subscriberCache;
+	
+	@Override
+	protected void doSetUpBeforeMuleContextCreation() throws Exception {
+		// clean cache file
+		new File(LOCAL_EI_SUBSCRIBER_CACHE).delete();
+	}
 
-    @Before
-    public void setUp() throws Exception {
-
-    	// Lookup the entity repository if not already done
+	@Override
+	protected void doSetUp() throws Exception {
+		// Lookup the entity repository if not already done
     	if (engagementRepository == null) {
     		engagementRepository = muleContext.getRegistry().lookupObject(EngagementRepository.class);
     	}

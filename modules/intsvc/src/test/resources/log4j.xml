@@ -68,7 +68,7 @@
 	</logger>
 	
 	<logger name="se.skltp.ei">
-		<level value="INFO" />
+		<level value="DEBUG" />
 	</logger>
 
 	<logger name="se.skltp.ei.intsvc.update.collect">
@@ -97,6 +97,16 @@
         <level value="TRACE" />
     </logger>    
     -->
+
+    <!--
+    <logger name="httpclient.wire.header">
+        <level value="DEBUG" />
+    </logger>    
+    <logger name="httpclient.wire.content">
+        <level value="DEBUG" />
+    </logger>
+    -->
+    
 	<root>
 		<priority value="WARN" />
 

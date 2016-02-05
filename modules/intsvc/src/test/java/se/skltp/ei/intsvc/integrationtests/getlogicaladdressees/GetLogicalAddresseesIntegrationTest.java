@@ -21,15 +21,12 @@ package se.skltp.ei.intsvc.integrationtests.getlogicaladdressees;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mule.api.MuleException;
-import org.mule.api.MuleMessage;
 import org.soitoolkit.commons.mule.util.RecursiveResourceBundle;
-
 
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
 import se.skltp.ei.intsvc.EiMuleServer;
+import se.skltp.ei.intsvc.getlogicaladdressees.GetLogicalAddresseesServiceClient;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 
 public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
@@ -47,6 +44,8 @@ public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
 //	private static final String EXPECTED_ERR_INVALID_ID_MSG = "Invalid Id: " + TEST_RR_ID_FAULT_INVALID_ID;
 	@SuppressWarnings("unused")
 	private static final String SERVICE_ADDRESS = EiMuleServer.getAddress("FIND_CONTENT_WEB_SERVICE_URL");
+	
+	private GetLogicalAddresseesServiceClient client;
   
     public GetLogicalAddresseesIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
@@ -62,27 +61,26 @@ public class GetLogicalAddresseesIntegrationTest extends AbstractTestCase {
 			"teststub-services/get-logical-addressees-by-service-contract-teststub-service.xml";
     }
 
-    @Before
-    public void setUp() throws Exception {
+    @Override
+    public void doSetUp() throws Exception {
 
     	// Clear queues used for the tests
 		getJmsUtil().clearQueues(INFO_LOG_QUEUE, ERROR_LOG_QUEUE);
+		
+    	if (client == null) {
+    		client = muleContext.getRegistry().lookupObject(GetLogicalAddresseesServiceClient.class);
+    	}
+		
     }
 
     /**
-	 * Perform a test that is expected to return one hit
-     * @throws MuleException 
+	 * Perform a test that is expected to return one hit. 
 	 */
     @Test
-    public void getLogicalAddresses_Ok() throws MuleException {
+    public void getLogicalAddresses_Ok() throws Exception {
     	
-    	MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
-    	GetLogicalAddresseesByServiceContractResponseType logicalAddresses = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
+    	GetLogicalAddresseesByServiceContractResponseType logicalAddresses = client.callService();
 
     	assertEquals(3, logicalAddresses.getLogicalAddressRecord().size());
-
-    	// Expect no error logs and four info log entries
-		assertQueueDepth(ERROR_LOG_QUEUE, 0);
-		assertQueueDepth(INFO_LOG_QUEUE, 4);
     }
 }
