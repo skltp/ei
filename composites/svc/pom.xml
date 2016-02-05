@@ -88,54 +88,30 @@
             <artifactId>hsqldb</artifactId>
             <version>2.2.9</version>
         </dependency>
-<!-- 
-		<dependency>
-		  <groupId>org.soitoolkit.commons.components</groupId>
-			<artifactId>soitoolkit-commons-mule</artifactId>
-			<version>${soitoolkit.version}</version>
-		</dependency>
 
-		<dependency>
-		  <groupId>org.soitoolkit.commons.components</groupId>
-			<artifactId>soitoolkit-studio-components</artifactId>
+		<!-- mule-dependencies: needed to get hold of logging dependencies (slf4j, log4j2, disruptor)
+            of the correct versions - and this whole module must work with mule-dependencies anyway -->
+        <!--
+        <dependency>
+            <groupId>org.soitoolkit.commons.components</groupId>
+            <artifactId>soitoolkit-commons-mule</artifactId>
             <version>${soitoolkit.version}</version>
-		</dependency>
-
-        TODO: Mule EE dependency
+        </dependency>
+        -->
         <dependency>
             <groupId>org.soitoolkit.commons.poms.mule-dependencies</groupId>
-            <artifactId>soitoolkit-mule-ee-3.3.1-dependencies</artifactId>
+            <artifactId>soitoolkit-mule-${ei.mule.version}-dependencies</artifactId>
             <version>${soitoolkit.version}</version>
             <type>pom</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.soitoolkit.commons.poms.mule-dependencies</groupId>
-            <artifactId>soitoolkit-mule-3.3.1-dependencies</artifactId>
-            <version>${soitoolkit.version}</version>
-            <type>pom</type>
-        </dependency>
--->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <exclusions>
+             <exclusion>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+             </exclusion>
+            </exclusions>            
         </dependency>
 
 		<!-- TEST DEPENDENCIES -->
-<!--		
-		<dependency>
-			<groupId>org.soitoolkit.commons.poms</groupId>
-			<artifactId>soitoolkit-test-dependencies</artifactId>
-			<version>${soitoolkit.version}</version>
-			<type>pom</type>
-			<scope>test</scope>
-		</dependency>
--->
-		<!-- Mockito -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -164,12 +140,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
             <version>1.3</version>
             <scope>test</scope>
         </dependency>

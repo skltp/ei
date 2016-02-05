@@ -35,7 +35,7 @@
 
 		<dependency>
 			<groupId>org.soitoolkit.commons.poms.mule-dependencies</groupId>
-			<artifactId>soitoolkit-mule-3.7.0-dependencies</artifactId>
+			<artifactId>soitoolkit-mule-${ei.mule.version}-dependencies</artifactId>
 			<version>${soitoolkit.version}</version>
 			<type>pom</type>
 			<exclusions>
@@ -160,7 +160,7 @@
                 <classifier>core</classifier>
                -->
                 <excludes>
-                  <exclude>log4j.xml</exclude>
+                  <exclude>log4j2.xml</exclude>
                 </excludes>
               </configuration>
               <executions>

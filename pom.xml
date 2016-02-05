@@ -16,6 +16,7 @@
   <name>skltp-ei-parent</name>
 
   <properties>
+    <ei.mule.version>3.7.0</ei.mule.version>
     <spring.version>4.1.6.RELEASE</spring.version>
     <apache.cxf.version>2.7.15</apache.cxf.version>
     <commons-collections.mule.version>3.2.1</commons-collections.mule.version>
