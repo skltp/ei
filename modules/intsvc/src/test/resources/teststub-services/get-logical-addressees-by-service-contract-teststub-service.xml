@@ -4,22 +4,29 @@
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:cxf="http://www.mulesoft.org/schema/mule/cxf"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 		http://www.mulesoft.org/schema/mule/core    http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/http    http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 		http://www.mulesoft.org/schema/mule/cxf     http://www.mulesoft.org/schema/mule/cxf/current/mule-cxf.xsd
 		http://www.mulesoft.org/schema/mule/jms     http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 	">
 
- 	<custom-transformer name="get-logical-addressees-by-service-contract-teststub-logger" class="se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducerLogger"/>
+    <flow name="get-logical-addressees-by-service-contract-teststub-service">
+        <http:inbound-endpoint
+            connector-ref="soitoolkit-http-connector"
+            address="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_TESTSTUB_URL}" 
+            exchange-pattern="request-response">
+        </http:inbound-endpoint>
 
- 	<simple-service 
-		name="get-logical-addressees-by-service-contract-teststub-service"
-        address="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_TESTSTUB_URL}?connector=soitoolkit-http-connector" 
-        component-class="se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducer"
-        transformer-refs="get-logical-addressees-by-service-contract-teststub-logger"
-        type="jax-ws" />
+        <custom-transformer class="se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducerLogger"/>
+
+        <cxf:jaxws-service serviceClass="se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract.v2.rivtabp21.GetLogicalAddresseesByServiceContractResponderInterface"/>
+        
+        <component class="se.skltp.ei.intsvc.integrationtests.getlogicaladdressees.GetLogicalAddresseesByServiceContractTestProducer"/>
+    </flow>
 
 </mule>

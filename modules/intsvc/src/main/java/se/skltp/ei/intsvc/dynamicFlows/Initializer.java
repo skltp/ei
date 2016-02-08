@@ -45,6 +45,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.LogicalAddresseeRecordType;
+import se.skltp.ei.intsvc.getlogicaladdressees.GetLogicalAddresseesServiceClient;
 import se.skltp.ei.intsvc.subscriber.api.Subscriber;
 import se.skltp.ei.intsvc.subscriber.api.SubscriberCache;
 
@@ -71,10 +72,16 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 	private MuleContext dynamicContext;
 
 	private SubscriberCache subscriberCache;
-	public void setSubscriberCache (SubscriberCache subscriberCache) {
+	private GetLogicalAddresseesServiceClient logicalAddresseesServiceClient;
+	
+	public void setSubscriberCache(SubscriberCache subscriberCache) {
 		this.subscriberCache = subscriberCache;
 	}
-	
+
+	public void setGetLogicalAddresseesServiceClient(GetLogicalAddresseesServiceClient logicalAddresseesServiceClient) {
+		this.logicalAddresseesServiceClient = logicalAddresseesServiceClient;
+	}
+
 	public Initializer() {
 		log.debug("Initializer object constructed");
 	}
@@ -138,9 +145,7 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 		log.info("Looking up logical addresses for dynamic notify flows");
 		List<String> logicalAdresses = new ArrayList<String>();
 		try {
-
-			MuleMessage response = muleContext.getClient().send("vm://get-logical-addressees", "", null);
-			GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = (GetLogicalAddresseesByServiceContractResponseType)response.getPayload();
+			GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = logicalAddresseesServiceClient.callService();
 			
 			List<Subscriber> subscribers = new ArrayList<Subscriber>();
 			for (LogicalAddresseeRecordType record : logicalAddressesResponse.getLogicalAddressRecord()) {
@@ -158,7 +163,7 @@ public class Initializer implements ApplicationContextAware, MuleContextNotifica
 
 		} catch (Exception e) {
 			
-			log.warn("Faild finding logical addresses, err: {}", e.getMessage());
+			log.warn("Failed finding logical addresses", e);
 			log.warn("Trying to restore cache from from file");
 			
 			logicalAdresses = new ArrayList<String>();

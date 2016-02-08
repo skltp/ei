@@ -19,49 +19,16 @@
         http://www.mulesoft.org/schema/mule/http      http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
         http://www.mulesoft.org/schema/mule/vm        http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
 
+
     <spring:beans>
-        <!-- Bean that creates a ProcessNotification request -->
-        <spring:bean name="create-get-logical-addressees-request-bean" class="se.skltp.ei.intsvc.getlogicaladdressees.GetLogicalAddresseesByServiceContractRequest">
+        <spring:bean name="get-logical-addressees-bean" class="se.skltp.ei.intsvc.getlogicaladdressees.GetLogicalAddresseesServiceClient">
             <spring:property name="logicalAddress" value="${VP_HSA_ID}"/>
+            <spring:property name="vpSenderId" value="${EI_HSA_ID}"/>
+            <spring:property name="vpInstanceId" value="${VP_INSTANCE_ID}"/>
+            <spring:property name="serviceEndpointUrl" value="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_OUTBOUND_URL}"/>
+            <spring:property name="connectTimeoutMs" value="${SERVICE_TIMEOUT_MS}"/>
+            <spring:property name="requestTimeoutMs" value="${SERVICE_TIMEOUT_MS}"/>
         </spring:bean>
     </spring:beans>
 
-    <flow name="get-logical-addressees-service">
-        <vm:inbound-endpoint 
-            address="vm://get-logical-addressees"
-            exchange-pattern="request-response"
-            transformer-refs="logMsgIn"
-            responseTransformer-refs="logRespOut" />
-
-        <component>
-            <spring-object bean="create-get-logical-addressees-request-bean"/>
-        </component>
-
- 		<!-- 
- 			Propagate x-vp-sender-id as an outbound property, value is the hsa id of EI to be used when invoking VP.
- 			Propagate x-vp-instance-id as an outbound property, value is set as an id of the invoked VP.
- 			
- 			These two headers are dependent on each other in a way that when using x-vp-sender-id against VP, VP will check for a valid x-vp-instance-id.
- 		-->
- 		<set-property propertyName="x-vp-sender-id" value="${EI_HSA_ID}" doc:name="propagate x-vp-sender-id when invoking GetLogicalAddresseesByServiceContract" />
- 		<set-property propertyName="x-vp-instance-id" value="${VP_INSTANCE_ID}" doc:name="propagate x-vp-instance-id when invoking GetLogicalAddresseesByServiceContract" />
-
-        <http:outbound-endpoint 
-            connector-ref="soitoolkit-http-connector"
-            address="${GET_LOGICAL_ADDRESSES_BY_SERVICE_CONTRACT_OUTBOUND_URL}" 
-            exchange-pattern="request-response"
-            responseTimeout="${SERVICE_TIMEOUT_MS}"
-            transformer-refs="logReqOut"
-            responseTransformer-refs="logRespIn">
-
-            <cxf:jaxws-client 
-                port="GetLogicalAddresseesByServiceContractResponderPort" 
-                operation="GetLogicalAddresseesByServiceContract" 
-				clientClass="se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract.v2.rivtabp21.GetLogicalAddresseesByServiceContractResponderService"
-                wsdlLocation="classpath:/ServiceContracts_infrastructure_itintegration_registry/interactions/GetLogicalAddresseesByServiceContractInteraction/GetLogicalAddresseesByServiceContractInteraction_2.0_RIVTABP21.wsdl"
-            />
-        </http:outbound-endpoint>
- 
-        <custom-exception-strategy class="org.soitoolkit.commons.mule.error.ServiceExceptionStrategy"/>
-    </flow>
 </mule>

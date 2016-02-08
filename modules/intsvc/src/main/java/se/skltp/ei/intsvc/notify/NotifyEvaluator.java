@@ -21,6 +21,9 @@ package se.skltp.ei.intsvc.notify;
 
 import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionEvaluator;
+import org.mule.api.transformer.DataType;
+import org.mule.transformer.types.DataTypeFactory;
+import org.mule.transformer.types.TypedValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.soitoolkit.commons.mule.jaxb.JaxbUtil;
@@ -58,4 +61,11 @@ public class NotifyEvaluator implements ExpressionEvaluator {
         	return true;
         }
     }
+
+	@Override
+	public TypedValue evaluateTyped(String expression, MuleMessage message) {
+		Object o = evaluate(expression, message);
+		DataType dt = DataTypeFactory.createFromObject(o);
+		return new TypedValue(o, dt);
+	}
 }
