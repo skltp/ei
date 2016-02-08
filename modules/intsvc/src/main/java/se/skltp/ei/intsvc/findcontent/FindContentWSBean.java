@@ -61,8 +61,15 @@ public class FindContentWSBean implements FindContentResponderInterface, MuleCon
     @Override
     public FindContentResponseType findContent(String logicalAddress, FindContentType parameters) {
     	FindContentResponseType findContentRespType = blBean.findContent(null, parameters);
-    	List<String> accessibleLogicalAddresses = getAccessibleLogicalAdresses(logicalAddress, parameters.getServiceContract());
     	
+    	if (parameters.getServiceContract() != null) {
+    		List<String> accessibleLogicalAddresses = getAccessibleLogicalAddresses(logicalAddress, parameters.getServiceContract());
+    		findContentRespType = filterAccessibleLogicalAddresses(findContentRespType, accessibleLogicalAddresses);
+    	}
+    	return findContentRespType;
+    }
+    
+    private FindContentResponseType filterAccessibleLogicalAddresses(FindContentResponseType findContentRespType, List<String> accessibleLogicalAddresses) {
     	Iterator<EngagementType> iterator = findContentRespType.getEngagement().iterator();
     	while (iterator.hasNext()) {
     		String lAddress = iterator.next().getLogicalAddress();
@@ -79,7 +86,7 @@ public class FindContentWSBean implements FindContentResponderInterface, MuleCon
 		this.muleContext = context;		
 	}
 	
-	private List<String> getAccessibleLogicalAdresses(String logicalAddress, String serviceContract) {
+	private List<String> getAccessibleLogicalAddresses(String logicalAddress, String serviceContract) {
 		Map<String, String> messageProperties = new HashMap<String, String>();
 		messageProperties.put("LOGICAL_ADDRESS", logicalAddress);
 		messageProperties.put("SERVICE_CONTRACT", serviceContract);

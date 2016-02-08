@@ -150,7 +150,7 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
      * @throws RegistrationException 
      */
     @Test
-    public void findContent_No_Contract_No_Hit() throws RegistrationException {
+    public void findContent_No_Contract_No_Filter() throws RegistrationException {
 
         FindContentTestConsumer consumer = new FindContentTestConsumer(SERVICE_ADDRESS);
 
@@ -160,11 +160,11 @@ public class FindContentServiceIntegrationTest extends AbstractTestCase {
 
         FindContentResponseType response = consumer.callService(LOGICAL_ADDRESS, request);
 
-        assertEquals(0, response.getEngagement().size());
+        assertEquals(1, response.getEngagement().size());
 
         // Expect no error logs and six info log entries
         assertQueueDepth(ERROR_LOG_QUEUE, 0);
-        assertQueueDepth(INFO_LOG_QUEUE, 6);
+        assertQueueDepth(INFO_LOG_QUEUE, 2);
     }
     
     /**
