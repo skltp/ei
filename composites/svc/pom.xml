@@ -6,30 +6,13 @@
     <parent>
         <groupId>se.skltp.ei</groupId>
         <artifactId>skltp-ei-parent</artifactId>
-        <version>1.3.1-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath> 
     </parent>
 
     <artifactId>skltp-ei-composite-svc</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    
-    <properties>
-        <spring.version>3.1.1.RELEASE</spring.version>
-        <commons-collections.mule.version>3.2.1</commons-collections.mule.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <!-- manage version of commons-collections, Mule 3.3.1 requires commons-collections 3.2.1 to work -->
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons-collections.mule.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 
 	<dependencies>
 		<dependency>
@@ -41,7 +24,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <version>1.1.0.RELEASE</version>
+            <version>1.9.0.RELEASE</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -94,6 +77,35 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.6.0.Final</version>
         </dependency>
+        <!--
+            Mule-3.7.0: mule bundles lib/opt/validation-api-1.1.0.Final.jar
+            which triggers hibernate to use a hibernate-validator, so we need
+            to include dependencies that are not present in the mule-distro.
+
+            hibernate-entitymanager-3.6.0.Final has dependencyMgmt for 
+            hibernate-validator-4.1.0.Final in it's parent pom.
+
+            hibernate-validator-4.3.2.Final is the
+            "Last Bean Validation 1.0 compatible version" according to
+            hibernate docs.
+        -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.3.2.Final</version>
+            <exclusions>
+                <!-- Mule-3.7.0: exclude libs/api's already present in mule-distro -->
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -105,63 +117,24 @@
             <artifactId>hsqldb</artifactId>
             <version>2.2.9</version>
         </dependency>
-<!-- 
-		<dependency>
-		  <groupId>org.soitoolkit.commons.components</groupId>
-			<artifactId>soitoolkit-commons-mule</artifactId>
-			<version>${soitoolkit.version}</version>
-		</dependency>
 
-		<dependency>
-		  <groupId>org.soitoolkit.commons.components</groupId>
-			<artifactId>soitoolkit-studio-components</artifactId>
+		<!-- mule-dependencies: needed to get hold of logging dependencies (slf4j, log4j2, disruptor)
+            of the correct versions - and this whole module must work with mule-dependencies anyway -->
+        <!--
+        <dependency>
+            <groupId>org.soitoolkit.commons.components</groupId>
+            <artifactId>soitoolkit-commons-mule</artifactId>
             <version>${soitoolkit.version}</version>
-		</dependency>
-
-        TODO: Mule EE dependency
+        </dependency>
+        -->
         <dependency>
             <groupId>org.soitoolkit.commons.poms.mule-dependencies</groupId>
-            <artifactId>soitoolkit-mule-ee-3.3.1-dependencies</artifactId>
+            <artifactId>soitoolkit-mule-${ei.mule.version}-dependencies</artifactId>
             <version>${soitoolkit.version}</version>
             <type>pom</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.soitoolkit.commons.poms.mule-dependencies</groupId>
-            <artifactId>soitoolkit-mule-3.3.1-dependencies</artifactId>
-            <version>${soitoolkit.version}</version>
-            <type>pom</type>
-        </dependency>
--->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-            <type>jar</type>
         </dependency>
 
 		<!-- TEST DEPENDENCIES -->
-<!--		
-		<dependency>
-			<groupId>org.soitoolkit.commons.poms</groupId>
-			<artifactId>soitoolkit-test-dependencies</artifactId>
-			<version>${soitoolkit.version}</version>
-			<type>pom</type>
-			<scope>test</scope>
-		</dependency>
--->
-		<!-- Mockito -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<scope>test</scope>
-			<version>1.8.5</version>
-		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -190,12 +163,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>1.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
             <version>1.3</version>
             <scope>test</scope>
         </dependency>

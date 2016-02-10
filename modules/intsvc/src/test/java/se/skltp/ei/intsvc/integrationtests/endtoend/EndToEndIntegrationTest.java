@@ -247,9 +247,12 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 
 		UpdateType request = createUdateRequest(null, ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
 		new DoOneTestUpdateDispatcher(request).doDispatch();
-		Exception e = waitForException(SERVICE_TIMOUT_MS + 2000);
+		Throwable e = waitForException(SERVICE_TIMOUT_MS + 2000);
 
-		// Assert that we got the expected exception
+		// Assert that we got the expected root-exception
+		while(e.getCause() != null) {
+			e = e.getCause();
+		}
 		assertEquals(SocketException.class, e.getClass());
 		
 		// Expect 3 error log and 19 info log entries

@@ -14,6 +14,7 @@
 	    <!-- Dynamic flows -->
 	    <spring:bean id="initializer" class="se.skltp.ei.intsvc.dynamicFlows.Initializer">
             <spring:property name="subscriberCache" ref="subscriber-cache-bean"/>
+            <spring:property name="getLogicalAddresseesServiceClient" ref="get-logical-addressees-bean"/>
 	    </spring:bean>
     </spring:beans>
 
