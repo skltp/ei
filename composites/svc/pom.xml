@@ -77,6 +77,35 @@
             <artifactId>hibernate-entitymanager</artifactId>
             <version>3.6.0.Final</version>
         </dependency>
+        <!--
+            Mule-3.7.0: mule bundles lib/opt/validation-api-1.1.0.Final.jar
+            which triggers hibernate to use a hibernate-validator, so we need
+            to include dependencies that are not present in the mule-distro.
+
+            hibernate-entitymanager-3.6.0.Final has dependencyMgmt for 
+            hibernate-validator-4.1.0.Final in it's parent pom.
+
+            hibernate-validator-4.3.2.Final is the
+            "Last Bean Validation 1.0 compatible version" according to
+            hibernate docs.
+        -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.3.2.Final</version>
+            <exclusions>
+                <!-- Mule-3.7.0: exclude libs/api's already present in mule-distro -->
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.logging</groupId>
+                    <artifactId>jboss-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
@@ -103,12 +132,6 @@
             <artifactId>soitoolkit-mule-${ei.mule.version}-dependencies</artifactId>
             <version>${soitoolkit.version}</version>
             <type>pom</type>
-            <exclusions>
-             <exclusion>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-             </exclusion>
-            </exclusions>            
         </dependency>
 
 		<!-- TEST DEPENDENCIES -->
