@@ -247,7 +247,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 
 		UpdateType request = createUdateRequest(null, ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
 		new DoOneTestUpdateDispatcher(request).doDispatch();
-		Throwable e = waitForException(SERVICE_TIMOUT_MS + 2000);
+		Throwable e = waitForException(SERVICE_TIMOUT_MS + 5000);
 
 		// Assert that we got the expected root-exception
 		while(e.getCause() != null) {
