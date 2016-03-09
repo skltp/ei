@@ -23,7 +23,7 @@ import se.skltp.ei.svc.service.api.FindContentInterface;
 		wsdlLocation = "ServiceContracts_itintegration_monitoring/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl")
 public class PingForconfigurationDbCheckWSBean implements PingForConfigurationResponderInterface{
 	
-	private ThreadSafeSimpleDateFormat dateFormat = new ThreadSafeSimpleDateFormat("yyyyMMddhhmmss");
+	private ThreadSafeSimpleDateFormat dateFormat = new ThreadSafeSimpleDateFormat("yyyyMMddHHmmss");
 	
 	private static final Logger log = LoggerFactory.getLogger(PingForconfigurationDbCheckWSBean.class);
 
