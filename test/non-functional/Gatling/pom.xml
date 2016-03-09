@@ -15,8 +15,8 @@
 	<name>${project.artifactId}</name>
 
 	<properties>
-		<gatling.version>2.1.2</gatling.version>
-		<gatling-plugin.version>2.1.2</gatling-plugin.version>
+		<gatling.version>2.1.7</gatling.version>
+		<gatling-plugin.version>2.1.7</gatling-plugin.version>
 		<baseUrl>http://localhost:9088</baseUrl>
 	</properties>
 
@@ -70,6 +70,12 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>LoadTestEI_Update_50</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_50</simulationClass>
+			</properties>
+		</profile>
+		<profile>
 			<id>LoadTestEI_Update_1</id>
 			<properties>
 				<simulationClass>se.skltp.ei.LoadTestEI_Update_1</simulationClass>
@@ -87,6 +93,8 @@
 				<simulationClass>se.skltp.ei.LoadTestEI_Mix</simulationClass>
 			</properties>
 		</profile>
+		<!-- N.B. LoadTestEI_FindContent uses data from LoadTestEI_Update_50. 
+		     Make sure it has been run before using this loadtest -->
 		<profile>
 			<id>LoadTestEI_FindContent</id>
 			<properties>
