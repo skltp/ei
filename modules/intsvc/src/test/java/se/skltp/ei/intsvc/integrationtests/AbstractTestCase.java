@@ -298,23 +298,6 @@ public abstract class AbstractTestCase extends org.soitoolkit.commons.mule.test.
 	/**
 	 * Sends the <code>payload</code> and <code>headers</code> to the <code>inboundEndpointAddress</code> and waits <code>timeout</code> ms for a <code>MuleMessage</code> to arrive on outboundEndpoint with the name <code>outboundEndpointName</code>. 
 	 * 
-	 * Sample usage:
-	 * <tt>
-	 *	public void testTransferKorttransaktioner() throws Exception {
-	 *		String expectedPayload = "Yada, yada, yada...";
-	 *
-	 *		MuleMessage message = dispatchAndWaitForDelivery(
-	 *			"sftp://dfcx0346@vfin8003.volvofinans.net/sftp/vfkonto/ut",
-	 *			expectedPayload,
-	 *			createFileHeader("from_vfkonto.dat"),
-	 *			"volvokort-test-endpoint",
-	 *			TIMEOUT);
-	 *
-	 *		String actualPayload = message.getPayloadAsString();
-	 *		assertEquals(expectedPayload, actualPayload); 
-	 *	}	 
-	 * </tt>
-	 * 
 	 * @param inboundEndpointAddress
 	 * @param payload
 	 * @param headers
