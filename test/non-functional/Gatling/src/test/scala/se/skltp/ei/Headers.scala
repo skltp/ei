@@ -27,7 +27,8 @@ object Headers {
       "Accept-Encoding" -> "gzip,deflate",
       "Content-Type" -> "text/xml;charset=UTF-8",
       "SOAPAction" -> "urn:riv:itintegration:engagementindex:UpdateResponder:1",
-      "Keep-Alive" -> "115")
+      "Keep-Alive" -> "115",
+	  "x-skltp-correlation-id" -> "eicorrelationid")
 	  
 	  val findContentHttp_header = Map(
       "Accept-Encoding" -> "gzip,deflate",
