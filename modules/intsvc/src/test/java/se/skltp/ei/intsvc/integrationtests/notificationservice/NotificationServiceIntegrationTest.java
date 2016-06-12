@@ -60,13 +60,14 @@ public class NotificationServiceIntegrationTest extends AbstractTestCase {
 	public NotificationServiceIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
-        setDisposeContextPerClass(true);
+        setDisposeContextPerClass(false);
     }
 
     protected String getConfigResources() {
 		return 
 			"soitoolkit-mule-jms-connector-activemq-embedded.xml," + 
 	  		"ei-common.xml," +
+	  		"skltp-ei-svc-spring-context.xml," +
 	        "notification-service.xml";
     }
 

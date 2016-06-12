@@ -59,7 +59,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 	public UpdateServiceIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
-        setDisposeContextPerClass(true);
+        setDisposeContextPerClass(false);
     }
 
     protected String getConfigResources() {
@@ -156,7 +156,7 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		// Expect nothing on the processing queue due to the error
 		assertQueueDepth(PROCESS_QUEUE, 0);
     }
-    
+
     /**
      * Verifies that we get an error message when a request contains too many engagements.
      */

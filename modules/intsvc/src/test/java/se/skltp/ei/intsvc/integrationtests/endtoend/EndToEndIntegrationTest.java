@@ -72,7 +72,7 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
     public EndToEndIntegrationTest() {
         // Only start up Mule once to make the tests run faster...
         // Set to false if tests interfere with each other when Mule is started only once.
-        setDisposeContextPerClass(true);
+        setDisposeContextPerClass(false);
     }
 
     protected String getConfigResources() {
@@ -247,9 +247,12 @@ public class EndToEndIntegrationTest extends AbstractTestCase {
 
 		UpdateType request = createUdateRequest(null, ProcessNotificationTestProducer.TEST_ID_FAULT_TIMEOUT);
 		new DoOneTestUpdateDispatcher(request).doDispatch();
-		Exception e = waitForException(SERVICE_TIMOUT_MS + 2000);
+		Throwable e = waitForException(SERVICE_TIMOUT_MS + 5000);
 
-		// Assert that we got the expected exception
+		// Assert that we got the expected root-exception
+		while(e.getCause() != null) {
+			e = e.getCause();
+		}
 		assertEquals(SocketException.class, e.getClass());
 		
 		// Expect 3 error log and 19 info log entries
