@@ -55,5 +55,8 @@
 		persistentDelivery="true"
 		numberOfConsumers="${SOITOOLKIT_MULE_AMQ_NO_OF_CONSUMERS}"
 		specification="1.1"
-		maxRedelivery="-1" />
+		maxRedelivery="-1" 
+		>
+		<service-overrides sessionHandler="org.mule.session.NullSessionHandler"/>
+		</jms:connector>
 </mule>
