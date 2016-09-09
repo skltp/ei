@@ -64,6 +64,12 @@
 			</activation>
 		</profile>
 		<profile>
+			<id>LoadTestEI_Update_500</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_500</simulationClass>
+			</properties>
+		</profile>
+		<profile>
 			<id>LoadTestEI_Update_1000</id>
 			<properties>
 				<simulationClass>se.skltp.ei.LoadTestEI_Update_1000</simulationClass>
