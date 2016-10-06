@@ -100,11 +100,14 @@
         <configuration>
           <properties>
             <year>2013</year>
-            <organization>Inera AB &lt;http://www.inera.se/&gt;</organization>
+				<copyright>Center for eHalsa i samverkan (CeHis).
+				&lt;http://cehis.se/&gt;</copyright>
+				<product>SKLTP</product>
+				<organization>Inera AB &lt;http://www.inera.se/&gt;</organization>
             <product>SKLTP</product>
           </properties>
           <strictCheck>true</strictCheck>
-          <header>http://skltp.googlecode.com/svn/tp/docs/license-header-template.txt</header>
+            <header>https://raw.githubusercontent.com/skltp/license/develop/header.txt</header>
           <encoding>UTF-8</encoding>
           <includes>
             <include>src/main/**</include>
