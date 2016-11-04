@@ -65,19 +65,22 @@ public class ProcessBean implements ProcessInterface {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessBean.class);
 
     private String owner;
+    private String pseudonym;
 
     private EngagementRepository engagementRepository;
 	private List<String> updateNotificationNotAllowedHsaIdList;
 
 
-    private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
+    @SuppressWarnings("unused")
+	private static UpdateResponseType RESPONSE_OK = new UpdateResponseType() {
         @Override
         public ResultCodeEnum getResultCode() {
             return ResultCodeEnum.OK;
         }
     };
 
-    private static ProcessNotificationResponseType NOTIFICATION_RESPONSE_OK = new ProcessNotificationResponseType() {
+    @SuppressWarnings("unused")
+	private static ProcessNotificationResponseType NOTIFICATION_RESPONSE_OK = new ProcessNotificationResponseType() {
         @Override
         public ResultCodeEnum getResultCode() {
             return ResultCodeEnum.OK;
@@ -87,6 +90,10 @@ public class ProcessBean implements ProcessInterface {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public void setPseudonym(String pseudonym) {
+        this.pseudonym = pseudonym;
     }
 
     /**
@@ -202,7 +209,7 @@ public class ProcessBean implements ProcessInterface {
             throw EI003_LOGICALADDRESS_DONT_MATCH_OWNER.createException("missing", owner);
         }
 
-        if (!header.getReceiverId().equals(owner)) {
+        if (!header.getReceiverId().equals(owner) && !header.getReceiverId().equals(pseudonym) ) {
             throw EI003_LOGICALADDRESS_DONT_MATCH_OWNER.createException(header.getReceiverId(), owner);
         }
     }
