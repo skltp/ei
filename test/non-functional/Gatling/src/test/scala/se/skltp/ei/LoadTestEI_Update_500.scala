@@ -20,19 +20,14 @@
  */
 package se.skltp.ei
 
-object Headers {
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import io.gatling.jdbc.Predef._
+import scala.concurrent.duration._
 
-  	// HTTP Headers
-    val updateHttp_header = Map(
-      "Accept-Encoding" -> "gzip,deflate",
-      "Content-Type" -> "text/xml;charset=UTF-8",
-      "SOAPAction" -> "urn:riv:itintegration:engagementindex:UpdateResponder:1",
-      "Keep-Alive" -> "115",
-	  "x-skltp-correlation-id" -> "eicorrelationid")
-	  
-	  val findContentHttp_header = Map(
-      "Accept-Encoding" -> "gzip,deflate",
-      "Content-Type" -> "text/xml;charset=UTF-8",
-      "SOAPAction" -> "urn:riv:itintegration:engagementindex:FindContentResponder:1",
-      "Keep-Alive" -> "115")
-  }
+class LoadTestEI_Update_500 extends Simulation {
+
+    setUp(
+		Scenarios.scn_Update_500_Ok.inject(rampUsers(Conf.noOfUsers) over (Scenarios.rampUpTimeSecs seconds)).protocols(Conf.httpConf)
+	)
+}

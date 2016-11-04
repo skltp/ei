@@ -6,12 +6,12 @@
   <parent>
     <groupId>se.skltp.commons</groupId>
     <artifactId>skltp-commons-mule-parent</artifactId>
-    <version>1.1.0</version>
+    <version>2.0.2</version>
   </parent>
 
   <groupId>se.skltp.ei</groupId>
   <artifactId>skltp-ei-parent</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.1.0</version>
   <packaging>pom</packaging>
   <name>skltp-ei-parent</name>
 
@@ -30,7 +30,7 @@
     <url>http://github.com/skltp/ei</url>
     <connection>scm:git:git://github.com/skltp/ei.git</connection>
     <developerConnection>scm:git:git://github.com/skltp/ei.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v2.1.0</tag>
   </scm>
   
   <repositories>
@@ -100,11 +100,14 @@
         <configuration>
           <properties>
             <year>2013</year>
-            <organization>Inera AB &lt;http://www.inera.se/&gt;</organization>
+				<copyright>Center for eHalsa i samverkan (CeHis).
+				&lt;http://cehis.se/&gt;</copyright>
+				<product>SKLTP</product>
+				<organization>Inera AB &lt;http://www.inera.se/&gt;</organization>
             <product>SKLTP</product>
           </properties>
           <strictCheck>true</strictCheck>
-          <header>http://skltp.googlecode.com/svn/tp/docs/license-header-template.txt</header>
+            <header>https://raw.githubusercontent.com/skltp/license/develop/header.txt</header>
           <encoding>UTF-8</encoding>
           <includes>
             <include>src/main/**</include>
