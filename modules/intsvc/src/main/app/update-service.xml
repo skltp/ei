@@ -22,6 +22,7 @@
         <!-- Bean with business validation logic -->
         <spring:bean name="update-validation-bean" class="se.skltp.ei.svc.service.impl.ProcessBean">
         	<spring:property name="owner" value="${EI_HSA_ID}"/>
+        	<spring:property name="pseudonym" value="${EI_ALTERNATIVE_HSA_ID}"/>
         	<spring:property name="updateNotificationNotAllowedHsaIdList" value="${UPDATE_NOTIFICATION_NOT_ALLOWED_HSA_ID_LIST}"/>
         </spring:bean>
 
