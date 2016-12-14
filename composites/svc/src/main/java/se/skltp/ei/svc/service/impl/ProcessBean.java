@@ -146,6 +146,9 @@ public class ProcessBean implements ProcessInterface {
                 throw EI002_DUPLICATE_UPDATE_ENTRIES.createException(otherIndex, hashCodeIndex);
             }
 
+            // Validate that mandatory fields do not start/end with white space
+            validateWhiteSpace(et);
+
             // Validate that reserved hsa-id's (the platforms own hsa-id's for example) are not used by mistake
             // If used it could cause a aggregating servie to call itself with no end, a looping service...
             validateTransactionLogicalAdressAndSourceSystem(hashCodeIndex, et);
@@ -181,6 +184,24 @@ public class ProcessBean implements ProcessInterface {
         }
     }
 
+	/**
+     * Checks that value does not have a white space in begining or end.
+     * 
+     * @param name the field name.
+     * @param value the field value.
+     */
+    private void whitespaceValueCheck(String name, String value) {
+    	
+    	// Validated elsewhere
+        if (value == null || value.length() == 0)
+        	return;
+
+        // Check that trimmed string has the same length as original
+        if(value.trim().length() != value.length()) {
+            throw EI004_VALIDATION_ERROR.createException("mandatory field \"" + name + "\" contains white space in beginning or end");                    	
+        }
+    }
+
     /**
      * Validates all mandatory fields.
      * 
@@ -202,6 +223,16 @@ public class ProcessBean implements ProcessInterface {
         }
     }
 
+    private void validateWhiteSpace(final EngagementType et) {
+    	whitespaceValueCheck("registeredResidentIdentification", et.getRegisteredResidentIdentification());          
+    	whitespaceValueCheck("serviceDomain", et.getServiceDomain());
+    	whitespaceValueCheck("categorization", et.getCategorization());
+    	whitespaceValueCheck("logicalAddress", et.getLogicalAddress());
+    	whitespaceValueCheck("businessObjectInstanceIdentifier", et.getBusinessObjectInstanceIdentifier());
+    	whitespaceValueCheck("clinicalProcessInterestId", et.getClinicalProcessInterestId());
+    	whitespaceValueCheck("sourceSystem", et.getSourceSystem());
+    	whitespaceValueCheck("dataController", et.getDataController()); 
+    }
 
     // Update, R7: Logical address in request equals owner of EI
     private void validateLogicalAddress(Header header) {
@@ -213,6 +244,7 @@ public class ProcessBean implements ProcessInterface {
             throw EI003_LOGICALADDRESS_DONT_MATCH_OWNER.createException(header.getReceiverId(), owner);
         }
     }
+
 
     // Update/processNotification - max 1000 engagements per request
     private void validateMaxLength(List<EngagementTransactionType> engagementTransactions ) {

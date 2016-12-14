@@ -253,6 +253,33 @@ public class UpdateServiceIntegrationTest extends AbstractTestCase {
 		assertQueueDepth(PROCESS_QUEUE, 0);
     }
 
+    @Test
+    public void update_ERR_with_whitespace() {
+		
+		UpdateType request = createUdateRequest(null, 1111111111L);
+		request.getEngagementTransaction().get(0).getEngagement().setBusinessObjectInstanceIdentifier(" x ");
+	
+		
+		String expectedError = "EI004: The payload does not validate, error messge: mandatory field \"businessObjectInstanceIdentifier\" contains white space in beginning or end";
+
+		try {
+			new DoOneTestDispatcher(request).doDispatch();
+			fail("Expected exception here");
+
+		} catch (javax.xml.ws.soap.SOAPFaultException e) {
+			// TODO: Add more SOAP Fault specific tests, can we get the actual SOAP fault XML to validate against???
+			assertEquals("javax.xml.ws.soap.SOAPFaultException: " + expectedError, e.toString());
+		};
+
+		// Expect one error log and info log entry
+		assertQueueDepth(ERROR_LOG_QUEUE, 1);
+		assertQueueContainsMessage(ERROR_LOG_QUEUE, expectedError);
+		assertQueueDepth(INFO_LOG_QUEUE, 1);
+
+		// Expect nothing on the processing queue due to the error
+		assertQueueDepth(PROCESS_QUEUE, 0);
+    }
+    
     /**
      * Validates that use of not allowed hsa-id's in engagement transactions logical-address are detected.
      */
