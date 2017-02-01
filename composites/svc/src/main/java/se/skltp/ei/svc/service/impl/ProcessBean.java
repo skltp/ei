@@ -236,7 +236,7 @@ public class ProcessBean implements ProcessInterface {
 
     // Update, R7: Logical address in request equals owner of EI
     private void validateLogicalAddress(Header header) {
-        if (header == null || header.getReceiverId() == null) {
+        if (header == null || header.getReceiverId() == null || header.getReceiverId().length() == 0) {
             throw EI003_LOGICALADDRESS_DONT_MATCH_OWNER.createException("missing", owner);
         }
 
