@@ -26,6 +26,7 @@ import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI004_VALIDATION_ERROR
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI005_VALIDATION_ERROR_INVALID_LOGICAL_ADDRESS;
 import static se.skltp.ei.svc.service.api.EiErrorCodeEnum.EI006_VALIDATION_ERROR_INVALID_SOURCE_SYSTEM;
 import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
+import static se.skltp.ei.svc.service.impl.util.EntityTransformer.formatDate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -302,7 +303,7 @@ public class ProcessBean implements ProcessInterface {
         final List<EngagementTransactionType> notificationTransactions = new ArrayList<EngagementTransactionType>();
         
         // Get a hashmap with data for most_recent_content
-        Map<String, Date>existingContent = getEngagementsThatExistsWithContent(request);
+        Map<String, Engagement>existingContent = getEngagementsThatExistsWithContent(request);
         
         // Loop over our incoming list of data and move data to new list if a notification should be sent
         for (final EngagementTransactionType inEngagementTransaction : engagementTransactions) {
@@ -310,16 +311,27 @@ public class ProcessBean implements ProcessInterface {
             EngagementType inET = inEngagementTransaction.getEngagement();
             inET.setOwner(this.owner); // According to R6 owner should always be set to owner of the index
             
+        	Engagement inEngagement = toEntity(inET); 
+        	
+            boolean keyExists = existingContent.containsKey(inEngagement.getId());
+        	Engagement curEngagement  = keyExists ? existingContent.get(inEngagement.getId()) : null; 
+        	boolean valueExists = keyExists && curEngagement != null;
+            
+            // We must set a creationTime and updateTime for notifications.
+            Date creationTime = valueExists ? creationTime = curEngagement.getCreationTime() : null;
+            inET.setCreationTime(formatDate(creationTime == null ? new Date() : creationTime));
+        	if(creationTime != null)
+        		inET.setUpdateTime(formatDate(new Date()));
+        		       	
             // If delete flag is set add it to notificationList
             if (inEngagementTransaction.isDeleteFlag()) {
             	notificationTransactions.add(inEngagementTransaction);
             } else {
             	// Check if we find this record in our map
-            	Engagement inEngagement = toEntity(inET); 
-            	if (existingContent.containsKey(inEngagement.getId())) {
+            	if (keyExists) {
             		// Check if most_recent_content has changed, it could be NULL
-            		String inValue = inEngagement.getMostRecentContent() == null ? "null":EntityTransformer.forrmatDate(inEngagement.getMostRecentContent());
-            		String dbValue = existingContent.get(inEngagement.getId()) == null ? "null":EntityTransformer.forrmatDate(existingContent.get(inEngagement.getId()));
+            		String inValue = inEngagement.getMostRecentContent() == null ? "null":formatDate(inEngagement.getMostRecentContent());
+            		String dbValue = !valueExists || curEngagement.getMostRecentContent() == null ? "null":formatDate(curEngagement.getMostRecentContent());
             		
             		if (inValue.equalsIgnoreCase(dbValue) ) {
             			// Don't add to processNotification list!
@@ -339,7 +351,7 @@ public class ProcessBean implements ProcessInterface {
         }
 
         // Perform the save
-        engagementRepository.save(saveList);  	
+        engagementRepository.save(saveList);  
         
         // Return a list of EngagementTransactions for notification to subscribers
         return notificationTransactions;
@@ -453,7 +465,7 @@ public class ProcessBean implements ProcessInterface {
         }
     }
 
-    public Map<String, Date> getEngagementsThatExistsWithContent(UpdateType request) {
+    public Map<String, Engagement> getEngagementsThatExistsWithContent(UpdateType request) {
 
         final List<EngagementTransactionType> engagementTransactions = request.getEngagementTransaction();
         final List<String> ids = new ArrayList<String>(engagementTransactions.size());
@@ -468,9 +480,9 @@ public class ProcessBean implements ProcessInterface {
             return Collections.emptyMap();
         } else {
         	// Create a new HashMap with id as key and most_recent_time as value
-        	HashMap<String, Date> returnMap = new HashMap<String,Date>();
+        	HashMap<String, Engagement> returnMap = new HashMap<String,Engagement>();
         	for (Engagement engagement :engagementRepository.findByIdIn(ids) ) {
-        		returnMap.put(engagement.getId(), engagement.getMostRecentContent());
+        		returnMap.put(engagement.getId(), engagement);
         	}
             return returnMap;
         }
