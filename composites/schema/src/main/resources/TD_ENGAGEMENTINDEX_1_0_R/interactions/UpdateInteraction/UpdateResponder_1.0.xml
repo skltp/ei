@@ -4,64 +4,75 @@
       <!--  Exempel tidbokning, Bokning -->
     <tns1:deleteFlag>false</tns1:deleteFlag>
     <tns1:engagement>
-      <tns1:registeredResidentIdentification>12121212121212</tns1:registeredResidentIdentification>
+      <tns1:registeredResidentIdentification>121212121212</tns1:registeredResidentIdentification>
       <tns1:serviceDomain>crm:scheduling</tns1:serviceDomain>
       <tns1:categorization>Booking</tns1:categorization>
-      <tns1:logicalAddress><länskod för landstinget>#</länskod>#<hsaid för vårdgivare></orgnummer>#<hsaid för mottagning></hsaid></tns1:logicalAddress>
+      <tns1:logicalAddress>[länskod för landstinget]#[hsaid för vårdgivare]#[hsaid för mottagning]</tns1:logicalAddress>
       <tns1:businessObjectInstanceIdentifier>bookingId_873</tns1:businessObjectInstanceIdentifier>
-      <tns1:mostRecentContent>20111213T124000</tns1:mostRecentContent>
-      <tns1:sourceSystem><hsaid för effica i ÖLL></hsaid></tns1:sourceSystem>
+      <tns1:clinicalProcessInterestId>NA</tns1:clinicalProcessInterestId>
+      <tns1:mostRecentContent>20111213124000</tns1:mostRecentContent>
+      <tns1:sourceSystem>hsaid för effica i ÖLL</tns1:sourceSystem>
+      <tns1:dataController>NA</tns1:dataController>
     </tns1:engagement>
   </tns:engagementTransaction>
-    <!--  Exempel tidbokning, Kallelse -->
+  <tns:engagementTransaction>
+  <!--  Exempel tidbokning, Kallelse -->
    	<tns1:deleteFlag>true</tns1:deleteFlag>
     <tns1:engagement>
-      <tns1:registeredResidentIdentification>12121212121212</tns1:registeredResidentIdentification>
+      <tns1:registeredResidentIdentification>121212121212</tns1:registeredResidentIdentification>
       <tns1:serviceDomain>crm:scheduling</tns1:serviceDomain>
       <tns1:categorization>Invitation</tns1:categorization>
-      <tns1:logicalAddress><länskod för landstinget>#</länskod>#<hsaid för vårdgivare></orgnummer>#<hsaid för mottagning></hsaid></tns1:logicalAddress>
+      <tns1:logicalAddress>[länskod för landstinget]#[hsaid för vårdgivare]#[hsaid för mottagning]</tns1:logicalAddress>
       <tns1:businessObjectInstanceIdentifier>bookingId_34</tns1:businessObjectInstanceIdentifier>
-      <tns1:mostRecentContent>20111010T100000</tns1:mostRecentContent>
-      <tns1:sourceSystem><hsaid för effica i ÖLL></hsaid></tns1:sourceSystem>
+      <tns1:clinicalProcessInterestId>NA</tns1:clinicalProcessInterestId>
+      <tns1:mostRecentContent>20111010100000</tns1:mostRecentContent>
+      <tns1:sourceSystem>hsaid för effica i ÖLL</tns1:sourceSystem>
+      <tns1:dataController>NA</tns1:dataController>
     </tns1:engagement>
   </tns:engagementTransaction>
-  </tns:engagementTransaction>
+  <tns:engagementTransaction>
   	<!--  Exempel NPÖ -->
    	<tns1:deleteFlag>false</tns1:deleteFlag>
     <tns1:engagement>
-      <tns1:registeredResidentIdentification>12121212121212</tns1:registeredResidentIdentification>
+      <tns1:registeredResidentIdentification>121212121212</tns1:registeredResidentIdentification>
       <tns1:serviceDomain>ehr:patientsummary</tns1:serviceDomain>
-      <tns1:categorization><infotyp i NPÖ></infotyp></tns1:categorization>
-      <tns1:logicalAddress><hsaid för källsystemet>HSAid för SystemCross-instansen hos ÖLL (option A) eller ÖLL:s anslutningspunkt (Option A) eller för nationella mellanlagret i NPÖ (Option B)</hsaid></tns1:logicalAddress>
+      <tns1:categorization>infotyp i NPÖ</tns1:categorization>
+      <tns1:logicalAddress>hsaid för källsystemet, HSAid för SystemCross-instansen hos ÖLL (option A) eller ÖLL:s anslutningspunkt (Option A) eller för nationella mellanlagret i NPÖ (Option B)</tns1:logicalAddress>
       <tns1:businessObjectInstanceIdentifier>NA</tns1:businessObjectInstanceIdentifier>
-      <tns1:sourceSystem><HSAid för SystemCross-instansen hos ÖLL></hsaid></tns1:sourceSystem>
+      <tns1:clinicalProcessInterestId>NA</tns1:clinicalProcessInterestId>
+      <tns1:sourceSystem>HSAid för SystemCross-instansen hos ÖLL</tns1:sourceSystem>
+      <tns1:dataController>NA</tns1:dataController>
     </tns1:engagement>
   </tns:engagementTransaction> 
-  </tns:engagementTransaction>
+  <tns:engagementTransaction>
 	<!--  Exempel TGP med TGP-specifikt engagemang -->
  	<tns1:deleteFlag>false</tns1:deleteFlag>
     <tns1:engagement>
-      <tns1:registeredResidentIdentification>12121212121212</tns1:registeredResidentIdentification>
+      <tns1:registeredResidentIdentification>121212121212</tns1:registeredResidentIdentification>
       <tns1:serviceDomain>ehr:accesscontrol</tns1:serviceDomain>
-      <tns1:categorization>TGP</infotyp></tns1:categorization>
-      <tns1:logicalAddress><länskod för landstinget>#</länskod>#<hsaid för vårdgivare></orgnummer>#<hsaid för VEH></hsaid></tns1:logicalAddress>
+      <tns1:categorization>TGP</tns1:categorization>
+      <tns1:logicalAddress>länskod för landstinget>#hsaid för vårdgivare#hsaid för VEH</tns1:logicalAddress>
       <tns1:businessObjectInstanceIdentifier>NA</tns1:businessObjectInstanceIdentifier>
-      <tns1:sourceSystem><HSAid för PAS hos ÖLL></hsaid></tns1:sourceSystem>
+      <tns1:clinicalProcessInterestId>NA</tns1:clinicalProcessInterestId>
+      <tns1:sourceSystem>HSAid för PAS hos ÖLL</tns1:sourceSystem>
+      <tns1:dataController>NA</tns1:dataController>
     </tns1:engagement>
   </tns:engagementTransaction> 
-  </tns:engagementTransaction>
+  <tns:engagementTransaction>
 	<!--  
 		Exempel Inskrivningshändelse som kan ligga till grund för TGP-beslut, t.ex. i kombination med Bokningar och kallelser.
 		TGP-kontraktet ovanpå Engagemangsindex skulle du söka efter specifika engagemang, så som "pas:enrollment" av kategorin "Enrolled" och "crm:scheduling" av kategorierna "Booked" och "Invited". 
 	-->
  	<tns1:deleteFlag>false</tns1:deleteFlag>
     <tns1:engagement>
-      <tns1:registeredResidentIdentification>12121212121212</tns1:registeredResidentIdentification>
+      <tns1:registeredResidentIdentification>121212121212</tns1:registeredResidentIdentification>
       <tns1:serviceDomain>pas:enrollment</tns1:serviceDomain>
-      <tns1:categorization>Enrolled</infotyp></tns1:categorization>
-      <tns1:logicalAddress><länskod för landstinget>#</länskod>#<hsaid för vårdgivare></orgnummer>#<hsaid för VEH></hsaid></tns1:logicalAddress>
+      <tns1:categorization>Enrolled</tns1:categorization>
+      <tns1:logicalAddress>länskod för landstinget#hsaid för vårdgivare#hsaid för VEH</tns1:logicalAddress>
       <tns1:businessObjectInstanceIdentifier>NA</tns1:businessObjectInstanceIdentifier>
-      <tns1:sourceSystem><HSAid för PAS hos ÖLL></hsaid></tns1:sourceSystem>
+      <tns1:clinicalProcessInterestId>NA</tns1:clinicalProcessInterestId>
+      <tns1:sourceSystem>HSAid för PAS hos ÖLL</tns1:sourceSystem>
+      <tns1:dataController>NA</tns1:dataController>
     </tns1:engagement>
   </tns:engagementTransaction> 
 </tns:Update>
