@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jline.internal.Log;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
@@ -64,7 +65,7 @@ import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 public class ProcessBean implements ProcessInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessBean.class);
-
+    
     private String owner;
     private String pseudonym;
 
@@ -318,11 +319,11 @@ public class ProcessBean implements ProcessInterface {
         	boolean valueExists = keyExists && curEngagement != null;
             
             // We must set a creationTime and updateTime for notifications.
-            Date creationTime = valueExists ? creationTime = curEngagement.getCreationTime() : null;
-            inET.setCreationTime(formatDate(creationTime == null ? new Date() : creationTime));
+            Date creationTime = valueExists ? curEngagement.getCreationTime() : null;
         	if(creationTime != null)
         		inET.setUpdateTime(formatDate(new Date()));
-        		       	
+            inET.setCreationTime(formatDate(creationTime == null ? new Date() : creationTime));
+        		   
             // If delete flag is set add it to notificationList
             if (inEngagementTransaction.isDeleteFlag()) {
             	notificationTransactions.add(inEngagementTransaction);
