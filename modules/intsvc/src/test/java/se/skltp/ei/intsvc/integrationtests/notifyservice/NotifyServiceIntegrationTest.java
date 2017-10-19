@@ -28,7 +28,6 @@ import java.util.List;
 
 import javax.jms.JMSException;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;

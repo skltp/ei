@@ -22,9 +22,7 @@ package se.skltp.ei.svc.service.api;
 import java.util.List;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
-import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
-import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 
 /**

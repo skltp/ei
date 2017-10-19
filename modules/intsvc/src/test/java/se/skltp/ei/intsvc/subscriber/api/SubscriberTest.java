@@ -53,7 +53,7 @@ public class SubscriberTest {
 
 		// Verify that we still got two engagements 
 		assertEquals(2, filteredEngagements.size());
-		assertEquals(engagements.get(0), filteredEngagements.get(0));
+		assertEquals(engagements.get(0).getEngagement().hashCode(), filteredEngagements.get(0).getEngagement().hashCode());
 	}
 	
 	

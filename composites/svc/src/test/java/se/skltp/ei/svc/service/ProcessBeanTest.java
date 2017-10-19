@@ -33,10 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
-import riv.itintegration.engagementindex._1.ResultCodeEnum;
-import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationResponseType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
-import riv.itintegration.engagementindex.updateresponder._1.UpdateResponseType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.EiErrorCodeEnum;

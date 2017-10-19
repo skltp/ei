@@ -20,8 +20,6 @@
 package se.skltp.ei.intsvc.integrationtests.collect;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +37,6 @@ import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
 import se.skltp.ei.intsvc.integrationtests.updateservice.UpdateTestConsumer;
 import se.skltp.ei.svc.service.GenServiceTestDataUtil;
-import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class UpdateServiceCollectIntegrationTest extends AbstractTestCase {
 
@@ -49,10 +46,10 @@ public class UpdateServiceCollectIntegrationTest extends AbstractTestCase {
 	@SuppressWarnings("unused")
 	private static final long SERVICE_TIMOUT_MS = Long.parseLong(rb.getString("SERVICE_TIMEOUT_MS"));
     
-    private static final String INVALID_LOGICAL_ADDRESS = "wrongLogicalAddress";
+	//private static final String INVALID_LOGICAL_ADDRESS = "wrongLogicalAddress";
     private static final String LOGICAL_ADDRESS = rb.getString("EI_HSA_ID");
     private static final String OWNER = rb.getString("EI_HSA_ID");
-	private static final String COLLECT_TRESHOLD_ORIGINAL = rb.getString("COLLECT_TRESHOLD");
+	// private static final String COLLECT_TRESHOLD_ORIGINAL = rb.getString("COLLECT_TRESHOLD");
 
 	@SuppressWarnings("unused")
 	private static final String EXPECTED_ERR_TIMEOUT_MSG = "Read timed out";
@@ -188,6 +185,7 @@ public class UpdateServiceCollectIntegrationTest extends AbstractTestCase {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private UpdateType createUpdateRequestWithTransactions(int count) {
 		UpdateType request = new UpdateType();
 

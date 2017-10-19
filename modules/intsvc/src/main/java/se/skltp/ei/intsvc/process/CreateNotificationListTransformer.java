@@ -22,8 +22,6 @@ public class CreateNotificationListTransformer extends AbstractMessageTransforme
 	private static final Logger log = LoggerFactory.getLogger(CreateNotificationListTransformer.class);
 	private static JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class, ProcessNotificationType.class);
 	private static riv.itintegration.engagementindex.processnotificationresponder._1.ObjectFactory objectFactoryProcessNotification = new ObjectFactory();
-	private static riv.itintegration.engagementindex.updateresponder._1.ObjectFactory objectFactoryUpdate = new riv.itintegration.engagementindex.updateresponder._1.ObjectFactory();
-
 	private SubscriberCache subscriberCache;
 	public void setSubscriberCache (SubscriberCache subscriberCache) {
 		this.subscriberCache = subscriberCache;
@@ -41,7 +39,8 @@ public class CreateNotificationListTransformer extends AbstractMessageTransforme
     	
     	// Unmarshal payload
     	ProcessNotificationType process = new ProcessNotificationType();
-    	List<EngagementTransactionType> engagements = (List<EngagementTransactionType>)msg;
+    	@SuppressWarnings("unchecked")
+		List<EngagementTransactionType> engagements = (List<EngagementTransactionType>)msg;
 
     	List<Subscriber> subscribers = subscriberCache.getSubscribers();    	
 

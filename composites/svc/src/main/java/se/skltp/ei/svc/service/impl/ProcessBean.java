@@ -43,7 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import jline.internal.Log;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.EngagementType;
 import riv.itintegration.engagementindex._1.ResultCodeEnum;
@@ -55,7 +54,6 @@ import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
-import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 /**
  * Updates engagement index with either update or process notification requests.
@@ -332,7 +330,7 @@ public class ProcessBean implements ProcessInterface {
             	if (keyExists) {
             		// Check if most_recent_content has changed, it could be NULL
             		String inValue = inEngagement.getMostRecentContent() == null ? "null":formatDate(inEngagement.getMostRecentContent());
-            		String dbValue = !valueExists || curEngagement.getMostRecentContent() == null ? "null":formatDate(curEngagement.getMostRecentContent());
+            		String dbValue = (!valueExists || curEngagement.getMostRecentContent() == null) ? "null":formatDate(curEngagement.getMostRecentContent());
             		
             		if (inValue.equalsIgnoreCase(dbValue) ) {
             			// Don't add to processNotification list!
