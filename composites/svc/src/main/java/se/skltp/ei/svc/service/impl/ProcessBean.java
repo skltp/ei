@@ -218,7 +218,7 @@ public class ProcessBean implements ProcessInterface {
     }
 
     private void dateCheck(String name, String value) {
-    	if(value != null) {
+    	if(value != null && value.length() > 0) {
     		try {
     			EntityTransformer.parseDate(value); 
     		} catch(Exception e) {
