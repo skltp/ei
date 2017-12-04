@@ -54,6 +54,7 @@ import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
+import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 /**
  * Updates engagement index with either update or process notification requests.
@@ -155,6 +156,12 @@ public class ProcessBean implements ProcessInterface {
             
             // mandatory fields
             validateMandatoryFields(et, ownerCheck);
+            
+            // validate max length
+            validateFieldMaxLength(et);
+            
+            //validate date fields
+            validateDates(et);
 
         }
     }
@@ -184,6 +191,42 @@ public class ProcessBean implements ProcessInterface {
         }
     }
 
+    private void validateFieldMaxLength(final EngagementType et) {
+    	maxLengthCheck("registeredResidentIdentification", et.getRegisteredResidentIdentification(), 32);          
+    	maxLengthCheck("serviceDomain", et.getServiceDomain(), 255);
+    	maxLengthCheck("categorization", et.getCategorization(), 255);
+    	maxLengthCheck("logicalAddress", et.getLogicalAddress(), 64);
+    	maxLengthCheck("businessObjectInstanceIdentifier", et.getBusinessObjectInstanceIdentifier(), 128);
+    	maxLengthCheck("clinicalProcessInterestId", et.getClinicalProcessInterestId(), 128);
+    	maxLengthCheck("sourceSystem", et.getSourceSystem(), 64);
+    	maxLengthCheck("dataController", et.getDataController(), 64); 
+    	maxLengthCheck("mostRecentContent", et.getMostRecentContent(), 14);  	
+    	maxLengthCheck("updateTime", et.getUpdateTime(), 14);  	
+    	maxLengthCheck("creationTime", et.getCreationTime(), 14); 
+    	    	
+    }
+    
+    private void maxLengthCheck(String name, String value, int max_length) {
+    	if(value != null && value.length() > max_length)
+            throw EI004_VALIDATION_ERROR.createException("Field \"" + name + "\" is to long");                		
+    }
+
+    private void validateDates(final EngagementType et) {
+    	dateCheck("mostRecentContent", et.getMostRecentContent());  	
+    	dateCheck("updateTime", et.getUpdateTime());  	
+    	dateCheck("creationTime", et.getCreationTime()); 
+    }
+
+    private void dateCheck(String name, String value) {
+    	if(value != null) {
+    		try {
+    			EntityTransformer.parseDate(value); 
+    		} catch(Exception e) {
+                throw EI004_VALIDATION_ERROR.createException("Field \"" + name + "\": " + e.getMessage());                		    			
+    		}
+    	}
+    }
+    
 	/**
      * Checks that value does not have a white space in begining or end.
      * 
