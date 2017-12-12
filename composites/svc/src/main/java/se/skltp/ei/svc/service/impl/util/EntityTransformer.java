@@ -102,9 +102,9 @@ public class EntityTransformer {
         eOut.setOwner(eIn.getOwner());
         eOut.setClinicalProcessInterestId(eIn.getClinicalProcessInterestId());
         eOut.setDataController(eIn.getDataController());
-        eOut.setCreationTime(forrmatDate(eIn.getCreationTime()));
-        eOut.setMostRecentContent(forrmatDate(eIn.getMostRecentContent()));	    
-        eOut.setUpdateTime(forrmatDate(eIn.getUpdateTime()));
+        eOut.setCreationTime(formatDate(eIn.getCreationTime()));
+        eOut.setMostRecentContent(formatDate(eIn.getMostRecentContent()));	    
+        eOut.setUpdateTime(formatDate(eIn.getUpdateTime()));
 
         return eOut;
     }
@@ -130,7 +130,7 @@ public class EntityTransformer {
      * @param date the date to format.
      * @return the formatted date.
      */
-    public static String forrmatDate(Date date) {
+    public static String formatDate(Date date) {
         return (date == null) ? null : format(date);
     }
 

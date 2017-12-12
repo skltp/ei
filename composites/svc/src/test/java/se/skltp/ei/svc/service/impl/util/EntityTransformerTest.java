@@ -38,7 +38,7 @@ public class EntityTransformerTest {
 
         Date date = EntityTransformer.parseDate(sDate);
 
-        String fDate = EntityTransformer.forrmatDate(date);
+        String fDate = EntityTransformer.formatDate(date);
 
         assertEquals(sDate, fDate);
     }

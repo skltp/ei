@@ -65,6 +65,7 @@ public class NotifyEvaluator implements ExpressionEvaluator {
 	@Override
 	public TypedValue evaluateTyped(String expression, MuleMessage message) {
 		Object o = evaluate(expression, message);
+		@SuppressWarnings("rawtypes")
 		DataType dt = DataTypeFactory.createFromObject(o);
 		return new TypedValue(o, dt);
 	}

@@ -130,49 +130,49 @@ public class ProcessBeanIntegrationTest {
         BEAN.update(null, request); 
         
         // Update setBusinessObjectInstanceIdentifier
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setBusinessObjectInstanceIdentifier(et1.getEngagement().getBusinessObjectInstanceIdentifier()+"1");
         BEAN.update(null, request);
         assertThat(countEngagements(), is(2));
         
         // Update setCategorization
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setCategorization(et1.getEngagement().getCategorization()+"1");
         BEAN.update(null, request);
         assertThat(countEngagements(), is(3));
         
         // Update setClinicalProcessInterestId
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setClinicalProcessInterestId(et1.getEngagement().getClinicalProcessInterestId()+"1");
         BEAN.update(null, request);
         assertThat(countEngagements(), is(4));
         
         // Update setDataController
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setDataController((et1.getEngagement().getDataController()+"1"));
         BEAN.update(null, request);
         assertThat(countEngagements(), is(5));
         
         // Update setLogicalAddress
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setLogicalAddress((et1.getEngagement().getLogicalAddress()+"1"));
         BEAN.update(null, request);
         assertThat(countEngagements(), is(6));
         
         // Update setRegisteredResidentIdentification
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setRegisteredResidentIdentification(et1.getEngagement().getRegisteredResidentIdentification()+"1");
         BEAN.update(null, request);
         assertThat(countEngagements(), is(7));
         
         // Update setServiceDomain
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setServiceDomain(et1.getEngagement().getServiceDomain()+"1");
         BEAN.update(null, request);
         assertThat(countEngagements(), is(8));
         
         // Update setRegisteredResidentIdentification
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         et1.getEngagement().setSourceSystem(et1.getEngagement().getSourceSystem()+"1");
         BEAN.update(null, request);
         assertThat(countEngagements(), is(9));
@@ -190,7 +190,7 @@ public class ProcessBeanIntegrationTest {
         Engagement engagement1 = getSingleEngagement();         
 
         // The only content that can be updated is mostRecentContent
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         BEAN.update(null, request); 
       
         engagementRepository.flush();
@@ -232,7 +232,7 @@ public class ProcessBeanIntegrationTest {
 
 
         // Update 2, must update content, otherwise nothing happens.
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         BEAN.update(null, request);
         Engagement engagement2 = getSingleEngagement();
  
@@ -294,7 +294,7 @@ public class ProcessBeanIntegrationTest {
          // Create a request
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         request.getEngagementTransaction().add(et1);
 
         List<EngagementTransactionType> processList = BEAN.update(null, request);
@@ -327,7 +327,7 @@ public class ProcessBeanIntegrationTest {
         // Do an update twice, second call should not generate a notification
         BEAN.update(null, request);
 
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         List<EngagementTransactionType> processList = BEAN.update(null, request);
 
         // Validate the length of the list
@@ -339,7 +339,7 @@ public class ProcessBeanIntegrationTest {
          // Create a request
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         request.getEngagementTransaction().add(et1);
         
         // Do an update twice, second call should not generate a notification
@@ -360,7 +360,7 @@ public class ProcessBeanIntegrationTest {
          // Create a request
         UpdateType request = new UpdateType();
         EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
-        et1.getEngagement().setMostRecentContent(EntityTransformer.forrmatDate(new Date()));
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(new Date()));
         request.getEngagementTransaction().add(et1);
         
         // Do an update twice, second call should not generate a notification

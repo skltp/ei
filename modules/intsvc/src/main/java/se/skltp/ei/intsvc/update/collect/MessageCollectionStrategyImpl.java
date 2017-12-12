@@ -121,8 +121,8 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	    	        Engagement oldEngagementEntity = toEntity(oldEngagementTransaction.getEngagement());
 	    	        boolean oldIsDeleteFlag = oldEngagementTransaction.isDeleteFlag();
 
-	        		long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.forrmatDate(newEngagementEntity.getMostRecentContent()));
-            		long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.forrmatDate(oldEngagementEntity.getMostRecentContent()));
+	        		long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(newEngagementEntity.getMostRecentContent()));
+            		long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(oldEngagementEntity.getMostRecentContent()));
             		
             		if (oldIsDeleteFlag) {
             			// Don't replace!

@@ -21,7 +21,7 @@ import se.riv.itintegration.monitoring.v1.PingForConfigurationType;
 		wsdlLocation = "ServiceContracts_itintegration_monitoring/interactions/PingForConfigurationInteraction/PingForConfigurationInteraction_1.0_RIVTABP21.wsdl")
 public class PingForconfigurationWSBean implements PingForConfigurationResponderInterface{
 	
-	private ThreadSafeSimpleDateFormat dateFormat = new ThreadSafeSimpleDateFormat("yyyyMMddhhmmss");
+	private ThreadSafeSimpleDateFormat dateFormat = new ThreadSafeSimpleDateFormat("yyyyMMddHHmmss");
 	
 	private static final Logger log = LoggerFactory.getLogger(PingForconfigurationWSBean.class);
 
