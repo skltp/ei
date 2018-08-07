@@ -22,7 +22,6 @@
     <!-- sonar -->
     <sonar.host.url>http://localhost:9000</sonar.host.url>
     <sonar.jdbc.url>jdbc:jtds:sqlserver://localhost;databaseName=sonar;SelectMethod=Cursor</sonar.jdbc.url>
-    <commons-collection.version>3.2.2</commons-collection.version>
   </properties>
 
     <scm>
@@ -40,17 +39,6 @@
     <module>applications/mule-frontend-app</module>
     <!-- <module>test/non-functional/Gatling</module> -->
   </modules>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <!-- Override commons-collections version 3.2.1 -->
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>${commons-collection.version}</version>
-      </dependency>
-      </dependencies>
-  </dependencyManagement>
 
   <build>
     <pluginManagement>
