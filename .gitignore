@@ -6,3 +6,6 @@ target
 *.class
 modules/intsvc/tests/scale/data
 .mule/
+
+*.iml
+.idea
