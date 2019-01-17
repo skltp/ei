@@ -41,13 +41,13 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 
 	private static JaxbUtil jabxUtil = new JaxbUtil(UpdateType.class);
 	private static riv.itintegration.engagementindex.updateresponder._1.ObjectFactory objectFactoryUpdate = new riv.itintegration.engagementindex.updateresponder._1.ObjectFactory();
-	
+
 	private long bufferAgeMillis;
 	/**
 	 * How long we are allowed to buffer records from messages before we must
 	 * transmit them.
 	 */
-	private long maxBufferAgeMillis = 4 * 60 * 1000;
+	private long maxBufferAgeMillis = 30000; //4 * 60 * 1000;
 	/**
 	 * The max number of records to return in each CollectedMessage.
 	 */
@@ -92,10 +92,9 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 			// start counting buffer age
 			bufferAgeMillis = System.currentTimeMillis();
 		}
-
 		// Unmarshal message
 		UpdateType updateRecord = (UpdateType)jabxUtil.unmarshal(message);
-		
+
 		int preAddBufferSize = buffer.size();
 		// Update counter of processed messages
 		totalNrAddedMessages++;
@@ -107,45 +106,45 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 			// Read one engagement and create key for this engagement
 			EngagementType newEngagement = newEngagementTransaction.getEngagement();
 			boolean newIsDeleteFlag = newEngagementTransaction.isDeleteFlag();
-	        Engagement newEngagementEntity = toEntity(newEngagement);
-	                
-	        // Check if we already have an engagement in our buffer with this key
-	        if (buffer.containsKey(newEngagementEntity.getId())) {
-	        	// Engagement found in buffer
-	        	if (newIsDeleteFlag) {
-	        		// A delete overrides previously stored engagement
-	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
-	        	} else {
-	        		// Check if incoming record contains a more recent time value
-	        		EngagementTransactionType oldEngagementTransaction = buffer.get(newEngagementEntity.getId());
-	    	        Engagement oldEngagementEntity = toEntity(oldEngagementTransaction.getEngagement());
-	    	        boolean oldIsDeleteFlag = oldEngagementTransaction.isDeleteFlag();
+			Engagement newEngagementEntity = toEntity(newEngagement);
 
-	        		long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(newEngagementEntity.getMostRecentContent()));
-            		long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(oldEngagementEntity.getMostRecentContent()));
-            		
-            		if (oldIsDeleteFlag) {
-            			// Don't replace!
-            			continue;
-            		} else {
-                  		if (oldMostRecentContent == 0 && newMostRecentContent != 0) {
-                			// Replace with engagement that has a value
-        	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
-                		} else if (newMostRecentContent == 0) {
-                			// Dont replace anything!
-                    		continue;
-                		} else if (newMostRecentContent > oldMostRecentContent) {
-                			// Replace with newer content
-        	        		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);              			
-                		}            			
-            		}
-	        	}	        	
-	        } else {
-	        	// No engagement exist in buffer with this key, store it!	        	
-	    		buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
-	        }
+			// Check if we already have an engagement in our buffer with this key
+			if (buffer.containsKey(newEngagementEntity.getId())) {
+				// Engagement found in buffer
+				if (newIsDeleteFlag) {
+					// A delete overrides previously stored engagement
+					buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+				} else {
+					// Check if incoming record contains a more recent time value
+					EngagementTransactionType oldEngagementTransaction = buffer.get(newEngagementEntity.getId());
+					Engagement oldEngagementEntity = toEntity(oldEngagementTransaction.getEngagement());
+					boolean oldIsDeleteFlag = oldEngagementTransaction.isDeleteFlag();
+
+					long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(newEngagementEntity.getMostRecentContent()));
+					long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(oldEngagementEntity.getMostRecentContent()));
+
+					if (oldIsDeleteFlag) {
+						// Don't replace!
+						continue;
+					} else {
+						if (oldMostRecentContent == 0 && newMostRecentContent != 0) {
+							// Replace with engagement that has a value
+							buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+						} else if (newMostRecentContent == 0) {
+							// Dont replace anything!
+							continue;
+						} else if (newMostRecentContent > oldMostRecentContent) {
+							// Replace with newer content
+							buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+						}
+					}
+				}
+			} else {
+				// No engagement exist in buffer with this key, store it!
+				buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+			}
 		}
-		
+
 		if (log.isDebugEnabled()) {
 			log.debug(
 					"added record: duplicate: {}, buffer size: {}, total added msgs: {}, total added records: {}",
@@ -159,14 +158,14 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 	public boolean isCollectedMessagesReadyToBeTransmitted() {
 		return (System.currentTimeMillis() >= bufferAgeMillis
 				+ maxBufferAgeMillis && !buffer.isEmpty())
-				|| (buffer.size() >= maxBufferedRecords) 
+				|| (buffer.size() >= maxBufferedRecords)
 				|| (totalNrAddedMessages >= maxCollectedMessages );
 	}
 
 	@Override
 	public List<CollectedMessage> getCollectedMessagesAndClearBuffer() {
 		List<CollectedMessage> collMsgs = new ArrayList<CollectedMessage>();
-		
+
 		long currentBufferAgeMillis = System.currentTimeMillis() - bufferAgeMillis;
 		List<EngagementTransactionType> records = new ArrayList<EngagementTransactionType>();
 		int totalCount = 0;
@@ -176,7 +175,7 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 			if (records.size() % maxRecordsInCollectedMessage == 0
 					|| totalCount == buffer.size()) {
 				CollectedMessage cm = buildCollectedMessage(records);
-				collMsgs.add(cm); 
+				collMsgs.add(cm);
 				// add statistics, only add stats for collected messages to
 				// first collected message if there is more than one, we will
 				// average stats over all collected messages so the result
@@ -190,9 +189,9 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 				else {
 					// all stats for the current buffer accounted for in the first collected message
 					cm.setStatisticsCollectedNrMessages(0);
-					cm.setStatisticsCollectedNrRecords(0);					
+					cm.setStatisticsCollectedNrRecords(0);
 				}
-				
+
 				records.clear();
 			}
 		}
@@ -206,7 +205,7 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 
 	private CollectedMessage buildCollectedMessage(List<EngagementTransactionType> records) {
 		CollectedMessage collMsg = new CollectedMessage();
-    	
+
 		UpdateType updateRequest = new UpdateType();
 
 		for (EngagementTransactionType engagementTransaction : records) {
