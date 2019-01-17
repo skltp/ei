@@ -32,35 +32,39 @@ import riv.itintegration.engagementindex.processnotificationresponder._1.Process
 
 public class NotifyEvaluator implements ExpressionEvaluator {
 
-    private static final Logger log = LoggerFactory.getLogger(NotifyEvaluator.class);
+	private static final Logger log = LoggerFactory.getLogger(NotifyEvaluator.class);
 	private static final JaxbUtil jaxbUtil = new JaxbUtil(ProcessNotificationType.class);
 
-    private static final String NAME = "ei-perform-notify";
-    
-    public String getName() {
-    	log.debug("Return evaluator name {}", NAME);
-        return NAME;
-    }
+	private static final String NAME = "ei-perform-notify";
 
-    public void setName(String name) {
-        throw new UnsupportedOperationException("setName");
-    }
+	public String getName() {
+		log.debug("Return evaluator name {}", NAME);
+		return NAME;
+	}
 
-    public Object evaluate(String expression, MuleMessage message) {
-        try {
-        	log.debug("Evaluate: {} on message {}", expression, message.getPayload());
+	public void setName(String name) {
+		throw new UnsupportedOperationException("setName");
+	}
 
-    		ProcessNotificationType pn = (ProcessNotificationType)jaxbUtil.unmarshal(message.getPayload());
-    		boolean ok = pn.getEngagementTransaction().size() > 0;
+	/**
+	 * To make this method work with "Mule..." it returns true in case of "error".
+	 */
+	public Object evaluate(String expression, MuleMessage message) {
 
-        	log.debug("Evaluator return: " + ok);
-        	return ok;
+		try {
+			log.debug("Evaluate: {} on message {}", expression, message.getPayload());
 
-        } catch (Exception e) {
-        	log.warn("Evaluator failed, return true", e);
-        	return true;
-        }
-    }
+			ProcessNotificationType pn = (ProcessNotificationType)jaxbUtil.unmarshal(message.getPayload());
+			boolean notOk = pn.getEngagementTransaction().size() < 1;
+
+			log.debug("Evaluator return: " + notOk);
+			return notOk;
+
+		} catch (Exception e) {
+			log.warn("Evaluator failed, return false.", e);
+			return false;
+		}
+	}
 
 	@Override
 	public TypedValue evaluateTyped(String expression, MuleMessage message) {
