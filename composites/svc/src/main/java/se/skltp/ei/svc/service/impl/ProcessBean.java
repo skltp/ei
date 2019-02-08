@@ -371,11 +371,15 @@ public class ProcessBean implements ProcessInterface {
     }
 
     /**
-     * Compare the "new" engagement with existing and "ignores" new engagement where most recent content "date" is before
-     * the existing.
+     * If the mostRecentContent(date) is assigned the semantics is: that a any Engagements for a "person" at the
+     * "care giver" that may been in their system before that the given mostRecentContent date has been cancelled.
      *
-     * @param incomingEngagement            "new" incoming engagement candidate for replacing existing
-     * @param persistedEngagement           a existing engagement having the same logical key
+     *if mostRecentContent is assigned to a date before that of a previous message, the new message should
+     *be ignored (new message obsolete since the date EI already received implicitly include those engagements)
+     *
+     * @param incomingEngagement "new" incoming engagement data candidate for replacing existing
+     * @param persistedEngagement a existing engagement having the same logical key (same person, location etc)
+     * @return if the incoming engagement should be saved and if it should result in a notification
      */
     private NotifySave incomingShouldBeSavedAndNotifySent( @NotNull Engagement incomingEngagement, @NotNull Engagement persistedEngagement) {
         Preconditions.checkArgument(
