@@ -85,6 +85,10 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 		this.maxCollectedMessages = maxCollectedMessages;
 	}
 
+	public MessageCollectionStrategyImpl() {
+		super();
+	}
+
 	@Override
 	public void collectMessage(String message)
 			throws MessageCollectionException {
@@ -104,45 +108,7 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 		List<EngagementTransactionType> engagementTransactions = updateRecord.getEngagementTransaction();
 		for (final EngagementTransactionType newEngagementTransaction : engagementTransactions) {
 			// Read one engagement and create key for this engagement
-			EngagementType newEngagement = newEngagementTransaction.getEngagement();
-			boolean newIsDeleteFlag = newEngagementTransaction.isDeleteFlag();
-			Engagement newEngagementEntity = toEntity(newEngagement);
-
-			// Check if we already have an engagement in our buffer with this key
-			if (buffer.containsKey(newEngagementEntity.getId())) {
-				// Engagement found in buffer
-				if (newIsDeleteFlag) {
-					// A delete overrides previously stored engagement
-					buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
-				} else {
-					// Check if incoming record contains a more recent time value
-					EngagementTransactionType oldEngagementTransaction = buffer.get(newEngagementEntity.getId());
-					Engagement oldEngagementEntity = toEntity(oldEngagementTransaction.getEngagement());
-					boolean oldIsDeleteFlag = oldEngagementTransaction.isDeleteFlag();
-
-					long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(newEngagementEntity.getMostRecentContent()));
-					long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(oldEngagementEntity.getMostRecentContent()));
-
-					if (oldIsDeleteFlag) {
-						// Don't replace!
-						continue;
-					} else {
-						if (oldMostRecentContent == 0 && newMostRecentContent != 0) {
-							// Replace with engagement that has a value
-							buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
-						} else if (newMostRecentContent == 0) {
-							// Dont replace anything!
-							continue;
-						} else if (newMostRecentContent > oldMostRecentContent) {
-							// Replace with newer content
-							buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
-						}
-					}
-				}
-			} else {
-				// No engagement exist in buffer with this key, store it!
-				buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
-			}
+			onEachNewEngagementTransaction(newEngagementTransaction);
 		}
 
 		if (log.isDebugEnabled()) {
@@ -151,6 +117,48 @@ public class MessageCollectionStrategyImpl implements MessageCollectionStrategy 
 					new Object[] { preAddBufferSize == buffer.size(),
 							buffer.size(), totalNrAddedMessages,
 							totalNrAddedRecords });
+		}
+	}
+
+	private void onEachNewEngagementTransaction(EngagementTransactionType newEngagementTransaction) {
+		EngagementType newEngagement = newEngagementTransaction.getEngagement();
+		boolean newIsDeleteFlag = newEngagementTransaction.isDeleteFlag();
+		Engagement newEngagementEntity = toEntity(newEngagement);
+
+		// Check if we already have an engagement in our buffer with this key
+		if (buffer.containsKey(newEngagementEntity.getId())) {
+			// Engagement found in buffer
+			if (newIsDeleteFlag) {
+				// A delete overrides previously stored engagement
+				buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+			} else {
+				// Check if incoming record contains a more recent time value
+				EngagementTransactionType oldEngagementTransaction = buffer.get(newEngagementEntity.getId());
+				Engagement oldEngagementEntity = toEntity(oldEngagementTransaction.getEngagement());
+				boolean oldIsDeleteFlag = oldEngagementTransaction.isDeleteFlag();
+
+				long newMostRecentContent = newEngagement.getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(newEngagementEntity.getMostRecentContent()));
+				long oldMostRecentContent = oldEngagementTransaction.getEngagement().getMostRecentContent() == null ? 0L:Long.parseLong(EntityTransformer.formatDate(oldEngagementEntity.getMostRecentContent()));
+
+				if (oldIsDeleteFlag) {
+					// Don't replace!
+					return;
+				} else {
+					if (oldMostRecentContent == 0 && newMostRecentContent != 0) {
+						// Replace with engagement that has a value
+						buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+					} else if (newMostRecentContent == 0) {
+						// Dont replace anything!
+						return;
+					} else if (newMostRecentContent > oldMostRecentContent) {
+						// Replace with newer content
+						buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
+					}
+				}
+			}
+		} else {
+			// No engagement exist in buffer with this key, store it!
+			buffer.put(newEngagementEntity.getId(), newEngagementTransaction);
 		}
 	}
 
