@@ -332,4 +332,21 @@ public class Engagement implements BusinessKey {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        return "Engagement{" +
+                "id='" + id + '\'' +
+                ", serviceDomain='" + serviceDomain + '\'' +
+                ", categorization='" + categorization + '\'' +
+                ", logicalAddress='" + logicalAddress + '\'' +
+                ", businessObjectInstanceIdentifier='" + businessObjectInstanceIdentifier + '\'' +
+                ", sourceSystem='" + sourceSystem + '\'' +
+                ", dataController='" + dataController + '\'' +
+                ", owner='" + owner + '\'' +
+                ", clinicalProcessInterestId='" + clinicalProcessInterestId + '\'' +
+                ", mostRecentContent=" + mostRecentContent +
+                ", creationTime=" + creationTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }

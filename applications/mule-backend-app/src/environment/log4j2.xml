@@ -50,6 +50,8 @@
 		<AsyncLogger name="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" level="TRACE"/>
 		<AsyncLogger name="org.springframework.core.io.support.PropertiesLoaderSupport" level="INFO"/>
 		<AsyncLogger name="org.springframework.beans.factory.xml.XmlBeanDefinitionReader" level="INFO"/>
+
+
 		<AsyncLogger name="org.mule.model.seda" level="INFO"/>
 		<AsyncLogger name="org.mule.MuleServer" level="INFO"/>
 		<AsyncLogger name="org.mule.DefaultMuleContext" level="INFO"/>
@@ -59,7 +61,7 @@
 		<AsyncLogger name="org.mule.component.simple.LogComponent" level="ERROR"/>
 		<AsyncLogger name="org.soitoolkit.commons" level="ERROR"/>
 
-		<AsyncLogger name="se.skltp.ei" level="ERROR"/>
+		<AsyncLogger name="se.skltp.ei" level="WARN"/>
 		<!-- Monitoring logs to separate log file, additivity makes sure not logged twice -->
 		<AsyncLogger name="se.skltp.ei.monitoring" level="INFO" additivity="false">
 			<AppenderRef ref="RollingRandomAccessFile_Monitoring"/>

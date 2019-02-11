@@ -104,6 +104,7 @@ public class ProcessBean implements ProcessInterface {
     @Autowired
     public void setEngagementRepository(EngagementRepository engagementRepository) {
         LOG.info("ProcessBean got its engagementRepository injected");
+
         this.engagementRepository = engagementRepository;
     }
 
@@ -382,6 +383,7 @@ public class ProcessBean implements ProcessInterface {
      * @return if the incoming engagement should be saved and if it should result in a notification
      */
     private NotifySave incomingShouldBeSavedAndNotifySent( @NotNull Engagement incomingEngagement, @NotNull Engagement persistedEngagement) {
+
         Preconditions.checkArgument(
                 persistedEngagement != null, "PersistedEngagement must not be null, Please check that there is such engagement before invoke");
 
@@ -394,7 +396,6 @@ public class ProcessBean implements ProcessInterface {
                 return NotifySave.NEITHER;
             } else {
                 return NotifySave.NOTIFY_AND_SAVE;
-                //
             }
         }
         return NotifySave.SAVE_ONLY;
