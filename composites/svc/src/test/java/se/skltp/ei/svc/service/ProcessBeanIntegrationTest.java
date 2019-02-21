@@ -547,7 +547,7 @@ public class ProcessBeanIntegrationTest {
         assertEquals(1, countEngagements());
         
         request.getEngagementTransaction().get(0).getEngagement().setOwner("remote-owner");
-        List<Engagement> list = BEAN.getEngagementsWithNewOwners(request);
+        List<Engagement> list = BEAN._getEngagementsWithNewOwners(request);
         
         
         assertThat(list.get(0).getOwner(), equalTo(OWNER));
@@ -561,7 +561,7 @@ public class ProcessBeanIntegrationTest {
     public void processNotification_R5_OK_find_engagements_should_return_empty_list() throws Exception{
     	
     	ProcessNotificationType request = new ProcessNotificationType();
-        List<Engagement> list = BEAN.getEngagementsWithNewOwners(request);
+        List<Engagement> list = BEAN._getEngagementsWithNewOwners(request);
 
         assertThat(list, hasSize(0));
     }

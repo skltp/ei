@@ -320,16 +320,7 @@ public class Engagement implements BusinessKey {
      * @return the generated hash id as a string.
      */
     private String generateHashId() {
-        String hash = Hash.sha2(registeredResidentIdentification,
-                serviceDomain,
-                categorization,
-                logicalAddress,
-                businessObjectInstanceIdentifier,
-                sourceSystem,
-                dataController,
-                owner,
-                clinicalProcessInterestId);
-        return hash;
+        return Hash.generateHashId(this);
     }
 
     @Override

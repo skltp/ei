@@ -7,27 +7,69 @@ import se.skltp.ei.svc.entity.model.Engagement;
 import java.util.*;
 
 /**
- * Holds Engagement data used during the process of handling new engagements
+ * Holds Engagement data used during the process of handling engagements
  */
 public class IncomingEngagementProcessData implements Iterable<EngagementTransactionType> {
 
     private List<Engagement> markedForRemoval = new ArrayList<>();
 
-    private List<EngagementTransactionType> notifications;
+    private List<EngagementTransactionType> processResult;
     private List<EngagementTransactionType> engagementTransactions;
+
+    public boolean isEngagementsFetchedForSave() {
+        return engagementsFetchedForSave;
+    }
+
+    private boolean engagementsFetchedForSave = false;
+
+
+    public List<EngagementTransactionType> getAllEngagementTransactionType() {
+        return engagementTransactions;
+    }
 
     private Map<Engagement, EngagementTransactionType> saveList = new HashMap<>();
 
     private Map<Engagement, EngagementTransactionType> deleteList = new HashMap<>();
     private Map<String, Engagement> existingContent;
 
-    public IncomingEngagementProcessData(List<EngagementTransactionType> engagementTransaction, String owner) {
+    private IncomingEngagementProcessData(List<EngagementTransactionType> engagementTransaction) {
         this.engagementTransactions = engagementTransaction;
-
-        for (final EngagementTransactionType inEngagementTransaction : this) {
-            inEngagementTransaction.getEngagement().setOwner(owner);
+        if (this.engagementTransactions == null) {
+            this.engagementTransactions = new ArrayList<>();
         }
-        notifications = new ArrayList<>();
+        processResult = new ArrayList<>();
+    }
+
+    /**
+     * To ensure the following:
+     * <p>
+     * "R6: owner of the persisted engagement item. Shall have a owner value corresponding to the organisation that
+     * is the provider of this service. For example: the national instance provided/hosted by Inera AB
+     * must ska mark all items created by this service-contract with a HSA-id corresponding Inera AB:s.
+     * And for any instance implementing this contract that are provided by a county, that instance should use their
+     * organisation-number.
+     * The purpose is to enable differentiation of items persisted on invocation of update from those persisted during
+     * invocation of ProcessNotification.
+     * <p>
+     * This method sets (for all items) the engagement owner to the "owner" of this instance
+     *
+     * @param engagementTransactions update Source
+     * @param owner HSA-id for provider of this instance
+     * @return DTO for handling the Update
+     */
+    public static IncomingEngagementProcessData createForUpdate(List<EngagementTransactionType> engagementTransactions, String owner) {
+        if (engagementTransactions != null) {
+
+            for (final EngagementTransactionType inEngagementTransaction : engagementTransactions) {
+                inEngagementTransaction.getEngagement().setOwner(owner);
+            }
+        }
+        return new IncomingEngagementProcessData(engagementTransactions);
+    }
+
+    public static IncomingEngagementProcessData createForProcessNotification(List<EngagementTransactionType> engagementTransactions) {
+
+        return new IncomingEngagementProcessData(engagementTransactions);
     }
 
     public void addForSaving(Engagement toBeSavedLater, EngagementTransactionType origin) {
@@ -52,12 +94,14 @@ public class IncomingEngagementProcessData implements Iterable<EngagementTransac
      * over that set (otherwise getting: java.util.ConcurrentModificationException).
      *
      * @param pRemove if true any items marked for removal is removed before returning list
-     * @return
+     * @return all engagements supposed to be saved/persisted
      */
     public Iterable<Engagement> engagementsToSave(boolean pRemove) {
         // markedForRemoval.forEach(engagement->saveList.remove(engagement));
         if (pRemove) {
             for (Engagement engagement : markedForRemoval) saveList.remove(engagement);
+
+            engagementsFetchedForSave = true;
         }
         return saveList.keySet();
     }
@@ -94,6 +138,9 @@ public class IncomingEngagementProcessData implements Iterable<EngagementTransac
         return engagementTransactions.size();
     }
 
+    /**
+     * @param existingContent a map of persisted Engagements with key corresponding to any of these sent in for processing
+     */
     public void setPersistedEngagementMap(Map<String, Engagement> existingContent) {
         this.existingContent = existingContent;
     }
@@ -103,7 +150,13 @@ public class IncomingEngagementProcessData implements Iterable<EngagementTransac
     }
 
     public Collection<EngagementTransactionType> getEngagementTransactionTypesMarkedForDeletion() {
-        return deleteList.values();
+        Collection<EngagementTransactionType> result = new ArrayList<>();
+        for (EngagementTransactionType engagementType : deleteList.values()) {
+            if (engagementType != null) {
+                result.add(engagementType);
+            }
+        }
+        return result;
     }
 
     public List<String> getSaveCandidateIds() {
@@ -122,8 +175,8 @@ public class IncomingEngagementProcessData implements Iterable<EngagementTransac
         markedForRemoval.add(incomingEngagement);
     }
 
-    public List<EngagementTransactionType> getNotifications() {
-        return notifications;
+    public List<EngagementTransactionType> getProcessResult() {
+        return processResult;
     }
 
 }

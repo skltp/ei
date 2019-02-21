@@ -45,7 +45,7 @@ public class ProcessBean {
     
     /**
      *
-     * @param parameters
+     * @param requestStr
      * @return
      */
     public List<EngagementTransactionType> process(String requestStr) {
