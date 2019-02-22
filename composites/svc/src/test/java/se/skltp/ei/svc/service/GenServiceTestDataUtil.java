@@ -26,20 +26,40 @@ import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 public class GenServiceTestDataUtil {
-	
+	/**
+	 * Generates a EngagementTransaction, which is completely derived from the value of residentIdentification (repeatable).
+	 *
+	 * @param entity the engagement
+	 * @return the generated engagement transaction
+	 */
+	private static EngagementTransactionType internalEngagementTransaction(Engagement entity) {
+		EngagementType engagement = EntityTransformer.fromEntity(entity);
+		EngagementTransactionType et = new EngagementTransactionType();
+		et.setDeleteFlag(false);
+		et.setEngagement(engagement);
+		return et;
+	}
+
     /**
      * Generates a EngagementTransaction, which is completely derived from the value of residentIdentification (repeatable).
      * 
-     * @param e the engagement
+     * @param residentId the engagement id
      * @return the generated engagement transaction
      */
 	public static EngagementTransactionType genEngagementTransaction(long residentId) {
 		Engagement entity = GenEntityTestDataUtil.genEngagement(residentId);
-		EngagementType engagement = EntityTransformer.fromEntity(entity);
-    	EngagementTransactionType et = new EngagementTransactionType();
-    	et.setDeleteFlag(false);
-    	et.setEngagement(engagement);
-		return et;
+		return internalEngagementTransaction(entity);
+	}
+
+	/**
+	 *
+	 * @param residentId
+	 * @param pOwner
+	 * @return
+	 */
+	public static EngagementTransactionType genEngagementTransaction(long residentId,String pOwner) {
+		Engagement entity = GenEntityTestDataUtil.genEngagement(residentId,pOwner);
+		return internalEngagementTransaction(entity);
 	}
 
 }

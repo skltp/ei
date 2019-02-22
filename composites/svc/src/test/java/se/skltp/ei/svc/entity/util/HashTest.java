@@ -22,9 +22,14 @@ package se.skltp.ei.svc.entity.util;
 import java.util.HashSet;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
+import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
+import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.model.util.Hash;
+
+import static javatests.TestSupport.assertNotEquals;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Tests the hash algorithm.
@@ -46,5 +51,41 @@ public class HashTest {
             set.add(hash1);
         }
         assertEquals(num, set.size());		
+    }
+
+
+    @Test
+    public void generateHashId() {
+        Engagement e1 = GenEntityTestDataUtil.genEngagement(1L);
+        Engagement e2 = GenEntityTestDataUtil.genEngagement(1L);
+        Engagement e3 = GenEntityTestDataUtil.genEngagement(1l,"Mr Brown");
+
+        Engagement e4 = GenEntityTestDataUtil.genEngagement(2l,"Mr Brown");
+
+        String h1 = Hash.generateHashId(e1);
+
+        String h2 = Hash.generateHashId(e2);
+
+        assertEquals(h1,h2);
+
+        h2 = e1.getId();
+        assertEquals(h1,h2);
+
+        h2 = Hash.generateHashId(e2, "Mr Pink");
+
+        assertNotEquals(h1,h2,"");
+
+        h1 = Hash.generateHashId(e3);
+
+        assertNotEquals(h1,h2,"");
+
+        h2 = Hash.generateHashId(e2, "Mr Brown");
+
+        assertEquals(h1,h2);
+
+        h1 = Hash.generateHashId(e3);
+        h2 = Hash.generateHashId(e4);
+
+        assertNotEquals(h1,h2,"");
     }
 }

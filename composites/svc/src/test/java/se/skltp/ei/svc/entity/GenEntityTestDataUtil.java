@@ -48,10 +48,14 @@ public class GenEntityTestDataUtil {
     /**
      * Generates a key, which is completely derived from the value of residentIdentification (repeatable).
      * 
-     * @param e the engagement
+     * @param residentIdentification the engagement
      * @return the generated engagement with an updated key
      */
     public static Engagement genEngagement(long residentIdentification) {
+        return genEngagement(residentIdentification,"Inera");
+    }
+
+    public static Engagement genEngagement(long residentIdentification,String pOwner) {
         final String[] domains = { "urn:riv:scheduling:timebooking", "urn:riv:clinicalprocess:dummy", "urn:riv:another:test:doamin", "urn:riv:yet:another:dummy:domain" };
         final String[] categories = { "booking", "dummy", "one.two.three", "andsoforth" };
         final String[] logicalAdresses = { "SE100200400-600", "SE100200400-700", "SE100200400-800", "SE100200400-900" };
@@ -66,10 +70,10 @@ public class GenEntityTestDataUtil {
                 logicalAdresses[n],
                 sourceSystems[n],
                 "dataController",
-                "Inera",
+                pOwner,
                 "NA");
 
-        return e;    	
+        return e;
     }
 
 }

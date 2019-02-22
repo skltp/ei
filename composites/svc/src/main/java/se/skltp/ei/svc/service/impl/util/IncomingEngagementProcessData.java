@@ -106,6 +106,9 @@ public class IncomingEngagementProcessData implements Iterable<EngagementTransac
         return saveList.keySet();
     }
 
+    public boolean existsAnythingToSave() {
+        return saveList.keySet().size() - markedForRemoval.size() > 0;
+    }
     public EngagementTransactionType getSaveListCorrespondingEngagementTransactionType(Engagement pKey) {
         return saveList.get(pKey);
     }
@@ -130,9 +133,7 @@ public class IncomingEngagementProcessData implements Iterable<EngagementTransac
         return deleteList.keySet().size() > 0;
     }
 
-    public boolean existsAnythingToSave() {
-        return saveList.keySet().size() > 0;
-    }
+
 
     public int size() {
         return engagementTransactions.size();
@@ -142,10 +143,12 @@ public class IncomingEngagementProcessData implements Iterable<EngagementTransac
      * @param existingContent a map of persisted Engagements with key corresponding to any of these sent in for processing
      */
     public void setPersistedEngagementMap(Map<String, Engagement> existingContent) {
+        if(existingContent==null)throw new IllegalArgumentException("existingContent Assignment=null please use empty map when no persisted engagemenst where found");
         this.existingContent = existingContent;
     }
 
     public Engagement getPersistedEngagement(String id) {
+        if(existingContent==null)throw new IllegalStateException("It seems like setPersistedEngagementMap not been initiated yet",new NullPointerException("existingContent==null"));
         return existingContent.getOrDefault(id, null);
     }
 

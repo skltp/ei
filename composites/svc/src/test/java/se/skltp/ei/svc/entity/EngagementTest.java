@@ -72,9 +72,13 @@ public class EngagementTest {
         Engagement e2 = GenEntityTestDataUtil.genEngagement(1L);
         Engagement e3 = GenEntityTestDataUtil.genEngagement(2L);
         Engagement e4 = new Engagement();
+
         assertTrue(e1.hashCode() == e2.hashCode());
+
         assertFalse(e1.hashCode() == e3.hashCode());
+
         assertTrue(e4.hashCode() == 0);
+
         assertEquals(e4.getId(), null);
     }
 
