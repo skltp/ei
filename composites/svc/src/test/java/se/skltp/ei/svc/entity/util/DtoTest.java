@@ -15,9 +15,7 @@ import static org.junit.Assert.*;
 
 public class DtoTest {
 
-    private int gen(long p){
-        return(int)(p % 4L);
-    }
+
 
     @Test
     public void testIncomingEngagementProcessData(){

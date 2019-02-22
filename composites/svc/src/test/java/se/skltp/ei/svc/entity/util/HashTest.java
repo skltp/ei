@@ -29,7 +29,6 @@ import se.skltp.ei.svc.entity.model.util.Hash;
 
 import static javatests.TestSupport.assertNotEquals;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
 
 /**
  * Tests the hash algorithm.
@@ -37,13 +36,13 @@ import static org.junit.Assert.assertFalse;
  * @author Peter
  */
 public class HashTest {
-    public static String prefix = "TestingHashWithAPrettyLongPrefixKeyJustAddedByASimpleNumberAndAlsoSomeInternationalCharactersSuchAsåäöÅÄÖ";
+    private static String prefix = "TestingHashWithAPrettyLongPrefixKeyJustAddedByASimpleNumberAndAlsoSomeInternationalCharactersSuchAsåäöÅÄÖ";
 
 
     @Test
     public void sha() {
         final int num = 1000;
-        HashSet<String> set = new HashSet<String>(num);
+        HashSet<String> set = new HashSet<>(num);
         for (int i = 0; i < num; i++) {
             String hash1 = Hash.sha2(prefix, String.valueOf(i));
             String hash2 = Hash.sha2(prefix + i);
@@ -58,9 +57,9 @@ public class HashTest {
     public void generateHashId() {
         Engagement e1 = GenEntityTestDataUtil.genEngagement(1L);
         Engagement e2 = GenEntityTestDataUtil.genEngagement(1L);
-        Engagement e3 = GenEntityTestDataUtil.genEngagement(1l,"Mr Brown");
+        Engagement e3 = GenEntityTestDataUtil.genEngagement(1L,"Mr Brown");
 
-        Engagement e4 = GenEntityTestDataUtil.genEngagement(2l,"Mr Brown");
+        Engagement e4 = GenEntityTestDataUtil.genEngagement(2L,"Mr Brown");
 
         String h1 = Hash.generateHashId(e1);
 
