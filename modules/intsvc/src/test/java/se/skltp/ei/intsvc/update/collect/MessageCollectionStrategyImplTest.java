@@ -192,7 +192,7 @@ public class MessageCollectionStrategyImplTest{
 
 	/*
 	 * Create message as a String for Update request. Set attributes deletFlag and most_recent_time for the request
-	 * Most recent time has the following format YYYYMMDDhhmmss
+	 * Most recent time has the following format yyyyMMddHHmmss
 	 */
 	private String createUpdateTextMessage(String mostRecentTime, boolean deleteFlag, long... residentIds) {
 		UpdateType request = new UpdateType();

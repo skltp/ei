@@ -331,15 +331,19 @@ public class ProcessBean implements ProcessInterface {
         for (Engagement incomingEngagement : pProcessData.engagementsToSave()) {
             Engagement persistedEngagement = pProcessData.getPersistedEngagement(incomingEngagement.getId());
             if (persistedEngagement != null) {
-                switch (evaluateIgnore(incomingEngagement, persistedEngagement)) {
+                ResultSave rs = evaluateIgnore(incomingEngagement, persistedEngagement);
+                switch (rs) {
                     //Mark  as not save No Notification
                     case NEITHER:
                         pProcessData.markAsRemoveFromSaveList(incomingEngagement);
+                        break;
                         //Keep in save list add notify
                     case SET_RESULT_AND_SAVE:
                         pProcessData.getProcessResult().add(pProcessData.getSaveListCorrespondingEngagementTransactionType(incomingEngagement));
                         //default = SAVE_ONLY: keep in save
+                        break;
                     default:
+                        break;
                 }
             } else {
                 pProcessData.getProcessResult().add(pProcessData.getSaveListCorrespondingEngagementTransactionType(incomingEngagement));

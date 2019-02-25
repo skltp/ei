@@ -21,8 +21,12 @@ package se.skltp.ei.svc.service.impl.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
+import org.mule.util.Preconditions;
 import riv.itintegration.engagementindex._1.EngagementType;
 import se.skltp.ei.svc.entity.model.Engagement;
 
@@ -143,5 +147,40 @@ public class EntityTransformer {
     public static Date parseDate(String date) {
         return (date == null) ? null : parse(date);
     }
+
+
+    private static Date dateDaysFromDate(LocalDateTime pSource,int pDays){
+            return localDateTime2Date(pSource.plusDays(pDays));
+    }
+
+    private static Date localDateTime2Date(LocalDateTime pSource){
+        return Date.from(pSource.atZone(ZoneId.systemDefault()).toInstant());
+    }
+    private static LocalDateTime date2LocalDateTime(Date pSource){
+        return LocalDateTime.ofInstant(pSource.toInstant(), ZoneId.systemDefault());
+    }
+
+    /**
+     * Returns a date: prior, equal or greater than the given pDate
+     * dependent on pDays being lt|eqt|gt than zero
+     * @param pDate source
+     * @param pDays deviation in days negative is before positive after
+     * @return
+     */
+    public static Date dateDaysFromDate(Date pDate ,int pDays){
+        Preconditions.checkState(pDate!=null,"Please make sure pDate is Assigned");
+        return dateDaysFromDate(date2LocalDateTime(pDate),pDays);
+    }
+
+    /**
+     *
+     * @param pDays positive values render a result date in the future and negative renders dates in the past
+     * @return returns a date that deviates from to days date by the given amount of pDate
+     */
+    public static Date dateDaysFromNow(int pDays){
+
+        return dateDaysFromDate(new Date(),pDays);
+    }
+
 
 }

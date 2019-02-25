@@ -318,6 +318,30 @@ public class ProcessBeanIntegrationTest {
     }
 
     @Test
+    public void sendAnotherUpdateWithOlderMostRecentContent() {
+        // Create a request
+        Date lDate = new Date();
+
+        UpdateType request = new UpdateType();
+
+        EngagementTransactionType et1 = GenServiceTestDataUtil.genEngagementTransaction(1111111111L);
+
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(lDate));
+
+        request.getEngagementTransaction().add(et1);
+
+        List<EngagementTransactionType> processList = BEAN.update(null, request);
+        // Validate the length of the list
+        assertEquals(1, processList.size());
+
+        et1.getEngagement().setMostRecentContent(EntityTransformer.formatDate(EntityTransformer.dateDaysFromDate(lDate,-1)));
+
+        processList = BEAN.update(null, request);
+
+        assertEquals(0, processList.size());
+    }
+
+    @Test
     public void update_Robusthet_most_recent_content_propagate_update_first_is_null() {
          // Create a request
         UpdateType request = new UpdateType();
