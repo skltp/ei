@@ -182,5 +182,10 @@ public class EntityTransformer {
         return dateDaysFromDate(new Date(),pDays);
     }
 
+    public static String dateDaysFromStrDate(String pStrDate,int pDays){
+        Preconditions.checkArgument(pStrDate!=null,"pStrDate must be assigned");
+        return formatDate(dateDaysFromDate(parse(pStrDate),pDays));
+    }
+
 
 }
