@@ -206,11 +206,8 @@ public class ProcessBean implements ProcessInterface {
 
 
     /**
-     * If the mostRecentContent(date) is assigned the semantics is: that a any Engagements for a "person" at the
-     * "care giver" that may been in their system before that the given mostRecentContent date has been cancelled.
-     * <p>
-     * if mostRecentContent is assigned to a date before that of a previous message, the new message should
-     * be ignored (new message obsolete since the date EI already received implicitly include those engagements)
+     * MostRecentContent shall always point at the timestamp when the latest EI-Update is called. Hence shall that date
+     * never be reset to a older date pointing at another latest information in the source system.
      *
      * @param incomingEngagement  "new" incoming engagement data candidate for replacing existing
      * @param persistedEngagement a existing engagement having the same logical key (same person, location etc)
@@ -237,14 +234,28 @@ public class ProcessBean implements ProcessInterface {
         return ResultSave.SAVE_ONLY;
     }
 
+    /**
+     *
+     * Note that an unassigned value in the incoming is treated as min date when compared to a set MostRecentContent
+     * value
+     * @param incomingEngagement the new engagement
+     * @param persistedEngagement a prior engagement with same logical id
+     * @return true if most recent content is older than the new or if new is null but not persisted
+     */
     private boolean ifIncomingHasMostRecentContentOlderThanPersisted(Engagement incomingEngagement, Engagement persistedEngagement) {
         if (neitherEngagementHasMostRecentContent(incomingEngagement, persistedEngagement)) {
             return false;
         } else if (bothEngagementHasMostRecentContent(incomingEngagement, persistedEngagement)) {
             return incomingEngagement.getMostRecentContent().before(persistedEngagement.getMostRecentContent());
-        } else {
+        } else if(onlyPersistedHasMostRecentContent(incomingEngagement, persistedEngagement)){
+            return true;
+        }else{//New has Most recent but not old/persisted
             return false;
         }
+    }
+
+    private boolean onlyPersistedHasMostRecentContent(Engagement incomingEngagement, Engagement persistedEngagement) {
+        return (incomingEngagement.getMostRecentContent()==null&&persistedEngagement.getMostRecentContent()!=null);
     }
 
     private boolean ifBothHasSameMostRecentContent(Engagement incomingEngagement, Engagement persistedEngagement) {

@@ -489,12 +489,14 @@ public class ProcessBeanIntegrationTest {
         incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
         MS_SALLY_3.getEt().getEngagement().setMostRecentContent(null);
 
+        //#9 MR_PINK_1, MR_BROWN_2 most recent content incremented
+        //MS_SALLY_3 most recent content is null should be treated as older than current
         checkTest(log, process(request),
                 dateEqualsPersisted(MR_PINK_1),
                 dateEqualsPersisted(MR_BROWN_2),
-                dateEqualsPersisted(MS_SALLY_3),
-                resultSize(3),
-                isInResultSet(MS_SALLY_3),
+                datePersistedIsAfter(MS_SALLY_3),
+                resultSize(2),
+                notInResultSet(MS_SALLY_3),
                 resultDateEqualsPreProcessDate(MR_PINK_1),
                 resultDateEqualsPreProcessDate(MR_BROWN_2));
         return log.getLogAsStr();
@@ -539,7 +541,8 @@ public class ProcessBeanIntegrationTest {
         List<EngagementTransactionType> processList = BEAN.update(null, request);
 
         // Validate the length of the list
-        assertEquals(1, processList.size());
+        assertEquals(0, processList.size());
+       // assertEquals(1, processList.size());
     }
 
 

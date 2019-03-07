@@ -95,7 +95,7 @@ class ProcessBeanIntegrationTestHelper {
         };
     }
 
-    static MostRecentContentReturnedAsExpected dateNotEquals(TestDataHelper.TestDataEnums candidate) {
+    static MostRecentContentReturnedAsExpected resultDateNotEquals(TestDataHelper.TestDataEnums candidate) {
         return new MostRecentContentReturnedAsExpected() {
             String message = "";
 
@@ -393,9 +393,8 @@ class ProcessBeanIntegrationTestHelper {
 
                     Date candidateDate = EntityTransformer.parseDate(candidate.getEt().getEngagement().getMostRecentContent());
 
-                    if (candidateDate == null) {
-                        message = "datePersistedIsAfter candidate.MostRecentContent==null " + candidate;
-                        return false;
+                    if (candidateDate == null) {//This is treated as if new date is before
+                        return true;
                     }
                     if (candidateDate.after(persisted.getMostRecentContent())) {
                         message = "datePersistedIsAfter persisted.MostRecentContent: " + persisted.getMostRecentContent() +
