@@ -540,7 +540,8 @@ public class ProcessBeanIntegrationTest {
         request.getEngagementTransaction().add(et1);
         List<EngagementTransactionType> processList = BEAN.update(null, request);
 
-        // Validate the length of the list
+        //ToDo awaiting answer from Inera regarding if this call should ultimately return 1 or zero (dependent on how null values
+        // Should be trated
         assertEquals(0, processList.size());
        // assertEquals(1, processList.size());
     }
