@@ -1,24 +1,24 @@
-package se.skltp.ei.svc.service;
+package se.skltp.ei.svc.service.impl.util;
 
-class TestLog {
+public class TestLog {
     private int logNr;
     private StringBuilder log;
     private String name;
 
-    TestLog(String name) {
+    public TestLog(String name) {
         this.name = name;
         log= new StringBuilder();
         logNr=0;
     }
 
-    void logProblem(String pLog){
+    public void logProblem(String pLog){
         logNr++;
         if(!"".equals(pLog)){
             log.append(name).append(" deviation at test no: ").append(logNr).append(" ").append(pLog);
         }
     }
 
-    String getLogAsStr() {
+    public String getLogAsStr() {
         return log.toString();
     }
 }

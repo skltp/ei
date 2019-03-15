@@ -38,7 +38,7 @@ import riv.itintegration.engagementindex.processnotificationresponder._1.Process
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import se.skltp.ei.intsvc.EiMuleServer;
 import se.skltp.ei.intsvc.integrationtests.AbstractTestCase;
-import se.skltp.ei.svc.service.GenServiceTestDataUtil;
+import se.skltp.ei.svc.service.impl.util.GenServiceTestDataUtil;
 import se.skltp.ei.svc.service.impl.ProcessBean;
 
 public class NotificationServiceIntegrationTest extends AbstractTestCase {

@@ -55,7 +55,7 @@ import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.ObjectFactory;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
-import se.skltp.ei.svc.service.GenServiceTestDataUtil;
+import se.skltp.ei.svc.service.impl.util.GenServiceTestDataUtil;
 
 /**
  * Extends the base class in Mule, org.mule.tck.junit4.FuntionalTestCase.

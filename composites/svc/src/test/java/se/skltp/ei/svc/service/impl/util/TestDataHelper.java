@@ -1,21 +1,13 @@
-package se.skltp.ei.svc.service;
+package se.skltp.ei.svc.service.impl.util;
 
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.util.Hash;
 import se.skltp.ei.svc.service.api.Header;
-import se.skltp.ei.svc.service.impl.ProcessBean;
-import se.skltp.ei.svc.service.impl.util.EntityTransformer;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import static junit.framework.Assert.assertEquals;
 
-class TestDataHelper {
+public class TestDataHelper {
     /**
      * Holds a number of enums that wraps EngagementTransactionType for test purposes. Note that neither the Enums them
      * self nor the wrapped test data is immutable (usually enums are used as immutable but there is nothing wrong with
@@ -27,10 +19,13 @@ class TestDataHelper {
      *
      * @see #getLogicalId()
      */
-    enum TestDataEnums {
+    public enum TestDataEnums {
         MR_PINK_1(GenServiceTestDataUtil.genEngagementTransaction(1111111111L), "Mr-Pink(1)"),
         MR_BROWN_2(GenServiceTestDataUtil.genEngagementTransaction(2222222222L), "Mr-Brown(2)"),
-        MS_SALLY_3(GenServiceTestDataUtil.genEngagementTransaction(3333333333L), "Ms-Sally(3)");
+        MS_SALLY_3(GenServiceTestDataUtil.genEngagementTransaction(3333333333L), "Ms-Sally(3)"),
+        MR_BEAN_4(GenServiceTestDataUtil.genEngagementTransaction(4444444444L), "Mr-Bean(4)"),
+        MR_BLACK_5(GenServiceTestDataUtil.genEngagementTransaction(5555555555L), "Mr-Black(5)");
+
         private EngagementTransactionType et;
 
         private String logicalId;
@@ -40,13 +35,19 @@ class TestDataHelper {
         /**
          * @return MostRecentContent value before process
          * @see #preProcess()
-         * @see se.skltp.ei.svc.service.ProcessBeanIntegrationTestHelper#updateOrProcessNotification(ProcessBean, Object)
+         * se.skltp.ei.svc.service.impl.util.ProcessBeanIntegrationTestHelper#updateOrProcessNotification(ProcessBean, Object)
          */
         public String getPreProcessMostRecentContent() {
             return preProcessMostRecentContent;
         }
 
         private String preProcessMostRecentContent;
+
+        public String getPreResetLogicalId() {
+            return preResetLogicalId;
+        }
+
+        private String preResetLogicalId;
 
         /**
          * Since tests share memory with the tested processes and we don't expect there to be any deep cloning
@@ -61,6 +62,7 @@ class TestDataHelper {
 
         TestDataEnums(EngagementTransactionType et, String name) {
             this.et = et;
+            preResetLogicalId = null;
             logicalId = Hash.generateHashId(EntityTransformer.toEntity(et.getEngagement()));
             this.name = name;
         }
@@ -74,11 +76,19 @@ class TestDataHelper {
          * @param owner the system owning the engagement
          * @see se.skltp.ei.svc.service.impl.ProcessBean#ProcessBean#update(Header header, UpdateType request)
          */
-        void reset(String owner) {
+        public void reset(String owner) {
 
-            et =  GenServiceTestDataUtil.genEngagementTransaction(new Long(et.getEngagement().getRegisteredResidentIdentification()));
+/*
+            if(et==null){
+                et = GenServiceTestDataUtil.genEngagementTransaction(new Long(et.getEngagement().getRegisteredResidentIdentification()),owner);
+            }
+*/
+            et.getEngagement().setMostRecentContent(null);
+            et.getEngagement().setUpdateTime(null);
+            et.getEngagement().setCreationTime(null);
             et.getEngagement().setOwner(owner);
             et.setDeleteFlag(false);
+            preResetLogicalId = logicalId;
             logicalId = Hash.generateHashId(EntityTransformer.toEntity(et.getEngagement()));
         }
 
@@ -113,13 +123,13 @@ class TestDataHelper {
         }
     }
 
-    static void resetEnumsEngagement(String owner) {
+    public static void resetEnumsEngagement(String owner) {
         for (TestDataEnums eTen : TestDataEnums.values()) {
             eTen.reset(owner);
         }
     }
 
-    static void resetEnumsEngagement() {
+    public static void resetEnumsEngagement() {
         for (TestDataEnums eTen : TestDataEnums.values()) {
             eTen.reset("owner-of-" + eTen.name);
         }
@@ -131,13 +141,6 @@ class TestDataHelper {
         }
     }
 
-    static List<String> getEnumLogicalIds() {
-        Set<String> res = new HashSet<>(TestDataEnums.values().length);
-        for (TestDataEnums eTen : TestDataEnums.values()) {
-            res.add(eTen.getLogicalId());
-        }
-        assertEquals(res.size(), TestDataEnums.values().length);
-        return new ArrayList(res);
-    }
+
 
 }

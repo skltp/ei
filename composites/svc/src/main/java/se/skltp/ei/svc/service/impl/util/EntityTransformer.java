@@ -24,7 +24,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.mule.util.Preconditions;
 import riv.itintegration.engagementindex._1.EngagementType;
@@ -187,5 +189,16 @@ public class EntityTransformer {
         return formatDate(dateDaysFromDate(parse(pStrDate),pDays));
     }
 
+    public static List<String> extractEngagementsId(Iterable<Engagement> source) {
+
+        List<String> result = new ArrayList<>();
+        for (Engagement engagement : source) {
+
+            result.add(engagement.getId());
+
+        }
+
+        return result;
+    }
 
 }

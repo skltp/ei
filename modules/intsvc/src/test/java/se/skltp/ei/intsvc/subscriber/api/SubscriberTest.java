@@ -11,7 +11,7 @@ import org.junit.Test;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
 import se.skltp.ei.intsvc.integrationtests.notifyservice.util.FilterCreator;
-import se.skltp.ei.svc.service.GenServiceTestDataUtil;
+import se.skltp.ei.svc.service.impl.util.GenServiceTestDataUtil;
 
 public class SubscriberTest {
 

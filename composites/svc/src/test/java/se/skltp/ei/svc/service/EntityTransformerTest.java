@@ -17,7 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package se.skltp.ei.svc.service.impl.util;
+package se.skltp.ei.svc.service;
 
 import static org.junit.Assert.*;
 
@@ -26,6 +26,7 @@ import java.util.Date;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 public class EntityTransformerTest {
 
@@ -41,6 +42,8 @@ public class EntityTransformerTest {
         String fDate = EntityTransformer.formatDate(date);
 
         assertEquals(sDate, fDate);
+
+
     }
 
     @Test
@@ -49,4 +52,25 @@ public class EntityTransformerTest {
         final String sDate = "1961-10-28 13:01:23";
         EntityTransformer.parseDate(sDate);
     }
+
+    @Test
+    public void nullDateParseTest() {
+
+        assertEquals(EntityTransformer.parseDate(null),null);
+    }
+
+    @Test
+    public void dateDaysFromDateNow() {
+
+        Date now = EntityTransformer.dateDaysFromNow(0);
+        Date anoterNow = EntityTransformer.dateDaysFromDate(now,0);
+
+        assertEquals(now,anoterNow);
+
+        Date aGreaterDate = EntityTransformer.dateDaysFromDate(now,1);
+        assertTrue(aGreaterDate.after(now));
+
+    }
+
+
 }

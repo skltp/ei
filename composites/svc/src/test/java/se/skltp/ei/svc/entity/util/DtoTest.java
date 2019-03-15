@@ -4,12 +4,8 @@ import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
-import se.skltp.ei.svc.service.GenServiceTestDataUtil;
-import se.skltp.ei.svc.service.impl.util.IncomingEngagementProcessData;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import se.skltp.ei.svc.service.impl.util.GenServiceTestDataUtil;
+import se.skltp.ei.svc.service.impl.util.SortedEngagementsData;
 
 import static org.junit.Assert.*;
 
@@ -22,9 +18,8 @@ public class DtoTest {
 
         UpdateType request = new UpdateType();
 
-        IncomingEngagementProcessData data = IncomingEngagementProcessData.createForUpdate(request.getEngagementTransaction(),"Inera");
+        SortedEngagementsData data = new SortedEngagementsData();
 
-        assertEquals(0, data.size());
 
         assertNotNull(data.engagementsToDelete());
 
@@ -39,9 +34,6 @@ public class DtoTest {
 
         assertFalse(data.existsAnythingToDelete());
 
-        assertNotNull(data.getProcessResult());
-
-        assertFalse(data.getProcessResult().iterator().hasNext());
 
 
 
@@ -57,15 +49,14 @@ public class DtoTest {
         request.getEngagementTransaction().add(et1);
         request.getEngagementTransaction().add(et2);
 
-        data = IncomingEngagementProcessData.createForUpdate(request.getEngagementTransaction(),"Inera");
+        data = new SortedEngagementsData();
 
-        assertEquals(2, data.size());
 
 
         int i=0;
-        for(EngagementTransactionType engagementTransactionType:data){
+        for(EngagementTransactionType engagementTransactionType:request.getEngagementTransaction()){
             i++;
-            assertEquals("Inera", engagementTransactionType.getEngagement().getOwner());
+
             if(engagementTransactionType.isDeleteFlag())
                 data.addForDeletion(e1,engagementTransactionType);
             else
@@ -74,51 +65,23 @@ public class DtoTest {
             data.addForDeletion(GenEntityTestDataUtil.genEngagement(1111111112L+i,"test"+i),null);
 
         }
-        assertEquals(2, data.size());
 
         assertTrue(data.existsAnythingToSave());
 
         assertTrue(data.existsAnythingToDelete());
 
-        List<String> ids =  data.getSaveCandidateIds();
 
-        assertEquals(e2.getId(), ids.iterator().next());
-
-        data.markAsRemoveFromSaveList(e2);
-
-        assertFalse(data.existsAnythingToSave());
 
         assertTrue(data.existsAnythingToDelete());
 
         assertTrue(data.engagementsToSave().iterator().hasNext());
 
-        assertFalse(data.engagementsToSave(true).iterator().hasNext());
 
-        Map<String,Engagement> persitedMap = new HashMap<>();
 
-        data.setPersistedEngagementMap(persitedMap);
 
-        assertNull("",data.getPersistedEngagement(e2.getId()));
-
-        persitedMap.put(e2.getId(),e2);
-
-        persitedMap.put(e1.getId(),e1);
-
-        assertEquals(data.getPersistedEngagement(e2.getId()), e2);
-
-        assertEquals(2, data.size());
 
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testGetPersistedEngagementUnassigned(){
-        IncomingEngagementProcessData data = IncomingEngagementProcessData.createForUpdate(null,"Inera");
-        data.getPersistedEngagement("hej");
-    }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetPersistedEngagementUnassigned(){
-        IncomingEngagementProcessData data = IncomingEngagementProcessData.createForUpdate(null,"Inera");
-        data.setPersistedEngagementMap(null);
-    }
+
 }

@@ -26,9 +26,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
-import static se.skltp.ei.svc.service.ProcessBeanIntegrationTestHelper.*;
-import static se.skltp.ei.svc.service.TestDataHelper.TestDataEnums.*;
-import static se.skltp.ei.svc.service.TestDataHelper.resetEnumsEngagement;
+import static se.skltp.ei.svc.service.impl.util.ProcessBeanIntegrationTestHelper.*;
+import static se.skltp.ei.svc.service.impl.util.TestDataHelper.TestDataEnums.*;
+import static se.skltp.ei.svc.service.impl.util.TestDataHelper.resetEnumsEngagement;
 
 import java.util.*;
 
@@ -45,7 +45,7 @@ import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.impl.ProcessBean;
-import se.skltp.ei.svc.service.impl.util.EntityTransformer;
+import se.skltp.ei.svc.service.impl.util.*;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -55,6 +55,7 @@ public class ProcessBeanIntegrationTest {
 
     private static ProcessBean BEAN = null;
     private static final String OWNER = "logical-address";
+
 
     @Autowired
     private EngagementRepository engagementRepository;
@@ -337,10 +338,12 @@ public class ProcessBeanIntegrationTest {
         assertEquals(s, "");
     }
 
-    private void checkTest(TestLog log, List<EngagementTransactionType> processList, CommonProcessTest... tests) {
+    private void checkTest(TestLog log, List<EngagementTransactionType> processList, TrialExitMessage... tests) {
         Preconditions.checkState(engagementRepository != null, "engagementRepository must be assigned");
         try {
-            log.logProblem(ProcessBeanIntegrationTestHelper.checkTest(processList, engagementRepository, tests));
+            log.logProblem(
+                    ProcessBeanIntegrationTestHelper.checkTest(processList, engagementRepository, tests)
+            );
         } catch (Exception e) {
             log.logProblem("checkTest" + e.getMessage());
         }
@@ -348,157 +351,225 @@ public class ProcessBeanIntegrationTest {
     }
 
     public String sendAnotherUpdateWithOlderMostRecentContent(Object request) {
-        TestLog log;
-        List<EngagementTransactionType> lEngagements;
-        if (request instanceof UpdateType) {
-            log = new TestLog("Test Update");
-            TestDataHelper.resetEnumsEngagement(OWNER);
-            lEngagements = ((UpdateType) request).getEngagementTransaction();
-        } else {
-            log = new TestLog("Test Update");
-            resetEnumsEngagement();
-            lEngagements = ((ProcessNotificationType) request).getEngagementTransaction();
+
+            TestLog log;
+            List<EngagementTransactionType> lEngagements;
+            if (request instanceof UpdateType) {
+                log = new TestLog("Test Update");
+                TestDataHelper.resetEnumsEngagement(OWNER);
+                lEngagements = ((UpdateType) request).getEngagementTransaction();
+            } else {
+                log = new TestLog("Test Update");
+                resetEnumsEngagement();
+                lEngagements = ((ProcessNotificationType) request).getEngagementTransaction();
+            }
+
+        {//#1 MR_PINK_1 Only one added Most recent content set
+            incMostRecentDate(5, MR_PINK_1);
+
+            lEngagements.add(MR_PINK_1.getEt());
+
+
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    engagementIsNotPersisted(MR_BROWN_2),
+                    engagementIsNotPersisted(MS_SALLY_3),
+                    resultDateEqualsPreProcessDate(MR_PINK_1),
+                    notInResultSet(MR_BROWN_2),
+                    notInResultSet(MS_SALLY_3),
+                    resultSize(1));
         }
 
-        incMostRecentDate(5, MR_PINK_1);
+        {//#2 MR_PINK_1 still only one added Most recent content set before prior update
+            incMostRecentDate(-1, MR_PINK_1);
 
-        lEngagements.add(MR_PINK_1.getEt());
+            checkTest(log, process(request),
+                    datePersistedIsAfter(MR_PINK_1),
+                    engagementIsNotPersisted(MR_BROWN_2),
+                    engagementIsNotPersisted(MS_SALLY_3),
 
-        //#1 MR_PINK_1 Only one added Most recent content set
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                engagementIsNotPersisted(MR_BROWN_2),
-                engagementIsNotPersisted(MS_SALLY_3),
-                resultDateEqualsPreProcessDate(MR_PINK_1),
-                notInResultSet(MR_BROWN_2),
-                notInResultSet(MS_SALLY_3),
-                resultSize(1));
+                    resultSize(0));
+        }
 
-
-        incMostRecentDate(-1, MR_PINK_1);
-
-        //#2 MR_PINK_1 still only one added Most recent content set before prior update
-        checkTest(log, process(request),
-                datePersistedIsAfter(MR_PINK_1),
-                engagementIsNotPersisted(MR_BROWN_2),
-                engagementIsNotPersisted(MS_SALLY_3),
-
-                resultSize(0));
-
-        //#3 Empty request
-        checkTest(log, process(request),
-                datePersistedIsAfter(MR_PINK_1),
-                engagementIsNotPersisted(MR_BROWN_2),
-                engagementIsNotPersisted(MS_SALLY_3),
-                resultSize(0));
+        {//#3 Empty request
+            checkTest(log, process(request),
+                    datePersistedIsAfter(MR_PINK_1),
+                    engagementIsNotPersisted(MR_BROWN_2),
+                    engagementIsNotPersisted(MS_SALLY_3),
+                    resultSize(0));
+        }
+        {//#4 MR_PINK_1 Most recent content 4 days after earlier attempts R_BROWN_2 and MS_SALLY_3 added with most
+            // recent content set
 
 
-        incMostRecentDate(5, MR_PINK_1, MR_BROWN_2);
+            incMostRecentDate(5, MR_PINK_1, MR_BROWN_2);
 
-        lEngagements.add(MR_BROWN_2.getEt());
+            lEngagements.add(MR_BROWN_2.getEt());
 
-        assertEquals(2, lEngagements.size());
+            assertEquals(2, lEngagements.size());
 
-        lEngagements.add(MS_SALLY_3.getEt());
+            lEngagements.add(MS_SALLY_3.getEt());
 
-        //#4 MR_PINK_1 Most recent content 4 days after earlier attempts
-        // MR_BROWN_2 and MS_SALLY_3 added with most recent content set
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                engagementIsPersisted(MS_SALLY_3),
-                persistedDateIsNull(MS_SALLY_3),
-                resultDateEqualsPreProcessDate(MR_PINK_1),
-                resultDateEqualsPreProcessDate(MR_BROWN_2),
-                resultDateEqualsPreProcessDate(MS_SALLY_3),
-                resultSize(3));
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    engagementIsPersisted(MS_SALLY_3),
+                    persistedMostRecentContentIsNull(MS_SALLY_3),
+                    resultDateEqualsPreProcessDate(MR_PINK_1),
+                    resultDateEqualsPreProcessDate(MR_BROWN_2),
+                    resultDateEqualsPreProcessDate(MS_SALLY_3),
+                    resultSize(3));
 
-
-
-        incMostRecentDate(1, MR_PINK_1, MR_BROWN_2, MS_SALLY_3);
-
-        //#5 All added with a Most recent content one day after any prior attempts
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                dateEqualsPersisted(MS_SALLY_3),
-                resultDateEqualsPreProcessDate(MR_PINK_1),
-                resultDateEqualsPreProcessDate(MR_BROWN_2),
-                resultDateEqualsPreProcessDate(MS_SALLY_3),
-                resultSize(3));
+        }
+        {//#5 All added with a Most recent content one day after any prior attempts
+            incMostRecentDate(1, MR_PINK_1, MR_BROWN_2, MS_SALLY_3);
 
 
-        incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    dateEqualsPersisted(MS_SALLY_3),
+                    resultDateEqualsPreProcessDate(MR_PINK_1),
+                    resultDateEqualsPreProcessDate(MR_BROWN_2),
+                    resultDateEqualsPreProcessDate(MS_SALLY_3),
+                    resultSize(3));
+        }
 
-        incMostRecentDate(-1, MS_SALLY_3);
+        {//#6 MR_PINK_1, MR_BROWN_2 have most recent content one day after prior attempts
+            //MS_SALLY_3 has a date one day prior to previous
 
-        //#6 MR_PINK_1, MR_BROWN_2 have most recent content one day after prior attempts
-        //MS_SALLY_3 has a date one day prior to previous
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                datePersistedIsAfter(MS_SALLY_3),
-                resultSize(2),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                notInResultSet(MS_SALLY_3));
+            incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
 
+            incMostRecentDate(-1, MS_SALLY_3);
 
-        incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
-        MS_SALLY_3.getEt().setDeleteFlag(true);
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    datePersistedIsAfter(MS_SALLY_3),
+                    resultSize(2),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    notInResultSet(MS_SALLY_3));
+        }
 
-        //#7 MR_PINK_1, MR_BROWN_2 have most recent content one day after prior attempts
-        //MS_SALLY_3 is deleted
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                engagementIsNotPersisted(MS_SALLY_3),
-                resultSize(3),
-                resultDateEqualsPreProcessDate(MR_PINK_1),
-                resultDateEqualsPreProcessDate(MR_BROWN_2),
-                resultDateEqualsPreProcessDate(MS_SALLY_3)
-        );
-
-        incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
-        //#8 MR_PINK_1, MR_BROWN_2 have most recent content one day after prior attempts
-        //MS_SALLY_3 is now deleted a second time Currently we do nothing to check that this not happens
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                engagementIsNotPersisted(MS_SALLY_3),
-                resultDateEqualsPreProcessDate(MS_SALLY_3),
-                resultDateEqualsPreProcessDate(MR_PINK_1),
-                resultDateEqualsPreProcessDate(MR_BROWN_2),
-                resultSize(3));
+        {//#7 MR_PINK_1, MR_BROWN_2 have most recent content one day after prior attempts MS_SALLY_3 is deleted
+            incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
+            MS_SALLY_3.getEt().setDeleteFlag(true);
 
 
-        MS_SALLY_3.getEt().setDeleteFlag(false);
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    engagementIsNotPersisted(MS_SALLY_3),
+                    resultSize(3),
+                    resultDateEqualsPreProcessDate(MR_PINK_1),
+                    resultDateEqualsPreProcessDate(MR_BROWN_2),
+                    resultDateEqualsPreProcessDate(MS_SALLY_3)
+            );
+        }
+        {//#8 MR_PINK_1, MR_BROWN_2 have most recent content one day after prior attempts MS_SALLY_3 is now deleted a
+            // second time Currently we do nothing to check that this not happens
+            incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
 
-        //#9 MR_PINK_1, MR_BROWN_2 and brown is the same as before and expected not to bee included in result
-        //MS_SALLY_3 is un deleted and expected to be treated as new with most recent content set
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                dateEqualsPersisted(MS_SALLY_3),
-                resultSize(1),
-                isInResultSet(MS_SALLY_3),
-                notInResultSet(MR_PINK_1),
-                notInResultSet(MR_BROWN_2));
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    engagementIsNotPersisted(MS_SALLY_3),
+                    resultDateEqualsPreProcessDate(MS_SALLY_3),
+                    resultDateEqualsPreProcessDate(MR_PINK_1),
+                    resultDateEqualsPreProcessDate(MR_BROWN_2),
+                    resultSize(3));
+        }
+        {//#9 MR_PINK_1, MR_BROWN_2 and brown is the same as before and expected not to bee included in result
+            //MS_SALLY_3 is un deleted and expected to be treated as new with most recent content set
 
 
-        incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
-        MS_SALLY_3.getEt().getEngagement().setMostRecentContent(null);
+            MS_SALLY_3.getEt().setDeleteFlag(false);
 
-        //#9 MR_PINK_1, MR_BROWN_2 most recent content incremented
-        //MS_SALLY_3 most recent content is null should be treated as older than current
-        checkTest(log, process(request),
-                dateEqualsPersisted(MR_PINK_1),
-                dateEqualsPersisted(MR_BROWN_2),
-                datePersistedIsAfter(MS_SALLY_3),
-                resultSize(2),
-                notInResultSet(MS_SALLY_3),
-                resultDateEqualsPreProcessDate(MR_PINK_1),
-                resultDateEqualsPreProcessDate(MR_BROWN_2));
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    dateEqualsPersisted(MS_SALLY_3),
+                    resultSize(1),
+                    isInResultSet(MS_SALLY_3),
+                    notInResultSet(MR_PINK_1),
+                    notInResultSet(MR_BROWN_2));
+        }
+
+        {//#10 MR_PINK_1, MR_BROWN_2 most recent content incremented
+            //MS_SALLY_3 most recent content is null should be treated as older than current
+
+            incMostRecentDate(1, MR_PINK_1, MR_BROWN_2);
+            MS_SALLY_3.getEt().getEngagement().setMostRecentContent(null);
+
+            checkTest(log, process(request),
+                    dateEqualsPersisted(MR_PINK_1),
+                    dateEqualsPersisted(MR_BROWN_2),
+                    datePersistedIsAfter(MS_SALLY_3),
+                    resultSize(2),
+                    notInResultSet(MS_SALLY_3),
+                    resultDateEqualsPreProcessDate(MR_PINK_1),
+                    resultDateEqualsPreProcessDate(MR_BROWN_2));
+        }
+        if (request instanceof ProcessNotificationType) {
+
+            {//#11 Delete all and introduce Mr Bean and Mr black
+                MR_BEAN_4.reset(OWNER);
+                MR_BLACK_5.reset(OWNER);
+
+                lEngagements.add(MR_BEAN_4.getEt());
+                lEngagements.add(MR_BLACK_5.getEt());
+
+                MR_PINK_1.getEt().setDeleteFlag(true);
+                MR_BROWN_2.getEt().setDeleteFlag(true);
+                MS_SALLY_3.getEt().setDeleteFlag(true);
+
+                checkTest(log, process(request),
+                        isInResultSet(MR_PINK_1),
+                        isInResultSet(MR_BROWN_2),
+                        isInResultSet(MS_SALLY_3),
+                        isInResultSet(MR_BEAN_4),
+                        isInResultSet(MR_BLACK_5),
+                        engagementIsNotPersisted(MR_PINK_1),
+                        engagementIsNotPersisted(MR_BROWN_2),
+                        engagementIsNotPersisted(MS_SALLY_3),
+
+                        dateEqualsPersisted(MR_BEAN_4),
+                        dateEqualsPersisted(MR_BLACK_5),
+                        resultSize(5));
+            }
+
+            {//# Add the others and change owner to something else for mr bean and black
+                MR_BEAN_4.reset("owner-of-bean-please-find-prior-and-delete");
+                MR_BLACK_5.reset("owner-of-black-please-find-prior-and-delete");
+
+
+                MR_PINK_1.getEt().setDeleteFlag(false);
+                MR_BROWN_2.getEt().setDeleteFlag(false);
+                MS_SALLY_3.getEt().setDeleteFlag(false);
+
+                checkTest(log, process(request),
+
+                        isInResultSet(MR_PINK_1),
+                        isInResultSet(MR_BROWN_2),
+                        isInResultSet(MS_SALLY_3),
+                        isInResultSet(MR_BEAN_4),
+                        isInResultSet(MR_BLACK_5),
+
+                        preResetIdRemovedFromPersisted(MR_BEAN_4),
+                        preResetIdRemovedFromPersisted(MR_BLACK_5),
+                        dateEqualsPersisted(MR_PINK_1),
+                        dateEqualsPersisted(MR_BROWN_2),
+                        dateEqualsPersisted(MS_SALLY_3),
+                        dateEqualsPersisted(MR_BEAN_4),
+                        dateEqualsPersisted(MR_BLACK_5),
+                        resultSize(5)
+                );
+            }
+
+        }
+
+
         return log.getLogAsStr();
 
     }
@@ -543,7 +614,7 @@ public class ProcessBeanIntegrationTest {
         //ToDo awaiting answer from Inera regarding if this call should ultimately return 1 or zero (dependent on how null values
         // Should be trated
         assertEquals(0, processList.size());
-       // assertEquals(1, processList.size());
+        // assertEquals(1, processList.size());
     }
 
 
@@ -673,7 +744,7 @@ public class ProcessBeanIntegrationTest {
         BEAN.processNotification(null, request);
 
         // Fetch all posts
-        List<Engagement> result =  engagementRepository.findAll();
+        List<Engagement> result = engagementRepository.findAll();
         assertThat(result, hasSize(2));
 
         // Verify that owner is same as before the request

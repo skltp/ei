@@ -1,4 +1,4 @@
-package se.skltp.ei.svc.service;
+package se.skltp.ei.svc.service.impl.util;
 
 import org.mule.util.Preconditions;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
@@ -8,7 +8,6 @@ import se.skltp.ei.svc.entity.model.Engagement;
 import se.skltp.ei.svc.entity.model.util.Hash;
 import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.impl.ProcessBean;
-import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 import java.util.*;
 
@@ -16,9 +15,11 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 /**
- * Convenience methods ProcessBeanIntegrationTest
+ * Convenience methods, that mainly returns tests that check different aspects of specific Engagement data after it been
+ * included in a call to ProcessBean method (update or processNotification). And for method for execution of these tests
+ *
  */
-class ProcessBeanIntegrationTestHelper {
+public class ProcessBeanIntegrationTestHelper {
 
     private static String defaultMostRecentContent;
 
@@ -27,7 +28,7 @@ class ProcessBeanIntegrationTestHelper {
     }
 
 
-    static Engagement engagementByEngagementTransactionType(List<Engagement> pSource, TestDataHelper.TestDataEnums key) {
+    private static Engagement engagementByEngagementTransactionType(List<Engagement> pSource, TestDataHelper.TestDataEnums key) {
         for (Engagement engagement : pSource) {
 
             if (engagement.getId().equals(key.getLogicalId())) {
@@ -38,7 +39,7 @@ class ProcessBeanIntegrationTestHelper {
     }
 
 
-    static void incMostRecentDate(int incBy, TestDataHelper.TestDataEnums... engagementTypes) {
+    public static void incMostRecentDate(int incBy, TestDataHelper.TestDataEnums... engagementTypes) {
         for (TestDataHelper.TestDataEnums et : engagementTypes) {
             String current = ((current = et.getEt().getEngagement().getMostRecentContent()) != null) ? current : defaultMostRecentContent;
             et.getEt().getEngagement().setMostRecentContent(
@@ -47,7 +48,7 @@ class ProcessBeanIntegrationTestHelper {
         }
     }
 
-    static EngagementTransactionType findCorrespondingEngagementTransactionType(Iterable<EngagementTransactionType> candidates, TestDataHelper.TestDataEnums key) {
+    private static EngagementTransactionType findCorrespondingEngagementTransactionType(Iterable<EngagementTransactionType> candidates, TestDataHelper.TestDataEnums key) {
         EngagementTransactionType result = null;
         for (EngagementTransactionType engagementTransactionType : candidates) {
 
@@ -59,8 +60,8 @@ class ProcessBeanIntegrationTestHelper {
         return result;
     }
 
-    static MostRecentContentReturnedAsExpected resultDateEqualsPreProcessDate(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentReturnedAsExpected() {
+    public static EngagementReturnedAsExpected resultDateEqualsPreProcessDate(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementReturnedAsExpected() {
             String message = "";
 
             @Override
@@ -95,34 +96,10 @@ class ProcessBeanIntegrationTestHelper {
         };
     }
 
-    static MostRecentContentReturnedAsExpected resultDateNotEquals(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentReturnedAsExpected() {
-            String message = "";
 
-            @Override
-            public boolean isTrueFor(List<EngagementTransactionType> processResult) {
-                EngagementTransactionType found = findCorrespondingEngagementTransactionType(processResult, candidate);
-                if (found == null) {
-                    message = "dateEquals " + candidate.name() + "was not a part of the result set equality undefined";
-                    return false;
-                }
-                if (found.getEngagement().getMostRecentContent().equals(candidate.getPreProcessMostRecentContent())) {
-                    message = "dateEquals " + candidate.name() + ".PreProcessMostRecentContent: " + candidate.getPreProcessMostRecentContent()
-                            + " is the same as " + candidate.name() + " post process date: " + candidate.getEt().getEngagement().getMostRecentContent();
-                    return false;
-                }
-                return true;
-            }
 
-            @Override
-            public String getMessage() {
-                return message;
-            }
-        };
-    }
-
-    static MostRecentContentReturnedAsExpected notInResultSet(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentReturnedAsExpected() {
+    public static EngagementReturnedAsExpected notInResultSet(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementReturnedAsExpected() {
             String message = "";
 
             @Override
@@ -142,8 +119,8 @@ class ProcessBeanIntegrationTestHelper {
         };
     }
 
-    static MostRecentContentReturnedAsExpected isInResultSet(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentReturnedAsExpected() {
+    public static EngagementReturnedAsExpected isInResultSet(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementReturnedAsExpected() {
             String message = "";
 
             @Override
@@ -164,8 +141,8 @@ class ProcessBeanIntegrationTestHelper {
     }
 
 
-    static MostRecentContentReturnedAsExpected resultSize(int expected) {
-        return new MostRecentContentReturnedAsExpected() {
+    public static EngagementReturnedAsExpected resultSize(int expected) {
+        return new EngagementReturnedAsExpected() {
             String message = "";
 
             @Override
@@ -189,10 +166,10 @@ class ProcessBeanIntegrationTestHelper {
      * to that of the candidate
      *
      * @param candidate the candidate for evaluation
-     * @return suitable implementation of MostRecentContentPersistedAsExpected
+     * @return suitable implementation of EngagementPersistedAsExpected
      */
-    static MostRecentContentPersistedAsExpected dateEqualsPersisted(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentPersistedAsExpected() {
+    public static EngagementPersistedAsExpected dateEqualsPersisted(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementPersistedAsExpected() {
             String message = "";
 
             @Override
@@ -222,8 +199,8 @@ class ProcessBeanIntegrationTestHelper {
     }
 
 
-    static MostRecentContentPersistedAsExpected engagementIsPersisted(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentPersistedAsExpected() {
+    public static EngagementPersistedAsExpected engagementIsPersisted(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementPersistedAsExpected() {
             String message = "";
 
             @Override
@@ -246,28 +223,25 @@ class ProcessBeanIntegrationTestHelper {
     }
 
     /**
-     * returns an implementation that checks if there exists a matching persisted engagement where MostRecentContent
-     * is null
-     *
      * @param candidate the candidate for evaluation
-     * @return suitable implementation of MostRecentContentPersistedAsExpected
+     * @return test
      */
-    static MostRecentContentPersistedAsExpected persistedDateIsNull(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentPersistedAsExpected() {
+    public static EngagementPersistedAsExpected persistedMostRecentContentIsNull(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementPersistedAsExpected() {
             String message = "";
 
             @Override
             public boolean isTrueFor(List<Engagement> persistedEngagements) {
                 Engagement persisted = engagementByEngagementTransactionType(persistedEngagements, candidate);
                 if (persisted == null) {
-                    message = "persistedDateIsNull candidate: " + candidate.name() + " is not persisted";
+                    message = "persistedMostRecentContentIsNull candidate: " + candidate.name() + " is not persisted";
                     return false;
                 }
 
                 if (persisted.getMostRecentContent() == null) {
                     return true;
                 } else {
-                    message = "persistedDateIsNull matching " + candidate.name() +
+                    message = "persistedMostRecentContentIsNull matching " + candidate.name() +
                             "persisted.MostRecentContent: " + persisted.getMostRecentContent() + "is not null";
                     return false;
                 }
@@ -282,34 +256,23 @@ class ProcessBeanIntegrationTestHelper {
     }
 
 
-    static String checkMostRecentContentPersisted(EngagementRepository engagementRepository, MostRecentContentPersistedAsExpected... tests) {
-        StringBuilder buff = new StringBuilder();
-
-        List<Engagement> engagements = engagementRepository.findByIdIn(TestDataHelper.getEnumLogicalIds());
-        for (MostRecentContentPersistedAsExpected mostRecentContentPersistedAsExpected : tests) {
-            if (!mostRecentContentPersistedAsExpected.isTrueFor(engagements)) {
-                buff.append(mostRecentContentPersistedAsExpected.getMessage());
-            }
-        }
-        return buff.toString();
-    }
-
     /**
      * Conducts all given tests and returns any problems that the tests may detect as a string.
      *
      * @param processResult        result of invoking process
      * @param engagementRepository persistent layer
      * @param tests                bound to a specific candidate and conditions
-     *                             that's either of type  MostRecentContentReturnedAsExpected or MostRecentContentPersistedAsExpected
+     *                             that's either of type  EngagementReturnedAsExpected or EngagementPersistedAsExpected
      * @return blank if all test where true otherwise a description of what condition wasn't matched by candidate
      */
-    static String checkTest(List<EngagementTransactionType> processResult, EngagementRepository engagementRepository, CommonProcessTest... tests) {
+    public static String checkTest(List<EngagementTransactionType> processResult, EngagementRepository engagementRepository, TrialExitMessage... tests) {
 
         Preconditions.checkArgument(processResult != null, "ProcessResult must be assigned");
         Preconditions.checkArgument(engagementRepository != null, "EngagementRepository must be assigned");
         StringBuilder buff = new StringBuilder();
-        List<Engagement> engagements = engagementRepository.findByIdIn(TestDataHelper.getEnumLogicalIds());
-        for (CommonProcessTest test : tests) {
+
+        List<Engagement> engagements = engagementRepository.findAll(); //engagementRepository.findByIdIn(TestDataHelper.getEnumLogicalIds());
+        for (TrialExitMessage test : tests) {
             testAsEither(processResult, engagements, test, buff);
         }
         return buff.toString();
@@ -317,7 +280,7 @@ class ProcessBeanIntegrationTestHelper {
 
     private static void testAsEither(List<EngagementTransactionType> processResult,
                                      List<Engagement> engagements,
-                                     CommonProcessTest test,
+                                     TrialExitMessage test,
                                      StringBuilder buff) {
         if (
                 testIsOnResultAndInvalid(processResult, test)
@@ -328,24 +291,22 @@ class ProcessBeanIntegrationTestHelper {
         }
     }
 
-    private static boolean testIsOnResultAndInvalid(List<EngagementTransactionType> processResult, CommonProcessTest test) {
-        return (test instanceof MostRecentContentReturnedAsExpected) &&
-                (!((MostRecentContentReturnedAsExpected) test).isTrueFor(processResult));
+    private static boolean testIsOnResultAndInvalid(List<EngagementTransactionType> processResult, TrialExitMessage test) {
+        return (test instanceof EngagementReturnedAsExpected) &&
+                (!((EngagementReturnedAsExpected) test).isTrueFor(processResult));
     }
 
-    private static boolean testIsOnPersistedAndInvalid(List<Engagement> engagements, CommonProcessTest test) {
-        return (test instanceof MostRecentContentPersistedAsExpected) &&
-                (!((MostRecentContentPersistedAsExpected) test).isTrueFor(engagements));
+    private static boolean testIsOnPersistedAndInvalid(List<Engagement> engagements, TrialExitMessage test) {
+        return (test instanceof EngagementPersistedAsExpected) &&
+                (!((EngagementPersistedAsExpected) test).isTrueFor(engagements));
     }
 
     /**
-     * returns an implementation that checks that there not exists a matching persisted engagement
-     *
      * @param candidate the candidate for evaluation
-     * @return suitable implementation of MostRecentContentPersistedAsExpected
+     * @return test
      */
-    static MostRecentContentPersistedAsExpected engagementIsNotPersisted(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentPersistedAsExpected() {
+    public static EngagementPersistedAsExpected engagementIsNotPersisted(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementPersistedAsExpected() {
             String message = "";
 
             @Override
@@ -368,14 +329,38 @@ class ProcessBeanIntegrationTestHelper {
     }
 
     /**
-     * returns an implementation that checks if there exists a matching persisted engagement where MostRecentContent
-     * is a date after that of the given candidate
+     * @param candidate the candidate for evaluation
+     * @return test
+     */
+    public static EngagementPersistedAsExpected preResetIdRemovedFromPersisted(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementPersistedAsExpected() {
+            String message = "";
+            @Override
+            public boolean isTrueFor(List<Engagement> persistedEngagements) {
+                for (Engagement engagement : persistedEngagements) {
+                    if (engagement.getId().equals(candidate.getPreResetLogicalId())) {
+                        message = "The pre reset id: " + candidate.getPreResetLogicalId() + " exists among the persisted: " + engagement;
+                        return false;
+                    }
+                }
+                return true;
+            }
+            @Override
+            public String getMessage() {
+                return message;
+            }
+        };
+    }
+
+    /**
+     * Test checks if there exists a matching persisted engagement where MostRecentContent is a date after that of the
+     * given candidate
      *
      * @param candidate the candidate for evaluation
-     * @return suitable implementation of MostRecentContentPersistedAsExpected
+     * @return suitable implementation of EngagementPersistedAsExpected
      */
-    static MostRecentContentPersistedAsExpected datePersistedIsAfter(TestDataHelper.TestDataEnums candidate) {
-        return new MostRecentContentPersistedAsExpected() {
+    public static EngagementPersistedAsExpected datePersistedIsAfter(TestDataHelper.TestDataEnums candidate) {
+        return new EngagementPersistedAsExpected() {
             String message = "";
 
             @Override
@@ -419,7 +404,7 @@ class ProcessBeanIntegrationTestHelper {
      * @param et     key et.ResidentIdentification
      * @return candidate.owner matching key
      */
-    static String getOwner(List<Engagement> result, EngagementTransactionType et) {
+    public static String getOwner(List<Engagement> result, EngagementTransactionType et) {
         for (Engagement e : result) {
             if (e.getRegisteredResidentIdentification().equals(et.getEngagement().getRegisteredResidentIdentification())) {
                 return e.getOwner();
@@ -435,7 +420,7 @@ class ProcessBeanIntegrationTestHelper {
      *
      * @return Engagement
      */
-    static Engagement getSingleEngagement(EngagementRepository engagementRepository) {
+    public static Engagement getSingleEngagement(EngagementRepository engagementRepository) {
         engagementRepository.flush();
         List<Engagement> result = engagementRepository.findAll();
         assertThat(result, hasSize(1));
@@ -443,13 +428,13 @@ class ProcessBeanIntegrationTestHelper {
         return result.get(0);
     }
 
-    static int countEngagements(EngagementRepository engagementRepository) {
+    public static int countEngagements(EngagementRepository engagementRepository) {
         engagementRepository.flush();
         List<Engagement> result = engagementRepository.findAll();
         return result.size();
     }
 
-    static List<EngagementTransactionType> updateOrProcessNotification(ProcessBean processHandler, Object request) {
+    public static List<EngagementTransactionType> updateOrProcessNotification(ProcessBean processHandler, Object request) {
         TestDataHelper.preProcessAll();
         if (request instanceof UpdateType) {
             return processHandler.update(null, (UpdateType) request);

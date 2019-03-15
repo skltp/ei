@@ -17,13 +17,12 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package se.skltp.ei.svc.service;
+package se.skltp.ei.svc.service.impl.util;
 
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex._1.EngagementType;
 import se.skltp.ei.svc.entity.GenEntityTestDataUtil;
 import se.skltp.ei.svc.entity.model.Engagement;
-import se.skltp.ei.svc.service.impl.util.EntityTransformer;
 
 public class GenServiceTestDataUtil {
 	/**
@@ -53,9 +52,9 @@ public class GenServiceTestDataUtil {
 
 	/**
 	 *
-	 * @param residentId
-	 * @param pOwner
-	 * @return
+	 * @param residentId residentId
+	 * @param pOwner pOwner
+	 * @return EngagementTransactionType
 	 */
 	public static EngagementTransactionType genEngagementTransaction(long residentId,String pOwner) {
 		Engagement entity = GenEntityTestDataUtil.genEngagement(residentId,pOwner);

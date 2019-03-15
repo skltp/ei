@@ -38,13 +38,14 @@ import se.skltp.ei.svc.entity.repository.EngagementRepository;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.api.ProcessInterface;
 import se.skltp.ei.svc.service.impl.util.EngagementValidator;
-import se.skltp.ei.svc.service.impl.util.IncomingEngagementProcessData;
+import se.skltp.ei.svc.service.impl.util.PersistedEngagementsHolder;
+import se.skltp.ei.svc.service.impl.util.SortedEngagementsData;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
 
-import static se.skltp.ei.svc.service.impl.util.EntityTransformer.formatDate;
-import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
+import static se.skltp.ei.svc.service.impl.util.EntityTransformer.*;
+import static se.skltp.ei.svc.service.impl.util.IncomingRequestInitializer.initEngagementOwner;
 
 /**
  * Updates engagement index with either update or process notification requests.
@@ -54,7 +55,7 @@ import static se.skltp.ei.svc.service.impl.util.EntityTransformer.toEntity;
 public class ProcessBean implements ProcessInterface {
 
 
-    private enum ResultSave {SET_RESULT_AND_SAVE, SAVE_ONLY, NEITHER}
+    private enum IgnoreOrNotifySave {NOTIFY_AND_SAVE_CHANGES, SAVE_WITH_NO_PROCESS_NOTIFICATION, IGNORE_NEW_ENGAGEMENT}
 
     private static final Logger LOG = LoggerFactory.getLogger(ProcessBean.class);
 
@@ -88,6 +89,7 @@ public class ProcessBean implements ProcessInterface {
     public void setOwner(String owner) {
         this.owner = owner;
         validator.setOwner(owner);
+
     }
 
     public void setPseudonym(String pseudonym) {
@@ -133,23 +135,48 @@ public class ProcessBean implements ProcessInterface {
     @Override
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     public List<EngagementTransactionType> update(Header header, UpdateType request) {
+
+
         LOG.debug("The svc.update service is called");
 
 
-        IncomingEngagementProcessData updateProcessData = IncomingEngagementProcessData.createForUpdate(request.getEngagementTransaction(), this.owner);
-
-        if (updateProcessData.size() == 0) {
-            return updateProcessData.getProcessResult();
+        if (!initEngagementOwner(request, owner)) {
+            return request.getEngagementTransaction();
         }
+
+
         // Separate deletes from the saves...
-        convertToEntityEngagementDataAndSortByDeleteOrSave(updateProcessData);
+        SortedEngagementsData sortedEngagements = convertToEntityEngagementDataAndSortByDeleteOrSave(request.getEngagementTransaction());
 
-        //All Incoming items that's deleted are included in the result
-        updateProcessData.getProcessResult().addAll(updateProcessData.getEngagementTransactionTypesMarkedForDeletion());
+        List<EngagementTransactionType> resultProcessNotifications = new ArrayList<>();
 
-        return getCommonUpdateProcessNotification(updateProcessData);
+
+        Map<String, Engagement> persistedEngagementsCorrespondingToIncoming = getGetPersistedEngagementEntityMapByIds(
+                extractEngagementsId(sortedEngagements.engagementsToSave())
+        );
+
+        removeIncomingItemsThatTriesToResetMostRecentContentAndAddUpdatedDataToProcessResult(sortedEngagements,
+                persistedEngagementsCorrespondingToIncoming,
+                resultProcessNotifications);
+
+
+        // Perform the delete if any
+        deleteEntityItemsAndAddToResult(sortedEngagements, resultProcessNotifications);
+
+        // Perform the save
+        if (sortedEngagements.existsAnythingToSave()) {
+            engagementRepository.save(sortedEngagements.engagementsToSave());
+        }
+
+        //Sets the last updated date on incoming data that resulted in an update
+        updateResultDateIfAppropriate(sortedEngagements);
+
+        // Return a list of incoming EngagementTransactions for that was processed
+        return resultProcessNotifications;
+
 
     }
+
     /**
      * {@inheritDoc}
      */
@@ -158,50 +185,77 @@ public class ProcessBean implements ProcessInterface {
     public List<EngagementTransactionType> processNotification(Header header, ProcessNotificationType request) {
         LOG.debug("The svc.processNotification service is called");
 
-        IncomingEngagementProcessData notificationProcessData = IncomingEngagementProcessData.createForProcessNotification(request.getEngagementTransaction());
-
-        if (notificationProcessData.size() == 0) {
-            return notificationProcessData.getProcessResult();
+        if (request.getEngagementTransaction().size() == 0) {
+            return request.getEngagementTransaction();
         }
 
+
         // Separate deletes from the saves...
-        convertToEntityEngagementDataAndSortByDeleteOrSave(notificationProcessData);
+        SortedEngagementsData sortedEngagements = convertToEntityEngagementDataAndSortByDeleteOrSave(request.getEngagementTransaction());
 
-        notificationProcessData.getProcessResult().addAll(notificationProcessData.getEngagementTransactionTypesMarkedForDeletion());
+        //result
+        List<EngagementTransactionType> resultProcessNotifications = new ArrayList<>();
 
+        //Avoids making two hits on the persistent layer
+        PersistedEngagementsHolder allPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming =
+                getAllPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming(sortedEngagements);
 
-        // R5 - fetch all posts that should be removed since the incoming Engagement changed owner
-        List<Engagement> deleteBecauseOwnerChanged = findCorrespondingDbItemsNoLongerBelongingToThis(notificationProcessData);
+        List<Engagement> persistedThatNoLongerBelongsToUs =
+                allPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming.
+                        getPersistedThatNoLongerBelongsToUs();
 
-        if (deleteBecauseOwnerChanged.size() > 0) {
-            for (final Engagement e : deleteBecauseOwnerChanged) {
+        Map<String, Engagement> persistedEngagementsCorrespondingToIncoming =
+                allPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming.
+                        getPersistedEngagementsCorrespondingToIncoming();
+
+        if (persistedThatNoLongerBelongsToUs.size() > 0) {
+            // R5 - Remove the incoming Engagement that changed owner
+            for (final Engagement e : persistedThatNoLongerBelongsToUs) {
                 LOG.warn("The owner has changed for Engagement with ID: " + e.getId());
-                notificationProcessData.addForDeletion(e, null);
+                sortedEngagements.addForDeletion(e, null);
             }
         }
 
-        return getCommonUpdateProcessNotification(notificationProcessData);
-    }
 
-    private List<EngagementTransactionType> getCommonUpdateProcessNotification(IncomingEngagementProcessData updateProcessData) {
-        //Removes obsolete updates based on most recent content
-        removeSaveItemsThatShouldBeIgnoredAndAddRestToProcessResult(updateProcessData);
+        removeIncomingItemsThatTriesToResetMostRecentContentAndAddUpdatedDataToProcessResult(
+                sortedEngagements,
+                persistedEngagementsCorrespondingToIncoming,
+                resultProcessNotifications);
+
 
         // Perform the delete if any
-        if (updateProcessData.existsAnythingToDelete()) {
-            engagementRepository.delete(updateProcessData.engagementsToDelete());
-        }
+        deleteEntityItemsAndAddToResult(sortedEngagements, resultProcessNotifications);
 
         // Perform the save
-        if (updateProcessData.existsAnythingToSave()) {
-            engagementRepository.save(updateProcessData.engagementsToSave(true));
+        if (sortedEngagements.existsAnythingToSave()) {
+            engagementRepository.save(sortedEngagements.engagementsToSave());
         }
 
         //
-        updateResultDateIfAppropriate(updateProcessData);
+        updateResultDateIfAppropriate(sortedEngagements);
 
-        // Return a list of incoming EngagementTransactions for that was processed
-        return updateProcessData.getProcessResult();
+        // Return a list of incoming EngagementTransactionTypes that either resulted in an updated state of a the
+        // corresponding persisted engagement (delete or update) or a new persisted item
+        return resultProcessNotifications;
+
+    }
+
+    /**
+     * Note that items deleted because they changed owner is only included in the result as the changed version. Hence
+     * there might be more items deleted than included in the getEngagementTransactionTypesMarkedForDeletion result
+     *
+     * @param sortedEngagements          source of persisted items marked for deletion and corresponding in data
+     * @param resultProcessNotifications destination of EngagementTransactionTypes that where deleted
+     * @see #getAllPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming
+     * @see #addIdsCorrespondingToEngagementsWhereOwnerChanged(Iterable, String, List)
+     */
+    private void deleteEntityItemsAndAddToResult(SortedEngagementsData sortedEngagements, List<EngagementTransactionType> resultProcessNotifications) {
+        if (sortedEngagements.existsAnythingToDelete()) {
+
+            engagementRepository.delete(sortedEngagements.engagementsToDelete());
+
+            resultProcessNotifications.addAll(sortedEngagements.getEngagementTransactionTypesMarkedForDeletion());
+        }
     }
 
 
@@ -211,54 +265,50 @@ public class ProcessBean implements ProcessInterface {
      *
      * @param incomingEngagement  "new" incoming engagement data candidate for replacing existing
      * @param persistedEngagement a existing engagement having the same logical key (same person, location etc)
-     * @return if the incoming engagement should be saved and if it should result in a notification
+     * @return if the incoming engagement should be saved and if it should result in a process notification
      */
-    private ResultSave evaluateIgnore(@NotNull Engagement incomingEngagement, @NotNull Engagement persistedEngagement) {
+    private IgnoreOrNotifySave checkIfMostRecentContentIsBeforeThatOfPersistedAndShouldBeIgnored(
+            @NotNull Engagement incomingEngagement, @NotNull Engagement persistedEngagement) {
         Preconditions.checkArgument(
                 persistedEngagement != null, "PersistedEngagement must not be null, Please check that there is such engagement before invoke");
 
+        if (!bothHasSameMostRecentContent(incomingEngagement, persistedEngagement)) {
+            if (incomingHasMostRecentContentOlderThanPersisted(incomingEngagement, persistedEngagement)) {
 
-        if (!ifBothHasSameMostRecentContent(incomingEngagement, persistedEngagement)) {
-            if (ifIncomingHasMostRecentContentOlderThanPersisted(incomingEngagement, persistedEngagement)) {
-                //Don't add to result list!
-                //And remove from save list (Basically ignore the new Engagement)
                 LOG.warn("incomingEngagement:" + incomingEngagement + "\n had a MostRecentContent older than the MostRecentContent of corresponding persistedEngagement:" + persistedEngagement + "\n the new engagement was hence ignored");
-                //incomingEngagementProcessData.removeFromSaveList(incomingEngagement);
-                return ResultSave.NEITHER;
+
+                return IgnoreOrNotifySave.IGNORE_NEW_ENGAGEMENT;
             } else {
-                return ResultSave.SET_RESULT_AND_SAVE;
+                return IgnoreOrNotifySave.NOTIFY_AND_SAVE_CHANGES;
             }
         }
         //There was a "identical" engagement with same most recent content the engagement will not be included in the
-        //result (basically has no effect but still saved)
-        return ResultSave.SAVE_ONLY;
+        //result (basically has no effect but still saved except the updated date is updated)
+        return IgnoreOrNotifySave.SAVE_WITH_NO_PROCESS_NOTIFICATION;
     }
 
     /**
-     *
      * Note that an unassigned value in the incoming is treated as min date when compared to a set MostRecentContent
      * value
-     * @param incomingEngagement the new engagement
+     *
+     * @param incomingEngagement  the new engagement
      * @param persistedEngagement a prior engagement with same logical id
      * @return true if most recent content is older than the new or if new is null but not persisted
      */
-    private boolean ifIncomingHasMostRecentContentOlderThanPersisted(Engagement incomingEngagement, Engagement persistedEngagement) {
+    private boolean incomingHasMostRecentContentOlderThanPersisted(Engagement incomingEngagement, Engagement persistedEngagement) {
         if (neitherEngagementHasMostRecentContent(incomingEngagement, persistedEngagement)) {
             return false;
         } else if (bothEngagementHasMostRecentContent(incomingEngagement, persistedEngagement)) {
             return incomingEngagement.getMostRecentContent().before(persistedEngagement.getMostRecentContent());
-        } else if(onlyPersistedHasMostRecentContent(incomingEngagement, persistedEngagement)){
-            return true;
-        }else{//New has Most recent but not old/persisted
-            return false;
-        }
+        } else //see note
+            return onlyPersistedHasMostRecentContent(incomingEngagement, persistedEngagement);
     }
 
     private boolean onlyPersistedHasMostRecentContent(Engagement incomingEngagement, Engagement persistedEngagement) {
-        return (incomingEngagement.getMostRecentContent()==null&&persistedEngagement.getMostRecentContent()!=null);
+        return (incomingEngagement.getMostRecentContent() == null && persistedEngagement.getMostRecentContent() != null);
     }
 
-    private boolean ifBothHasSameMostRecentContent(Engagement incomingEngagement, Engagement persistedEngagement) {
+    private boolean bothHasSameMostRecentContent(Engagement incomingEngagement, Engagement persistedEngagement) {
         if (neitherEngagementHasMostRecentContent(incomingEngagement, persistedEngagement)) {
             return true;
         } else if (bothEngagementHasMostRecentContent(incomingEngagement, persistedEngagement)) {
@@ -282,20 +332,18 @@ public class ProcessBean implements ProcessInterface {
      *
      * @param incomingEngagementProcessData source/destination
      */
-    private void updateResultDateIfAppropriate(IncomingEngagementProcessData incomingEngagementProcessData) {
+    private void updateResultDateIfAppropriate(SortedEngagementsData incomingEngagementProcessData) {
 
-        Preconditions.checkState(isAllNededToSaveSaved(incomingEngagementProcessData), "Please save engagements before calling this method");
-
-        for(Engagement engagement:incomingEngagementProcessData.engagementsToSave()){
+        for (Engagement engagement : incomingEngagementProcessData.engagementsToSave()) {
 
             EngagementType engagementTransactionType = incomingEngagementProcessData.getSaveListCorrespondingEngagementType(engagement);
-            if(engagementTransactionType!=null){
+            if (engagementTransactionType != null) {
                 Date creationTime = engagement.getCreationTime();
-                if(creationTime!=null){
+                if (creationTime != null) {
                     engagementTransactionType.setCreationTime(formatDate(creationTime));
                 }
                 Date updateTime = engagement.getUpdateTime();
-                if(updateTime!=null){
+                if (updateTime != null) {
                     engagementTransactionType.setUpdateTime(formatDate(updateTime));
                 }
             }
@@ -303,19 +351,14 @@ public class ProcessBean implements ProcessInterface {
         }
     }
 
-    private boolean isAllNededToSaveSaved(IncomingEngagementProcessData processData) {
-        return (!processData.existsAnythingToSave())||(processData.isEngagementsFetchedForSave());
-    }
-
 
     /**
-     * @param incomingEngagementProcessData source of
+     * @param pIncomingEngagementsData source of
      */
-    private void convertToEntityEngagementDataAndSortByDeleteOrSave(IncomingEngagementProcessData incomingEngagementProcessData) {
-        if (incomingEngagementProcessData == null) {
-            return;
-        }
-        for (final EngagementTransactionType engagementTransaction : incomingEngagementProcessData) {
+    private SortedEngagementsData convertToEntityEngagementDataAndSortByDeleteOrSave(List<EngagementTransactionType> pIncomingEngagementsData) {
+        SortedEngagementsData result = new SortedEngagementsData();
+
+        for (final EngagementTransactionType engagementTransaction : pIncomingEngagementsData) {
 
             EngagementType engagementType = engagementTransaction.getEngagement();
             if (engagementType != null) {
@@ -323,44 +366,67 @@ public class ProcessBean implements ProcessInterface {
                 final Engagement engagement = toEntity(engagementType);
 
                 if (engagementTransaction.isDeleteFlag()) {
-                    incomingEngagementProcessData.addForDeletion(engagement, engagementTransaction);
+                    result.addForDeletion(engagement, engagementTransaction);
                 } else {
-                    incomingEngagementProcessData.addForSaving(engagement, engagementTransaction);
+                    result.addForSaving(engagement, engagementTransaction);
                 }
             }
 
         }
+        return result;
     }
 
 
+    /**
+     * This method was introduced in version 1.1.1 to ensure that attempts to "reset" most recent content is ignored
+     *
+     * @param sortedEngagements                           incoming engagements and their corresponding
+     *                                                    EngagementTransactionType sorted by if they should be delete
+     *                                                    or saved
+     * @param persistedEngagementsCorrespondingToIncoming persisted engagement with same id as incoming engagement
+     * @param resultProcessNotifications                  destination for Incoming data that's not removed
+     * @see #checkIfMostRecentContentIsBeforeThatOfPersistedAndShouldBeIgnored
+     * <p>
+     * <p>
+     * Note: There might be incoming engagements that are found to be identical to existing persisted engagements
+     * these are not put in resultProcessNotifications (cause they haven't really changed). But eventually they will be
+     * saved and the last changed date will bee updated.
+     * <p>
+     * The reason for this is that the method replaced by this method explicitly checked if there was "identical"
+     * engagements and excluded these from the result notification list but saved them. Rather than breaking anything
+     * that may depend on the last update date changes we desided to keep this behavoiur.
+     */
+    private void removeIncomingItemsThatTriesToResetMostRecentContentAndAddUpdatedDataToProcessResult(
+            SortedEngagementsData sortedEngagements,
+            Map<String, Engagement> persistedEngagementsCorrespondingToIncoming,
+            List<EngagementTransactionType> resultProcessNotifications) {
+        Iterator<Engagement> iterator = sortedEngagements.engagementsToSave().iterator();
+        while (iterator.hasNext()) {
+            Engagement incomingEngagement = iterator.next();
 
-
-    private void removeSaveItemsThatShouldBeIgnoredAndAddRestToProcessResult(IncomingEngagementProcessData pProcessData) {
-        //Fetch all persisted Engagements that matches any of the incoming engagements
-        pProcessData.setPersistedEngagementMap(getGetPersistedEngagementEntityMapByIds(pProcessData.getSaveCandidateIds()));
-
-        for (Engagement incomingEngagement : pProcessData.engagementsToSave()) {
-            Engagement persistedEngagement = pProcessData.getPersistedEngagement(incomingEngagement.getId());
+            Engagement persistedEngagement = persistedEngagementsCorrespondingToIncoming.getOrDefault(incomingEngagement.getId(), null);
             if (persistedEngagement != null) {
-                ResultSave rs = evaluateIgnore(incomingEngagement, persistedEngagement);
+                IgnoreOrNotifySave rs = checkIfMostRecentContentIsBeforeThatOfPersistedAndShouldBeIgnored(incomingEngagement, persistedEngagement);
                 switch (rs) {
                     //Mark  as not save No Notification
-                    case NEITHER:
-                        pProcessData.markAsRemoveFromSaveList(incomingEngagement);
+                    case IGNORE_NEW_ENGAGEMENT:
+                        iterator.remove();
                         break;
-                        //Keep in save list add notify
-                    case SET_RESULT_AND_SAVE:
-                        pProcessData.getProcessResult().add(pProcessData.getSaveListCorrespondingEngagementTransactionType(incomingEngagement));
-                        //default = SAVE_ONLY: keep in save
+                    //Keep in save list add notify
+                    case NOTIFY_AND_SAVE_CHANGES:
+                        resultProcessNotifications.add(sortedEngagements.getSaveListCorrespondingEngagementTransactionType(incomingEngagement));
+
                         break;
                     default:
+                        //default = SAVE_WITH_NO_PROCESS_NOTIFICATION: keep in save
                         break;
                 }
             } else {
-                pProcessData.getProcessResult().add(pProcessData.getSaveListCorrespondingEngagementTransactionType(incomingEngagement));
+                resultProcessNotifications.add(sortedEngagements.getSaveListCorrespondingEngagementTransactionType(incomingEngagement));
             }
 
         }
+
     }
 
     /**
@@ -376,7 +442,6 @@ public class ProcessBean implements ProcessInterface {
                 iter.remove();
             }
         }
-
         //   request.getEngagementTransaction().removeIf(engagementTransactionType -> engagementTransactionType.getEngagement().getOwner().equals(this.owner));
 
         return request;
@@ -390,19 +455,29 @@ public class ProcessBean implements ProcessInterface {
      *
      * <p>
      * This method is not part of the public API
-     * TODO (patrik) - refactor the test so the this method can be private
      *
-     * @param incomingEngagementProcessData source of Engagements id
+     * @param pSortedEngagements source of Engagements id
      * @return List with engagements to remove
      */
-    private List<Engagement> findCorrespondingDbItemsNoLongerBelongingToThis(IncomingEngagementProcessData incomingEngagementProcessData) {
-        Preconditions.checkArgument(sortedInDeleteAndSave(incomingEngagementProcessData), "Either engagementsToDelete(),engagementsToSave() should have items please apply convertToEntityEngagementDataAndSortByDeleteOrSave on incomingEngagementProcessData");
+    private PersistedEngagementsHolder getAllPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming(SortedEngagementsData pSortedEngagements) {
 
-        final List<String> ids = new ArrayList<>(incomingEngagementProcessData.size());
+        final List<String> idOfEngagementsNoLongerBelongingToUs = new ArrayList<>();
 
-        generateCorrespondingIdsForEngagementsWithDifferentOwner(incomingEngagementProcessData.engagementsToDelete(), this.owner, ids);
-        generateCorrespondingIdsForEngagementsWithDifferentOwner(incomingEngagementProcessData.engagementsToSave(), this.owner, ids);
-        return getGetPersistedEngagementEntityListByIds(ids);
+        addIdsCorrespondingToEngagementsWhereOwnerChanged(pSortedEngagements.engagementsToDelete(), this.owner, idOfEngagementsNoLongerBelongingToUs);
+        addIdsCorrespondingToEngagementsWhereOwnerChanged(pSortedEngagements.engagementsToSave(), this.owner, idOfEngagementsNoLongerBelongingToUs);
+
+        final List<String> allIdsCorrespondingToAnyThing = new ArrayList<>();
+
+        allIdsCorrespondingToAnyThing.addAll(idOfEngagementsNoLongerBelongingToUs);
+
+        //There will be no intersecting Ids since  addIdsCorrespondingToEngagementsWhereOwnerChanged have a owner that
+        //differs from any of the ids in the save list
+        allIdsCorrespondingToAnyThing.addAll(extractEngagementsId(pSortedEngagements.engagementsToSave()));
+        PersistedEngagementsHolder allPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming =
+                new PersistedEngagementsHolder(getGetPersistedEngagementEntityListByIds(allIdsCorrespondingToAnyThing),
+                        idOfEngagementsNoLongerBelongingToUs);
+        return allPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming;
+
 
     }
 
@@ -414,32 +489,30 @@ public class ProcessBean implements ProcessInterface {
      */
     public List<Engagement> _getEngagementsWithNewOwners(ProcessNotificationType request) {
 
-        IncomingEngagementProcessData testData = IncomingEngagementProcessData.createForProcessNotification(request.getEngagementTransaction());
-        if (testData.size() == 0) {
+
+        if (request.getEngagementTransaction().size() == 0) {
             return Collections.emptyList();
         }
-        convertToEntityEngagementDataAndSortByDeleteOrSave(testData);
+
+        SortedEngagementsData testData = convertToEntityEngagementDataAndSortByDeleteOrSave(request.getEngagementTransaction());
         // Separate deletes from the saves...
-        return findCorrespondingDbItemsNoLongerBelongingToThis(testData);
+        return getAllPersistedEngagementsSortedOnThoseNoLongerBelongsToUsAndThoseMatchingIncoming(testData).getPersistedThatNoLongerBelongsToUs();
 
 
     }
 
-    private boolean sortedInDeleteAndSave(IncomingEngagementProcessData incomingEngagementProcessData) {
-
-        return incomingEngagementProcessData.existsAnythingToSave() || incomingEngagementProcessData.existsAnythingToDelete();
-    }
 
     /**
      * @param engagementsIdSource Candidate for id generation
      * @param pOwner              owner that may differ from engagements owner
      * @param pDestination        destination of ids generated (if the pOwner differs from any given engagements owner)
      */
-    private void generateCorrespondingIdsForEngagementsWithDifferentOwner(Iterable<Engagement> engagementsIdSource, String pOwner, List<String> pDestination) {
+    private void addIdsCorrespondingToEngagementsWhereOwnerChanged(Iterable<Engagement> engagementsIdSource, String pOwner, List<String> pDestination) {
         //engagementsIdSource.forEach(engagement->pDestination.add(Hash.generateHashId(engagement,pOwner)));
         for (Engagement engagement : engagementsIdSource) {
+            String incomingEngagementOwnerName = engagement.getOwner();
 
-            if (!Objects.equals(engagement.getOwner(), pOwner)) {
+            if (!Objects.equals(incomingEngagementOwnerName, pOwner)) {
                 pDestination.add(Hash.generateHashId(engagement, pOwner));
             }
 

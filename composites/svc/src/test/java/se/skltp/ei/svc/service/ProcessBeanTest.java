@@ -40,6 +40,7 @@ import se.skltp.ei.svc.service.api.EiErrorCodeEnum;
 import se.skltp.ei.svc.service.api.EiException;
 import se.skltp.ei.svc.service.api.Header;
 import se.skltp.ei.svc.service.impl.ProcessBean;
+import se.skltp.ei.svc.service.impl.util.GenServiceTestDataUtil;
 
 public class ProcessBeanTest {
 
