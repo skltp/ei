@@ -1,1 +1,0 @@
-mvn test -DbaseUrl=http://ine-dit-app02.sth.basefarm.net:8081 -DnoOfUsers=30 -P LoadTestEI_Update_1

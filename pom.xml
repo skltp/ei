@@ -1,103 +1,370 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
+  <packaging>pom</packaging>
+  <modules>
+    <module>skltp-ei-schemas</module>
+    <module>skltp-ei-data-model</module>
+    <module>skltp-ei-common</module>
+    <module>skltp-ei-teststub</module>
+    <module>skltp-ei-frontend</module>
+    <module>skltp-ei-backend</module>
+    <module>skltp-ei-application</module>
+    <module>report</module>
+  </modules>
   <parent>
-    <groupId>se.skltp.commons</groupId>
-    <artifactId>skltp-commons-mule-parent</artifactId>
-    <version>2.0.3</version>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.4.1</version>
+    <relativePath/> <!-- lookup parent from repository -->
   </parent>
-
   <groupId>se.skltp.ei</groupId>
   <artifactId>skltp-ei-parent</artifactId>
-  <version>2.1.5-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <version>3.0.0-SNAPSHOT</version>
   <name>skltp-ei-parent</name>
+  <description>Engagement index built with Apache Camel</description>
 
   <properties>
-    <ei.mule.version>3.7.0</ei.mule.version>
-    <spring.version>4.1.6.RELEASE</spring.version>
-    <apache.cxf.version>2.7.15</apache.cxf.version>
-    <!-- sonar -->
-    <sonar.host.url>http://localhost:9000</sonar.host.url>
-    <sonar.jdbc.url>jdbc:jtds:sqlserver://localhost;databaseName=sonar;SelectMethod=Cursor</sonar.jdbc.url>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <camel.version>3.7.0</camel.version>
+    <spring.boot-version>2.4.1</spring.boot-version>
+    <hawtio.spring.boot-version>2.10.2</hawtio.spring.boot-version>
+    <lombok.version>1.18.12</lombok.version>
+    <apache-cfx.version>3.4.0</apache-cfx.version>
+    <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
+    <jetty.version>9.4.31.v20200723</jetty.version>
+    <h2database.version>1.4.200</h2database.version>
+    <ehcache.version>2.10.6</ehcache.version>
+
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+
+    <!-- ************************-->
+    <!-- Sonar/Reporting settings -->
+    <!-- ************************-->
+    <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
+    <sonar.plugin.version>3.7.0.1746</sonar.plugin.version>
+
+    <sonar.language>java</sonar.language>
+    <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.coverage.jacoco.xmlReportPaths>
+      ${project.basedir}/report/target/site/jacoco-aggregate/jacoco.xml
+    </sonar.coverage.jacoco.xmlReportPaths>
+<!--    <sonar.projectBaseDir>skltp-ei</sonar.projectBaseDir>-->
   </properties>
 
-    <scm>
+  <distributionManagement>
+    <repository>
+      <id>release-nexus</id>
+      <name>Release Nexus</name>
+      <url>${releases-nexus-url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshot-nexus</id>
+      <name>Snapshot Nexus</name>
+      <url>${snapshot-nexus-url}</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <scm>
     <url>http://github.com/skltp/ei</url>
     <connection>scm:git:https://github.com/skltp/ei.git</connection>
     <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
-  
-  <modules>
-    <module>composites/schema</module>
-    <module>composites/svc</module>
-    <module>modules/intsvc</module>
-    <module>applications/mule-backend-app</module>
-    <module>applications/mule-frontend-app</module>
-    <!-- <module>test/non-functional/Gatling</module> -->
-  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- Spring-boot -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring.boot-version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-jetty</artifactId>
+        <version>${spring.boot-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-autoconfigure</artifactId>
+        <version>${spring.boot-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+        <version>${spring.boot-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-cache</artifactId>
+        <version>${spring.boot-version}</version>
+      </dependency>
+
+      <!-- ehcache-->
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>${ehcache.version}</version>
+      </dependency>
+
+      <!--      Database-->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+        <version>${spring.boot-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2database.version}</version>
+      </dependency>
+
+      <!--Camel Spring-boot starters-->
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-starter</artifactId>
+        <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-cxf-starter</artifactId>
+        <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-jetty-starter</artifactId>
+        <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-activemq-starter</artifactId>
+        <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-sjms-starter</artifactId>
+        <version>${camel.version}</version>
+      </dependency>
+
+      <!-- Camel -->
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-support</artifactId>
+        <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-management</artifactId>
+        <version>${camel.version}</version>
+      </dependency>
+
+      <!-- Cxf -->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-http-jetty</artifactId>
+        <version>${apache-cfx.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-transports-http-hc</artifactId>
+        <version>${apache-cfx.version}</version>
+      </dependency>
+
+      <!--hawt.io-->
+      <dependency>
+        <groupId>io.hawt</groupId>
+        <artifactId>hawtio-springboot</artifactId>
+        <version>${hawtio.spring.boot-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-jaas</artifactId>
+        <version>9.4.11.v20180605</version>
+      </dependency>
+
+      <!-- logging -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-log4j2</artifactId>
+        <version>${spring.boot-version}</version>
+      </dependency>
+      <!-- for async logging -->
+      <dependency>
+        <groupId>com.lmax</groupId>
+        <artifactId>disruptor</artifactId>
+        <version>${lmax_disruptor-version}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <optional>true</optional>
+        <version>${lombok.version}</version>
+      </dependency>
+
+      <!-- Test Dependencies-->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <version>${spring.boot-version}</version>
+        <scope>test</scope>
+        <exclusions>
+          <!-- This is to exclude Junit4 test-->
+          <exclusion>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-test-junit5</artifactId>
+        <scope>test</scope>
+        <version>${camel.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-test-spring-junit5</artifactId>
+        <version>${camel.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.1</version>
-          <configuration>
-            <autoVersionSubmodules>true</autoVersionSubmodules>
-            <useReleaseProfile>false</useReleaseProfile>
-            <tagNameFormat>v@{project.version}</tagNameFormat>
-            <localCheckout>true</localCheckout>
-          </configuration>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>${sonar.plugin.version}</version>
+          <executions>
+            <execution>
+              <phase>verify</phase>
+              <goals>
+                <goal>sonar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>sonar-maven-plugin</artifactId>
-			<version>2.7.1</version>
-		</plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.plugin.version}</version>
+          <configuration>
+            <append>true</append>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
+
     <plugins>
+
       <plugin>
-        <groupId>com.mycila.maven-license-plugin</groupId>
-        <artifactId>maven-license-plugin</artifactId>
-        <version>1.10.b1</version>
-        <configuration>
-          <properties>
-            <year>2013</year>
-				<copyright>Center for eHalsa i samverkan (CeHis).
-				&lt;http://cehis.se/&gt;</copyright>
-				<product>SKLTP</product>
-				<organization>Inera AB &lt;http://www.inera.se/&gt;</organization>
-            <product>SKLTP</product>
-          </properties>
-          <strictCheck>true</strictCheck>
-            <header>https://raw.githubusercontent.com/skltp/license/develop/header.txt</header>
-          <encoding>UTF-8</encoding>
-          <includes>
-            <include>src/main/**</include>
-            <include>src/test/**</include>
-          </includes>
-          <excludes>
-            <exclude>**/*.xsd</exclude>
-            <exclude>**/*.wsdl</exclude>
-            <exclude>**/*.dtd</exclude>
-          </excludes>
-          <useDefaultExcludes>true</useDefaultExcludes>
-          <mapping>
-            <tag>DYNASCRIPT_STYLE</tag>
-          </mapping>
-          <useDefaultMapping>true</useDefaultMapping>
-        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
-		<groupId>org.codehaus.mojo</groupId>
-		<artifactId>sonar-maven-plugin</artifactId>
-		</plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <!-- Seems to be som kind of conflict with JAXB camel dependencies and JDK8 Jaxb impl.
+          https://stackoverflow.com/questions/42499436/classcastexception-cannot-be-cast-to-com-sun-xml-internal-bind-v2-runtime-refle -->
+          <systemPropertyVariables>
+            <com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize>true
+            </com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize>
+          </systemPropertyVariables>
+
+          <!--Make failsafe and spring-boot repackage play nice together
+          https://github.com/spring-projects/spring-boot/issues/6254-->
+          <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+          <runOrder>alphabetical</runOrder>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>test-coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>pre-unit-test</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>pre-integration-test</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+
 </project>

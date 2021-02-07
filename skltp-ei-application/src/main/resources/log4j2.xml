@@ -1,0 +1,54 @@
+<Configuration status="WARN" monitorInterval="30">
+
+  <Properties>
+    <Property name="LOG_PATTERN">
+      %d %-5p [%t] %-30c - %X{corr.id} %m%n
+    </Property>
+  </Properties>
+
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="${LOG_PATTERN}"/>
+    </Console>
+
+
+  </Appenders>
+
+  <Loggers>
+
+
+    <!-- Ei application-->
+    <Logger name="se.skltp.ei" level="WARN"/>
+    <Logger name="se.skltp.ei.subscriber" level="INFO"/>
+    <Logger name="se.skltp.ei.service.GetLogicalAddresseesServiceClient" level="WARN"/>
+    <Logger name="se.skltp.ei.EiApplication" level="INFO"/>
+
+    <!-- Ei application routes-->
+    <Logger name="frontend-update-webservice-route" level="INFO"/>
+    <Logger name="frontend-notification-webservice-route" level="INFO"/>
+    <Logger name="backend-process-route" level="INFO"/>
+    <Logger name="backend-collection-route" level="INFO"/>
+    <Logger name="backend-findcontent-route" level="INFO"/>
+
+    <!--Apache camel-->
+    <Logger name="org.apache.camel" level="INFO"/>
+    <Logger name="org.apache.camel.impl.engine.InternalRouteStartupManager" level="INFO"/>
+
+    <!--Jetty-->
+    <Logger name="org.eclipse.jetty" level="WARN"/>
+
+    <!--  ActiveMQ-->
+    <Logger name="org.apache.activemq" level="WARN"/>
+
+    <!--  Hibernate -->
+    <Logger name="org.hibernate.SQL" level="WARN"/>
+
+    <!--  Cxf -->
+    <Logger name="org.apache.cxf" level="WARN"/>
+
+    <Root level="WARN">
+      <AppenderRef ref="Console"/>
+    </Root>
+
+  </Loggers>
+</Configuration>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>skltp-ei-parent</artifactId>
+    <groupId>se.skltp.ei</groupId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>skltp-ei-schemas</artifactId>
+
+  <properties>
+    <!-- Properties for generating code from XML Schemas (JAXB) -->
+    <schema.path>${basedir}/src/main/resources/schemas</schema.path>
+    <schema.gen.src.dir>${project.build.directory}/generated-sources/cxf</schema.gen.src.dir>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-codegen-plugin</artifactId>
+        <version>${apache-cfx.version}</version>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceRoot>${schema.gen.src.dir}</sourceRoot>
+              <wsdlOptions>
+                <wsdlOption>
+                  <wsdl>${schema.path}/VAGVAL/wsdl/wrapped-vagvalsinfo-sokvagvalsinfo-1.0.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${schema.path}/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${schema.path}/TD_ENGAGEMENTINDEX_1_0_R/interactions/FindContentInteraction/FindContentInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${schema.path}/TD_ENGAGEMENTINDEX_1_0_R/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl</wsdl>
+                </wsdlOption>
+              </wsdlOptions>
+            </configuration>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <!--
+        Until rivta itintegration infrastructure schemas 2.0 is published in central maven a
+        local se.skltp release of schemas us used.
+    -->
+    <dependency>
+      <groupId>se.skltp.infrastructure.itintegration</groupId>
+      <artifactId>ServiceContracts_infrastructure_itintegration_registry</artifactId>
+      <version>2.0-RC1</version>
+    </dependency>
+
+  </dependencies>
+
+</project>
+
+
