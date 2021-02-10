@@ -77,6 +77,10 @@
     <!-- Camel spring-boot starters-->
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-jetty-starter</artifactId>
     </dependency>
     <dependency>
@@ -121,7 +125,6 @@
     </dependency>
 
 
-
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -156,6 +159,11 @@
       <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-http-starter</artifactId>
+      <scope>test</scope>
+    </dependency>
 
 
   </dependencies>
@@ -166,6 +174,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
+          <classifier>exec</classifier>
           <excludes>
             <exclude>
               <groupId>org.projectlombok</groupId>
@@ -173,6 +182,14 @@
             </exclude>
           </excludes>
         </configuration>
+        <executions>
+          <execution>
+            <id>build-info</id>
+            <goals>
+              <goal>build-info</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -9,7 +9,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
 import org.apache.camel.CamelContext;
-import se.skltp.ei.EiBackendDynamicNotificationRoute;
+import se.skltp.ei.route.EiBackendDynamicNotificationRoute;
 
 @Log4j2
 public final class SubscriberCacheEventListener implements CacheEventListener {

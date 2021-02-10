@@ -6,7 +6,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Component;
@@ -17,16 +16,6 @@ import se.skltp.ei.subscriber.SubscriberService;
 @Log4j2
 @Component
 public class StartupEventNotifier extends EventNotifierSupport {
-
-  private final SubscriberService subscriberService;
-  private final CacheManager cacheManager;
-
-  @Autowired
-  public StartupEventNotifier(CacheManager cacheManager,  SubscriberService subscriberService) {
-    this.subscriberService = subscriberService;
-    this.cacheManager = cacheManager;
-  }
-
 
   @Override
   protected void doStart() {
@@ -50,10 +39,13 @@ public class StartupEventNotifier extends EventNotifierSupport {
   }
 
   private void initializeSubscribers(CamelContext camelContext) {
+    final CacheManager cacheManager = camelContext.getRegistry().lookupByNameAndType("cacheManager", CacheManager.class);
+    final SubscriberService subscriberService = camelContext.getRegistry()
+        .lookupByNameAndType("subscriberCachableService", SubscriberService.class);
 
     // Register a eventlistener for SubscriberCacheService. The eventlistener will create dynamic rotues that poll the
     // ProcessNotification amq queues when the Subscriber cache is updated
-    net.sf.ehcache.CacheManager ehCacheManager = ((EhCacheCacheManager) this.cacheManager).getCacheManager();
+    net.sf.ehcache.CacheManager ehCacheManager = ((EhCacheCacheManager) cacheManager).getCacheManager();
     final SubscriberCacheEventListener subscriberCacheEventListener = SubscriberCacheEventListener.createInstance(camelContext);
     ehCacheManager.getCache("subscriber-cache").getCacheEventNotificationService().registerListener(subscriberCacheEventListener);
 

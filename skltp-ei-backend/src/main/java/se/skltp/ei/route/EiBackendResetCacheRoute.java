@@ -1,4 +1,4 @@
-package se.skltp.ei;
+package se.skltp.ei.route;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,7 @@ public class EiBackendResetCacheRoute extends RouteBuilder {
   @Override
   public void configure() throws Exception {
     from("jetty://{{subscriber.cache.reset.url}}").routeId("backend-reset-cache-route")
-        .process(ex->{
-          cacheManager.getCache("subscriber-cache").clear();
-        })
+        .process(ex -> cacheManager.getCache("subscriber-cache").clear())
         .setBody(simple("Subscriber cache reset"));
   }
 }

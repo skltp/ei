@@ -48,6 +48,17 @@
       <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel.springboot</groupId>
+      <artifactId>camel-http-starter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>se.skltp.ei</groupId>
+      <artifactId>skltp-ei-teststub</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -56,10 +67,14 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-<!--        <configuration>-->
-<!--          <layout>ZIP</layout> &lt;!&ndash; to use PropertiesLaunchar &ndash;&gt;-->
-<!--          <classifier>exec</classifier>-->
-<!--        </configuration>-->
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <id>build-info</id>

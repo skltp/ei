@@ -1,4 +1,4 @@
-package se.skltp.ei;
+package se.skltp.ei.route;
 
 import static se.skltp.ei.service.constants.EiConstants.X_VP_INSTANCE_ID;
 import static se.skltp.ei.service.constants.EiConstants.X_VP_SENDER_ID;

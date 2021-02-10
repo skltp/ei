@@ -235,6 +235,10 @@
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>com.vaadin.external.google</groupId>
+            <artifactId>android-json</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
@@ -246,6 +250,12 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-spring-junit5</artifactId>
+        <version>${camel.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-http-starter</artifactId>
         <version>${camel.version}</version>
         <scope>test</scope>
       </dependency>
