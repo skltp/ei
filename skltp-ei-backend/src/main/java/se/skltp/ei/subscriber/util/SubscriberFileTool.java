@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -45,7 +46,7 @@ public class SubscriberFileTool {
 
       PersistentCache persistentCache = new PersistentCache();
       persistentCache.subscribers = subscribers;
-      os.write(JAXB.marshal(persistentCache).getBytes("UTF-8"));
+      os.write(JAXB.marshal(persistentCache).getBytes(StandardCharsets.UTF_8));
       log.info("Succesfully saved EI subscribers to local cache: {}", subscriberCachefilePath);
 
     } catch (Exception e) {

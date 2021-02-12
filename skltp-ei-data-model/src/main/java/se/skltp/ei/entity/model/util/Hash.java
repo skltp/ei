@@ -15,7 +15,7 @@
  */
 package se.skltp.ei.entity.model.util;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import se.skltp.ei.entity.model.BusinessKey;
@@ -62,11 +62,7 @@ public class Hash {
       buf.append((s == null) ? "" : s);
     }
     final byte[] hash;
-    try {
-      hash = digesters.get().digest(buf.toString().getBytes("UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
+    hash = digesters.get().digest(buf.toString().getBytes(StandardCharsets.UTF_8));
 
     return asString(hash);
   }

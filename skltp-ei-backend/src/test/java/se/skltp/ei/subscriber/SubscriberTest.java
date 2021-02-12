@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
 import se.skltp.ei.util.FilterCreator;
-import se.skltp.ei.util.GenServiceTestDataUtil;
+import se.skltp.ei.util.EngagementTransactionTestUtil;
 
 class SubscriberTest {
   private List<EngagementTransactionType> engagements;
@@ -23,11 +23,11 @@ class SubscriberTest {
 
     engagements = new ArrayList();
 
-    et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et1 = EngagementTransactionTestUtil.createET(1111111111L);
     et1.getEngagement().setCategorization("CATEGORY-A");
     et1.getEngagement().setServiceDomain("SERVICEDOMAIN-A");
 
-    et2 = GenServiceTestDataUtil.generateEngagementTransaction(121111111L);
+    et2 = EngagementTransactionTestUtil.createET(121111111L);
     et2.getEngagement().setCategorization("CATEGORY-B");
     et2.getEngagement().setServiceDomain("SERVICEDOMAIN-B");
 

@@ -57,7 +57,6 @@
     <sonar.coverage.jacoco.xmlReportPaths>
       ${project.basedir}/report/target/site/jacoco-aggregate/jacoco.xml
     </sonar.coverage.jacoco.xmlReportPaths>
-<!--    <sonar.projectBaseDir>skltp-ei</sonar.projectBaseDir>-->
   </properties>
 
   <distributionManagement>

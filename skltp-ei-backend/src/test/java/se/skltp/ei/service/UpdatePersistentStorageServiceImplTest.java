@@ -20,7 +20,7 @@ import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import riv.itintegration.engagementindex.updateresponder._1.UpdateType;
 import se.skltp.ei.entity.repository.EngagementRepository;
-import se.skltp.ei.util.GenServiceTestDataUtil;
+import se.skltp.ei.util.EngagementTransactionTestUtil;
 
 class UpdatePersistentStorageServiceImplTest {
 
@@ -60,8 +60,8 @@ class UpdatePersistentStorageServiceImplTest {
   public void twoUpdateEngagementsStoredCorrectly()  {
 
     UpdateType request = new UpdateType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
-    EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
+    EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
 
     request.getEngagementTransaction().add(et1);
     request.getEngagementTransaction().add(et2);
@@ -77,9 +77,9 @@ class UpdatePersistentStorageServiceImplTest {
   public void twoUpdateEngagementsDeletedCorrectly()  {
 
     UpdateType request = new UpdateType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
     et1.setDeleteFlag(true);
-    EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
+    EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
     et2.setDeleteFlag(true);
 
     request.getEngagementTransaction().add(et1);
@@ -96,9 +96,9 @@ class UpdatePersistentStorageServiceImplTest {
   public void oneUpdateEngagementDeletedOneUpdatedCorrectly()  {
 
     UpdateType request = new UpdateType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
     et1.setDeleteFlag(true);
-    EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
+    EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
 
     request.getEngagementTransaction().add(et1);
     request.getEngagementTransaction().add(et2);
@@ -114,7 +114,7 @@ class UpdatePersistentStorageServiceImplTest {
   public void ownerIsChangedAccordingToR6ForUpdateType()  {
 
     UpdateType request = new UpdateType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
     et1.getEngagement().setOwner("SomeOtherOwner");
 
     request.getEngagementTransaction().add(et1);
@@ -130,7 +130,7 @@ class UpdatePersistentStorageServiceImplTest {
   public void engagementsThatsAlreadyStoredShouldNotAppearInReturnList ()  {
 
     UpdateType request = new UpdateType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(19740418L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(19740418L);
     et1.getEngagement().setOwner(OWNER);
 
     // Set entity as already existing in mock repository
@@ -149,8 +149,8 @@ class UpdatePersistentStorageServiceImplTest {
   public void twoProcessNotificationEngagementsStoredCorrectly()  {
 
     ProcessNotificationType request = new ProcessNotificationType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
-    EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
+    EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
 
     request.getEngagementTransaction().add(et1);
     request.getEngagementTransaction().add(et2);
@@ -166,9 +166,9 @@ class UpdatePersistentStorageServiceImplTest {
   public void twoProcessNotificationEngagementsDeletedCorrectly()  {
 
     ProcessNotificationType request = new ProcessNotificationType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
     et1.setDeleteFlag(true);
-    EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
+    EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
     et2.setDeleteFlag(true);
 
     request.getEngagementTransaction().add(et1);
@@ -185,13 +185,13 @@ class UpdatePersistentStorageServiceImplTest {
   public void processNotificationEngagementsWithNewOwnerShouldRemoveExistingAccordingToR5()  {
 
     // Set entity as already existing in mock repository
-    EngagementTransactionType existing = GenServiceTestDataUtil.generateEngagementTransaction(5555555555L);
+    EngagementTransactionType existing = EngagementTransactionTestUtil.createET(5555555555L);
     existing.getEngagement().setOwner(OWNER);
     when(mockEngagementRepository.findByIdIn(any())).thenReturn(Arrays.asList(toEntity(existing.getEngagement())));
 
     // Update owner with ProcessNotification
     ProcessNotificationType request = new ProcessNotificationType();
-    EngagementTransactionType newEngagement = GenServiceTestDataUtil.generateEngagementTransaction(5555555555L);
+    EngagementTransactionType newEngagement = EngagementTransactionTestUtil.createET(5555555555L);
     newEngagement.getEngagement().setOwner("NEW_OWNER");
     request.getEngagementTransaction().add(newEngagement);
 

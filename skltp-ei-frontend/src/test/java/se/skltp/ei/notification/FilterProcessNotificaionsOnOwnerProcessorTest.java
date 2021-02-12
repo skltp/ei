@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
-import se.skltp.ei.util.GenServiceTestDataUtil;
+import se.skltp.ei.util.EngagementTransactionTestUtil;
 
 class FilterProcessNotificaionsOnOwnerProcessorTest {
 
@@ -29,8 +29,8 @@ class FilterProcessNotificaionsOnOwnerProcessorTest {
   public void processNotification_R4_OK_filter_should_remove_circular_notifications() throws Exception {
 
     ProcessNotificationType request = new ProcessNotificationType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
-    EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
+    EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
 
     et2.getEngagement().setOwner(OWNER);
 
@@ -51,7 +51,7 @@ class FilterProcessNotificaionsOnOwnerProcessorTest {
   public void processNotification_R4_OK_no_engagements_left() throws Exception {
 
     ProcessNotificationType request = new ProcessNotificationType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et1);
 
     et1.getEngagement().setOwner(OWNER);

@@ -54,9 +54,9 @@ class EngagementValidatorTest {
 
     try {
       UpdateType request = new UpdateType();
-      EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
-      EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
-      EngagementTransactionType et3 = GenServiceTestDataUtil.generateEngagementTransaction(3333333333L);
+      EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
+      EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
+      EngagementTransactionType et3 = EngagementTransactionTestUtil.createET(3333333333L);
 
       request.getEngagementTransaction().add(et3);
       request.getEngagementTransaction().add(et1);
@@ -79,7 +79,7 @@ class EngagementValidatorTest {
   public void update_r7_positive_owner_matches_logicaladdress() throws Exception {
     try {
       UpdateType request = new UpdateType();
-      EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+      EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
       request.getEngagementTransaction().add(et1);
 
       engagementValidator.validateUpdate(OWNER, request);
@@ -130,7 +130,7 @@ class EngagementValidatorTest {
 
     long start = 1111111111L;
     for (int i = 0; i < EngagementValidator.MAX_NUMBER_OF_ENGAGEMENTS + 10; i++) {
-      EngagementTransactionType et = GenServiceTestDataUtil.generateEngagementTransaction(start + i);
+      EngagementTransactionType et = EngagementTransactionTestUtil.createET(start + i);
       request.getEngagementTransaction().add(et);
     }
 
@@ -210,56 +210,56 @@ class EngagementValidatorTest {
 
     // registeredResidentIdentification
     UpdateType request = new UpdateType();
-    EngagementTransactionType et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    EngagementTransactionType et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setRegisteredResidentIdentification(null);
     assertRequest(request);
 
     // serviceDomain
     request = new UpdateType();
-    et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setServiceDomain(null);
     assertRequest(request);
 
     // categorization
     request = new UpdateType();
-    et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setCategorization(null);
     assertRequest(request);
 
     // logicalAddress
     request = new UpdateType();
-    et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setLogicalAddress(null);
     assertRequest(request);
 
     // BusinessObjectInstanceIdentifier
     request = new UpdateType();
-    et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setBusinessObjectInstanceIdentifier(null);
     assertRequest(request);
 
     // clinicalProcessInterestId
     request = new UpdateType();
-    et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setClinicalProcessInterestId(null);
     assertRequest(request);
 
     // sourceSystem
     request = new UpdateType();
-    et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setSourceSystem(null);
     assertRequest(request);
 
     // dataController
     request = new UpdateType();
-    et = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    et = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et);
     et.getEngagement().setDataController(null);
     assertRequest(request);
@@ -295,9 +295,9 @@ class EngagementValidatorTest {
 
     try {
       ProcessNotificationType request = new ProcessNotificationType();
-      EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
-      EngagementTransactionType et2 = GenServiceTestDataUtil.generateEngagementTransaction(2222222222L);
-      EngagementTransactionType et3 = GenServiceTestDataUtil.generateEngagementTransaction(3333333333L);
+      EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
+      EngagementTransactionType et2 = EngagementTransactionTestUtil.createET(2222222222L);
+      EngagementTransactionType et3 = EngagementTransactionTestUtil.createET(3333333333L);
 
       request.getEngagementTransaction().add(et3);
       request.getEngagementTransaction().add(et1);
@@ -327,7 +327,7 @@ class EngagementValidatorTest {
 
     long start = 1111111111L;
     for (int i = 0; i < EngagementValidator.MAX_NUMBER_OF_ENGAGEMENTS + 100; i++) {
-      EngagementTransactionType et = GenServiceTestDataUtil.generateEngagementTransaction(start + i);
+      EngagementTransactionType et = EngagementTransactionTestUtil.createET(start + i);
       request.getEngagementTransaction().add(et);
     }
 
@@ -344,7 +344,7 @@ class EngagementValidatorTest {
   @Test
   public void processNotification_ERR_owner_is_missing() throws Exception {
     ProcessNotificationType request = new ProcessNotificationType();
-    EngagementTransactionType et1 = GenServiceTestDataUtil.generateEngagementTransaction(1111111111L);
+    EngagementTransactionType et1 = EngagementTransactionTestUtil.createET(1111111111L);
     request.getEngagementTransaction().add(et1);
 
     et1.getEngagement().setOwner(null);
@@ -407,7 +407,7 @@ class EngagementValidatorTest {
 
     long start = 1111111111L;
     for (int i = 0; i < count; i++) {
-      EngagementTransactionType et = GenServiceTestDataUtil.generateEngagementTransaction(start + i);
+      EngagementTransactionType et = EngagementTransactionTestUtil.createET(start + i);
       request.getEngagementTransaction().add(et);
     }
     return request;
@@ -418,7 +418,7 @@ class EngagementValidatorTest {
 
     long start = 1111111111L;
     for (int i = 0; i < count; i++) {
-      EngagementTransactionType et = GenServiceTestDataUtil.generateEngagementTransaction(start + i);
+      EngagementTransactionType et = EngagementTransactionTestUtil.createET(start + i);
       request.getEngagementTransaction().add(et);
     }
     return request;
