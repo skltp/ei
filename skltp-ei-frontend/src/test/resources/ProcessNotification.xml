@@ -1,0 +1,26 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:riv:itintegration:registry:1" xmlns:urn1="urn:riv:itintegration:engagementindex:ProcessNotificationResponder:1" xmlns:urn2="urn:riv:itintegration:engagementindex:1">
+   <soapenv:Header>
+      <urn:LogicalAddress>ei-hsa-id</urn:LogicalAddress>
+   </soapenv:Header>
+   <soapenv:Body>
+      <urn1:ProcessNotification>
+
+         <urn1:engagementTransaction>
+            <urn2:deleteFlag>false</urn2:deleteFlag>
+            <urn2:engagement>
+               <urn2:registeredResidentIdentification>1111111111</urn2:registeredResidentIdentification>
+               <urn2:serviceDomain>TEST-DOMAIN</urn2:serviceDomain>
+               <urn2:categorization>TEST-CATEGORY</urn2:categorization>
+               <urn2:logicalAddress>TEST-LOGICAL-ADDRESS-2</urn2:logicalAddress>
+               <urn2:businessObjectInstanceIdentifier>TEST-BOII</urn2:businessObjectInstanceIdentifier>
+               <urn2:clinicalProcessInterestId>TEST_CPIID</urn2:clinicalProcessInterestId>
+               <urn2:sourceSystem>TEST-SOURCE-SYSTEM</urn2:sourceSystem>
+               <urn2:dataController>TEST-DATA-CONTROLLER</urn2:dataController>
+               <urn2:owner>remote-owner</urn2:owner>
+            </urn2:engagement>
+         </urn1:engagementTransaction>
+
+      </urn1:ProcessNotification>
+
+   </soapenv:Body>
+</soapenv:Envelope>
