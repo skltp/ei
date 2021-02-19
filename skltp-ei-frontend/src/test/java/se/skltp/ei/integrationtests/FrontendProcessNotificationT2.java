@@ -30,13 +30,14 @@ public class FrontendProcessNotificationT2 {
 
   private static final String PROCNOT_URL="{{processnotification.webservice.url}}?throwExceptionOnFailure=false";
   
-  private static final String UPDATE1 = "src/test/resources/ProcessNotification.xml";
-  private static final String UPDATE_DUPLICATE = "src/test/resources/ProcessNotification_duplicate.xml";
+  private static final String PROCNOTE1 = "src/test/resources/ProcessNotification.xml";
+  private static final String PROCNOTE_DUPLICATE = "src/test/resources/ProcessNotification_duplicate.xml";
+  private static final String UPDATE1 = "src/test/resources/Update1.xml";
 
   @Test
   public void processnotificationTestReturnsOK() throws IOException {
 
-    String body = new String(Files.readBytes(new File(UPDATE1)));
+    String body = new String(Files.readBytes(new File(PROCNOTE1)));
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(PROCNOT_URL, body, headers, String.class);
@@ -46,9 +47,23 @@ public class FrontendProcessNotificationT2 {
   }
 
   @Test
-  public void processnotificationTestReturnsDuplicateError() throws IOException {
+  public void processnotificationTestReturnsEI004() throws IOException {
 
-    String body = new String(Files.readBytes(new File(UPDATE_DUPLICATE)));
+    String body = new String(Files.readBytes(new File(PROCNOTE1)));
+    // Trigger EI004
+    body = body.replaceAll("urn2:logicalAddress", "urn2:logicalAddrezz");
+    
+    Map<String, Object> headers = new HashMap<String, Object>();
+    String statusResponse = producerTemplate.requestBodyAndHeaders(PROCNOT_URL, body, headers, String.class);
+    assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
+    assertTrue (statusResponse.contains("<soap:Fault>"));
+    assertTrue (statusResponse.contains("EI004"));
+  }
+  
+  @Test
+  public void processnotificationTestReturnsEI002() throws IOException {
+
+    String body = new String(Files.readBytes(new File(PROCNOTE_DUPLICATE)));
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(PROCNOT_URL, body, headers, String.class);
