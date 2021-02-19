@@ -53,22 +53,20 @@ public class FrontendUpdateIT {
   public void updateTestReturnsEI002() throws IOException {
 
     String body = new String(Files.readBytes(new File(UPDATE_DUPLICATE)));
-    // Trigger EI004
-    body = body.replaceAll(owner, "wronglogicaladdress");
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<soap:Fault>"));
-    assertTrue (statusResponse.contains("EI003"));
+    assertTrue (statusResponse.contains("EI002"));
   }
 
   @Test
   public void updateTestReturnsEI003() throws IOException {
 
     String body = new String(Files.readBytes(new File(UPDATE1)));
-    // Trigger EI004
-    body = body.replaceAll("urn2:logicalAddress", "urn2:logicalAddrezz");
+    // Trigger EI003
+    body = body.replaceAll(owner, "wronglogicaladdress");
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
