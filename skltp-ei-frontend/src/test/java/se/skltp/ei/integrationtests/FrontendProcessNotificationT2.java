@@ -30,14 +30,14 @@ public class FrontendProcessNotificationT2 {
 
   private static final String PROCNOT_URL="{{processnotification.webservice.url}}?throwExceptionOnFailure=false";
   
-  private static final String PROCNOTE1 = "src/test/resources/ProcessNotification.xml";
-  private static final String PROCNOTE_DUPLICATE = "src/test/resources/ProcessNotification_duplicate.xml";
-  private static final String UPDATE1 = "src/test/resources/Update1.xml";
+  private static final String PROCNOTE1 = "ProcessNotification.xml";
+  private static final String PROCNOTE_DUPLICATE = "ProcessNotification_duplicate.xml";
+  private static final String UPDATE1 = "Update1.xml";
 
   @Test
   public void processnotificationTestReturnsOK() throws IOException {
 
-    String body = new String(Files.readBytes(new File(PROCNOTE1)));
+    String body = getBody(PROCNOTE1);
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(PROCNOT_URL, body, headers, String.class);
@@ -49,7 +49,7 @@ public class FrontendProcessNotificationT2 {
   @Test
   public void processnotificationTestReturnsEI004() throws IOException {
 
-    String body = new String(Files.readBytes(new File(PROCNOTE1)));
+    String body = getBody(PROCNOTE1);
     // Trigger EI004
     body = body.replaceAll("urn2:logicalAddress", "urn2:logicalAddrezz");
     
@@ -63,7 +63,7 @@ public class FrontendProcessNotificationT2 {
   @Test
   public void processnotificationTestReturnsEI002() throws IOException {
 
-    String body = new String(Files.readBytes(new File(PROCNOTE_DUPLICATE)));
+    String body = getBody(PROCNOTE_DUPLICATE);
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(PROCNOT_URL, body, headers, String.class);
@@ -72,5 +72,9 @@ public class FrontendProcessNotificationT2 {
     assertTrue (statusResponse.contains("EI002"));
   }
 
+  private String getBody(String resource) throws IOException {
+		String file = this.getClass().getResource("/" + resource).getPath();
+		return new String(Files.readBytes(new File(file)));	  
+  }
 }
 

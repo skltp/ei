@@ -31,8 +31,8 @@ public class FrontendUpdateIT {
 
   private static final String UPDATE_URL="{{update.webservice.url}}?throwExceptionOnFailure=false";
   
-  private static final String UPDATE1 = "src/test/resources/Update1.xml";
-  private static final String UPDATE_DUPLICATE = "src/test/resources/Update_duplicate.xml";
+  private static final String UPDATE1 = "Update1.xml";
+  private static final String UPDATE_DUPLICATE = "Update_duplicate.xml";
 
   @Value("${ei.hsa.id}")
   private String owner;
@@ -40,7 +40,7 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsOK() throws IOException {
 
-    String body = new String(Files.readBytes(new File(UPDATE1)));
+    String body = getBody(UPDATE1);
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
@@ -52,7 +52,7 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsEI002() throws IOException {
 
-    String body = new String(Files.readBytes(new File(UPDATE_DUPLICATE)));
+    String body = getBody(UPDATE_DUPLICATE);
     
     Map<String, Object> headers = new HashMap<String, Object>();
     String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
@@ -64,7 +64,7 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsEI003() throws IOException {
 
-    String body = new String(Files.readBytes(new File(UPDATE1)));
+    String body = getBody(UPDATE1);
     // Trigger EI003
     body = body.replaceAll(owner, "wronglogicaladdress");
     
@@ -78,7 +78,7 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsEI004() throws IOException {
 
-    String body = new String(Files.readBytes(new File(UPDATE1)));
+    String body = getBody(UPDATE1);
     // Trigger EI004
     body = body.replaceAll("urn2:logicalAddress", "urn2:logicalAddrezz");
     
@@ -92,7 +92,7 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsEI004Whitespace() throws IOException {
 
-    String body = new String(Files.readBytes(new File(UPDATE1)));
+    String body = getBody(UPDATE1);
     // Trigger EI004 (white space)
     body = body.replaceAll("urn2:logicalAddress>", "urn2:logicalAddress> ");
     
@@ -102,6 +102,11 @@ public class FrontendUpdateIT {
     assertTrue (statusResponse.contains("<soap:Fault>"));
     assertTrue (statusResponse.contains("EI004"));
     assertTrue (statusResponse.contains("white space"));
+  }
+  
+  private String getBody(String resource) throws IOException {
+		String file = this.getClass().getResource("/" + resource).getPath();
+		return new String(Files.readBytes(new File(file)));	  
   }
 }
 
