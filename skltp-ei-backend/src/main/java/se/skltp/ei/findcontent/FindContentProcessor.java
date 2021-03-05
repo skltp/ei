@@ -11,6 +11,8 @@ import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResp
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.service.FindContentService;
 
+import static se.skltp.ei.service.util.EIUtils.isEmpty;
+
 @Component
 public class FindContentProcessor implements Processor {
 
@@ -33,11 +35,12 @@ public class FindContentProcessor implements Processor {
 
   private void validateFindContent(FindContentType findContent) {
     // We need at least registeredResidentIdentification and serviceDomain to do a query
-    if(findContent.getRegisteredResidentIdentification() == null) {
+    if(isEmpty(findContent.getRegisteredResidentIdentification())) {
       throw EI000_TECHNICAL_ERROR.createException(MISSING_PERSON_MESSAGE);
 
-    } else if(findContent.getServiceDomain() == null) {
+    } else if(isEmpty(findContent.getServiceDomain())) {
       throw EI000_TECHNICAL_ERROR.createException(MISSING_SERVICEDOMAIN_MESSAGE);
     }
   }
+
 }
