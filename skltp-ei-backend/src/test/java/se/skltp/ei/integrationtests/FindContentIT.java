@@ -91,7 +91,7 @@ public class FindContentIT {
     try {
     	statusResponse = producerTemplate.requestBody(url, body, String.class);  	    
 		fail("Supposed to throw Exception");
-	  } catch(Exception e) {
+	  } catch(CamelExecutionException e) {
 		  System.out.println("========================= " + e.toString());
 		  System.out.println("========================= " + e.getMessage());
 		  System.out.println("========================= " + statusResponse);
