@@ -12,9 +12,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import io.hawt.util.Files;
@@ -26,9 +24,6 @@ public class FrontendUpdateIT {
 
   @Produce
   protected ProducerTemplate producerTemplate;
-
-  @Autowired
-  BuildProperties buildProperties;
 
   private static final String UPDATE_URL="{{update.webservice.url}}?throwExceptionOnFailure=false";
   
@@ -114,6 +109,7 @@ public class FrontendUpdateIT {
     
     assertTrue(Integer.compare(statusCode,500) == 0);
     assertTrue ("Server Error".equals(statusText));
+    
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<soap:Fault>"));
     assertTrue (statusResponse.contains("EI004"));
@@ -134,7 +130,10 @@ public class FrontendUpdateIT {
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
     String statusText = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT, String.class);
-    
+
+    assertTrue(Integer.compare(statusCode,500) == 0);
+    assertTrue ("Server Error".equals(statusText));
+
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<soap:Fault>"));
     assertTrue (statusResponse.contains("EI004"));

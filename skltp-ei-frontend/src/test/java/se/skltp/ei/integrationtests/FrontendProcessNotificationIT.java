@@ -38,10 +38,6 @@ public class FrontendProcessNotificationIT {
   @Produce
   protected ProducerTemplate producerTemplate;
 
-  @Autowired
-  BuildProperties buildProperties;
-
-  
   @Value("${processnotification.webservice.url}")
   String url;
   

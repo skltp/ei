@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import io.hawt.util.Files;
@@ -45,10 +44,6 @@ public class FindContentIT {
 
   @Autowired
   private EngagementRepository engagementRepository;
-  
-  @Autowired
-  BuildProperties buildProperties;
-
   
   @Value("${findcontent.webservice.url}")
   String url;
@@ -131,23 +126,20 @@ public class FindContentIT {
   public void findContentCxfTest() throws Exception {
 	  
 	  String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
-      , url
-      , FINDCONTENT_WSDL
-      , FindContentResponderInterface.class.getName()
-      , FindContentResponderService.FindContentResponderPort.toString());
-
-
-    // Insert one entity
-    engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.TWO_SUBSCRIBERS));
-    engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.NO_SUBSCRIBER_2));
-    
+	  , url
+	  , FINDCONTENT_WSDL
+	  , FindContentResponderInterface.class.getName()
+	  , FindContentResponderService.FindContentResponderPort.toString());
+	
+	  // Insert one entity
+	  engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.TWO_SUBSCRIBERS));
+	  engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.NO_SUBSCRIBER_2));
 	    
 	  FindContentType fc = new FindContentType();
 	  fc.setRegisteredResidentIdentification("191212121212");
 	  fc.setServiceDomain("TEST-DOMAIN");
 	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint(route);
 	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-	  // CustomerService below is the service endpoint interface, *not* the javax.xml.ws.Service subclass
 	  FindContentResponderInterface proxy = ProxyHelper.createProxy(startEndpoint, classLoader, FindContentResponderInterface.class);
 	  
 	  FindContentResponseType response = (FindContentResponseType)proxy.findContent("123", fc);
@@ -166,9 +158,9 @@ public class FindContentIT {
       , FindContentResponderService.FindContentResponderPort.toString());
 
 
-    // Insert one entity
-    engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.TWO_SUBSCRIBERS));
-    engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.NO_SUBSCRIBER_2));
+      // Insert one entity
+      engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.TWO_SUBSCRIBERS));
+      engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.NO_SUBSCRIBER_2));
     
 	    
 	  FindContentType fc = new FindContentType();
@@ -176,15 +168,12 @@ public class FindContentIT {
 	  //fc.setServiceDomain("TEST-DOMAIN");
 	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint(route);
 	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-	  // CustomerService below is the service endpoint interface, *not* the javax.xml.ws.Service subclass
 	  FindContentResponderInterface proxy = ProxyHelper.createProxy(startEndpoint, classLoader, FindContentResponderInterface.class);
-	  FindContentResponseType response;
 	  
 	  try {
-		  response = (FindContentResponseType)proxy.findContent("123", fc);
+		  proxy.findContent("123", fc);
 		  fail("Supposed to throw SoapFault");
 	  } catch(SoapFault e) {
-		  System.out.println("!========================= " + e.toString() + " == " + e.getMessage());
 		  assertTrue(e.getMessage().contains("EI000"));
 	  } 
   }
