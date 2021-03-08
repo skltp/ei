@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -52,10 +53,20 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsEI002() throws IOException {
 
-    String body = getBody(UPDATE_DUPLICATE);
+    Exchange ex = producerTemplate.request(UPDATE_URL, (e) -> {
+    	
+        String body = getBody(UPDATE_DUPLICATE);
+        
+        e.getIn().setBody(body);
+        e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+    });
+    String statusResponse = (String) ex.getMessage().getBody(String.class);
+    Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+    String statusText = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT, String.class);
     
-    Map<String, Object> headers = new HashMap<String, Object>();
-    String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
+    assertTrue(Integer.compare(statusCode,500) == 0);
+    assertTrue ("Server Error".equals(statusText));
+    
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<soap:Fault>"));
     assertTrue (statusResponse.contains("EI002"));
@@ -64,12 +75,22 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsEI003() throws IOException {
 
-    String body = getBody(UPDATE1);
-    // Trigger EI003
-    body = body.replaceAll(owner, "wronglogicaladdress");
+    Exchange ex = producerTemplate.request(UPDATE_URL, (e) -> {
+    	
+        String body = getBody(UPDATE1);
+        // Trigger EI003
+        body = body.replaceAll(owner, "wronglogicaladdress");
+        
+        e.getIn().setBody(body);
+        e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+    });
+    String statusResponse = (String) ex.getMessage().getBody(String.class);
+    Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+    String statusText = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT, String.class);
     
-    Map<String, Object> headers = new HashMap<String, Object>();
-    String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
+    assertTrue(Integer.compare(statusCode,500) == 0);
+    assertTrue ("Server Error".equals(statusText));
+    
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<soap:Fault>"));
     assertTrue (statusResponse.contains("EI003"));
@@ -78,12 +99,21 @@ public class FrontendUpdateIT {
   @Test
   public void updateTestReturnsEI004() throws IOException {
 
-    String body = getBody(UPDATE1);
-    // Trigger EI004
-    body = body.replaceAll("urn2:logicalAddress", "urn2:logicalAddrezz");
+    Exchange ex = producerTemplate.request(UPDATE_URL, (e) -> {
+    	
+        String body = getBody(UPDATE1);
+        // Trigger EI004
+        body = body.replaceAll("urn2:logicalAddress", "urn2:logicalAddrezz");
+       
+        e.getIn().setBody(body);
+        e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+    });
+    String statusResponse = (String) ex.getMessage().getBody(String.class);
+    Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+    String statusText = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT, String.class);
     
-    Map<String, Object> headers = new HashMap<String, Object>();
-    String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
+    assertTrue(Integer.compare(statusCode,500) == 0);
+    assertTrue ("Server Error".equals(statusText));
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<soap:Fault>"));
     assertTrue (statusResponse.contains("EI004"));
@@ -91,13 +121,20 @@ public class FrontendUpdateIT {
   
   @Test
   public void updateTestReturnsEI004Whitespace() throws IOException {
-
-    String body = getBody(UPDATE1);
-    // Trigger EI004 (white space)
-    body = body.replaceAll("urn2:logicalAddress>", "urn2:logicalAddress> ");
+   
+   Exchange ex = producerTemplate.request(UPDATE_URL, (e) -> {
+    	
+	    String body = getBody(UPDATE1);
+	    // Trigger EI004 (white space)
+	    body = body.replaceAll("urn2:logicalAddress>", "urn2:logicalAddress> ");
+       
+        e.getIn().setBody(body);
+        e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+    });
+    String statusResponse = (String) ex.getMessage().getBody(String.class);
+    Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+    String statusText = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT, String.class);
     
-    Map<String, Object> headers = new HashMap<String, Object>();
-    String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<soap:Fault>"));
     assertTrue (statusResponse.contains("EI004"));

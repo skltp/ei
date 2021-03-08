@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.bean.ProxyHelper;
@@ -69,13 +69,21 @@ public class FindContentIT {
     engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L));
     engagementRepository.save(EngagementTestUtil.generateEngagement(1312121212L));
 
-    String statusResponse = producerTemplate.requestBody(url, body, String.class);  
-    
+    Exchange ex = producerTemplate.request(url, (e) -> {
+        e.getIn().setBody(body);
+        e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+    });
+    String statusResponse = (String) ex.getMessage().getBody(String.class);
+    Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+    String statusText = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT, String.class);
+    //{Accept-Encoding=gzip,deflate, CamelHttpResponseCode=200, CamelHttpResponseText=OK, Content-Length=931, Content-Type=text/xml;charset=iso-8859-1, Date=Mon, 08 Mar 2021 09:39:05 GMT, Host=localhost:8082, Server=Jetty(9.4.31.v20200723), User-Agent=Apache-HttpClient/4.5.13 (Java/1.8.0_161)}
+    assertTrue(Integer.compare(statusCode,200) == 0);
+    assertTrue ("OK".equals(statusText));
+
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<ns2:registeredResidentIdentification>191212121212</ns2:registeredResidentIdentification>"));
     assertFalse (statusResponse.contains("<ns2:registeredResidentIdentification>191312121212</ns2:registeredResidentIdentification>"));
     assertTrue (statusResponse.contains("<engagement>"));
-
   }
 
   @Test
@@ -87,16 +95,17 @@ public class FindContentIT {
     engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L));
     engagementRepository.save(EngagementTestUtil.generateEngagement(1312121212L));
 
-    String statusResponse = null;
-    try {
-    	statusResponse = producerTemplate.requestBody(url, body, String.class);  	    
-		fail("Supposed to throw Exception");
-	  } catch(CamelExecutionException e) {
-		  System.out.println("========================= " + e.toString());
-		  System.out.println("========================= " + e.getMessage());
-		  System.out.println("========================= " + statusResponse);
-		  // TODO: assertTrue(e.getMessage().contains("EI000"));
-	  }
+    Exchange ex = producerTemplate.request(url + "?throwExceptionOnFailure=false", (e) -> {
+        e.getIn().setBody(body);
+        e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+    });
+    String statusResponse = (String) ex.getMessage().getBody(String.class);
+    Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+    String statusText = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT, String.class);
+    assertTrue(Integer.compare(statusCode,500) == 0);
+    assertTrue ("Server Error".equals(statusText));
+    assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
+	assertTrue(statusResponse.contains("EI000"));
   }
   
   @Test

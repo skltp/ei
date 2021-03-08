@@ -8,6 +8,7 @@ import static se.skltp.ei.service.api.EiErrorCodeEnum.EI004_VALIDATION_ERROR;
 import static se.skltp.ei.service.api.EiErrorCodeEnum.EI005_VALIDATION_ERROR_INVALID_LOGICAL_ADDRESS;
 import static se.skltp.ei.service.api.EiErrorCodeEnum.EI006_VALIDATION_ERROR_INVALID_SOURCE_SYSTEM;
 import static se.skltp.ei.service.util.EntityTransformer.toEntity;
+import static se.skltp.ei.service.util.EIUtils.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -223,12 +224,12 @@ public class EngagementValidator {
   private void whitespaceValueCheck(String name, String value) {
 
     // Validated elsewhere
-    if (value == null || value.length() == 0) {
+    if (isEmpty(value)) {
       return;
     }
 
     // Check that trimmed string has the same length as original
-    if (value.trim().length() != value.length()) {
+    if (!isTrimmed(value)) {
       throw EI004_VALIDATION_ERROR.createException("mandatory field \"" + name + "\" contains white space in beginning or end");
     }
   }
