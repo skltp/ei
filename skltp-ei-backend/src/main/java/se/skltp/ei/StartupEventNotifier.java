@@ -6,6 +6,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,12 @@ import se.skltp.ei.subscriber.SubscriberService;
 @Log4j2
 @Component
 public class StartupEventNotifier extends EventNotifierSupport {
+
+	  @Value("${dlq.maximum-redeliveries}")
+	  private Integer maximumRedeliveries;
+	  
+	  @Value("${dlq.redelivery-delay:0}")
+	  private Integer redeliveryDelay;
 
   @Override
   protected void doStart() {
@@ -46,7 +53,8 @@ public class StartupEventNotifier extends EventNotifierSupport {
     // Register a eventlistener for SubscriberCacheService. The eventlistener will create dynamic rotues that poll the
     // ProcessNotification amq queues when the Subscriber cache is updated
     net.sf.ehcache.CacheManager ehCacheManager = ((EhCacheCacheManager) cacheManager).getCacheManager();
-    final SubscriberCacheEventListener subscriberCacheEventListener = SubscriberCacheEventListener.createInstance(camelContext);
+    final SubscriberCacheEventListener subscriberCacheEventListener = 
+    		SubscriberCacheEventListener.createInstance(camelContext, maximumRedeliveries, redeliveryDelay);
     ehCacheManager.getCache("subscriber-cache").getCacheEventNotificationService().registerListener(subscriberCacheEventListener);
 
     // This will initially update the cache and trigger creation of routes in the eventlistener

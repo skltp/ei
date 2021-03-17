@@ -51,7 +51,7 @@ public class EiCollectionAggregationStrategy extends AbstractMapAggregationStrat
   }
 
 
-  boolean shouldUpdateMap(final EngagementTransactionType newEngagementTransaction,  final EngagementTransactionType oldEngagementTransaction) {
+  private boolean shouldUpdateMap(final EngagementTransactionType newEngagementTransaction,  final EngagementTransactionType oldEngagementTransaction) {
 
     if (oldEngagementTransaction == null) {
       return true;

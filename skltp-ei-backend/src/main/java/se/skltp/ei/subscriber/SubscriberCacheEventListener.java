@@ -9,6 +9,8 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
 import org.apache.camel.CamelContext;
+import org.springframework.beans.factory.annotation.Value;
+
 import se.skltp.ei.route.EiBackendDynamicNotificationRoute;
 
 @Log4j2
@@ -16,17 +18,23 @@ public final class SubscriberCacheEventListener implements CacheEventListener {
 
   private static SubscriberCacheEventListener instance;
 
-  public static final SubscriberCacheEventListener createInstance(CamelContext camelContext) {
+  private int maximumRedeliveries=0;
+  private int redeliveryDelay=0;
+
+  public static final SubscriberCacheEventListener createInstance(
+		  CamelContext camelContext,int maximumRedeliveries, int redeliveryDelay) {
     if(instance == null){
-      instance = new SubscriberCacheEventListener(camelContext);
+      instance = new SubscriberCacheEventListener(camelContext, maximumRedeliveries, redeliveryDelay);
     }
     return instance;
   }
 
   CamelContext camelContext;
 
-  private SubscriberCacheEventListener(CamelContext camelContext) {
+  private SubscriberCacheEventListener(CamelContext camelContext,int maximumRedeliveries, int redeliveryDelay) {
     this.camelContext = camelContext;
+    this.maximumRedeliveries = maximumRedeliveries;
+    this.redeliveryDelay = redeliveryDelay;
   }
 
   @Override
@@ -81,7 +89,7 @@ public final class SubscriberCacheEventListener implements CacheEventListener {
     try {
       for (Subscriber subscriber : subscribers) {
         if (camelContext.getRoute(subscriber.getNotificationRouteName()) == null) {
-          camelContext.addRoutes(new EiBackendDynamicNotificationRoute(subscriber));
+          camelContext.addRoutes(new EiBackendDynamicNotificationRoute(subscriber, maximumRedeliveries, redeliveryDelay));
         }
       }
     } catch (Exception e) {
