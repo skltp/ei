@@ -1,10 +1,10 @@
-# Konfiguration av EI
+# Konfiguration av EI Camel
 
-EI är en spring-boot applikation och kan konfigureras enligt de sätt spring-boot föreskriver
+EI är en Spring Boot-applikation som kan konfigureras enligt de sätt Spring Boot föreskriver.
 
 ### Application.properties ###
-Spring-boot property fil som ligger under resources i jaren. Inställningarna kan överlagras enligt de sätt som Spring-boot föreskriver. 
-Utöver dessa properties finns möjlighet att konfigurera de komponenter som används och stödjer spring boot. exempelvis Camel, JPA, ActiveMQ m.m.
+Spring Boot-propertyfil som ligger under resources i jar-filen. Inställningarna kan överlagras enligt de sätt som Spring Boot föreskriver. 
+Utöver dessa properties finns möjlighet att konfigurera de komponenter som används och stödjer Spring Boot, exempelvis Camel, JPA, ActiveMQ m.m.
 
 |Nyckel|Defaultvärde/Exempel|Beskrivning|
 |----|------------------|---------|
@@ -19,7 +19,7 @@ Utöver dessa properties finns möjlighet att konfigurera de komponenter som anv
 | getlogicaladdresses.serviceEndpointUrl | http://localhost:8080/vp/getlogicaladdreesses | Utgående URL till GLABSC tjänsten |
 | getlogicaladdresses.logicalAddress | $\{vp.hsa.id\} | HSA id till GLABSC producenten |
 | getlogicaladdresses.vpSenderId | $\{vp.hsa.id\} | VP's sender-ID för interna anrop |
-| getlogicaladdresses.vpInstanceId | $\{vp.instance.id} | VP's instans-ID för interna anrop |
+| getlogicaladdresses.vpInstanceId | $\{vp.instance.id\} | VP's instans-ID för interna anrop |
 | getlogicaladdresses.connectTimeoutMs | 5000 | Connect timeout ms för GLABSC anrop |
 | getlogicaladdresses.requestTimeoutMs | 5000 | Request timeout ms för GLABSC anrop |
 | processnotification.serviceEndpointUrl | http://localhost:8080/vp/processnotification | Utgående URL för ProcessNotifications |
@@ -27,13 +27,22 @@ Utöver dessa properties finns möjlighet att konfigurera de komponenter som anv
 | processnotification.vpInstanceId | $\{vp.instance.id\} | VP's instans-ID för interna anrop |
 | subscriber.cache.file.name |  | Filnamn för lokal cache av subscribers |
 | subscriber.cache.timeToLiveSeconds | 7200 | Timeout innan subscriber cachen förnyas genom anrop med GLABSC tjänsten  |
-| update-notification.not.allowed.hsaid.list | \${ei.hsa.id\},$\{vp.hsa.id\} | Otillåtna HSA-IDn för att undvika recirculation av anrop  |
+| subscriber.cache.reset.url | http://localhost:8083/skltp-ei/resetcache | Adress för att tömma prenumerantcachen | 
+| subscriber.cache.status.url | http://localhost:8083/skltp-ei/subscriber/status | Adress för att få status på prenumeranter |
+| ei.status.url | http://localhost:8083/skltp-ei/status | Adress för att få status på EI |
+| update-notification.not.allowed.hsaid.list | \${ei.hsa.id\},$\{vp.hsa.id\} | Otillåtna HSA-IDn för att undvika recirkulation av anrop  |
 | collect.queue.name | skltp.ei.collect | Namn på collect kön i AMQ |
 | collect.queue.completion.size | 1000 | Antal anrop i kön innan den collectas och skickas till process kön |
 | collect.queue.completion.timeout | 5 | Max sekunder meddelande kan ligga i collect kön innan de skickas till processkön  |
 | update.collect.threshold | 1 | Threshold för antal engagemang i ett anrop för att de ska hamna direkt i Process kön |
 | process.queue.name | skltp.ei.process | Namn på processkön i AMQ  |
 | activemq.broker.url | vm://localhost?broker.persistent=false | URL till AMQ broker  |
+| activemq.broker.user | admin | Användarnamn för ActiveMQ-användare |
+| activemq.broker.password | secret | Lösenord för ActiveMQ-användare |
+| dlq.maximum-redeliveries | 2 | Antal leveransförsök som görs innan meddelanden hamnar i dead letter-kön. Standardinställningen är 0. |  
+| dlq.redelivery-delay | 5000 | Tid mellan leveransförsök i millisekunder. Standardinställningen är 0 ms. |
+| camel.component.activemq.broker-url | ${activemq.broker.url} | Adress till ActiveMQ | 
+| camel.component.activemq.trust-all-packages | true | Standard för ActiveMQ är att inte tillåta serialisering av godtyckliga Javaobjekt. Denna inställning ändrar detta beteende. | 
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
