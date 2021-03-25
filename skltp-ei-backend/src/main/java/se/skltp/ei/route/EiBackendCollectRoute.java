@@ -48,7 +48,7 @@ public class EiBackendCollectRoute extends RouteBuilder {
             + "&completionSize=%d"
             + "&keepAliveDelay=2000"
             + "&aggregationStrategy=#eiCollectionAggregationStrategy"
-            + "&connectionFactory=backendAmqConnectionFactory"
+            + "&connectionFactory=pooledConnectionFactory"
         , collectQueueName
         , collectQueueCompletionTimeout*1000
         , collectQueueCompletionSize)
