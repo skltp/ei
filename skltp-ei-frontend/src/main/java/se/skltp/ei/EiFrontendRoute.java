@@ -3,9 +3,11 @@ package se.skltp.ei;
 import static org.apache.camel.ExchangePattern.InOnly;
 import static se.skltp.ei.service.constants.EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
 import riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderInterface;
 import riv.itintegration.engagementindex.processnotification._1.rivtabp21.ProcessNotificationResponderService;
@@ -15,6 +17,7 @@ import se.skltp.ei.notification.CreateProcessNotificationResponseProcessor;
 import se.skltp.ei.notification.RemoveCircularProcessNotificationsProcessor;
 import se.skltp.ei.notification.ProcessNotificationRequestToJmsMsgProcessor;
 import se.skltp.ei.notification.ValidateProcessNotificationProcessor;
+import se.skltp.ei.service.EICxfConfigurer;
 import se.skltp.ei.update.SetOwnerProcessor;
 import se.skltp.ei.update.UpdateRequestToJmsMessageProcessor;
 import se.skltp.ei.update.CreateUpdateResponseProcessor;
@@ -29,6 +32,7 @@ public class EiFrontendRoute extends RouteBuilder {
   public static final String UPDATE_SERVICE_CONFIGURATION = "cxf:%s"
       + "?wsdlURL=%s"
       + "&serviceClass=%s"
+      + "&cxfConfigurer=#eiFrontendConfigBean"
       + "&portName=%s";
 
 
@@ -56,6 +60,9 @@ public class EiFrontendRoute extends RouteBuilder {
   @Autowired
   RemoveCircularProcessNotificationsProcessor removeCircularProcessNotificationsProcessor;
 
+  @Autowired
+  GenericApplicationContext applicationContext;
+
   @Value("${update.collect.threshold:0}")
   int collectThreshold;
 
@@ -71,9 +78,18 @@ public class EiFrontendRoute extends RouteBuilder {
   @Value("${processnotification.webservice.url}")
   String notificationWebserviceUrl;
 
+  @Value("${log.frontend.logger.name}")
+  String frontendLoggerName;
+
+  @Value("${log.max.payload.size}")
+  int maxPayloadSize;
 
   @Override
   public void configure() throws Exception {
+
+    applicationContext.registerBean("eiFrontendConfigBean", EICxfConfigurer.class,
+        ()->new EICxfConfigurer(maxPayloadSize, frontendLoggerName, "ei-frontend"));
+
 
     String updateConfigurationPath = String.format(UPDATE_SERVICE_CONFIGURATION
         , updateWebserviceUrl
@@ -91,7 +107,7 @@ public class EiFrontendRoute extends RouteBuilder {
 
     from(updateConfigurationPath).streamCaching()
         .id("frontend-update-webservice-route")
-        .log("Update SOAP call received")
+        .log(LoggingLevel.DEBUG, "eiFrontendLog", "Update SOAP call received")
         .process(validateUpdateProcessor)
         .process(setOwnerProcessor)
         .process(updateRequestToJmsMessageProcessor)
@@ -105,7 +121,7 @@ public class EiFrontendRoute extends RouteBuilder {
 
     from(processNotificationConfigurationPath).streamCaching()
         .id("frontend-notification-webservice-route")
-        .log("ProcessNotification SOAP call received")
+        .log(LoggingLevel.DEBUG, "eiFrontendLog","ProcessNotification SOAP call received")
         .process(validateProcessNotificationProcessor)
         .process(removeCircularProcessNotificationsProcessor)
         .process(processNotificationRequestToJmsMsgProcessor)

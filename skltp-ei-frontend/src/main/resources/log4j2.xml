@@ -11,19 +11,6 @@
       <PatternLayout pattern="${LOG_PATTERN}"/>
     </Console>
 
-    <RollingRandomAccessFile name="BackendLogFile"
-      fileName="${log.dir}/skltp-ei-backend-app.log"
-      filePattern="${log.dir}/skltp-ei-backend-app.%i">
-      <PatternLayout>
-        <Pattern>%d %-5p [%t] %-30c - %m%n</Pattern>
-      </PatternLayout>
-      <Policies>
-        <!-- KB, MB -->
-        <SizeBasedTriggeringPolicy size="50 MB"/>
-      </Policies>
-      <DefaultRolloverStrategy fileIndex="min" max="10"/>
-    </RollingRandomAccessFile>
-
     <RollingRandomAccessFile name="FrontendLogFile"
       fileName="${log.dir}/skltp-ei-frontend-app.log"
       filePattern="${log.dir}/skltp-ei-frontend-app.%i">
@@ -36,10 +23,10 @@
       </Policies>
       <DefaultRolloverStrategy fileIndex="min" max="10"/>
     </RollingRandomAccessFile>
+
   </Appenders>
+
   <Loggers>
-
-
     <!-- Ei application-->
     <Logger name="se.skltp.ei" level="INFO"/>
     <Logger name="se.skltp.ei.subscriber" level="INFO"/>
@@ -47,10 +34,7 @@
     <Logger name="se.skltp.ei.EiApplication" level="INFO"/>
 
     <!-- Ei application routes-->
-    <Logger name="eiBackendLog" level="debug">
-      <AppenderRef ref="BackendLogFile"/>
-    </Logger>
-    <Logger name="eiFrontendLog" level="debug">
+    <Logger name="eiFrontendLog" level="INFO">
       <AppenderRef ref="FrontendLogFile"/>
     </Logger>
 
@@ -72,6 +56,7 @@
 
     <Root level="WARN">
       <AppenderRef ref="Console"/>
+      <AppenderRef ref="FrontendLogFile"/>
     </Root>
 
   </Loggers>

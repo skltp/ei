@@ -2,6 +2,7 @@ package se.skltp.ei.route;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +39,7 @@ public class EiBackendUpdateRoute extends RouteBuilder {
  	         .onRedelivery(new Processor() {
  	             @Override
  	             public void process(Exchange exchange) throws Exception {
- 	                 log.error("Redelivery no " 
+ 	                 log.error("Redelivery no "
  	            	 + exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class)
  	            	 + " from " + processQueueName);
  	             }
@@ -46,11 +47,11 @@ public class EiBackendUpdateRoute extends RouteBuilder {
     // Get from process queue
     fromF("activemq:queue:%s?transacted=true", processQueueName)
         .id("backend-process-route")
-        .log("Got one from Process Queue:\n${body}")
+        .log(LoggingLevel.DEBUG, "eiBackendLog","Got one from Process Queue:\n${body}")
         .process(updatePersistentStorageProcessor)
         .split(method(notificationSplitterBean, "createNotificationList"))
               .parallelProcessing(true)
-          .log("Add notification to ${header.NotificationQueueName}")
+          .log(LoggingLevel.DEBUG, "eiBackendLog","Add notification to ${header.NotificationQueueName}")
           .toD("activemq:queue:${header.NotificationQueueName}")
         .end();
 

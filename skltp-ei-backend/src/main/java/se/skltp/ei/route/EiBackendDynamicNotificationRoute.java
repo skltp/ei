@@ -6,6 +6,7 @@ import static se.skltp.ei.service.constants.EiConstants.X_VP_SENDER_ID;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PropertiesComponent;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,11 +64,11 @@ public class EiBackendDynamicNotificationRoute extends RouteBuilder {
  	 
 	  fromF("activemq:queue:%s?transacted=true", subscriber.getNotificationQueueName())
         .id(subscriber.getNotificationRouteName())
-        .log("Got from notification queue")
+        .log(LoggingLevel.DEBUG, "eiBackendLog","Got from notification queue")
         .process(new CreateProcessNotificationRequestProcessor(subscriber.getLogicalAdress()))
         .setHeader(X_VP_SENDER_ID, simple("{{processnotification.vpSenderId}}"))
         .setHeader(X_VP_INSTANCE_ID, simple("{{processnotification.vpInstanceId}}"))
-        .toF("cxf:{{processnotification.serviceEndpointUrl}}?wsdlURL=%s&serviceClass=%s&portName=%s"
+        .toF("cxf:{{processnotification.serviceEndpointUrl}}?wsdlURL=%s&serviceClass=%s&portName=%s&cxfConfigurer=#eiBackendConfigBean"
             , PROCESSNOTIFICATION_WSDL
             , ProcessNotificationResponderInterface.class.getName()
             , ProcessNotificationResponderService.ProcessNotificationResponderPort.toString());

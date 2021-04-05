@@ -34,7 +34,7 @@ public class ProcessNotificationTestStubProcessor implements Processor {
 
   private void checkValue(String expected, String actual, String message) {
     if(actual==null || !expected.equalsIgnoreCase(actual)){
-      throw new EiException(EI000_TECHNICAL_ERROR, String.format(EXCEPTION_MSG, message, actual, expected));
+      throw new EiException(EI000_TECHNICAL_ERROR, String.format(EXCEPTION_MSG, message, expected, actual));
     }
   }
 

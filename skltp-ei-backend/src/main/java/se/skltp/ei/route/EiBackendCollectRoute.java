@@ -2,6 +2,7 @@ package se.skltp.ei.route;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,7 @@ public class EiBackendCollectRoute extends RouteBuilder {
         , collectQueueCompletionTimeout*1000
         , collectQueueCompletionSize)
         .id("backend-collection-route")
-        .log("Got an update collection:\n${body}")
+        .log(LoggingLevel.DEBUG, "eiBackendLog","Got an update collection:\n${body}")
         .toF( "activemq:queue:%s?transacted=true", processQueueName);
   }
 }
