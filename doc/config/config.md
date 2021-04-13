@@ -42,8 +42,8 @@ Utöver dessa properties finns möjlighet att konfigurera de komponenter som anv
 | activemq.broker.url | vm://localhost?broker.persistent=false | URL till AMQ broker  |
 | activemq.broker.user | admin | Användarnamn för ActiveMQ-användare |
 | activemq.broker.password | secret | Lösenord för ActiveMQ-användare |
-| dlq.maximum-redeliveries | 2 | Antal leveransförsök som görs innan meddelanden hamnar i dead letter-kön. Standardinställningen är 0. |  
-| dlq.redelivery-delay | 5000 | Tid mellan leveransförsök i millisekunder. Standardinställningen är 0 ms. |
+| activemq.broker.maximum-redeliveries | 2 | Antal leveransförsök som görs innan meddelanden hamnar i dead letter-kön. Standardinställningen är 0. |  
+| activemq.broker.redelivery-delay | 5000 | Tid mellan leveransförsök i millisekunder. Standardinställningen är 0 ms. |
 | camel.component.activemq.broker-url | ${activemq.broker.url} | Adress till ActiveMQ | 
 | camel.component.activemq.trust-all-packages | true | Standard för ActiveMQ är att inte tillåta serialisering av godtyckliga Javaobjekt. Denna inställning ändrar detta beteende. | 
 

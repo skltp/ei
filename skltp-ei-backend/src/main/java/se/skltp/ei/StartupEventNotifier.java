@@ -18,10 +18,10 @@ import se.skltp.ei.subscriber.SubscriberService;
 @Component
 public class StartupEventNotifier extends EventNotifierSupport {
 
-	  @Value("${dlq.maximum-redeliveries}")
+	  @Value("${activemq.broker.maximum-redeliveries}")
 	  private Integer maximumRedeliveries;
 	  
-	  @Value("${dlq.redelivery-delay:0}")
+	  @Value("${activemq.broker.redelivery-delay:0}")
 	  private Integer redeliveryDelay;
 
   @Override

@@ -19,10 +19,10 @@ public class EiBrokerConfiguration  {
   @Value("${activemq.broker.url:}")
   String activemqBrokerUrl;
 
-  @Value("${activemq.broker.url:admin}")
+  @Value("${activemq.broker.url:#{null}}")
   String activemqBrokerUser;
 
-  @Value("${activemq.broker.url:secret}")
+  @Value("${activemq.broker.url:#{null}}")
   String activemqBrokerPassword;
 
   @Bean
@@ -31,6 +31,7 @@ public class EiBrokerConfiguration  {
     activeMQConnectionFactory.setBrokerURL(activemqBrokerUrl);
     activeMQConnectionFactory.setUserName(activemqBrokerUser);
     activeMQConnectionFactory.setPassword(activemqBrokerPassword);
+
     return activeMQConnectionFactory;
   }
 

@@ -21,10 +21,10 @@ public class EiBackendCollectRoute extends RouteBuilder {
   @Value("${collect.queue.completion.timeout:30}")
   Integer collectQueueCompletionTimeout;
 
-  @Value("${dlq.maximum-redeliveries:0}")
+  @Value("${activemq.broker.maximum-redeliveries:0}")
   private int maximumRedeliveries;
 
-  @Value("${dlq.redelivery-delay:0}")
+  @Value("${activemq.broker.redelivery-delay:0}")
   private int redeliveryDelay;
   
   @Override

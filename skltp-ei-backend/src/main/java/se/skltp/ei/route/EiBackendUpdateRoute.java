@@ -23,10 +23,10 @@ public class EiBackendUpdateRoute extends RouteBuilder {
   @Autowired
   NotificationSplitterBean notificationSplitterBean;
 
-  @Value("${dlq.maximum-redeliveries:0}")
+  @Value("${activemq.broker.maximum-redeliveries:0}")
   private int maximumRedeliveries;
 
-  @Value("${dlq.redelivery-delay:0}")
+  @Value("${activemq.broker.redelivery-delay:0}")
   private int redeliveryDelay;
   
   @Override
