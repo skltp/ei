@@ -1,12 +1,16 @@
 package se.skltp.ei.updateprocess;
 
+import static se.skltp.ei.service.constants.EiConstants.X_SKLTP_CORRELATION_ID;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Header;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultMessage;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
@@ -26,7 +30,7 @@ public class NotificationSplitterBean {
   @Autowired
   private SubscriberCachableService subscriberCache;
 
-  public List<Message> createNotificationList(@Body List<EngagementTransactionType> engagementsChangedList, CamelContext camelContext) {
+  public List<Message> createNotificationList(@Body List<EngagementTransactionType> engagementsChangedList, @Header(X_SKLTP_CORRELATION_ID) String correlationId, CamelContext camelContext) {
 
     log.debug("Incomming changed engagements: {}", engagementsChangedList.size());
 
@@ -41,7 +45,7 @@ public class NotificationSplitterBean {
 
       if ( !process.getEngagementTransaction().isEmpty()) {
         final String marshalledNotification = jabxUtil.marshal(objectFactoryProcessNotification.createProcessNotification(process));
-        answerList.add(createMessage(marshalledNotification, subscriber.getNotificationQueueName(), camelContext));
+        answerList.add(createMessage(marshalledNotification, subscriber.getNotificationQueueName(), camelContext, correlationId));
       }
     }
 
@@ -49,9 +53,10 @@ public class NotificationSplitterBean {
     return answerList;
   }
 
-  private Message createMessage(String body, String queueName, CamelContext camelContext){
+  private Message createMessage(String body, String queueName, CamelContext camelContext, String correlationId){
     DefaultMessage message = new DefaultMessage(camelContext);
     message.setHeader("NotificationQueueName", queueName);
+    message.setHeader(X_SKLTP_CORRELATION_ID, correlationId);
     message.setBody(body);
     return message;
   }

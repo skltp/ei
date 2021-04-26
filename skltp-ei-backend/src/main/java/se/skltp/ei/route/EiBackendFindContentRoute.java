@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import riv.itintegration.engagementindex.findcontent._1.rivtabp21.FindContentResponderInterface;
 import riv.itintegration.engagementindex.findcontent._1.rivtabp21.FindContentResponderService;
 import se.skltp.ei.findcontent.FindContentProcessor;
+import se.skltp.ei.service.CheckInboundHeadersProcessor;
 import se.skltp.ei.service.EICxfConfigurer;
 
 @Component
@@ -21,6 +22,9 @@ public class EiBackendFindContentRoute extends RouteBuilder {
 
   @Autowired
   GenericApplicationContext applicationContext;
+
+  @Autowired
+  CheckInboundHeadersProcessor checkInboundHeadersProcessor;
 
   @Value("${findcontent.webservice.url}")
   String findcontentWebserviceUrl;
@@ -44,7 +48,7 @@ public class EiBackendFindContentRoute extends RouteBuilder {
             , FindContentResponderInterface.class.getName()
             , FindContentResponderService.FindContentResponderPort.toString())
     .id("backend-findcontent-route")
-    .log(LoggingLevel.DEBUG, "eiBackendLog","Findcontent SOAP call received")
+    .process(checkInboundHeadersProcessor)
     .process(findContentProcessor);
 
 

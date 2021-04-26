@@ -17,6 +17,7 @@ import se.skltp.ei.notification.CreateProcessNotificationResponseProcessor;
 import se.skltp.ei.notification.RemoveCircularProcessNotificationsProcessor;
 import se.skltp.ei.notification.ProcessNotificationRequestToJmsMsgProcessor;
 import se.skltp.ei.notification.ValidateProcessNotificationProcessor;
+import se.skltp.ei.service.CheckInboundHeadersProcessor;
 import se.skltp.ei.service.EICxfConfigurer;
 import se.skltp.ei.update.SetOwnerProcessor;
 import se.skltp.ei.update.UpdateRequestToJmsMessageProcessor;
@@ -63,6 +64,9 @@ public class EiFrontendRoute extends RouteBuilder {
   @Autowired
   GenericApplicationContext applicationContext;
 
+  @Autowired
+  CheckInboundHeadersProcessor checkInboundHeadersProcessor;
+
   @Value("${update.collect.threshold:0}")
   int collectThreshold;
 
@@ -107,7 +111,7 @@ public class EiFrontendRoute extends RouteBuilder {
 
     from(updateConfigurationPath).streamCaching()
         .id("frontend-update-webservice-route")
-        .log(LoggingLevel.DEBUG, "eiFrontendLog", "Update SOAP call received")
+        .process(checkInboundHeadersProcessor)
         .process(validateUpdateProcessor)
         .process(setOwnerProcessor)
         .process(updateRequestToJmsMessageProcessor)
@@ -121,7 +125,7 @@ public class EiFrontendRoute extends RouteBuilder {
 
     from(processNotificationConfigurationPath).streamCaching()
         .id("frontend-notification-webservice-route")
-        .log(LoggingLevel.DEBUG, "eiFrontendLog","ProcessNotification SOAP call received")
+        .process(checkInboundHeadersProcessor)
         .process(validateProcessNotificationProcessor)
         .process(removeCircularProcessNotificationsProcessor)
         .process(processNotificationRequestToJmsMsgProcessor)

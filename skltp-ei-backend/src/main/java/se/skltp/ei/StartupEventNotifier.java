@@ -1,11 +1,17 @@
 package se.skltp.ei;
 
+import static se.skltp.ei.service.constants.EiConstants.X_SKLTP_CORRELATION_ID;
+
 import java.io.IOException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -27,9 +33,8 @@ public class StartupEventNotifier extends EventNotifierSupport {
   @Override
   protected void doStart() {
     setIgnoreCamelContextEvents(false);
-
-//    // filter out unwanted events
-    setIgnoreExchangeCreatedEvent(true);
+    setIgnoreExchangeCreatedEvent(false);
+    // filter out unwanted events
     setIgnoreExchangeSentEvents(true);
     setIgnoreExchangeCompletedEvent(true);
     setIgnoreExchangeFailedEvents(true);
@@ -42,6 +47,15 @@ public class StartupEventNotifier extends EventNotifierSupport {
   public void notify(CamelEvent event) throws IOException {
     if (event instanceof CamelContextStartedEvent) {
       initializeSubscribers((CamelContext)event.getSource());
+    }else if (event instanceof ExchangeCreatedEvent ||
+        event instanceof ExchangeSentEvent) {
+      final Object source = event.getSource();
+      if (source instanceof Exchange) {
+        final String correlationId = ((Exchange) source).getIn().getHeader(X_SKLTP_CORRELATION_ID, String.class);
+        if (correlationId != null) {
+          ThreadContext.put("corr.id", String.format("[%s]", correlationId));
+        }
+      }
     }
   }
 
