@@ -19,19 +19,20 @@ public class EiBrokerConfiguration  {
   @Value("${activemq.broker.url:}")
   String activemqBrokerUrl;
 
-  @Value("${activemq.broker.url:#{null}}")
+  @Value("${activemq.broker.user:#{null}}")
   String activemqBrokerUser;
 
-  @Value("${activemq.broker.url:#{null}}")
+  @Value("${activemq.broker.password:#{null}}")
   String activemqBrokerPassword;
 
   @Bean
   ActiveMQConnectionFactory amqConnectionFactory() {
     final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
     activeMQConnectionFactory.setBrokerURL(activemqBrokerUrl);
-    activeMQConnectionFactory.setUserName(activemqBrokerUser);
-    activeMQConnectionFactory.setPassword(activemqBrokerPassword);
-
+    if(activemqBrokerUser != null && activemqBrokerUser.length() > 0 ) {    	
+        activeMQConnectionFactory.setUserName(activemqBrokerUser);
+        activeMQConnectionFactory.setPassword(activemqBrokerPassword); 
+    }
     return activeMQConnectionFactory;
   }
 
