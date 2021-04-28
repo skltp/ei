@@ -6,11 +6,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.cxf.binding.soap.SoapFault;
@@ -67,6 +70,7 @@ public class FindContentIT {
     Exchange ex = producerTemplate.request(url, (e) -> {
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -93,6 +97,7 @@ public class FindContentIT {
     Exchange ex = producerTemplate.request(url + "?throwExceptionOnFailure=false", (e) -> {
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -111,7 +116,9 @@ public class FindContentIT {
     // Insert one entity
     engagementRepository.save(EngagementTestUtil.generateEngagement(1312121212L));
 
-    String statusResponse = producerTemplate.requestBody(url, body, String.class);
+    Map<String, Object> headers = new HashMap<String, Object>();
+    headers.put("x-skltp-correlation-id", "1234");    
+    String statusResponse = producerTemplate.requestBodyAndHeaders(url, body,headers,  String.class);
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertFalse (statusResponse.contains("<ns2:registeredResidentIdentification>191212121212</ns2:registeredResidentIdentification>"));
     assertFalse (statusResponse.contains("<ns2:registeredResidentIdentification>191312121212</ns2:registeredResidentIdentification>"));
@@ -125,12 +132,21 @@ public class FindContentIT {
   @Test
   public void findContentCxfTest() throws Exception {
 	  
-	  String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
+	  final String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
 	  , url
 	  , FINDCONTENT_WSDL
 	  , FindContentResponderInterface.class.getName()
 	  , FindContentResponderService.FindContentResponderPort.toString());
-	
+
+	  RouteBuilder r = new RouteBuilder() {
+			
+		@Override
+		public void configure() throws Exception {
+			from("direct:findcont").setHeader("x-skltp-correlation-id", constant("1234")).to(route);
+			
+		}
+	 };
+	  producerTemplate.getCamelContext().addRoutes(r);
 	  // Insert one entity
 	  engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.TWO_SUBSCRIBERS));
 	  engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.NO_SUBSCRIBER_2));
@@ -138,7 +154,7 @@ public class FindContentIT {
 	  FindContentType fc = new FindContentType();
 	  fc.setRegisteredResidentIdentification("191212121212");
 	  fc.setServiceDomain("TEST-DOMAIN");
-	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint(route);
+	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint("direct:findcont");
 	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 	  FindContentResponderInterface proxy = ProxyHelper.createProxy(startEndpoint, classLoader, FindContentResponderInterface.class);
 	  
@@ -151,12 +167,21 @@ public class FindContentIT {
   public void findContentCxfEI000FaultTest() throws Exception {
 	  
 	  
-	  String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
+	  final String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
       , url
       , FINDCONTENT_WSDL
       , FindContentResponderInterface.class.getName()
       , FindContentResponderService.FindContentResponderPort.toString());
 
+	  RouteBuilder r = new RouteBuilder() {
+			
+		@Override
+		public void configure() throws Exception {
+			from("direct:findcont1").setHeader("x-skltp-correlation-id", constant("1234")).to(route);
+			
+		}
+	 };
+	  producerTemplate.getCamelContext().addRoutes(r);
 
       // Insert one entity
       engagementRepository.save(EngagementTestUtil.generateEngagement(1212121212L, DomainType.TWO_SUBSCRIBERS));
@@ -166,7 +191,7 @@ public class FindContentIT {
 	  FindContentType fc = new FindContentType();
 	  fc.setRegisteredResidentIdentification("191212121212");
 	  //fc.setServiceDomain("TEST-DOMAIN");
-	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint(route);
+	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint("direct:findcont1");
 	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 	  FindContentResponderInterface proxy = ProxyHelper.createProxy(startEndpoint, classLoader, FindContentResponderInterface.class);
 	  

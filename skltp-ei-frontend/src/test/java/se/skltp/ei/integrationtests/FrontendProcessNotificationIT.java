@@ -9,13 +9,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import io.hawt.util.Files;
@@ -57,6 +56,7 @@ public class FrontendProcessNotificationIT {
         
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -81,6 +81,7 @@ public class FrontendProcessNotificationIT {
         
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -104,6 +105,7 @@ public class FrontendProcessNotificationIT {
         
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -125,12 +127,23 @@ public class FrontendProcessNotificationIT {
   @Test
   public void procnotCxfTest() throws Exception {
 	  
-	  String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
+	  final String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
       , url
       , PROCESSNOTIFICATION_WSDL
       , ProcessNotificationResponderInterface.class.getName()
       , ProcessNotificationResponderService.ProcessNotificationResponderPort.toString());  
-	    
+
+	  RouteBuilder r = new RouteBuilder() {
+			
+		@Override
+		public void configure() throws Exception {
+			from("direct:procnot1").setHeader("x-skltp-correlation-id", constant("1234")).to(route);
+			
+		}
+	 };
+	 
+	  producerTemplate.getCamelContext().addRoutes(r);
+	  
 	  ProcessNotificationType pn = new ProcessNotificationType();
 	  EngagementTransactionType ett = new EngagementTransactionType();
 	  ett.setDeleteFlag(false);
@@ -138,7 +151,8 @@ public class FrontendProcessNotificationIT {
 	  ett.setEngagement(et);
 	  pn.getEngagementTransaction().add(ett);
 	  
-	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint(route);
+	  final Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint("direct:procnot1");
+
 	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 	  ProcessNotificationResponderInterface proxy = ProxyHelper.createProxy(startEndpoint, classLoader, ProcessNotificationResponderInterface.class);
 	  
@@ -149,15 +163,23 @@ public class FrontendProcessNotificationIT {
   
   @Test
   public void procnotCxfEI000FaultTest() throws Exception {
-	  
-	  
-	  String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
+	  	  
+	  final String route= String.format("cxf:%s?wsdlURL=%s&serviceClass=%s&portName=%s"
       , url
       , PROCESSNOTIFICATION_WSDL
       , ProcessNotificationResponderInterface.class.getName()
       , ProcessNotificationResponderService.ProcessNotificationResponderPort.toString());
 
-
+	  RouteBuilder r = new RouteBuilder() {
+			
+		@Override
+		public void configure() throws Exception {
+			from("direct:procnot").setHeader("x-skltp-correlation-id", constant("1234")).to(route);
+			
+		}
+	 };
+	  producerTemplate.getCamelContext().addRoutes(r);
+	  
 	  ProcessNotificationType pn = new ProcessNotificationType();
 	  EngagementTransactionType ett = new EngagementTransactionType();
 	  ett.setDeleteFlag(false);
@@ -166,7 +188,8 @@ public class FrontendProcessNotificationIT {
 	  ett.setEngagement(et);
 	  pn.getEngagementTransaction().add(ett);
 	  
-	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint(route);
+	  Endpoint startEndpoint = producerTemplate.getCamelContext().getEndpoint("direct:procnot");
+	  
 	  ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 	  ProcessNotificationResponderInterface proxy = ProxyHelper.createProxy(startEndpoint, classLoader, ProcessNotificationResponderInterface.class);
 	  

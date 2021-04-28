@@ -39,6 +39,7 @@ public class FrontendUpdateIT {
     String body = getBody(UPDATE1);
     
     Map<String, Object> headers = new HashMap<String, Object>();
+    headers.put("x-skltp-correlation-id", "1234");
     String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
     assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
     assertTrue (statusResponse.contains("<ns2:ResultCode>OK</ns2:ResultCode>"));
@@ -54,6 +55,7 @@ public class FrontendUpdateIT {
         
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -78,6 +80,7 @@ public class FrontendUpdateIT {
         
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -102,6 +105,7 @@ public class FrontendUpdateIT {
        
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
@@ -126,6 +130,7 @@ public class FrontendUpdateIT {
        
         e.getIn().setBody(body);
         e.getIn().setHeader("Content-Type", "application/xml;charset=UTF-8");
+        e.getIn().setHeader("x-skltp-correlation-id", "1234");
     });
     String statusResponse = (String) ex.getMessage().getBody(String.class);
     Integer statusCode = ex.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
