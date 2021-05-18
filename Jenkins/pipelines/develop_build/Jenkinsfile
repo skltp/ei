@@ -14,7 +14,7 @@ SONAR_HOME = tool name: 'SonarScanner 4.5'
          // Get the Maven tool.
          // ** NOTE: This 'M3' Maven tool must be configured
          // **       in the global configuration.
-         mvnHome = tool 'maven:3.8.1-jdk-8'
+         mvnHome = tool 'Maven 3.5.0'
       }
       stage('Build') {
         // Run the maven build
