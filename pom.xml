@@ -33,11 +33,11 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <camel.version>3.7.0</camel.version>
+    <camel.version>3.7.4</camel.version>
     <spring.boot-version>2.4.1</spring.boot-version>
     <hawtio.spring.boot-version>2.10.2</hawtio.spring.boot-version>
     <lombok.version>1.18.12</lombok.version>
-    <apache-cfx.version>3.4.0</apache-cfx.version>
+    <apache-cfx.version>3.4.2</apache-cfx.version>
     <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
     <jetty.version>9.4.31.v20200723</jetty.version>
     <h2database.version>1.4.200</h2database.version>
