@@ -21,8 +21,8 @@
     <Logger name="se.skltp.ei.EiApplication" level="INFO"/>
 
     <!-- Ei application routes-->
-    <Logger name="eiBackendLog" level="debug"/>
-    <Logger name="eiFrontendLog" level="debug"/>
+    <Logger name="eiBackendLog" level="INFO"/>
+    <Logger name="eiFrontendLog" level="INFO"/>
 
 
     <!--Apache camel-->
