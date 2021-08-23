@@ -10,20 +10,6 @@
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="${LOG_PATTERN}"/>
     </Console>
-
-    <RollingRandomAccessFile name="BackendLogFile"
-      fileName="${log.dir}/skltp-ei-backend-app.log"
-      filePattern="${log.dir}/skltp-ei-backend-app.%i">
-      <PatternLayout>
-        <Pattern>%d %-5p [%t] %-30c - %m%n</Pattern>
-      </PatternLayout>
-      <Policies>
-        <!-- KB, MB -->
-        <SizeBasedTriggeringPolicy size="50 MB"/>
-      </Policies>
-      <DefaultRolloverStrategy fileIndex="min" max="10"/>
-    </RollingRandomAccessFile>
-
   </Appenders>
 
   <Loggers>
@@ -34,9 +20,7 @@
     <Logger name="se.skltp.ei.EiApplication" level="INFO"/>
 
     <!-- Ei application routes-->
-    <Logger name="eiBackendLog" level="INFO">
-      <AppenderRef ref="BackendLogFile"/>
-    </Logger>
+    <Logger name="eiBackendLog" level="INFO"/>
 
     <!--Apache camel-->
     <Logger name="org.apache.camel" level="INFO"/>
@@ -56,7 +40,6 @@
 
     <Root level="WARN">
       <AppenderRef ref="Console"/>
-      <AppenderRef ref="RollingRandomAccessFile"/>
     </Root>
 
   </Loggers>

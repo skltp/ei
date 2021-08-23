@@ -38,9 +38,9 @@ public class MessageLogEventSender {
     StringBuilder b = new StringBuilder();
     b.append("skltp-messages\n");
     b.append("** logEvent-info.start ***********************************************************\n");
-    write(b, "  ComponentId", componentId);
-    write(b, "  LogMessage", type2LogMessage(msgEvent.logEvent.getType()));
-    write(b, "  BusinessCorrelationId", msgEvent.businessCorrelationId);
+    write(b, "ComponentId", componentId);
+    write(b, "LogMessage", type2LogMessage(msgEvent.logEvent.getType()));
+    write(b, "BusinessCorrelationId", msgEvent.businessCorrelationId);
     write(b, "Host", msgEvent.hostName);
     write(b, "ServiceImpl", msgEvent.logEvent.getServiceName().getLocalPart());
     write(b, "Endpoint", msgEvent.logEvent.getAddress());

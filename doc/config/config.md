@@ -13,8 +13,9 @@ Utöver dessa properties finns möjlighet att konfigurera de komponenter som anv
 | processnotification.webservice.url | http://localhost:8081/skltp-ei/notification-service/v1 | URL för ProcessNotification webbtjänsten |
 | findcontent.webservice.url | http://localhost:8082/skltp-ei/find-content-service/v1 | URL för FindContent webtjänsten |
 | management.endpoints.web.exposure.include | hawtio,jolokia | Behöver vara 'hawtio,jolokia' för att hawtio ska köras |
-| hawtio.authentication.enabled | true | Sätt till 'false' för att stänga av autentisering i hawtio |
-| hawtio.external.loginfile | src/test/resources/users.properties | Sökväg till fil med hawtio-användare och lösenord. Användare behöver tillhöra rollen 'user' för att kunna logga in. Formatet beskrivs på: https://wiki.eclipse.org/Jetty/Tutorial/Realms#HashLoginService |
+| spring.jmx.enabled | true | Slå på JMX för Spring, så att det går att konfigurera t.ex. köer i Hawtio |
+| hawtio.authentication.enabled | true | Sätt till 'false' för att stänga av autentisering i Hawtio |
+| hawtio.external.loginfile | src/test/resources/users.properties | Sökväg till fil med Hawtio-användare och lösenord. Användare behöver tillhöra rollen 'user' för att kunna logga in. Formatet beskrivs på: https://wiki.eclipse.org/Jetty/Tutorial/Realms#HashLoginService |
 | ei.hsa.id | ei-hsa-id | EIs egna HSA id |
 | ei.alternative.hsa.id | ei-hsa-id | Alternativ till EIs HSA-ID |
 | vp.hsa.id | vp-hsa-id | VP's sender-ID för interna anrop |
