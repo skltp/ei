@@ -47,6 +47,20 @@ public class FrontendUpdateIT {
   }
 
   @Test
+  public void updateTestWithWrongSOAPActionShouldReturnOK() throws IOException {
+
+    String body = getBody(UPDATE1);
+    
+    Map<String, Object> headers = new HashMap<String, Object>();
+    headers.put("x-skltp-correlation-id", "1234");
+    headers.put("SOAPAction", "wrongsoapaction");
+    String statusResponse = producerTemplate.requestBodyAndHeaders(UPDATE_URL, body, headers, String.class);
+    assertTrue (statusResponse .startsWith("<") && statusResponse .endsWith(">"));
+    assertTrue (statusResponse.contains("<ns2:ResultCode>OK</ns2:ResultCode>"));
+    assertTrue (statusResponse.contains("<ns2:UpdateResponse"));
+  }
+  
+  @Test
   public void updateTestReturnsEI002() throws IOException {
 
     Exchange ex = producerTemplate.request(UPDATE_URL, (e) -> {

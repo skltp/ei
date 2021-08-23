@@ -5,6 +5,8 @@ import org.apache.camel.component.cxf.CxfConfigurer;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
+
+import se.skltp.ei.interceptors.SoapActionRemoverInInterceptor;
 import se.skltp.ei.service.logging.MessageLoggingFeature;
 
 
@@ -18,6 +20,7 @@ public class EICxfConfigurer implements CxfConfigurer {
   @Override
   public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
     addMessageLoggingFeature(factoryBean);
+    factoryBean.getInInterceptors().add(new SoapActionRemoverInInterceptor());
   }
 
   private boolean addMessageLoggingFeature(AbstractWSDLBasedEndpointFactory factoryBean) {
