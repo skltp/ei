@@ -1,0 +1,111 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>se.skltp.ei</groupId>
+		<artifactId>skltp-ei-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>ei-performance-tests</artifactId>
+	<name>${project.artifactId}</name>
+
+	<properties>
+		<gatling.version>2.1.7</gatling.version>
+		<gatling-plugin.version>2.1.7</gatling-plugin.version>
+		<baseUrl>http://localhost:9088</baseUrl>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.gatling.highcharts</groupId>
+			<artifactId>gatling-charts-highcharts</artifactId>
+			<version>${gatling.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>io.gatling</groupId>
+				<artifactId>gatling-maven-plugin</artifactId>
+				<version>${gatling-plugin.version}</version>
+				<configuration>
+					<simulationClass>${simulationClass}</simulationClass>
+					<jvmArgs>
+						<jvmArg>-DnoOfUsers=1</jvmArg>
+						<jvmArg>-DbaseUrl=https://localhost:20000</jvmArg>
+						<jvmArg>-DtestTimeSecs=30</jvmArg>
+						<jvmArg>-DstartPnr=20</jvmArg>
+						<jvmArg>-Dgatling.skip=true</jvmArg>
+					</jvmArgs>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>LoadTestEI_Default_NoTests</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>LoadTestEI_Update_500</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_500</simulationClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>LoadTestEI_Update_1000</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_1000</simulationClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>LoadTestEI_Update_50</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_50</simulationClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>LoadTestEI_Update_1</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_1</simulationClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>LoadTestEI_Update_Duplicates_1</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Update_Duplicates_1</simulationClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>LoadTestEI_Mix</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_Mix</simulationClass>
+			</properties>
+		</profile>
+		<!-- N.B. LoadTestEI_FindContent uses data from LoadTestEI_Update_50. 
+		     Make sure it has been run before using this loadtest -->
+		<profile>
+			<id>LoadTestEI_FindContent</id>
+			<properties>
+				<simulationClass>se.skltp.ei.LoadTestEI_FindContent</simulationClass>
+			</properties>
+		</profile>
+	</profiles>
+</project>
