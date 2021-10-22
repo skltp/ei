@@ -13,7 +13,7 @@ public class EiBackendSubscriberStatusRoute extends RouteBuilder {
 
   @Override
   public void configure() throws Exception {
-    from("jetty://{{subscriber.cache.status.url}}").routeId("backend-reset-cache-route")
+    from("jetty://{{subscriber.cache.status.url}}").routeId("backend-status-cache-route")
         .process(subcriberStatusProcessor)
         .setHeader("Content-type", simple("application/json"));
   }
