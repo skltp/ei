@@ -23,6 +23,7 @@ SONAR_HOME = tool name: 'SonarScanner 4.5'
 	  	  maven.pull()
 		  maven.inside("-v ${jdk}:${jdk}") {
 		    sh 'mvn --global-settings ${MAVEN_SETTINGS} clean install -Ptest-coverage'
+		    pomVersion = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
 		  }
         }
       }
@@ -31,6 +32,7 @@ SONAR_HOME = tool name: 'SonarScanner 4.5'
                 withSonarQubeEnv("${params.SONAR_ENV}") {
                     sh """${SonarScanner} \
                                 -Dsonar.projectKey=${params.SONAR_PROJECTKEY} \
+                                -Dsonar.projectVersion=${pomVersion} \
                                 -Dsonar.login="${SONAR_TOKEN}" \
                                 -Dsonar.java.binaries=${params.SONAR_JAVA_BINARIES} \
                                 -Dsonar.test.inclusions=**/src/test/**/*.java \
@@ -43,6 +45,7 @@ SONAR_HOME = tool name: 'SonarScanner 4.5'
    }
    stage('Results') {
       junit '**/target/surefire-reports/TEST-*.xml'
+      jacoco()
       archiveArtifacts '**/target/*.jar'
    }
 
