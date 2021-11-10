@@ -27,26 +27,31 @@ SONAR_HOME = tool name: 'SonarScanner 4.5'
 		  }
         }
       }
-        stage('SonarScanner'){
-            withCredentials([string(credentialsId: "${params.SONAR_TOKENID}", variable: "SONAR_TOKEN" )]) {
-                withSonarQubeEnv("${params.SONAR_ENV}") {
-                    sh """${SonarScanner} \
-                                -Dsonar.projectKey=${params.SONAR_PROJECTKEY} \
-                                -Dsonar.projectVersion=${pomVersion} \
-                                -Dsonar.login="${SONAR_TOKEN}" \
-                                -Dsonar.java.binaries=${params.SONAR_JAVA_BINARIES} \
-                                -Dsonar.test.inclusions=**/src/test/**/*.java \
-                                -Dsonar.coverage.jacoco.xmlReportPaths=${params.SONAR_JACOCO_REPORTS} \
-                                -Dsonar.sourceEncoding=${params.SONAR_SRC_ENCODING}
-                        """
-                }
-            }
-        }
+      stage('SonarScanner'){
+         withSonarQubeEnv(credentialsId: "${params.SONAR_TOKENID}", installationName: "${params.SONAR_ENV}") {
+            sh """${SonarScanner} \
+               -Dsonar.projectKey=${params.SONAR_PROJECTKEY} \
+               -Dsonar.projectVersion=${pomVersion} \
+               -Dsonar.java.binaries=${params.SONAR_JAVA_BINARIES} \
+               -Dsonar.test.inclusions=**/src/test/**/*.java \
+               -Dsonar.coverage.jacoco.xmlReportPaths=${params.SONAR_JACOCO_REPORTS} \
+               -Dsonar.sourceEncoding=${params.SONAR_SRC_ENCODING}
+               """
+         }
+      }
    }
    stage('Results') {
       junit '**/target/surefire-reports/TEST-*.xml'
       jacoco()
       archiveArtifacts '**/target/*.jar'
+      sleep(15) // Workaround for webhook problems
+      timeout(time: 1, unit: 'MINUTES') {
+         def qg = waitForQualityGate(credentialsId: "${params.SONAR_TOKENID}")
+         if (qg.status != 'OK') {
+            echo "Status: ${qg.status}"
+            currentBuild.result = "UNSTABLE"
+         }
+      }
    }
 
    def previousResult = currentBuild.previousBuild?.result
