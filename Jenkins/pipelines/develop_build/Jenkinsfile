@@ -38,7 +38,6 @@ SONAR_HOME = tool name: 'SonarScanner 4.5'
       junit '**/target/surefire-reports/TEST-*.xml'
       jacoco()
       archiveArtifacts '**/target/*.jar'
-      sleep(15) // Workaround for webhook problems
       timeout(time: 1, unit: 'MINUTES') {
          def qg = waitForQualityGate(credentialsId: "${params.SONAR_TOKENID}")
          if (qg.status != 'OK') {
