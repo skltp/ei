@@ -29,14 +29,17 @@ public class SubcriberStatusProcessor implements Processor {
     final Element element = cache.get("subscribers");
 
     Map<String, Object> map = new HashMap();
-    Date updatedTime = new Date(element.getLastUpdateTime());
-    Date creationTime = new Date(element.getCreationTime());
-    List<Subscriber> subscribers = (List<Subscriber>) element.getObjectValue();
 
-    map.put("CreationTime", creationTime.toString());
-    map.put("UpdatedTime", updatedTime.toString());
-    map.put("ExpirationTime", new Date(element.getExpirationTime()).toString());
-    map.put("Subscribers", subscribers);
+    if (element != null) {
+      Date updatedTime = new Date(element.getLastUpdateTime());
+      Date creationTime = new Date(element.getCreationTime());
+      List<Subscriber> subscribers = (List<Subscriber>) element.getObjectValue();
+
+      map.put("CreationTime", creationTime.toString());
+      map.put("UpdatedTime", updatedTime.toString());
+      map.put("ExpirationTime", new Date(element.getExpirationTime()).toString());
+      map.put("Subscribers", subscribers);
+    }
 
     try {
       ObjectMapper mapper = new ObjectMapper();
