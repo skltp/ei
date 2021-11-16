@@ -1,13 +1,10 @@
 package se.skltp.ei.subscriber.util;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import lombok.extern.log4j.Log4j2;
@@ -63,7 +60,7 @@ public class SubscriberFileTool {
     }
 
     try (InputStream is = new FileInputStream(ResourceUtils.getURL(subscriberCachefilePath).getFile())) {
-      PersistentCache persistentCache = (PersistentCache) JAXB.unmarshal(is);
+      PersistentCache persistentCache = (PersistentCache) JAXB.unmarshal(inputStreamToString(is));
       if (persistentCache.subscribers != null) {
 
         log.info("Succesfully loaded EI subscribers to local cache: {}", subscriberCachefilePath);
@@ -76,6 +73,13 @@ public class SubscriberFileTool {
       log.error("Failed to load EI subscribers from local cache: {}", subscriberCachefilePath,  e);
     }
     return Collections.emptyList();
+  }
+
+  private static String inputStreamToString(InputStream is)
+          throws IOException {
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+      return br.lines().collect(Collectors.joining(System.lineSeparator()));
+    }
   }
 
 }
