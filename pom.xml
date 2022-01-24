@@ -41,7 +41,7 @@
     <h2database.version>1.4.200</h2database.version>
     <ehcache.version>2.10.6</ehcache.version>
     <commons.lang.version>2.6</commons.lang.version>
-    <log4j2.version>2.17.0</log4j2.version>
+    <log4j2.version>2.17.1</log4j2.version>
 
     <maven.javadoc.skip>true</maven.javadoc.skip>
 
