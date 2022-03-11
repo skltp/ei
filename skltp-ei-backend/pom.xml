@@ -132,6 +132,12 @@
       <artifactId>disruptor</artifactId>
     </dependency>
 
+    <!-- JAX-WS Runtime, needed for javax.xml.* with Java 11 or newer -->
+    <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>jaxws-rt</artifactId>
+    </dependency>
+
     <!-- Test Dependencies-->
     <dependency>
       <groupId>se.skltp.ei</groupId>

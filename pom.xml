@@ -42,6 +42,7 @@
     <ehcache.version>2.10.6</ehcache.version>
     <commons.lang.version>2.6</commons.lang.version>
     <log4j2.version>2.17.0</log4j2.version>
+    <jaxws.version>2.3.5</jaxws.version>
 
     <maven.javadoc.skip>true</maven.javadoc.skip>
 
@@ -229,6 +230,13 @@
         <artifactId>lombok</artifactId>
         <optional>true</optional>
         <version>${lombok.version}</version>
+      </dependency>
+
+      <!-- JAX-WS Runtime, needed for javax.xml.* with Java 11 or newer -->
+      <dependency>
+        <groupId>com.sun.xml.ws</groupId>
+        <artifactId>jaxws-rt</artifactId>
+        <version>${jaxws.version}</version>
       </dependency>
 
       <!-- Test Dependencies-->
