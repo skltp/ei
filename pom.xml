@@ -20,7 +20,7 @@
   </parent>
   <groupId>se.skltp.ei</groupId>
   <artifactId>skltp-ei-parent</artifactId>
-  <version>3.0.3-SNAPSHOT</version>
+  <version>3.0.4-SNAPSHOT</version>
   <name>skltp-ei-parent</name>
   <description>Engagement index built with Apache Camel</description>
 
@@ -38,10 +38,10 @@
     <apache-cfx.version>3.4.2</apache-cfx.version>
     <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
     <jetty.version>9.4.31.v20200723</jetty.version>
-    <h2database.version>1.4.200</h2database.version>
+    <h2database.version>2.1.210</h2database.version>
     <ehcache.version>2.10.6</ehcache.version>
     <commons.lang.version>2.6</commons.lang.version>
-    <log4j2.version>2.17.0</log4j2.version>
+    <log4j2.version>2.17.1</log4j2.version>
 
     <maven.javadoc.skip>true</maven.javadoc.skip>
 
