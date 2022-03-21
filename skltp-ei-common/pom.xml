@@ -111,11 +111,6 @@
       <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel.springboot</groupId>
-      <artifactId>camel-cxf-starter</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
