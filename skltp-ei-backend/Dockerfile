@@ -3,7 +3,7 @@ FROM openjdk:11-oraclelinux8
 ENV BASE_DIR=/opt/skltp/ \
     USER=ind-app \
     LOG_DIR=/var/log/ \
-    JARFILE=target/skltp-ei-backend-3.1.1-SNAPSHOT.jar
+    JARFILE=target/skltp-ei-backend-3.1.1-SNAPSHOT-exec.jar
 
 ADD ${JARFILE} ${BASE_DIR}/app.jar
 RUN mkdir -p ${LOG_DIR} \
