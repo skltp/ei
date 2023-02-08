@@ -2,10 +2,9 @@ FROM openjdk:11-oraclelinux8
 
 ENV BASE_DIR=/opt/skltp/ \
     USER=ind-app \
-    LOG_DIR=/var/log/ \
-    JARFILE=target/skltp-ei-frontend-3.1.1-SNAPSHOT-exec.jar
+    LOG_DIR=/var/log/
 
-ADD ${JARFILE} ${BASE_DIR}/app.jar
+ADD target/skltp-ei-frontend-*-exec.jar ${BASE_DIR}app.jar
 RUN mkdir -p ${LOG_DIR} \
   && useradd -Ms /bin/bash -b ${BASE_DIR} -u 556559423 ${USER} \
   && chown ${USER}:${USER} -R ${BASE_DIR} ${LOG_DIR}
