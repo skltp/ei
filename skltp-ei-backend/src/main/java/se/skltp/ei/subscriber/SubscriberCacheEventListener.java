@@ -20,21 +20,25 @@ public final class SubscriberCacheEventListener implements CacheEventListener {
 
   private int maximumRedeliveries=0;
   private int redeliveryDelay=0;
+  private double backOffMultiplier = 0.0d;
+  private boolean useExponentialBackoff=false;
 
   public static final SubscriberCacheEventListener createInstance(
-		  CamelContext camelContext,int maximumRedeliveries, int redeliveryDelay) {
+		  CamelContext camelContext,int maximumRedeliveries, int redeliveryDelay, double backOffMultiplier, boolean useExponentialBackoff) {
     if(instance == null){
-      instance = new SubscriberCacheEventListener(camelContext, maximumRedeliveries, redeliveryDelay);
+      instance = new SubscriberCacheEventListener(camelContext, maximumRedeliveries, redeliveryDelay, backOffMultiplier, useExponentialBackoff);
     }
     return instance;
   }
 
   CamelContext camelContext;
 
-  private SubscriberCacheEventListener(CamelContext camelContext,int maximumRedeliveries, int redeliveryDelay) {
+  private SubscriberCacheEventListener(CamelContext camelContext,int maximumRedeliveries, int redeliveryDelay, double backOffMultiplier, boolean useExponentialBackoff) {
     this.camelContext = camelContext;
     this.maximumRedeliveries = maximumRedeliveries;
     this.redeliveryDelay = redeliveryDelay;
+    this.backOffMultiplier = backOffMultiplier;
+    this.useExponentialBackoff = useExponentialBackoff;
   }
 
   @Override
@@ -89,7 +93,7 @@ public final class SubscriberCacheEventListener implements CacheEventListener {
     try {
       for (Subscriber subscriber : subscribers) {
         if (camelContext.getRoute(subscriber.getNotificationRouteName()) == null) {
-          camelContext.addRoutes(new EiBackendDynamicNotificationRoute(subscriber, maximumRedeliveries, redeliveryDelay));
+          camelContext.addRoutes(new EiBackendDynamicNotificationRoute(subscriber, maximumRedeliveries, redeliveryDelay, backOffMultiplier, useExponentialBackoff));
         }
       }
     } catch (Exception e) {

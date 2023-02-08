@@ -30,6 +30,12 @@ public class StartupEventNotifier extends EventNotifierSupport {
 	  @Value("${activemq.broker.redelivery-delay:0}")
 	  private Integer redeliveryDelay;
 
+    @Value("${activemq.broker.backoff-multiplier:0.0}")
+    private Double backOffMultiplier;
+
+    @Value("${activemq.broker.use-exponential-backoff:false}")
+    private Boolean useExponentialBackoff;
+
   @Override
   protected void doStart() {
     setIgnoreCamelContextEvents(false);
@@ -68,7 +74,7 @@ public class StartupEventNotifier extends EventNotifierSupport {
     // ProcessNotification amq queues when the Subscriber cache is updated
     net.sf.ehcache.CacheManager ehCacheManager = ((EhCacheCacheManager) cacheManager).getCacheManager();
     final SubscriberCacheEventListener subscriberCacheEventListener = 
-    		SubscriberCacheEventListener.createInstance(camelContext, maximumRedeliveries, redeliveryDelay);
+    		SubscriberCacheEventListener.createInstance(camelContext, maximumRedeliveries, redeliveryDelay, backOffMultiplier, useExponentialBackoff);
     ehCacheManager.getCache("subscriber-cache").getCacheEventNotificationService().registerListener(subscriberCacheEventListener);
 
     // This will initially update the cache and trigger creation of routes in the eventlistener

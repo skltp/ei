@@ -7,6 +7,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PropertiesComponent;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,13 +36,18 @@ public class EiBackendDynamicNotificationRoute extends RouteBuilder {
   
   private int maximumRedeliveries = 0;
   private int redeliveryDelay = 0;
+  private double backOffMultiplier = 0.0d;
+  private boolean useExponentialBackOff = false;
 
   public static final String PROCESSNOTIFICATION_WSDL="/schemas/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl";
 
-  public EiBackendDynamicNotificationRoute(Subscriber subscriber, int maximumRedeliveries, int redeliveryDelay) {
+  public EiBackendDynamicNotificationRoute(Subscriber subscriber, int maximumRedeliveries, int redeliveryDelay, double backOffMultiplier, boolean useExponentialBackOff) {
 	    this.subscriber = subscriber;
 	    this.maximumRedeliveries = maximumRedeliveries;
-	    this.redeliveryDelay = redeliveryDelay;  }
+	    this.redeliveryDelay = redeliveryDelay;
+        this.backOffMultiplier = backOffMultiplier;
+        this.useExponentialBackOff = useExponentialBackOff;
+  }
 
 	private String getDeadLetterQueueName() {
 		  return "DLQ.".concat(subscriber.getNotificationQueueName());
@@ -49,18 +56,25 @@ public class EiBackendDynamicNotificationRoute extends RouteBuilder {
   @Override
   public void configure() {
 
- 	 errorHandler(deadLetterChannel(String.format("activemq:queue:%s", getDeadLetterQueueName()))
-		 .useOriginalMessage()
-		 .maximumRedeliveries(maximumRedeliveries)
-		 .redeliveryDelay(redeliveryDelay)
-         .onRedelivery(new Processor() {
-             @Override
-             public void process(Exchange exchange) throws Exception {
-                 log.error("Redelivery no " 
-            	 + exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class)
-            	 + " from " + subscriber.getNotificationQueueName());
-             }
-         }));
+    DeadLetterChannelBuilder builder = deadLetterChannel(String.format("activemq:queue:%s", getDeadLetterQueueName()));
+    builder.useOriginalMessage()
+           .maximumRedeliveries(maximumRedeliveries)
+           .redeliveryDelay(redeliveryDelay)
+           .backOffMultiplier(backOffMultiplier)
+           .onRedelivery(new Processor() {
+               @Override
+               public void process(Exchange exchange) throws Exception {
+                   log.error("Redelivery no "
+                   + exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class)
+                   + " from " + subscriber.getNotificationQueueName());
+               }
+           });
+    if(useExponentialBackOff) {
+        builder.useExponentialBackOff()
+               .backOffMultiplier(backOffMultiplier);
+    }
+    
+ 	 errorHandler(builder);
  	 
 	  fromF("activemq:queue:%s?transacted=true", subscriber.getNotificationQueueName())
         .id(subscriber.getNotificationRouteName())
