@@ -52,6 +52,7 @@ public class EiBackendUpdateRoute extends RouteBuilder {
                   }
               });
     if(useExponentialBackoff){
+        log.debug("Using exponential backoff for " + processQueueName + " with backoff multiplier: " + backOffMultiplier);
         builder.useExponentialBackOff()
                .backOffMultiplier(backOffMultiplier);
     }
