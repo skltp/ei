@@ -60,7 +60,6 @@ public class EiBackendDynamicNotificationRoute extends RouteBuilder {
     builder.useOriginalMessage()
            .maximumRedeliveries(maximumRedeliveries)
            .redeliveryDelay(redeliveryDelay)
-           .backOffMultiplier(backOffMultiplier)
            .onRedelivery(new Processor() {
                @Override
                public void process(Exchange exchange) throws Exception {
@@ -70,6 +69,7 @@ public class EiBackendDynamicNotificationRoute extends RouteBuilder {
                }
            });
     if(useExponentialBackOff) {
+        log.debug("Using exponential backoff for " + getDeadLetterQueueName() + " with backoff multiplier: " + backOffMultiplier);
         builder.useExponentialBackOff()
                .backOffMultiplier(backOffMultiplier);
     }
