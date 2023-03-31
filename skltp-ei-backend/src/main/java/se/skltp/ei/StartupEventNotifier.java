@@ -25,16 +25,16 @@ import se.skltp.ei.subscriber.SubscriberService;
 @Component
 public class StartupEventNotifier extends EventNotifierSupport {
 
-    @Value("${activemq.broker.maximum-redeliveries}")
+    @Value("${activemq.broker.notification.maximum-redeliveries}")
     private Integer maximumRedeliveries;
 
-    @Value("${activemq.broker.redelivery-delay:0}")
+    @Value("${activemq.broker.notification.redelivery-delay:0}")
     private Integer redeliveryDelay;
 
-    @Value("${activemq.broker.backoff-multiplier:0.0}")
+    @Value("${activemq.broker.notification.backoff-multiplier:0.0}")
     private Double backOffMultiplier;
 
-    @Value("${activemq.broker.use-exponential-backoff:false}")
+    @Value("${activemq.broker.notification.use-exponential-backoff:false}")
     private Boolean useExponentialBackoff;
 
     @Override

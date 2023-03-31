@@ -43,8 +43,14 @@ Utöver dessa properties finns möjlighet att konfigurera de komponenter som anv
 | activemq.broker.url | vm://localhost?broker.persistent=false | URL till AMQ broker  |
 | activemq.broker.user | admin | Användarnamn för ActiveMQ-användare |
 | activemq.broker.password | secret | Lösenord för ActiveMQ-användare |
-| activemq.broker.maximum-redeliveries | 2 | Antal leveransförsök som görs innan meddelanden hamnar i dead letter-kön. Standardinställningen är 0. |  
+| activemq.broker.maximum-redeliveries | 2 | Antal leveransförsök som görs innan meddelanden hamnar i dead letter-kön. Standardinställningen är 0. |
 | activemq.broker.redelivery-delay | 5000 | Tid mellan leveransförsök i millisekunder. Standardinställningen är 0 ms. |
+| activemq.broker.use-exponential-backoff | false | Sätt till true om exponential backoff ska användas, annars false. |
+| activemq.broker.backoff-multiplier | 3 | Om exponential backoff ovan är satt till true, kommer varje omsändningsförsök n att fördröjas med föregående delay \* multiplier. |
+| activemq.broker.notification.maximum-redeliveries | ${activemq.broker.maximum-redeliveries} | Antal leveransförsök specifikt för notification-köer (prenumeranter). Standard är att använda samma värde som för interna köer. |
+| activemq.broker.notification.redelivery-delay | ${activemq.broker.redelivery-delay} | Tid mellan leveransförsök specifikt för notification-köer (prenumeranter). Standard är att använda samma värde som för interna köer. |
+| activemq.broker.notification.use-exponential-backoff | ${activemq.broker.use-exponential-backoff} | Sätt till true om exponential backoff ska användas specifikt för notification-köer (prenumeranter). Standard är att använda samma som för interna köer. |
+| activemq.broker.notification.backoff-multiplier | ${activemq.broker.backoff-multiplier} | Specifikt värde för notification-köer (prenumeranter). Standard är att använda samma värde som för interna köer. |
 | camel.component.activemq.broker-url | ${activemq.broker.url} | Adress till ActiveMQ | 
 | camel.component.activemq.trust-all-packages | true | Standard för ActiveMQ är att inte tillåta serialisering av godtyckliga Javaobjekt. Denna inställning ändrar detta beteende. | 
 
