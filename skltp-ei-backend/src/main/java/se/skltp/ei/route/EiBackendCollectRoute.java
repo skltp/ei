@@ -29,11 +29,14 @@ public class EiBackendCollectRoute extends RouteBuilder {
     @Value("${activemq.broker.redelivery-delay:0}")
     private int redeliveryDelay;
 
+    @Value("${activemq.broker.use-exponential-backoff:false}")
+    private Boolean useExponentialBackoff;
+
     @Value("${activemq.broker.backoff-multiplier:0.0}")
     private Double backOffMultiplier;
 
-    @Value("${activemq.broker.use-exponential-backoff:false}")
-    private Boolean useExponentialBackoff;
+    @Value("${activemq.broker.maximum-redelivery-delay:0}")
+    private int maximumRedeliveryDelay;
 
     @Override
     public void configure() throws Exception {
@@ -51,9 +54,11 @@ public class EiBackendCollectRoute extends RouteBuilder {
                     }
                 });
         if (useExponentialBackoff) {
-            log.info("Using exponential backoff for " + collectQueueName + " with backoff multiplier: " + backOffMultiplier);
+            log.info("Using exponential backoff for {} with backoff multiplier: {} and maximum delay: {}",
+                    collectQueueName, backOffMultiplier, maximumRedeliveryDelay);
             builder.useExponentialBackOff()
-                    .backOffMultiplier(backOffMultiplier);
+                    .backOffMultiplier(backOffMultiplier)
+                    .maximumRedeliveryDelay(maximumRedeliveryDelay);
         }
         errorHandler(builder);
 

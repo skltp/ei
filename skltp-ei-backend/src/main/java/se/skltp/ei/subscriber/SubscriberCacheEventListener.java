@@ -9,7 +9,6 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
 import org.apache.camel.CamelContext;
-import org.springframework.beans.factory.annotation.Value;
 
 import se.skltp.ei.route.EiBackendDynamicNotificationRoute;
 
@@ -20,25 +19,27 @@ public final class SubscriberCacheEventListener implements CacheEventListener {
 
     private int maximumRedeliveries = 0;
     private int redeliveryDelay = 0;
-    private double backOffMultiplier = 0.0d;
     private boolean useExponentialBackoff = false;
+    private double backOffMultiplier = 0.0d;
+    private int maximumRedeliveryDelay = 0;
 
     public static final SubscriberCacheEventListener createInstance(
-            CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, double backOffMultiplier, boolean useExponentialBackoff) {
+            CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, boolean useExponentialBackoff, double backOffMultiplier, int maximumRedeliveryDelay) {
         if (instance == null) {
-            instance = new SubscriberCacheEventListener(camelContext, maximumRedeliveries, redeliveryDelay, backOffMultiplier, useExponentialBackoff);
+            instance = new SubscriberCacheEventListener(camelContext, maximumRedeliveries, redeliveryDelay, useExponentialBackoff, backOffMultiplier, maximumRedeliveryDelay);
         }
         return instance;
     }
 
     CamelContext camelContext;
 
-    private SubscriberCacheEventListener(CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, double backOffMultiplier, boolean useExponentialBackoff) {
+    private SubscriberCacheEventListener(CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, boolean useExponentialBackoff, double backOffMultiplier, int maximumRedeliveryDelay) {
         this.camelContext = camelContext;
         this.maximumRedeliveries = maximumRedeliveries;
         this.redeliveryDelay = redeliveryDelay;
         this.backOffMultiplier = backOffMultiplier;
         this.useExponentialBackoff = useExponentialBackoff;
+        this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
 
     @Override
@@ -93,7 +94,7 @@ public final class SubscriberCacheEventListener implements CacheEventListener {
         try {
             for (Subscriber subscriber : subscribers) {
                 if (camelContext.getRoute(subscriber.getNotificationRouteName()) == null) {
-                    camelContext.addRoutes(new EiBackendDynamicNotificationRoute(subscriber, maximumRedeliveries, redeliveryDelay, backOffMultiplier, useExponentialBackoff));
+                    camelContext.addRoutes(new EiBackendDynamicNotificationRoute(subscriber, maximumRedeliveries, redeliveryDelay, useExponentialBackoff, backOffMultiplier, maximumRedeliveryDelay));
                 }
             }
         } catch (Exception e) {

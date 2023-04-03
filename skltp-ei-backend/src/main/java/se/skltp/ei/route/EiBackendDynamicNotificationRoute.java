@@ -33,17 +33,19 @@ public class EiBackendDynamicNotificationRoute extends RouteBuilder {
 
     private int maximumRedeliveries = 0;
     private int redeliveryDelay = 0;
-    private double backOffMultiplier = 0.0d;
     private boolean useExponentialBackOff = false;
+    private double backOffMultiplier = 0.0d;
+    private int maximumRedeliveryDelay = 0;
 
     public static final String PROCESSNOTIFICATION_WSDL = "/schemas/TD_ENGAGEMENTINDEX_1_0_R/interactions/ProcessNotificationInteraction/ProcessNotificationInteraction_1.0_RIVTABP21.wsdl";
 
-    public EiBackendDynamicNotificationRoute(Subscriber subscriber, int maximumRedeliveries, int redeliveryDelay, double backOffMultiplier, boolean useExponentialBackOff) {
+    public EiBackendDynamicNotificationRoute(Subscriber subscriber, int maximumRedeliveries, int redeliveryDelay, boolean useExponentialBackOff, double backOffMultiplier, int maximumRedeliveryDelay) {
         this.subscriber = subscriber;
         this.maximumRedeliveries = maximumRedeliveries;
         this.redeliveryDelay = redeliveryDelay;
-        this.backOffMultiplier = backOffMultiplier;
         this.useExponentialBackOff = useExponentialBackOff;
+        this.backOffMultiplier = backOffMultiplier;
+        this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
 
     private String getDeadLetterQueueName() {
@@ -56,9 +58,11 @@ public class EiBackendDynamicNotificationRoute extends RouteBuilder {
         DeadLetterChannelBuilder builder = deadLetterChannel(String.format("activemq:queue:%s", getDeadLetterQueueName()));
 
         if (useExponentialBackOff) {
-            log.info("Using exponential backoff for " + getDeadLetterQueueName() + " with backoff multiplier: " + backOffMultiplier);
+            log.info("Using exponential backoff for {} with backoff multiplier: {} and maximum delay: {}",
+                    getDeadLetterQueueName(), backOffMultiplier, maximumRedeliveryDelay);
             builder.useExponentialBackOff()
-                    .backOffMultiplier(backOffMultiplier);
+                    .backOffMultiplier(backOffMultiplier)
+                    .maximumRedeliveryDelay(maximumRedeliveryDelay);
         }
         builder.useOriginalMessage()
                 .maximumRedeliveries(maximumRedeliveries)
