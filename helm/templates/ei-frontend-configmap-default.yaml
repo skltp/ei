@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ei-frontend-application-properties
+  name: ei-frontend-configmap-default
 data:
   
   # Webservices urls
