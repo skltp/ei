@@ -2,7 +2,7 @@ container:
   repository: docker.drift.inera.se/ntjp/
 
 environment:
-  ei-backend:
+  ei_backend:
     variables:
       _default_config_maps:
         - ei-backend-configmap-default
@@ -10,7 +10,7 @@ environment:
         # Override to supply your own maps.
       secrets:
         # Override to supply your own secrets.
-  ei-frontend:
+  ei_frontend:
     variables:
       _default_config_maps:
         - ei-frontend-configmap-default
