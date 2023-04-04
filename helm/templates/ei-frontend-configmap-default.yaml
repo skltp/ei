@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ei-frontend-application-properties
+data:
+  
+  # Webservices urls
+  UPDATE_WEBSERVICE_URL: http://0.0.0.0:8081/skltp-ei/update-service/v1
+  PROCESSNOTIFICATION_WEBSERVICE_URL: http://0.0.0.0:8081/skltp-ei/notification-service/v1
+
+  # Status service URL
+  EI_STATUS_URL: http://0.0.0.0:8084/skltp-ei-frontend/status
+
+  # The engagement index own HSA ID, the same as owner
+  EI_HSA_ID: "5565594230"
+  #EI_ALTERNATIVE_HSA_ID:
+
+  # The HSA ID used when communicating with service platform, e.g GetLogicalAddresseesByServiceContract.
+  VP_HSA_ID: "5565594230"
+
+  # A list of HSA-ID known to not be allowed for usage as logical-address nor source-system in calls to the services Update and ProcessNotification.
+  # This list is used to avoid the possibility to introduce looping aggregating services that is tricked to call it self without end...
+  UPDATE-NOTIFICATION_NOT_ALLOWED_HSAID_LIST: "5565594230"
+
+  # AMQ broker property
+  activemq.broker.url: failover:(tcp://ei-amq:61616)?randomize=false&timeout=10000&jms.prefetchPolicy.queuePrefetch=5
+  # ACTIVEMQ_BROKER_USER:
+  # ACTIVEMQ_BROKER_PASSWORD:
+  ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "5"
+  ACTIVEMQ_BROKER_REDELIVERY_DELAY: "60000"
