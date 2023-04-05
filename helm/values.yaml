@@ -1,15 +1,21 @@
 container:
   repository: docker.drift.inera.se/ntjp/
+  backend:
+    image:
+      tag: "3.1.0-SNAPSHOT"
+  frontend:
+    image:
+      tag:
 
 environment:
-  ei_backend:
+  backend:
     _default_config_maps:
       - ei-backend-configmap-default
     config_maps:
       # Override to supply your own maps.
     secrets:
       # Override to supply your own secrets.
-  ei_frontend:
+  frontend:
     _default_config_maps:
       - ei-frontend-configmap-default
     config_maps:

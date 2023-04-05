@@ -24,8 +24,7 @@ spec:
         - name: regcred
       containers:
         - name: skltp-ei-frontend
-          image: "{{ .Values.container.repository }}skltp-ei-frontend:{{ .Chart.AppVersion }}"
-          imagePullPolicy: Always
+          image: "{{ .Values.container.repository }}skltp-ei-frontend:{{ .Values.container.frontend.image.tag | default $.Chart.AppVersion }}"
           ports:
             - containerPort: 8081
               protocol: TCP
@@ -61,15 +60,15 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           envFrom:
-            {{- range $.Values.environment.ei_frontend._default_config_maps }}
+            {{- range $.Values.environment.frontend._default_config_maps }}
             - configMapRef:
                 name: {{ . }}
             {{- end }}
-            {{- range $.Values.environment.ei_frontend.config_maps }}
+            {{- range $.Values.environment.frontend.config_maps }}
             - configMapRef:
                 name: {{ . }}
             {{- end }}
-            {{- range $.Values.environment.ei_frontend.secrets }}
+            {{- range $.Values.environment.frontend.secrets }}
             - secretRef:
                 name: {{ . }}
             {{- end }}
