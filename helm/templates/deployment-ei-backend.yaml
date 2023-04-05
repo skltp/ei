@@ -61,15 +61,15 @@ spec:
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           envFrom:
-            {{- range $.Values.environment.ei_backend.variables._default_config_maps }}
+            {{- range $.Values.environment.ei_backend._default_config_maps }}
             - configMapRef:
                 name: {{ . }}
             {{- end }}
-            {{- range $.Values.environment.ei_backend.variables.config_maps }}
+            {{- range $.Values.environment.ei_backend.config_maps }}
             - configMapRef:
                 name: {{ . }}
             {{- end }}
-            {{- range $.Values.environment.ei_backend.variables.secrets }}
+            {{- range $.Values.environment.ei_backend.secrets }}
             - secretRef:
                 name: {{ . }}
             {{- end }}
