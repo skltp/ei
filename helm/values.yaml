@@ -3,18 +3,16 @@ container:
 
 environment:
   ei_backend:
-    variables:
-      _default_config_maps:
-        - ei-backend-configmap-default
-      config_maps:
-        # Override to supply your own maps.
-      secrets:
-        # Override to supply your own secrets.
+    _default_config_maps:
+      - ei-backend-configmap-default
+    config_maps:
+      # Override to supply your own maps.
+    secrets:
+      # Override to supply your own secrets.
   ei_frontend:
-    variables:
-      _default_config_maps:
-        - ei-frontend-configmap-default
-      config_maps:
-        # Override to supply your own maps.
-      secrets:
-        # Override to supply your own secrets.
+    _default_config_maps:
+      - ei-frontend-configmap-default
+    config_maps:
+      # Override to supply your own maps.
+    secrets:
+      # Override to supply your own secrets.
