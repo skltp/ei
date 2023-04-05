@@ -34,7 +34,7 @@ data:
   EI_STATUS_URL: http://0.0.0.0:8083/skltp-ei-backend/status
 
   # Activemq properties
-  ACTIVEMQ_BROKER_URL: failover:(tcp://ei-amq:61616)?randomize=false&timeout=10000&jms.prefetchPolicy.queuePrefetch=5
+  activemq.broker.url: failover:(tcp://ei-amq:61616)?randomize=false&timeout=10000&jms.prefetchPolicy.queuePrefetch=5
   # ACTIVEMQ_BROKER_USER:
   # ACTIVEMQ_BROKER_PASSWORD:
   ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "5"
@@ -43,7 +43,7 @@ data:
   ACTIVEMQ_BROKER_USE_EXPONENTIAL_BACKOFF: "true"
 
   # MySQL settings
-  SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/ei_test_amq?serverTimezone=Europe/Stockholm
+  spring.datasource.url: jdbc:mysql://localhost:3306/ei_test_amq?serverTimezone=Europe/Stockholm
   SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
   SPRING_DATASOURCE_JPA_DATABASE-PLATFORM: org.hibernate.dialect.MySQL8Dialect
   SPRING_DATASOURCE_JPA_HIBERNATE_DDL-AUTO: update
