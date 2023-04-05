@@ -2,10 +2,10 @@ container:
   repository: docker.drift.inera.se/ntjp/
   backend:
     image:
-      tag: "3.1.0-SNAPSHOT"
+      tag: # Override to supply another image tag to run
   frontend:
     image:
-      tag:
+      tag: # Override to supply another image tag to run
 
 environment:
   backend:
