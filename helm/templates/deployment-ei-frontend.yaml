@@ -24,7 +24,7 @@ spec:
         - name: regcred
       containers:
         - name: skltp-ei-frontend
-          image: "{{ .Values.container.repository }}skltp-ei-frontend:{{ .Values.container.frontend.image.tag | default $.Chart.AppVersion }}"
+          image: "{{ .Values.repository }}skltp-ei-frontend:{{ .Values.container.frontend.image.tag | default $.Chart.AppVersion }}"
           ports:
             - containerPort: 8081
               protocol: TCP

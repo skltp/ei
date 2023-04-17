@@ -24,7 +24,7 @@ spec:
         - name: regcred
       containers:
         - name: skltp-ei-backend
-          image: "{{ .Values.container.repository }}skltp-ei-backend:{{ .Values.container.backend.image.tag | default $.Chart.AppVersion }}"
+          image: "{{ .Values.repository }}skltp-ei-backend:{{ .Values.container.backend.image.tag | default $.Chart.AppVersion }}"
           imagePullPolicy: Always
           ports:
             - containerPort: 8082

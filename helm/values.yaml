@@ -1,5 +1,5 @@
+repository: docker.drift.inera.se/ntjp/
 container:
-  repository: docker.drift.inera.se/ntjp/
   backend:
     image:
       tag: # Override to supply another image tag to run
