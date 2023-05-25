@@ -1,4 +1,5 @@
 repository: docker.drift.inera.se/ntjp/
+
 container:
   backend:
     image:
@@ -6,6 +7,10 @@ container:
   frontend:
     image:
       tag: # Override to supply another image tag to run
+
+# Environment-specific backwards-compatible service name
+vip:
+  name: default-ei-vip
 
 environment:
   backend:

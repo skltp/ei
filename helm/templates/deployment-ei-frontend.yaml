@@ -28,8 +28,10 @@ spec:
           ports:
             - containerPort: 8081
               protocol: TCP
+              name: frontend-tcp1
             - containerPort: 8084
               protocol: TCP
+              name: frontend-tcp2
           livenessProbe:
             failureThreshold: 15
             httpGet:

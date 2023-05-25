@@ -29,8 +29,10 @@ spec:
           ports:
             - containerPort: 8082
               protocol: TCP
+              name: backend-tcp1
             - containerPort: 8083
               protocol: TCP
+              name: backend-tcp2
           livenessProbe:
             failureThreshold: 15
             httpGet:
