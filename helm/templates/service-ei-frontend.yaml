@@ -16,6 +16,6 @@ spec:
     targetPort: 8084
     name: status
   selector:
-    app: ei-frontend
+    name: ei-frontend
   sessionAffinity: None
   type: ClusterIP

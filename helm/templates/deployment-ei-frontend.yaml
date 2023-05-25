@@ -8,7 +8,8 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ei-frontend
+      name: ei-frontend
+      app: ei
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -18,7 +19,8 @@ spec:
     metadata:
       annotations:
       labels:
-        app: ei-frontend
+        name: ei-frontend
+        app: ei
     spec:
       imagePullSecrets:
         - name: regcred

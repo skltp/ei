@@ -16,7 +16,7 @@ spec:
     targetPort: 8083
     name: status
   selector:
-    app: ei-backend
+    name: ei-backend
   sessionAffinity: None
   type: ClusterIP
 status:
