@@ -14,7 +14,7 @@ data:
 
   # VP properties for calling VP services
   VP_HSA_ID: "5565594230"
-  VP_INSTANCE_ID: NTjP_T_SERVICES_SE165565594230-10BR
+  VP_INSTANCE_ID: {{ .Values.skltp.instanceId }}
 
   # Properties to call GetLogicalAddresseesByServiceContract
   GETLOGICALADDRESSES_SERVICEENDPOINTURL: http://vp:8080/vp/infrastructure/itintegration/registry/GetLogicalAddresseesByServiceContract/2/rivtabp21
