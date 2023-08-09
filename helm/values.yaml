@@ -1,0 +1,29 @@
+repository: docker.drift.inera.se/ntjp/
+
+container:
+  backend:
+    image:
+      tag: # Override to supply another image tag to run
+  frontend:
+    image:
+      tag: # Override to supply another image tag to run
+
+# Environment-specific backwards-compatible service name
+vip:
+  name: default-ei-vip
+
+environment:
+  backend:
+    _default_config_maps:
+      - ei-backend-configmap-default
+    config_maps:
+      # Override to supply your own maps.
+    secrets:
+      # Override to supply your own secrets.
+  frontend:
+    _default_config_maps:
+      - ei-frontend-configmap-default
+    config_maps:
+      # Override to supply your own maps.
+    secrets:
+      # Override to supply your own secrets.
