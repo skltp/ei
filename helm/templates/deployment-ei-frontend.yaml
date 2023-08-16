@@ -42,7 +42,7 @@ spec:
             failureThreshold: 10
             httpGet:
               path: actuator/health/liveness
-              port: 8881
+              port: 8882
               scheme: HTTP
             initialDelaySeconds: 90
             periodSeconds: 20
@@ -52,7 +52,7 @@ spec:
             failureThreshold: 10
             httpGet:
               path: actuator/health/readiness
-              port: 8881
+              port: 8882
               scheme: HTTP
             initialDelaySeconds: 40
             periodSeconds: 10
