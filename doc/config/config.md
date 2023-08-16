@@ -12,7 +12,11 @@ Utöver dessa properties finns möjlighet att konfigurera de komponenter som anv
 | update.webservice.url | http://localhost:8081/skltp-ei/update-service/v1 |URL för Update webbtjänsten |
 | processnotification.webservice.url | http://localhost:8081/skltp-ei/notification-service/v1 | URL för ProcessNotification webbtjänsten |
 | findcontent.webservice.url | http://localhost:8082/skltp-ei/find-content-service/v1 | URL för FindContent webtjänsten |
-| management.endpoints.web.exposure.include | hawtio,jolokia | Behöver vara 'hawtio,jolokia' för att hawtio ska köras |
+| management.endpoints.web.exposure.include | hawtio,jolokia,health | Behöver inkluder 'hawtio,jolokia' för att hawtio ska köras. 'health' behövs för probes |
+| management.endpoint.health.probes.enabled | true | Exponera liveness/readiness probes |
+| management.endpoint.health.show-details | always | Visa detaljer om health indicators |
+| management.health.livenessState.enabled | true | Aktivera inbyggd livess-indikator |
+| management.health.readinessState.enabled | true | Aktivera inbyggd readiness-indikator |
 | spring.jmx.enabled | true | Slå på JMX för Spring, så att det går att konfigurera t.ex. köer i Hawtio |
 | hawtio.authentication.enabled | true | Sätt till 'false' för att stänga av autentisering i Hawtio |
 | hawtio.external.loginfile | src/test/resources/users.properties | Sökväg till fil med Hawtio-användare och lösenord. Användare behöver tillhöra rollen 'user' för att kunna logga in. Formatet beskrivs på: https://wiki.eclipse.org/Jetty/Tutorial/Realms#HashLoginService |
