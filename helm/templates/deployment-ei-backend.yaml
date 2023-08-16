@@ -35,6 +35,10 @@ spec:
             - containerPort: 8083
               protocol: TCP
               name: backend-tcp2
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
           livenessProbe:
             failureThreshold: 10
             httpGet:
