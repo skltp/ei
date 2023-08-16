@@ -35,26 +35,30 @@ spec:
             - containerPort: 8083
               protocol: TCP
               name: backend-tcp2
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep", "10"]
           livenessProbe:
-            failureThreshold: 15
+            failureThreshold: 10
             httpGet:
-              path: skltp-ei-backend/status
-              port: 8083
+              path: actuator/health/liveness
+              port: 8881
               scheme: HTTP
-            initialDelaySeconds: 60
+            initialDelaySeconds: 90
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 5
           readinessProbe:
-            failureThreshold: 3
+            failureThreshold: 10
             httpGet:
-              path: skltp-ei-backend/status
-              port: 8083
+              path: actuator/health/readiness
+              port: 8881
               scheme: HTTP
-            initialDelaySeconds: 30
+            initialDelaySeconds: 40
             periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 2
+            timeoutSeconds: 5
           resources:
             limits:
               cpu: 801m
