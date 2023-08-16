@@ -4,9 +4,11 @@ container:
   backend:
     image:
       tag: # Override to supply another image tag to run
+      pullPolicy: Always
   frontend:
     image:
       tag: # Override to supply another image tag to run
+      pullPolicy: Always
 
 # Environment-specific backwards-compatible service name
 vip:
