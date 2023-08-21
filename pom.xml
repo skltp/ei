@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.5.12</version>
+    <version>2.7.14</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>se.skltp.ei</groupId>
@@ -32,7 +32,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <camel.version>3.7.4</camel.version>
-    <spring.boot-version>2.5.12</spring.boot-version>
+    <spring.boot-version>2.7.14</spring.boot-version>
     <hawtio.spring.boot-version>2.10.2</hawtio.spring.boot-version>
     <lombok.version>1.18.12</lombok.version>
     <apache-cfx.version>3.4.2</apache-cfx.version>
