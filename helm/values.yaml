@@ -14,6 +14,14 @@ container:
 vip:
   name: default-ei-vip
 
+deployments:
+  backend:
+    replicaCount: 1
+    elasticGrokFilter: camel
+  frontend:
+    replicaCount: 1
+    elasticGrokFilter: camel
+
 environment:
   backend:
     _default_config_maps:
