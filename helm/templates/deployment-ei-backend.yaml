@@ -61,9 +61,10 @@ spec:
             timeoutSeconds: 5
           resources:
             limits:
-              memory: 800Mi
+              memory: 1Gi
             requests:
-              memory: 800Mi
+              cpu: 200m
+              memory: 1Gi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           envFrom:
