@@ -5,7 +5,7 @@ metadata:
   name: ei-backend
 spec:
   progressDeadlineSeconds: 600
-  replicas: 1
+  replicas: {{ .Values.deployments.backend.replicaCount }}
   selector:
     matchLabels:
       name: ei-backend
@@ -21,6 +21,7 @@ spec:
       labels:
         name: ei-backend
         app: ei
+        elasticGrokFilter: {{ .Values.deployments.backend.elasticGrokFilter }}
     spec:
       imagePullSecrets:
         - name: regcred
