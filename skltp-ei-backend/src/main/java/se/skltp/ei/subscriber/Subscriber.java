@@ -12,8 +12,6 @@ import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyserv
 @XmlRootElement
 public class Subscriber implements Serializable {
 
-  public static final String NOTIFICATION_QUEUE_PREFIX = "EI.NOTIFICATION.";
-
   /**
    * LogicalAddress that identifies this subscriber
    */
@@ -32,11 +30,11 @@ public class Subscriber implements Serializable {
   public Subscriber() {
   }
 
-  public Subscriber(String logicalAdress, List<FilterType> filterList) {
+  public Subscriber(String logicalAdress, List<FilterType> filterList, String notificationQueuePrefix) {
     this.logicalAdress = logicalAdress;
     this.filterList = filterList;
 
-    queueName = NOTIFICATION_QUEUE_PREFIX + logicalAdress;
+    queueName = notificationQueuePrefix + logicalAdress;
   }
 
   public String getLogicalAdress() {
