@@ -18,7 +18,7 @@ import se.skltp.ei.updateprocess.CreateProcessNotificationRequestProcessor;
 /**
  * Route definition for sending notifications to subscribers.
  * <br><br>
- * Queue name: EI.NOTIFICATION.subscriber
+ * Default name: EI.NOTIFICATION.subscriber
  * <br>where subscriber is a logical address.
  *
  * <br><br>
