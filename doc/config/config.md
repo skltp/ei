@@ -44,6 +44,7 @@ Utöver dessa properties finns möjlighet att konfigurera de komponenter som anv
 | collect.queue.completion.timeout | 5 | Max sekunder meddelande kan ligga i collect kön innan de skickas till processkön  |
 | update.collect.threshold | 1 | Threshold för antal engagemang i ett anrop för att de ska hamna direkt i Process kön |
 | process.queue.name | skltp.ei.process | Namn på processkön i AMQ  |
+| notification.queue.prefix | EI.NOTIFICATION. | Prefix för namn på notification-köer i AMQ. Kö-namnet bildas av prefixet och prenumerantens logiska adress.  |
 | activemq.broker.url | vm://localhost?broker.persistent=false | URL till AMQ broker  |
 | activemq.broker.user | admin | Användarnamn för ActiveMQ-användare |
 | activemq.broker.password | secret | Lösenord för ActiveMQ-användare |
