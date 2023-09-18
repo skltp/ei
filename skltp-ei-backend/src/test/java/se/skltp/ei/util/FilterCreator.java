@@ -10,6 +10,8 @@ import se.skltp.ei.subscriber.Subscriber;
  */
 public class FilterCreator {
 
+  static String NOTIFICATION_QUEUE_PREFIX = "EI.NOTIFICATION.";
+
   /**
    * Create a list of FilterType with only one FilterType element
    *
@@ -39,9 +41,9 @@ public class FilterCreator {
     // Create a subscriber
     Subscriber s;
     if (serviceDomain != null) {
-      s = new Subscriber(logicalAddress, createFilterList(createFilter(serviceDomain, categorizations)));
+      s = new Subscriber(logicalAddress, createFilterList(createFilter(serviceDomain, categorizations)), NOTIFICATION_QUEUE_PREFIX);
     } else {
-      s = new Subscriber(logicalAddress, new ArrayList());
+      s = new Subscriber(logicalAddress, new ArrayList(), NOTIFICATION_QUEUE_PREFIX);
     }
 
     subscribers.add(s);
