@@ -25,6 +25,9 @@ public class SubscriberCachableService implements SubscriberService {
   @Value("${subscriber.cache.file.name:#{null}}")
   private String subscriberCachefilePath;
 
+  @Value("${notification.queue.prefix:notification.}")
+  private String notificationQueuePrefix;
+
   @Override
   @Cacheable(value = "subscriber-cache", key = "'subscribers'",  sync = true)
   public List<Subscriber> getSubscribers(){
@@ -33,7 +36,8 @@ public class SubscriberCachableService implements SubscriberService {
     try {
       GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = logicalAddresseesServiceClient.callService();
       List<Subscriber> subscribers = logicalAddressesResponse.getLogicalAddressRecord().stream()
-          .map(record -> new Subscriber(record.getLogicalAddress(), record.getFilter())).collect(Collectors.toList());
+          .map(record -> new Subscriber(record.getLogicalAddress(), record.getFilter(), notificationQueuePrefix))
+          .collect(Collectors.toList());
 
       SubscriberFileTool.saveToLocalCopy(subscribers, subscriberCachefilePath);
       return subscribers;
