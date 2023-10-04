@@ -2,7 +2,8 @@ FROM openjdk:11-oraclelinux8
 
 ENV BASE_DIR=/opt/skltp/ \
     USER=ind-app \
-    LOG_DIR=/var/log/
+    LOG_DIR=/var/log/ \
+    TZ=Europe/Stockholm
 
 ADD target/skltp-ei-frontend-*-exec.jar ${BASE_DIR}app.jar
 RUN mkdir -p ${LOG_DIR} \
