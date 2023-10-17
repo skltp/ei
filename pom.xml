@@ -41,7 +41,8 @@
     <h2database.version>2.2.220</h2database.version>
     <ehcache.version>2.10.6</ehcache.version>
     <commons.lang.version>2.6</commons.lang.version>
-    <log4j2.version>2.17.1</log4j2.version>
+    <log4j2.version>2.17.2</log4j2.version>
+    <log4j.version>2.17.2</log4j.version>
     <ecs-logging-java.version>1.5.0</ecs-logging-java.version>
     <jaxws.version>2.3.5</jaxws.version>
 
@@ -223,11 +224,6 @@
         <groupId>co.elastic.logging</groupId>
         <artifactId>log4j2-ecs-layout</artifactId>
         <version>${ecs-logging-java.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-layout-template-json</artifactId>
-        <version>${log4j.version}</version>
       </dependency>
       <!-- for async logging -->
       <dependency>

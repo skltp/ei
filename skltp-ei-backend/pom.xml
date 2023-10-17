@@ -125,6 +125,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
+        <dependency>
+            <groupId>co.elastic.logging</groupId>
+            <artifactId>log4j2-ecs-layout</artifactId>
+            <version>${ecs-logging-java.version}</version>
+        </dependency>
 
         <!-- for async logging -->
         <dependency>
