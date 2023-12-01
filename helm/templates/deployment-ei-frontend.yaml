@@ -23,12 +23,19 @@ spec:
         app: ei
         elasticGrokFilter: {{ .Values.deployments.frontend.elasticGrokFilter }}
     spec:
+      volumes:
+        - name: log4j
+          configMap:
+            name: ei-log4j
       imagePullSecrets:
         - name: regcred
       containers:
         - name: skltp-ei-frontend
           image: "{{ .Values.repository }}skltp-ei-frontend:{{ .Values.container.frontend.image.tag | default $.Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.frontend.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: /etc/ei
+              name: log4j
           ports:
             - containerPort: 8081
               protocol: TCP

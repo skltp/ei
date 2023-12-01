@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: ei-frontend-configmap-default
 data:
+  LOGGING_CONFIG: /etc/ei/log4j2.xml
   
   # Webservices urls
   UPDATE_WEBSERVICE_URL: http://0.0.0.0:8081/skltp-ei/update-service/v1
@@ -34,4 +35,3 @@ data:
   # ACTIVEMQ_BROKER_PASSWORD:
   ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "5"
   ACTIVEMQ_BROKER_REDELIVERY_DELAY: "60000"
-  LOG4J_APPENDER: ECS

@@ -40,3 +40,21 @@ environment:
       # Override to supply your own maps.
     secrets:
       # Override to supply your own secrets.
+
+log4j:
+  loggers:
+    - name: se.skltp.ei
+      level: INFO
+    - name: se.skltp.ei.subscriber
+      level: INFO
+    - name: se.skltp.ei.service.GetLogicalAddresseesServiceClient
+      level: WARN
+    - name: se.skltp.ei.EiApplication
+      level: INFO
+    - name: eiBackendLog
+      level: INFO
+    - name: eiFrontendLog
+      level: INFO
+    - name: org.apache.camel
+      level: INFO
+  rootLoggerLevel: WARN
