@@ -5,6 +5,7 @@ metadata:
 data:
   # Used for hawtio (http://localhost:8881/actuator/hawtio/)
   SERVER_PORT: "8881"
+  LOGGING_CONFIG: /etc/ei/log4j2.xml
 
   # Webservices urls
   FINDCONTENT_WEBSERVICE_URL: http://0.0.0.0:8082/skltp-ei/find-content-service/v1
@@ -55,4 +56,3 @@ data:
   SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
   SPRING_DATASOURCE_JPA_DATABASE-PLATFORM: org.hibernate.dialect.MySQL8Dialect
   SPRING_DATASOURCE_JPA_HIBERNATE_DDL-AUTO: update
-  LOG4J_APPENDER: ECS
