@@ -21,6 +21,7 @@ spec:
       labels:
         name: ei-backend
         app: ei
+        app.kubernetes.io/name: ei-backend
         elasticGrokFilter: {{ .Values.deployments.backend.elasticGrokFilter }}
     spec:
       volumes:
