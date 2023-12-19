@@ -21,9 +21,11 @@ deployments:
   backend:
     replicaCount: 1
     elasticGrokFilter: camel
+    memory: 1Gi
   frontend:
     replicaCount: 1
     elasticGrokFilter: camel
+    memory: 512Mi
 
 environment:
   backend:
