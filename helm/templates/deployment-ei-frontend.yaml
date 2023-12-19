@@ -70,10 +70,10 @@ spec:
             timeoutSeconds: 5
           resources:
             limits:
-              memory: {{ .Values.deployment.frontend.memory }}
+              memory: {{ .Values.deployments.frontend.memory }}
             requests:
               cpu: 150m
-              memory: {{ .Values.deployment.frontend.memory }}
+              memory: {{ .Values.deployments.frontend.memory }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           envFrom:
