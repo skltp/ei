@@ -72,7 +72,7 @@ spec:
             limits:
               memory: {{ .Values.deployments.backend.memory }}
             requests:
-              cpu: 200m
+              cpu: 100m
               memory: {{ .Values.deployments.backend.memory }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
