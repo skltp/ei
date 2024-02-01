@@ -21,11 +21,26 @@ deployments:
   backend:
     replicaCount: 1
     elasticGrokFilter: camel
-    memory: 1Gi
   frontend:
     replicaCount: 1
     elasticGrokFilter: camel
+
+backend_resources: #{} # Comment the no-op curly-braces if you activate below commented-out resources.
+  limits:
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 1Gi
+
+frontend_resources: #{} # Comment the no-op curly-braces if you activate below commented-out resources.
+  limits:
     memory: 512Mi
+  requests:
+    cpu: 75m
+    memory: 512Mi
+
+skltp:
+  instanceId: -999 # placeholder to allow local chart templating.
 
 environment:
   backend:
