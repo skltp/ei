@@ -68,12 +68,8 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 5
-          resources:
-            limits:
-              memory: {{ .Values.deployments.backend.memory }}
-            requests:
-              cpu: 100m
-              memory: {{ .Values.deployments.backend.memory }}
+          resources: # Block-templated memory and CPU resources.
+            {{- toYaml .Values.backend_resources | nindent 12 }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           envFrom:
