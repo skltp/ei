@@ -1,6 +1,6 @@
 # EI - SKLTP Engagemangs Index
 Projektet är byggd med Spring-boot och Apache Camel.<br/>
-Mer information om EI: https://skl-tp.atlassian.net/wiki/spaces/SKLTP/pages/8323234/EI+-+Engagemangsindex <br/>
+Mer information om EI: https://inera.atlassian.net/wiki/spaces/SKLTP/pages/3187858114/EI+-+Engagemangsindex <br/>
  
  **Bygga projektet:<br/>**
  _mvn clean install_<br/>
