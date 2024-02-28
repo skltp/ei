@@ -4,7 +4,7 @@ pipeline {
   environment{
     JDK_PATH = tool name: 'openjdk-11'
     JAVA_HOME = "${JDK_PATH}"
-    MAVEN_DOCKER_IMAGE = 'maven:3.8.4-jdk-11'
+    MAVEN_DOCKER_IMAGE = 'maven:3.9-eclipse-temurin-11'
   }
 
   stages{

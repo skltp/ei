@@ -13,7 +13,7 @@ pipeline {
     environment{
         JDK_PATH = tool name: 'openjdk-11'
         JAVA_HOME = "${env.JDK_PATH}"
-        MAVEN_IMAGE = 'maven:3.8.4-jdk-11'
+        MAVEN_IMAGE = 'maven:3.9-eclipse-temurin-11'
         SCANNER_HOME = tool name: 'SonarScanner 4.5'
     }
 
