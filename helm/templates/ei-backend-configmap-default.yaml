@@ -3,9 +3,11 @@ kind: ConfigMap
 metadata:
   name: ei-backend-configmap-default
 data:
-  # Used for hawtio (http://localhost:8881/actuator/hawtio/)
-  SERVER_PORT: "8881"
   LOGGING_CONFIG: /etc/ei/log4j2.xml
+
+  # Actuator settings
+  SERVER_PORT: "8881"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
 
   # Webservices urls
   FINDCONTENT_WEBSERVICE_URL: http://0.0.0.0:8082/skltp-ei/find-content-service/v1

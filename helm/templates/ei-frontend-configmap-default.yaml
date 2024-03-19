@@ -4,6 +4,10 @@ metadata:
   name: ei-frontend-configmap-default
 data:
   LOGGING_CONFIG: /etc/ei/log4j2.xml
+
+  # Actuator settings
+  SERVER_PORT: "8882"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
   
   # Webservices urls
   UPDATE_WEBSERVICE_URL: http://0.0.0.0:8081/skltp-ei/update-service/v1
