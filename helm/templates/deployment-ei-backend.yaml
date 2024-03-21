@@ -74,7 +74,7 @@ spec:
               drop:
                 - ALL
             runAsNonRoot: true
-            runAsUser: 556559423 # ind-app user
+            runAsUser: 1000 # ind-app user
             seccompProfile:
               type: RuntimeDefault
           resources: # Block-templated memory and CPU resources.
