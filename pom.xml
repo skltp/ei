@@ -20,7 +20,7 @@
   </parent>
   <groupId>se.skltp.ei</groupId>
   <artifactId>skltp-ei-parent</artifactId>
-  <version>3.2.3-RC2</version>
+  <version>3.2.3-RC3-SNAPSHOT</version>
   <name>skltp-ei-parent</name>
   <description>Engagement index built with Apache Camel</description>
 
@@ -79,7 +79,7 @@
     <url>http://github.com/skltp/ei</url>
     <connection>scm:git:https://github.com/skltp/ei.git</connection>
     <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
-    <tag>v3.2.3-RC2</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencyManagement>
