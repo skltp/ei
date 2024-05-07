@@ -119,8 +119,8 @@ probes_frontend:
       path: actuator/health/readiness
       port: 8882
       scheme: HTTP
-    initialDelaySeconds: 15
-    periodSeconds: 5  # 15s initial + 9 failures * 5s period = 60 seconds max startup before failure and restart.
+    initialDelaySeconds: 20
+    periodSeconds: 5  # 20s initial + 9 failures * 5s period = 65 seconds max startup before failure and restart.
     timeoutSeconds: 4
     successThreshold: 1
     failureThreshold: 9
