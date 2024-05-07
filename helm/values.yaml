@@ -76,11 +76,11 @@ log4j:
       level: INFO
   rootLoggerLevel: WARN
 
-probes:
+probes_backend:
   startupProbe:
     httpGet:
       path: actuator/health/readiness
-      port: 8089
+      port: 8881
       scheme: HTTP
     initialDelaySeconds: 15
     periodSeconds: 5  # 15s initial + 9 failures * 5s period = 60 seconds max startup before failure and restart.
@@ -90,7 +90,7 @@ probes:
   livenessProbe:
     httpGet:
       path: actuator/health/liveness
-      port: 8089
+      port: 8881
       scheme: HTTP
     initialDelaySeconds: 10
     periodSeconds: 10
@@ -102,7 +102,44 @@ probes:
   readinessProbe:
     httpGet:
       path: actuator/health/readiness
-      port: 8089
+      port: 8881
+      scheme: HTTP
+    # lower initial delay than liveness, but same period, allows traffic to be governed before liveness is tested.
+    initialDelaySeconds: 9
+    periodSeconds: 10
+    timeoutSeconds: 5
+    # 1x 10s + timeout 5s allows for up to 15 seconds on non-response before traffic is cut from pod.
+    #    Earliest cut possible 24 seconds after startup completes.
+    failureThreshold: 1
+    successThreshold: 1
+
+probes_frontend:
+  startupProbe:
+    httpGet:
+      path: actuator/health/readiness
+      port: 8882
+      scheme: HTTP
+    initialDelaySeconds: 15
+    periodSeconds: 5  # 15s initial + 9 failures * 5s period = 60 seconds max startup before failure and restart.
+    timeoutSeconds: 4
+    successThreshold: 1
+    failureThreshold: 9
+  livenessProbe:
+    httpGet:
+      path: actuator/health/liveness
+      port: 8882
+      scheme: HTTP
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    # 3x 10s + 5s timeout allows for up to 45 seconds of non-responsiveness before pod kill-and-restart.
+    #    Earliest kill possible 55 seconds after startup completes.
+    failureThreshold: 4
+    successThreshold: 1
+  readinessProbe:
+    httpGet:
+      path: actuator/health/readiness
+      port: 8882
       scheme: HTTP
     # lower initial delay than liveness, but same period, allows traffic to be governed before liveness is tested.
     initialDelaySeconds: 9
