@@ -44,6 +44,9 @@ spec:
             - containerPort: 8083
               protocol: TCP
               name: backend-tcp2
+            - containerPort: 8881
+              protocol: TCP
+              name: actuators
           lifecycle:
             preStop:
               exec:

@@ -80,7 +80,7 @@ probes_backend:
   startupProbe:
     httpGet:
       path: actuator/health/readiness
-      port: 8881
+      port: actuators
       scheme: HTTP
     initialDelaySeconds: 20
     periodSeconds: 5  # 20s initial + 9 failures * 5s period = 65 seconds max startup before failure and restart.
@@ -90,7 +90,7 @@ probes_backend:
   livenessProbe:
     httpGet:
       path: actuator/health/liveness
-      port: 8881
+      port: actuators
       scheme: HTTP
     initialDelaySeconds: 10
     periodSeconds: 10
@@ -102,7 +102,7 @@ probes_backend:
   readinessProbe:
     httpGet:
       path: actuator/health/readiness
-      port: 8881
+      port: actuators
       scheme: HTTP
     # lower initial delay than liveness, but same period, allows traffic to be governed before liveness is tested.
     initialDelaySeconds: 9
@@ -127,7 +127,7 @@ probes_frontend:
   livenessProbe:
     httpGet:
       path: actuator/health/liveness
-      port: 8882
+      port: actuators
       scheme: HTTP
     initialDelaySeconds: 10
     periodSeconds: 10
@@ -139,7 +139,7 @@ probes_frontend:
   readinessProbe:
     httpGet:
       path: actuator/health/readiness
-      port: 8882
+      port: actuators
       scheme: HTTP
     # lower initial delay than liveness, but same period, allows traffic to be governed before liveness is tested.
     initialDelaySeconds: 9

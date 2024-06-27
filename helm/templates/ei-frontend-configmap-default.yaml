@@ -7,7 +7,8 @@ data:
 
   # Actuator settings
   SERVER_PORT: "8882"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
+  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: true
   
   # Webservices urls
   UPDATE_WEBSERVICE_URL: http://0.0.0.0:8081/skltp-ei/update-service/v1

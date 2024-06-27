@@ -44,6 +44,9 @@ spec:
             - containerPort: 8084
               protocol: TCP
               name: frontend-tcp2
+            - containerPort: 8882
+              protocol: TCP
+              name: actuators
           lifecycle:
             preStop:
               exec:
