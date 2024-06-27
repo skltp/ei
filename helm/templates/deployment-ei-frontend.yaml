@@ -23,6 +23,7 @@ spec:
         app: ei
         app.kubernetes.io/name: ei-frontend
         elasticGrokFilter: {{ .Values.deployments.frontend.elasticGrokFilter }}
+        monitoring: prometheus
     spec:
       volumes:
         - name: log4j
