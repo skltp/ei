@@ -7,8 +7,8 @@ data:
 
   # Actuator settings
   SERVER_PORT: "8881"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
-  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: true
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,prometheus"
+  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
 
   # Webservices urls
   FINDCONTENT_WEBSERVICE_URL: http://0.0.0.0:8082/skltp-ei/find-content-service/v1
