@@ -6,6 +6,7 @@ metadata:
 spec:
   progressDeadlineSeconds: 600
   replicas: {{ .Values.deployments.frontend.replicaCount }}
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       name: ei-frontend
