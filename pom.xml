@@ -33,13 +33,13 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <camel.version>3.7.7</camel.version>
+        <camel.version>3.22.2</camel.version>
         <spring.boot-version>2.7.18</spring.boot-version>
         <hawtio.spring.boot-version>2.10.2</hawtio.spring.boot-version>
         <lombok.version>1.18.34</lombok.version>
         <apache-cfx.version>3.6.3</apache-cfx.version>
         <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
-        <jetty.version>9.4.31.v20200723</jetty.version>
+        <jetty.version>9.4.53.v20231009</jetty.version>
         <h2database.version>2.2.220</h2database.version>
         <ehcache.version>2.10.6</ehcache.version>
         <commons.lang.version>2.6</commons.lang.version>
@@ -157,7 +157,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-cxf-starter</artifactId>
+                <artifactId>camel-cxf-soap-starter</artifactId>
                 <version>${camel.version}</version>
             </dependency>
             <dependency>
@@ -214,7 +214,8 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jaas</artifactId>
-                <version>9.4.11.v20180605</version>
+                <version>${jetty.version}</version>
+                <!--version>9.4.11.v20180605</version-->
             </dependency>
 
             <!-- logging -->
@@ -252,7 +253,14 @@
                 <version>${lombok.version}</version>
             </dependency>
 
-            <!-- JAX-WS Runtime, needed for javax.xml.* with Java 11 or newer -->
+            <!-- JAX-WS API and Runtime, needed for javax.xml.* with Java 11 or newer -->
+            <!-- API -->
+            <dependency>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <!-- Runtime -->
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>

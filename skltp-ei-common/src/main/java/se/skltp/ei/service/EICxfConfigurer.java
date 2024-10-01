@@ -1,7 +1,6 @@
 package se.skltp.ei.service;
 
-
-import org.apache.camel.component.cxf.CxfConfigurer;
+import org.apache.camel.component.cxf.jaxws.CxfConfigurer;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
