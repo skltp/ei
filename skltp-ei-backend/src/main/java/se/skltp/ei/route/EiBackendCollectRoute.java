@@ -30,7 +30,7 @@ public class EiBackendCollectRoute extends RouteBuilder {
     private int redeliveryDelay;
 
     @Value("${activemq.broker.use-exponential-backoff:false}")
-    private Boolean useExponentialBackoff;
+    private boolean useExponentialBackoff;
 
     @Value("${activemq.broker.backoff-multiplier:0.0}")
     private Double backOffMultiplier;
@@ -48,9 +48,9 @@ public class EiBackendCollectRoute extends RouteBuilder {
                 .onRedelivery(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        log.error("Redelivery no "
-                                + exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class)
-                                + " from " + collectQueueName);
+                        log.error("Redelivery no {} from {}.",
+                            exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class),
+                            collectQueueName);
                     }
                 });
         if (useExponentialBackoff) {
@@ -62,18 +62,14 @@ public class EiBackendCollectRoute extends RouteBuilder {
         }
         errorHandler(builder);
 
-        // Collect from collect queue
-        fromF("sjms-batch:queue:%s"
-                + "?completionTimeout=%d"
-                + "&completionSize=%d"
-                + "&keepAliveDelay=2000"
-                + "&aggregationStrategy=#eiCollectionAggregationStrategy"
-                + "&connectionFactory=pooledConnectionFactory",
-                 collectQueueName,
-                 collectQueueCompletionTimeout * 1000,
-                 collectQueueCompletionSize)
-                .id("backend-collection-route")
-                .log(LoggingLevel.DEBUG, "eiBackendLog", "Got an update collection:\n${body}")
-                .toF("activemq:queue:%s?transacted=true", processQueueName);
+        // Consumer: Receiving and batching messages from the SJMS queue
+        fromF("sjms:queue:%s?connectionFactory=#pooledConnectionFactory", collectQueueName)
+            .id("backend-collection-route")
+            .aggregate(constant(true)) // aggregate all exchanges
+            .aggregationStrategy("eiCollectionAggregationStrategy")
+            .completionSize(collectQueueCompletionSize) // batch size: number of messages
+            .completionTimeout(collectQueueCompletionTimeout * 1000) // batch timeout in milliseconds
+            .log(LoggingLevel.DEBUG, "eiBackendLog", "Processing batch of messages: Got an update collection:\n${body}")
+            .toF("activemq:queue:%s?transacted=true", processQueueName);
     }
 }
