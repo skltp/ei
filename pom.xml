@@ -33,7 +33,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <camel.version>3.17.0</camel.version>
+        <camel.version>3.18.8</camel.version>
         <spring.boot-version>2.7.18</spring.boot-version>
         <hawtio.spring.boot-version>2.10.2</hawtio.spring.boot-version>
         <lombok.version>1.18.34</lombok.version>
@@ -157,7 +157,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-cxf-starter</artifactId>
+                <artifactId>camel-cxf-soap-starter</artifactId>
                 <version>${camel.version}</version>
             </dependency>
             <dependency>
