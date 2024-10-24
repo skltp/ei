@@ -41,7 +41,6 @@
         <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
         <h2database.version>2.2.220</h2database.version>
         <ehcache.version>2.10.6</ehcache.version>
-        <commons.lang.version>2.6</commons.lang.version>
         <log4j2.version>2.17.2</log4j2.version>
         <log4j.version>2.17.2</log4j.version>
         <ecs-logging-java.version>1.5.0</ecs-logging-java.version>
@@ -248,11 +247,6 @@
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
                 <version>${lmax_disruptor-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons.lang.version}</version>
             </dependency>
 
             <dependency>

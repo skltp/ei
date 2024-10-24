@@ -3,6 +3,7 @@ package se.skltp.ei.service.logging;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+
 import org.apache.cxf.ext.logging.event.LogEvent;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.io.CachedOutputStream;
@@ -10,7 +11,6 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.apache.commons.lang.StringUtils;
 
 
 public class MessageInInterceptor extends AbstractPhaseInterceptor {
@@ -42,7 +42,7 @@ public class MessageInInterceptor extends AbstractPhaseInterceptor {
   void changeEncodingToUTF8(Message message) {
     String encoding = (String) message.get(Message.ENCODING);
 
-    if (StringUtils.isEmpty(encoding) || !encoding.equals(StandardCharsets.UTF_8.name())) {
+    if (encoding == null || encoding.isEmpty() || !encoding.equals(StandardCharsets.UTF_8.name())) {
       message.put(Message.ENCODING, StandardCharsets.UTF_8.name());
     }
   }
@@ -69,7 +69,7 @@ public class MessageInInterceptor extends AbstractPhaseInterceptor {
 
     private void handleOutputStream(final LogEvent event, Message message, CachedOutputStream cos) throws IOException {
       String encoding = (String) message.get(Message.ENCODING);
-      if (StringUtils.isEmpty(encoding)) {
+      if (encoding == null || encoding.isEmpty()) {
         encoding = StandardCharsets.UTF_8.name();
       }
       StringBuilder payload = new StringBuilder();
