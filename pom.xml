@@ -39,7 +39,6 @@
         <lombok.version>1.18.34</lombok.version>
         <apache-cfx.version>3.6.3</apache-cfx.version>
         <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
-        <jetty.version>9.4.31.v20200723</jetty.version>
         <h2database.version>2.2.220</h2database.version>
         <ehcache.version>2.10.6</ehcache.version>
         <commons.lang.version>2.6</commons.lang.version>
@@ -87,6 +86,22 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Bill of Materials, for Spring Boot and Camel. -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel.springboot</groupId>
+                <artifactId>camel-spring-boot-bom</artifactId>
+                <version>${camel.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <!-- Spring-boot -->
             <dependency>
@@ -210,11 +225,6 @@
                 <groupId>io.hawt</groupId>
                 <artifactId>hawtio-springboot</artifactId>
                 <version>${hawtio.spring.boot-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-jaas</artifactId>
-                <version>9.4.11.v20180605</version>
             </dependency>
 
             <!-- logging -->
