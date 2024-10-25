@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import se.skltp.ei.EiBackendApplication;
+import se.skltp.ei.EiTeststubRoute;
 import se.skltp.ei.util.EngagementTestUtil.DomainType;
 import se.skltp.ei.util.NotificationAssert;
 import se.skltp.ei.util.UpdateRequestUtil;
@@ -22,7 +23,7 @@ import se.skltp.ei.util.UpdateRequestUtil;
 // and that the collect queue is collected and sent for processing.
 // The business logic in aggregation should be tested more in unit test
 @CamelSpringBootTest
-@SpringBootTest(classes = {EiBackendApplication.class})
+@SpringBootTest(classes = {EiBackendApplication.class, EiTeststubRoute.class})
 @ActiveProfiles("teststub")
 public class CollectQueueUpdateIT {
 

@@ -25,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
 import riv.itintegration.engagementindex.processnotificationresponder._1.ProcessNotificationType;
 import se.skltp.ei.EiBackendApplication;
+import se.skltp.ei.EiTeststubRoute;
 import se.skltp.ei.entity.model.Engagement;
 import se.skltp.ei.entity.repository.EngagementRepository;
 import se.skltp.ei.util.DatabaseAssert;
@@ -34,7 +35,7 @@ import se.skltp.ei.util.NotificationAssert;
 import se.skltp.ei.util.ProcessNotificationRequestUtil;
 
 @CamelSpringBootTest
-@SpringBootTest(classes = {EiBackendApplication.class})
+@SpringBootTest(classes = {EiBackendApplication.class, EiTeststubRoute.class})
 @ActiveProfiles("teststub")
 public class ProcessQueueNotificationUpdateIT {
 
