@@ -9,12 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import se.skltp.ei.EiBackendApplication;
+import se.skltp.ei.EiTeststubRoute;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static se.skltp.ei.EiTeststubRoute.LOGICALADDREESS_MOCK;
 
 @CamelSpringBootTest
-@SpringBootTest(classes = {EiBackendApplication.class})
+@SpringBootTest(classes = {EiBackendApplication.class, EiTeststubRoute.class})
 @ActiveProfiles("teststub")
 public class ResetSubscriberCacheIT {
   @Produce
