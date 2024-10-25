@@ -29,12 +29,13 @@ import riv.itintegration.engagementindex.findcontent._1.rivtabp21.FindContentRes
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentResponseType;
 import riv.itintegration.engagementindex.findcontentresponder._1.FindContentType;
 import se.skltp.ei.EiBackendApplication;
+import se.skltp.ei.EiTeststubRoute;
 import se.skltp.ei.entity.repository.EngagementRepository;
 import se.skltp.ei.util.EngagementTestUtil;
 import se.skltp.ei.util.EngagementTestUtil.DomainType;
 
 @CamelSpringBootTest
-@SpringBootTest(classes = {EiBackendApplication.class})
+@SpringBootTest(classes = {EiBackendApplication.class, EiTeststubRoute.class})
 @ActiveProfiles("teststub")
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class FindContentIT {

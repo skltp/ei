@@ -10,9 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import se.skltp.ei.EiBackendApplication;
+import se.skltp.ei.EiTeststubRoute;
 
 @CamelSpringBootTest
-@SpringBootTest(classes = {EiBackendApplication.class})
+@SpringBootTest(classes = {EiBackendApplication.class, EiTeststubRoute.class})
 @ActiveProfiles("teststub")
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class GetSubscriberStatusIT {
