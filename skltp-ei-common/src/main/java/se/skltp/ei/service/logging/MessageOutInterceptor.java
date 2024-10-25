@@ -123,7 +123,7 @@ public class MessageOutInterceptor extends AbstractPhaseInterceptor<Message> {
 
     protected void writePayload(StringBuilder builder, CachedOutputStream cos, String encoding)
         throws IOException {
-      if (StringUtils.isEmpty(encoding)) {
+      if (StringUtils.isEmpty(encoding)) { // The CXF package StringUtils checks for null, or length=0, or contains only [space] characters.
         cos.writeCacheTo(builder, lim);
       } else {
         cos.writeCacheTo(builder, encoding, lim);
