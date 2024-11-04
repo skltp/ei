@@ -119,26 +119,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-jetty</artifactId>
-                <version>${spring.boot-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>${spring.boot-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-actuator</artifactId>
-                <version>${spring.boot-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-cache</artifactId>
-                <version>${spring.boot-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>${micrometer.version}</version>
@@ -153,41 +133,9 @@
 
             <!--      Database-->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>${spring.boot-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2database.version}</version>
-            </dependency>
-
-            <!--Camel Spring-boot starters-->
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-spring-boot-starter</artifactId>
-                <version>${camel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-cxf-soap-starter</artifactId>
-                <version>${camel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-jetty-starter</artifactId>
-                <version>${camel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-activemq-starter</artifactId>
-                <version>${camel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-sjms-starter</artifactId>
-                <version>${camel.version}</version>
             </dependency>
 
             <!-- Camel -->
@@ -227,11 +175,6 @@
             </dependency>
 
             <!-- logging -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-log4j2</artifactId>
-                <version>${spring.boot-version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-layout-template-json</artifactId>
