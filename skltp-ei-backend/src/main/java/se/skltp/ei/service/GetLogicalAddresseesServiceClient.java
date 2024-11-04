@@ -25,11 +25,13 @@ import javax.xml.ws.handler.MessageContext;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract.v2.rivtabp21.GetLogicalAddresseesByServiceContractResponderInterface;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract.v2.rivtabp21.GetLogicalAddresseesByServiceContractResponderService;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractType;
-import se.rivta.infrastructure.itintegration.registry.v2.ServiceContractNamespaceType;
+
+import riv.infrastructure.itintegration.registry._2.ServiceContractNamespaceType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract._2.rivtabp21.GetLogicalAddresseesByServiceContractResponderInterface;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontract._2.rivtabp21.GetLogicalAddresseesByServiceContractResponderService;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractResponseType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractType;
+
 import se.skltp.ei.service.config.GetLogicalAddressesConfig;
 
 @Log4j2
@@ -72,10 +74,6 @@ public class GetLogicalAddresseesServiceClient {
   private GetLogicalAddresseesByServiceContractResponseType callService(
       GetLogicalAddresseesByServiceContractType request) {
 
-    // SKLTP-807: backwards compatibility note:
-    // do NOT rely on WSDL-lookup here, i.e. do not use the naive JAX-WS
-    // way, we need to use the BindingProvider like below to not have
-    // JAX-WS do a WSDL-lookup before the service invocation
     GetLogicalAddresseesByServiceContractResponderService svc = new GetLogicalAddresseesByServiceContractResponderService(
         null, new QName(WSDL_NAMESPACE, WSDL_DEFINITION_NAME));
 

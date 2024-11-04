@@ -2,7 +2,8 @@ package se.skltp.ei.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
+
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.FilterType;
 import se.skltp.ei.subscriber.Subscriber;
 
 /**

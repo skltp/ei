@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.FilterType;
 import riv.itintegration.engagementindex._1.EngagementTransactionType;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.FilterType;
 import se.skltp.ei.util.FilterCreator;
 import se.skltp.ei.util.EngagementTransactionTestUtil;
 
