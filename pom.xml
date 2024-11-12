@@ -53,14 +53,6 @@
         <!-- Sonar/Reporting settings -->
         <!-- ************************-->
         <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
-        <sonar.plugin.version>3.7.0.1746</sonar.plugin.version>
-
-        <sonar.language>java</sonar.language>
-        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.coverage.jacoco.xmlReportPaths>
-      ${project.basedir}/report/target/site/jacoco-aggregate/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <distributionManagement>
@@ -305,34 +297,7 @@
     </dependencyManagement>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${sonar.plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sonar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco.plugin.version}</version>
-                    <configuration>
-                        <append>true</append>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -341,7 +306,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <!-- Seems to be som kind of conflict with JAXB camel dependencies and JDK8 Jaxb impl.
+                    <!-- Seems to be some kind of conflict with JAXB camel dependencies and JDK8 Jaxb impl.
           https://stackoverflow.com/questions/42499436/classcastexception-cannot-be-cast-to-com-sun-xml-internal-bind-v2-runtime-refle -->
                     <systemPropertyVariables>
                         <com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize>true
@@ -395,9 +360,10 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>pre-unit-test</id>
+                                <id>default-prepare-agent</id>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
@@ -407,6 +373,20 @@
                                 <phase>pre-integration-test</phase>
                                 <goals>
                                     <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>post-integration-test</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-report</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report</goal>
                                 </goals>
                             </execution>
                         </executions>
