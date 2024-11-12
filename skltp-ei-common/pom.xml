@@ -3,7 +3,7 @@
   <parent>
     <artifactId>skltp-ei-parent</artifactId>
     <groupId>se.skltp.ei</groupId>
-    3.3.0-SNAPSHOT
+    <version>3.3.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
