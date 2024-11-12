@@ -1,9 +1,11 @@
 package se.skltp.ei;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
+//import org.apache.activemq.jms.pool.PooledConnectionFactory;
+//import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.jms.pool.PooledConnectionFactory;
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,7 +28,7 @@ public class EiBrokerConfiguration  {
   String activemqBrokerPassword;
 
   @Bean
-  ActiveMQConnectionFactory amqConnectionFactory() {
+	ActiveMQConnectionFactory amqConnectionFactory() {
     final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
     activeMQConnectionFactory.setBrokerURL(activemqBrokerUrl);
     if(activemqBrokerUser != null && activemqBrokerUser.length() > 0 ) {    	
@@ -51,9 +53,8 @@ public class EiBrokerConfiguration  {
 	    ActiveMQComponent activeMQComponent = new ActiveMQComponent();
 	    activeMQComponent.setConnectionFactory(connectionFactory);
 	    activeMQComponent.setTransacted(true);
+	    //activeMQComponent.setMaxConcurrentConsumers(2);
 	    activeMQComponent.setLazyCreateTransactionManager(false);
 	    return activeMQComponent;
 	}
-	
-
 }

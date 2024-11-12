@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
+
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,7 +105,7 @@ public class GetLogicalAddresseesServiceClient {
 		reqCtx.put("com.sun.xml.internal.ws.connect.timeout", getLogicalAddressesConfig.getConnectTimeoutMs());
 		reqCtx.put("com.sun.xml.internal.ws.request.timeout", getLogicalAddressesConfig.getRequestTimeoutMs());
     // CXF
-		reqCtx.put("javax.xml.ws.client.connectionTimeout", getLogicalAddressesConfig.getConnectTimeoutMs());
-		reqCtx.put("javax.xml.ws.client.receiveTimeout", getLogicalAddressesConfig.getRequestTimeoutMs());
+		reqCtx.put("jakarta.xml.ws.client.connectionTimeout", getLogicalAddressesConfig.getConnectTimeoutMs());
+		reqCtx.put("jakarta.xml.ws.client.receiveTimeout", getLogicalAddressesConfig.getRequestTimeoutMs());
   }
 }

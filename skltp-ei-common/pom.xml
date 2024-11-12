@@ -53,6 +53,12 @@
     </dependency>
 
     <dependency>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
     </dependency>
@@ -60,11 +66,32 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
+
+    <!-- START: ACTIVE MQ -->
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-activemq-starter</artifactId>
     </dependency>
-    
+
+    <!-- ACTIVE MQ OVERRIDES - Compatibility with Jakarta. Should not be needed in Spring Boot 3.4.0-RC1+ -->
+    <!-- NOTE: activemq-client below overrides to a Jakarta compatible AMQ6+ version -->
+    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-client</artifactId>
+    </dependency>
+    <!-- NOTE: activemq-broker below overrides to a Jakarta compatible AMQ6+ version -->
+    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jms-pool</artifactId>
+    </dependency>
+    <!-- END: ACTIVE MQ -->
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -75,10 +102,10 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-jaas</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.eclipse.jetty</groupId>-->
+<!--      <artifactId>jetty-jaas</artifactId>-->
+<!--    </dependency>-->
 
     <!-- logging -->
     <dependency>
@@ -107,6 +134,7 @@
       <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>

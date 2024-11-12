@@ -6,8 +6,9 @@ import static se.skltp.ei.util.EngagementTransactionTestUtil.createET;
 import static se.skltp.ei.util.ProcessNotificationRequestUtil.createProcessNotificationTxt;
 
 import java.util.List;
-import javax.jms.JMSException;
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
+import jakarta.jms.JMSException;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;

@@ -10,10 +10,8 @@ import static se.skltp.ei.util.NotificationAssert.getEngagementTransaction;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
+
+import org.apache.camel.*;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +36,7 @@ import se.skltp.ei.util.UpdateRequestUtil;
 @ActiveProfiles("teststub")
 public class ProcessQueueUpdateIT {
 
+  public static final int RESULT_WAIT_TIMEOUT = 4000; // milliseconds
   @Produce
   protected ProducerTemplate producerTemplate;
 
@@ -62,10 +61,9 @@ public class ProcessQueueUpdateIT {
   }
 
   @Test
-  public void twoUpdatesWithTwoSubscribersHappyDay() throws InterruptedException {
-
-    notificationMock.expectedMessageCount(2);
-    notificationMock.setResultWaitTime(4000);
+  void twoUpdatesWithTwoSubscribersHappyDay() throws InterruptedException {
+    notificationMock.setExpectedMessageCount(2);
+    notificationMock.setResultWaitTime(RESULT_WAIT_TIMEOUT);
 
     // Create request and put to processQueue
     final String request = UpdateRequestUtil.createUpdateTxtMsg(owner, DomainType.TWO_SUBSCRIBERS, 1111111111L, 2222222222L);
@@ -86,10 +84,10 @@ public class ProcessQueueUpdateIT {
   }
 
   @Test
-  public void twoUpdatesWithOneSubscriberHappyDay() throws InterruptedException {
+  void twoUpdatesWithOneSubscriberHappyDay() throws InterruptedException {
 
-    notificationMock.expectedMessageCount(1);
-    notificationMock.setResultWaitTime(4000);
+    notificationMock.setExpectedMessageCount(1);
+    notificationMock.setResultWaitTime(RESULT_WAIT_TIMEOUT);
 
     // Create request and put to processQueue
     final String request = UpdateRequestUtil.createUpdateTxtMsg(owner, DomainType.ONE_SUBSCRIBER, 1111111111L, 2222222222L);
@@ -109,10 +107,10 @@ public class ProcessQueueUpdateIT {
   }
 
   @Test
-  public void ownerAlwaysSetToPlattformOwnerR6() throws InterruptedException {
+  void ownerAlwaysSetToPlattformOwnerR6() throws InterruptedException {
 
-    notificationMock.expectedMessageCount(1);
-    notificationMock.setResultWaitTime(4000);
+    notificationMock.setExpectedMessageCount(1);
+    notificationMock.setResultWaitTime(RESULT_WAIT_TIMEOUT);
 
     // Create request and put to processQueue
     final String request = UpdateRequestUtil
@@ -129,14 +127,13 @@ public class ProcessQueueUpdateIT {
     final List<Engagement> dbEntities = engagementRepository.findAll();
     assertEquals(2, dbEntities.size());
     DatabaseAssert.assertContains(request, owner, dbEntities); // And owner changed here
-
   }
 
   @Test
-  public void deleteOneOfTwoExistingEntities() throws InterruptedException {
+  void deleteOneOfTwoExistingEntities() throws InterruptedException {
 
-    notificationMock.expectedMessageCount(1);
-    notificationMock.setResultWaitTime(4000);
+    notificationMock.setExpectedMessageCount(1);
+    notificationMock.setResultWaitTime(RESULT_WAIT_TIMEOUT);
 
     final EngagementTransactionType et1 = createET(DomainType.ONE_SUBSCRIBER, 1111111111L, true);
     final EngagementTransactionType et2 = createET(DomainType.ONE_SUBSCRIBER, 2222222222L, false);
@@ -159,14 +156,13 @@ public class ProcessQueueUpdateIT {
     final List<Engagement> dbEntities = engagementRepository.findAll();
     assertEquals(1, dbEntities.size());
     DatabaseAssert.assertContains(et2.getEngagement(), dbEntities);
-
   }
 
   @Test
-  public void noNotificationWhenEntityExist() throws InterruptedException {
+  void noNotificationWhenEntityExist() throws InterruptedException {
 
-    notificationMock.expectedMessageCount(0);
-    notificationMock.setSleepForEmptyTest(4000);
+    notificationMock.setExpectedMessageCount(0);
+    notificationMock.setSleepForEmptyTest(RESULT_WAIT_TIMEOUT);
 
     final EngagementTransactionType et1 = createET(DomainType.ONE_SUBSCRIBER, 1111111111L, false);
 
@@ -184,17 +180,16 @@ public class ProcessQueueUpdateIT {
     final List<Engagement> dbEntities = engagementRepository.findAll();
     assertEquals(1, dbEntities.size());
     DatabaseAssert.assertContains(et1.getEngagement(), dbEntities);
-
   }
 
   @Test
-  public void updateMostRecentContentHappyDay() throws InterruptedException {
+  void updateMostRecentContentHappyDay() throws InterruptedException {
 
     final String originalMostRecent = "20200101120000";// yyyyMMddHHmmss
     final String updatedMostRecent =  "20210101120000";// yyyyMMddHHmmss
 
-    notificationMock.expectedMessageCount(1);
-    notificationMock.setResultWaitTime(4000);
+    notificationMock.setExpectedMessageCount(1);
+    notificationMock.setResultWaitTime(RESULT_WAIT_TIMEOUT);
 
     final EngagementTransactionType et1 = createET(DomainType.ONE_SUBSCRIBER, 1111111111L, false);
     et1.getEngagement().setMostRecentContent(originalMostRecent);
@@ -218,7 +213,6 @@ public class ProcessQueueUpdateIT {
     final Optional<Engagement> dbEntityOptional = engagementRepository.findById(expectedEntity.getId());
     assertTrue(dbEntityOptional.isPresent());
     assertEquals(expectedEntity.getMostRecentContent(), dbEntityOptional.get().getMostRecentContent());
-
   }
 
   private void InitDatabase(UpdateType udateRequest) {
@@ -226,6 +220,4 @@ public class ProcessQueueUpdateIT {
     assertEquals(udateRequest.getEngagementTransaction().size(), engagementRepository.findAll().size(),
         "Database not set up correctly before test");
   }
-
-
 }

@@ -3,7 +3,6 @@ package se.skltp.ei;
 import static org.apache.camel.ExchangePattern.InOnly;
 import static se.skltp.ei.service.constants.EiConstants.EI_LOG_NUMBER_OF_RECORDS_IN_MESSAGE;
 
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
