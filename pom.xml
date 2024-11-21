@@ -54,6 +54,7 @@
         <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
         <h2database.version>2.2.220</h2database.version>
         <ehcache3.version>3.10.8</ehcache3.version>
+        <javax-cache.version>1.1.1</javax-cache.version>
         <log4j2.version>2.17.2</log4j2.version>
         <log4j.version>2.17.2</log4j.version>
         <ecs-logging-java.version>1.5.0</ecs-logging-java.version>
@@ -138,6 +139,11 @@
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache3.version}</version>
                 <classifier>jakarta</classifier>
+            </dependency>
+            <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>${javax-cache.version}</version>
             </dependency>
 
             <dependency>
