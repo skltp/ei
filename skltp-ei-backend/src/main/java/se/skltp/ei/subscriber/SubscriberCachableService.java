@@ -36,7 +36,7 @@ public class SubscriberCachableService implements SubscriberService {
     try {
       GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = logicalAddresseesServiceClient.callService();
       List<Subscriber> subscribers = logicalAddressesResponse.getLogicalAddressRecord().stream()
-          .map(record -> new Subscriber(record.getLogicalAddress(), record.getFilter(), notificationQueuePrefix))
+          .map(entry -> new Subscriber(entry.getLogicalAddress(), entry.getFilter(), notificationQueuePrefix))
           .collect(Collectors.toList());
 
       SubscriberFileTool.saveToLocalCopy(subscribers, subscriberCachefilePath);
