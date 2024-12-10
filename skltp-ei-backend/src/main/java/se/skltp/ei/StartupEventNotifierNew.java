@@ -40,7 +40,7 @@ public class StartupEventNotifierNew extends EventNotifierSupport {
     }
 
     @Override
-    @DependsOn("CustomCacheManager")
+    @DependsOn("ehCacheManager")
     public void notify(CamelEvent event) throws IOException {
         if (event instanceof CamelContextStartedEvent) {
 

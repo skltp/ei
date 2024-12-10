@@ -2,16 +2,19 @@ package se.skltp.ei;
 
 import lombok.Getter;
 import org.apache.camel.CamelContext;
-import org.ehcache.CacheManager;
+import org.springframework.cache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.builders.*;
 import org.ehcache.event.EventType;
+import org.ehcache.jsr107.Eh107Configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.skltp.ei.subscriber.SubscriberCacheEventListenerNew;
 
+import javax.cache.Caching;
 import java.time.Duration;
 import java.util.ArrayList;
 
@@ -62,8 +65,8 @@ public class SubscriberCacheConfiguration {
     }
   }
 
-  @Bean("CustomCacheManager")
-  public CacheManager cacheManager() {
+  @Bean("ehCacheManager")
+  public CacheManager ehCacheManager() {
 
     System.out.println("QWERQWERQWER: Setup of Cache Manager.");
 
@@ -91,12 +94,21 @@ public class SubscriberCacheConfiguration {
         .withService(cacheEventListenerConfiguration)
         .build();
 
-    CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-        .withCache(subscriberCacheName,
-            cacheConfiguration)
-        .build(); // invoking build() returns a fully instantiated, but uninitialized, CacheManager.
+    javax.cache.CacheManager javaxCacheManager = Caching
+        .getCachingProvider("org.ehcache.jsr107.EhcacheCachingProvider")
+        .getCacheManager();
 
-    cacheManager.init(); // Before using the CacheManager it needs to be initialized.
+    javaxCacheManager.destroyCache(subscriberCacheName);
+    javaxCacheManager.createCache(subscriberCacheName, Eh107Configuration.fromEhcacheCacheConfiguration(cacheConfiguration));
+
+    return new JCacheCacheManager(javaxCacheManager);
+
+//    CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
+//        .withCache(subscriberCacheName,
+//            cacheConfiguration)
+//        .build(); // invoking build() returns a fully instantiated, but uninitialized, CacheManager.
+//
+//    cacheManager.init(); // Before using the CacheManager it needs to be initialized.
 
     // CACHE RETRIEVAL EXAMPLE
 
@@ -122,6 +134,6 @@ public class SubscriberCacheConfiguration {
     //   all Cache instances known at the time.
 //    cacheManager.close();
 
-    return cacheManager;
+    //return cacheManager;
   }
 }
