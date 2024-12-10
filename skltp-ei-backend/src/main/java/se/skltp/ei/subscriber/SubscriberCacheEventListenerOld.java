@@ -1,21 +1,21 @@
 package se.skltp.ei.subscriber;
 
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import java.util.Date;
-//import java.util.List;
-//import lombok.extern.log4j.Log4j2;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Date;
+import java.util.List;
+import lombok.extern.log4j.Log4j2;
 //import net.sf.ehcache.Ehcache;
 //import net.sf.ehcache.Element;
 //import net.sf.ehcache.event.CacheEventListener;
-//import org.apache.camel.CamelContext;
-//
-//import se.skltp.ei.route.EiBackendDynamicNotificationRoute;
+import org.apache.camel.CamelContext;
+
+import se.skltp.ei.route.EiBackendDynamicNotificationRoute;
 
 //@Log4j2
-public final class SubscriberCacheEventListener /*implements CacheEventListener*/ {
+public final class SubscriberCacheEventListenerOld /*implements CacheEventListener*/ {
 
-//    private static SubscriberCacheEventListener instance;
+//    private static SubscriberCacheEventListenerOld instance;
 //
 //    private int maximumRedeliveries = 0;
 //    private int redeliveryDelay = 0;
@@ -23,17 +23,17 @@ public final class SubscriberCacheEventListener /*implements CacheEventListener*
 //    private double backOffMultiplier = 0.0d;
 //    private int maximumRedeliveryDelay = 0;
 //
-//    public static final SubscriberCacheEventListener createInstance(
-//            CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, boolean useExponentialBackoff, double backOffMultiplier, int maximumRedeliveryDelay) {
+//    public static final SubscriberCacheEventListenerOld createInstance(
+//        CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, boolean useExponentialBackoff, double backOffMultiplier, int maximumRedeliveryDelay) {
 //        if (instance == null) {
-//            instance = new SubscriberCacheEventListener(camelContext, maximumRedeliveries, redeliveryDelay, useExponentialBackoff, backOffMultiplier, maximumRedeliveryDelay);
+//            instance = new SubscriberCacheEventListenerOld(camelContext, maximumRedeliveries, redeliveryDelay, useExponentialBackoff, backOffMultiplier, maximumRedeliveryDelay);
 //        }
 //        return instance;
 //    }
 //
 //    CamelContext camelContext;
 //
-//    private SubscriberCacheEventListener(CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, boolean useExponentialBackoff, double backOffMultiplier, int maximumRedeliveryDelay) {
+//    private SubscriberCacheEventListenerOld(CamelContext camelContext, int maximumRedeliveries, int redeliveryDelay, boolean useExponentialBackoff, double backOffMultiplier, int maximumRedeliveryDelay) {
 //        this.camelContext = camelContext;
 //        this.maximumRedeliveries = maximumRedeliveries;
 //        this.redeliveryDelay = redeliveryDelay;
@@ -108,11 +108,11 @@ public final class SubscriberCacheEventListener /*implements CacheEventListener*
 //        List<Subscriber> subscribers = (List<Subscriber>) element.getObjectValue();
 //
 //        log.info("{}\n Created: {}\n Updated: {}\n Key: {}\n Subcribers:\n{}",
-//                 reason,
-//                 creationTime,
-//                 updatedTime,
-//                 element.getObjectKey(),
-//                 subscriberToJson(subscribers));
+//            reason,
+//            creationTime,
+//            updatedTime,
+//            element.getObjectKey(),
+//            subscriberToJson(subscribers));
 //
 //    }
 //

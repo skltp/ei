@@ -1,15 +1,16 @@
 package se.skltp.ei;
 
+import lombok.Getter;
+import org.apache.camel.CamelContext;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.CacheManagerBuilder;
-import org.ehcache.config.builders.ExpiryPolicyBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.builders.*;
+import org.ehcache.event.EventType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import se.skltp.ei.subscriber.SubscriberCacheEventListenerNew;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -25,8 +26,61 @@ public class SubscriberCacheConfiguration {
 
   private final long maxEntriesLocalHeap = 1;
 
-  @Bean
+  // EVENT LISTENER PROPERTIES
+  @Getter
+  @Value("${activemq.broker.notification.maximum-redeliveries}")
+  private Integer maximumRedeliveries;
+
+  @Getter
+  @Value("${activemq.broker.notification.redelivery-delay:0}")
+  private Integer redeliveryDelay;
+
+  @Getter
+  @Value("${activemq.broker.notification.use-exponential-backoff:false}")
+  private Boolean useExponentialBackoff;
+
+  @Getter
+  @Value("${activemq.broker.notification.backoff-multiplier:0.0}")
+  private Double backOffMultiplier;
+
+  @Getter
+  @Value("${activemq.broker.notification.maximum-redelivery-delay:0}")
+  private int maximumRedeliveryDelay;
+
+  @Getter
+  CamelContext camelContext;
+
+
+  // ### Camel Context SETTER ###
+  void setCamelContextOnce(CamelContext providedContext) {
+    if (this.camelContext == null) {
+      System.out.println("QWERQWERQWER: Recording CamelContext into Config.");
+      this.camelContext = providedContext;
+    } else {
+      System.out.println("QWERQWERQWER: ILLEGAL duplicate record of CamelContext.");
+      throw new UnsupportedOperationException("It is not allowed to set a second camel context.");
+    }
+  }
+
+  @Bean("CustomCacheManager")
   public CacheManager cacheManager() {
+
+    System.out.println("QWERQWERQWER: Setup of Cache Manager.");
+
+    // Provide the listener a reference to this configuration item.
+    SubscriberCacheEventListenerNew listener = SubscriberCacheEventListenerNew.createInstance(this);
+
+    // Prior implementation seemed to be listening to every type of event, so let's do the same here.
+    CacheEventListenerConfigurationBuilder cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
+        .newEventListenerConfiguration(
+            listener,
+            EventType.CREATED,
+            EventType.EVICTED,
+            EventType.EXPIRED,
+            EventType.REMOVED,
+            EventType.UPDATED
+        )
+        .unordered().asynchronous();
 
     CacheConfiguration<String, ArrayList> cacheConfiguration
         = CacheConfigurationBuilder.newCacheConfigurationBuilder(
@@ -34,6 +88,7 @@ public class SubscriberCacheConfiguration {
             ArrayList.class,
             ResourcePoolsBuilder.heap(maxEntriesLocalHeap))
         .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(subscriberCacheTTLSeconds)))
+        .withService(cacheEventListenerConfiguration)
         .build();
 
     CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
