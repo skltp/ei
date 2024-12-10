@@ -24,10 +24,9 @@ public class GetSubscriberStatusIT {
   public void getStatusResponseTest() {
 
     String statusResponse = producerTemplate.requestBody("{{subscriber.cache.status.url}}", "body", String.class);
-    assertTrue (statusResponse .startsWith("{") && statusResponse .endsWith("}"));
-    assertTrue (statusResponse.contains("CreationTime"));
+
+    assertTrue (statusResponse .startsWith("{") && statusResponse .endsWith("}")); // Test JSON wrapping.
+    assertTrue (statusResponse.contains("Subscribers"));
     assertTrue (statusResponse.contains("TEST-DOMAIN"));
-
   }
-
 }
