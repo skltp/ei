@@ -14,7 +14,6 @@ import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import se.skltp.ei.subscriber.SubscriberService;
 
@@ -23,8 +22,12 @@ import se.skltp.ei.subscriber.SubscriberService;
 @Component
 public class StartupEventNotifier extends EventNotifierSupport {
 
-    @Autowired
     SubscriberCacheConfiguration subscriberCacheConfiguration;
+
+    @Autowired
+    public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
+        this.subscriberCacheConfiguration = subscriberCacheConfiguration;
+    }
 
     @Override
     protected void doStart() {
@@ -40,7 +43,6 @@ public class StartupEventNotifier extends EventNotifierSupport {
     }
 
     @Override
-    @DependsOn("ehCacheManager")
     public void notify(CamelEvent event) throws IOException {
         if (event instanceof CamelContextStartedEvent) {
 

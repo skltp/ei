@@ -19,7 +19,7 @@ public final class SubscriberCacheEventListener implements CacheEventListener<St
 
   private static SubscriberCacheConfiguration config;
 
-  public static final SubscriberCacheEventListener createInstance(SubscriberCacheConfiguration config) {
+  public static SubscriberCacheEventListener createInstance(SubscriberCacheConfiguration config) {
 
     if (instance == null) {
       // record static fields.
@@ -54,7 +54,6 @@ public final class SubscriberCacheEventListener implements CacheEventListener<St
       default -> throw new IllegalStateException("Unexpected value: " + event.getType());
     }
   }
-
 
   private void logMeta(String reason, CacheEvent<? extends String, ? extends ArrayList<Subscriber>> event) {
 

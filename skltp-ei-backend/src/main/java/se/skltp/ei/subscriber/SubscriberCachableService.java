@@ -16,10 +16,8 @@ import se.skltp.ei.subscriber.util.SubscriberFileTool;
 @Log4j2
 public class SubscriberCachableService implements SubscriberService {
 
-  @Autowired
   GetLogicalAddresseesServiceClient logicalAddresseesServiceClient;
 
-  @Autowired
   CamelContext camelContext;
 
   @Value("${subscriber.cache.file.name:#{null}}")
@@ -27,6 +25,13 @@ public class SubscriberCachableService implements SubscriberService {
 
   @Value("${notification.queue.prefix:notification.}")
   private String notificationQueuePrefix;
+
+  @Autowired
+  public SubscriberCachableService(GetLogicalAddresseesServiceClient logicalAddresseesServiceClient,
+                                   CamelContext camelContext) {
+    this.logicalAddresseesServiceClient = logicalAddresseesServiceClient;
+    this.camelContext = camelContext;
+  }
 
   @Override
   @Cacheable(value = "subscriber-cache", key = "'subscribers'",  sync = true)
