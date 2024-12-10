@@ -12,7 +12,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import se.skltp.ei.subscriber.SubscriberCacheEventListenerNew;
+import se.skltp.ei.subscriber.SubscriberCacheEventListener;
 
 import javax.cache.Caching;
 import java.time.Duration;
@@ -57,10 +57,8 @@ public class SubscriberCacheConfiguration {
   // ### Camel Context SETTER ###
   void setCamelContextOnce(CamelContext providedContext) {
     if (this.camelContext == null) {
-      System.out.println("QWERQWERQWER: Recording CamelContext into Config.");
       this.camelContext = providedContext;
     } else {
-      System.out.println("QWERQWERQWER: ILLEGAL duplicate record of CamelContext.");
       throw new UnsupportedOperationException("It is not allowed to set a second camel context.");
     }
   }
@@ -68,10 +66,8 @@ public class SubscriberCacheConfiguration {
   @Bean("ehCacheManager")
   public CacheManager ehCacheManager() {
 
-    System.out.println("QWERQWERQWER: Setup of Cache Manager.");
-
     // Provide the listener a reference to this configuration item.
-    SubscriberCacheEventListenerNew listener = SubscriberCacheEventListenerNew.createInstance(this);
+    SubscriberCacheEventListener listener = SubscriberCacheEventListener.createInstance(this);
 
     // Prior implementation seemed to be listening to every type of event, so let's do the same here.
     CacheEventListenerConfigurationBuilder cacheEventListenerConfiguration = CacheEventListenerConfigurationBuilder
@@ -85,55 +81,27 @@ public class SubscriberCacheConfiguration {
         )
         .unordered().asynchronous();
 
+    // Create a Cache configuration, pulling in parameters from both local fields, and SpringBoot-initialized Parameters.
     CacheConfiguration<String, ArrayList> cacheConfiguration
         = CacheConfigurationBuilder.newCacheConfigurationBuilder(
             String.class,
             ArrayList.class,
             ResourcePoolsBuilder.heap(maxEntriesLocalHeap))
         .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(subscriberCacheTTLSeconds)))
+        //   Also attach the listener item we created earlier.
         .withService(cacheEventListenerConfiguration)
         .build();
 
+    // Fetch a JSR107-compatible caching implementation from Spring Boot, using Javax standards.
     javax.cache.CacheManager javaxCacheManager = Caching
         .getCachingProvider("org.ehcache.jsr107.EhcacheCachingProvider")
         .getCacheManager();
 
+    // Destroy any cache with our desired name, if one happens to exist.
     javaxCacheManager.destroyCache(subscriberCacheName);
+    // Create a new JSR107-compatible EhCache cache, using our above config.
     javaxCacheManager.createCache(subscriberCacheName, Eh107Configuration.fromEhcacheCacheConfiguration(cacheConfiguration));
 
     return new JCacheCacheManager(javaxCacheManager);
-
-//    CacheManager cacheManager = CacheManagerBuilder.newCacheManagerBuilder()
-//        .withCache(subscriberCacheName,
-//            cacheConfiguration)
-//        .build(); // invoking build() returns a fully instantiated, but uninitialized, CacheManager.
-//
-//    cacheManager.init(); // Before using the CacheManager it needs to be initialized.
-
-    // CACHE RETRIEVAL EXAMPLE
-
-    // A cache is retrieved by passing its alias, key type and value type to the CacheManager...
-    // - For type-safety, we ask for both key and value types to be passed in. ...
-    // - This guards the Cache from being polluted by random types.
-//    Cache<String, ArrayList> preConfigured =
-//        cacheManager.getCache(subscriberCacheName, String.class, ArrayList.class);
-
-    // CACHE CLOSURES.
-
-    // SINGLE CACHE
-
-    // We can call CacheManager.removeCache(String) for a given Cache.
-    //   The CacheManager will not only remove its reference to the Cache, but will also close it.
-//    cacheManager.removeCache(subscriberCacheName);
-
-    // ALL CACHES
-
-    // In order to release all transient resources (memory, threads, ...)
-    //   a CacheManager provides to Cache instances it manages,
-    //   you have to invoke CacheManager.close(), which in turns closes
-    //   all Cache instances known at the time.
-//    cacheManager.close();
-
-    //return cacheManager;
   }
 }

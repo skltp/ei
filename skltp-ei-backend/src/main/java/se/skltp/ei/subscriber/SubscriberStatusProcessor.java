@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class SubscriberStatusProcessorNew implements Processor {
+public class SubscriberStatusProcessor implements Processor {
 
   @Autowired
   CacheManager cacheManager;

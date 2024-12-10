@@ -13,31 +13,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-public final class SubscriberCacheEventListenerNew implements CacheEventListener<String, ArrayList<Subscriber>> {
+public final class SubscriberCacheEventListener implements CacheEventListener<String, ArrayList<Subscriber>> {
 
-  private static SubscriberCacheEventListenerNew instance;
+  private static SubscriberCacheEventListener instance;
 
   private static SubscriberCacheConfiguration config;
 
-  public static final SubscriberCacheEventListenerNew createInstance(SubscriberCacheConfiguration config) {
+  public static final SubscriberCacheEventListener createInstance(SubscriberCacheConfiguration config) {
 
     if (instance == null) {
-      System.out.println("QWERQWERQWER: Creation of CacheEventListener.");
       // record static fields.
-      SubscriberCacheEventListenerNew.config = config;
-      SubscriberCacheEventListenerNew.instance = new SubscriberCacheEventListenerNew();
+      SubscriberCacheEventListener.config = config;
+      SubscriberCacheEventListener.instance = new SubscriberCacheEventListener();
     }
 
     return instance;
   }
 
-  private SubscriberCacheEventListenerNew() {
+  private SubscriberCacheEventListener() {
   }
 
   @Override
   public void onEvent(CacheEvent<? extends String, ? extends ArrayList<Subscriber>> event) {
-
-    System.out.println("QWERQWERQWER: OnEVENT CacheEventListener.");
 
     switch (event.getType()) {
 

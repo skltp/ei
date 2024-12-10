@@ -7,7 +7,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import se.skltp.ei.EiBackendApplication;
 import se.skltp.ei.EiTeststubRoute;
@@ -15,13 +14,12 @@ import se.skltp.ei.EiTeststubRoute;
 @CamelSpringBootTest
 @SpringBootTest(classes = {EiBackendApplication.class, EiTeststubRoute.class})
 @ActiveProfiles("teststub")
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class GetSubscriberStatusIT {
+class GetSubscriberStatusIT {
   @Produce
   protected ProducerTemplate producerTemplate;
 
   @Test
-  public void getStatusResponseTest() {
+  void getStatusResponseTest() {
 
     String statusResponse = producerTemplate.requestBody("{{subscriber.cache.status.url}}", "body", String.class);
 

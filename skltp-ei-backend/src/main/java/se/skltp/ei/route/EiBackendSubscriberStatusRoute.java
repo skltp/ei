@@ -3,13 +3,13 @@ package se.skltp.ei.route;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import se.skltp.ei.subscriber.SubscriberStatusProcessorNew;
+import se.skltp.ei.subscriber.SubscriberStatusProcessor;
 
 @Component
 public class EiBackendSubscriberStatusRoute extends RouteBuilder {
 
   @Autowired
-  SubscriberStatusProcessorNew subscriberStatusProcessor;
+  SubscriberStatusProcessor subscriberStatusProcessor;
 
   @Override
   public void configure() throws Exception {

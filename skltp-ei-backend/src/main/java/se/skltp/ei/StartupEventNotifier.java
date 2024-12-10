@@ -21,7 +21,7 @@ import se.skltp.ei.subscriber.SubscriberService;
 
 @Log4j2
 @Component
-public class StartupEventNotifierNew extends EventNotifierSupport {
+public class StartupEventNotifier extends EventNotifierSupport {
 
     @Autowired
     SubscriberCacheConfiguration subscriberCacheConfiguration;
@@ -44,8 +44,6 @@ public class StartupEventNotifierNew extends EventNotifierSupport {
     public void notify(CamelEvent event) throws IOException {
         if (event instanceof CamelContextStartedEvent) {
 
-            System.out.println("QWERQWERQWER: Camel Startup Notify..");
-
             CamelContext camelEventContext = (CamelContext) event.getSource();
             subscriberCacheConfiguration.setCamelContextOnce(camelEventContext); // Record Camel Context within configuration body for future usage.
             initializeSubscribers(camelEventContext);
@@ -63,8 +61,6 @@ public class StartupEventNotifierNew extends EventNotifierSupport {
     }
 
     private void initializeSubscribers(CamelContext camelContext) {
-
-        System.out.println("QWERQWERQWER: Initializing Subscribers.");
 
         final SubscriberService subscriberService =
             camelContext.getRegistry().lookupByNameAndType("subscriberCachableService", SubscriberService.class);
