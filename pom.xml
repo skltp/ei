@@ -138,6 +138,7 @@
                 <version>${javax-cache.version}</version>
             </dependency>
 
+            <!-- TODO: hibernate-jpamodelgen below might not be needed after Spring Boot 3.4.0. Check. -->
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-jpamodelgen</artifactId>
@@ -177,7 +178,7 @@
                 <artifactId>activemq-broker</artifactId>
                 <version>${activemq-deps-version}</version>
             </dependency>
-            <!-- TODO: activemq-jms-pool below might not be needed after Spring Boot 3.4.0-RC1+. Check. -->
+            <!-- TODO: activemq-jms-pool below might not be needed after Spring Boot 3.4.0. Check. -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-jms-pool</artifactId>
@@ -314,9 +315,6 @@
                 <version>${micrometer.version}</version>
             </dependency>
         </dependencies>
-
-
-
     </dependencyManagement>
 
     <build>
@@ -418,6 +416,4 @@
             </build>
         </profile>
     </profiles>
-
-
 </project>
