@@ -50,7 +50,7 @@
         <cxf-rt-wsdl.version>4.0.5</cxf-rt-wsdl.version>
         <activemq-deps-version>6.1.3</activemq-deps-version>
 
-        <hawtio.spring.boot-version>2.10.2</hawtio.spring.boot-version>
+        <hawtio.spring.boot-version>2.17.7</hawtio.spring.boot-version>
         <lmax_disruptor-version>3.3.6</lmax_disruptor-version>
         <h2database.version>2.2.220</h2database.version>
         <ehcache3.version>3.10.8</ehcache3.version>

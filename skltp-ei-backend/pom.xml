@@ -74,11 +74,6 @@
             <artifactId>ehcache</artifactId>
             <classifier>jakarta</classifier>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate.orm</groupId>-->
-<!--            <artifactId>hibernate-jcache</artifactId>-->
-<!--        </dependency>-->
-
 
         <!-- Databases -->
         <dependency>
@@ -223,12 +218,10 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <!--version>4.0.0</version-->
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <!--version>4.0.0</version-->
             <scope>runtime</scope>
         </dependency>
     </dependencies>
