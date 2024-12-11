@@ -4,13 +4,13 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.jms.JMSException;
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.QueueBrowser;
+import jakarta.jms.Session;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class JmsBrowser {
 

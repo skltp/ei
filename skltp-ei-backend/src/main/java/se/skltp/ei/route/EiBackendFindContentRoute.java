@@ -47,9 +47,9 @@ public class EiBackendFindContentRoute extends RouteBuilder {
             , FINDCONTENT_WSDL
             , FindContentResponderInterface.class.getName()
             , FindContentResponderService.FindContentResponderPort.toString())
-    .id("backend-findcontent-route")
-    .process(checkInboundHeadersProcessor)
-    .process(findContentProcessor);
+        .id("backend-findcontent-route")
+        .process(checkInboundHeadersProcessor)
+        .process(findContentProcessor);
 
 
   }

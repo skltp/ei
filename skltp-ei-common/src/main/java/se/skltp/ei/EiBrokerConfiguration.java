@@ -1,9 +1,9 @@
 package se.skltp.ei;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.jms.pool.PooledConnectionFactory;
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -11,6 +11,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+
+import java.util.ArrayList;
 
 @Configuration
 @EnableCaching
@@ -26,10 +28,13 @@ public class EiBrokerConfiguration  {
   String activemqBrokerPassword;
 
   @Bean
-  ActiveMQConnectionFactory amqConnectionFactory() {
+	ActiveMQConnectionFactory amqConnectionFactory() {
     final ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
     activeMQConnectionFactory.setBrokerURL(activemqBrokerUrl);
-    if(activemqBrokerUser != null && activemqBrokerUser.length() > 0 ) {    	
+    //activeMQConnectionFactory.setTrustAllPackages(false); // TODO: Set for Sonar.
+    //activeMQConnectionFactory.setTrustedPackages(new ArrayList<>());
+
+    if(activemqBrokerUser != null && !activemqBrokerUser.isEmpty()) {
         activeMQConnectionFactory.setUserName(activemqBrokerUser);
         activeMQConnectionFactory.setPassword(activemqBrokerPassword); 
     }
@@ -54,6 +59,4 @@ public class EiBrokerConfiguration  {
 	    activeMQComponent.setLazyCreateTransactionManager(false);
 	    return activeMQComponent;
 	}
-	
-
 }

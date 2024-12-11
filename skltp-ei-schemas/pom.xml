@@ -40,6 +40,12 @@
                 <wsdlOption>
                   <wsdl>${schema.path}/TD_ENGAGEMENTINDEX_1_0_R/interactions/UpdateInteraction/UpdateInteraction_1.0_RIVTABP21.wsdl</wsdl>
                 </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${schema.path}/INFRASTRUCTURE_ITINTEGRATION_REG_2/interactions/GetLogicalAddresseesByServiceContractInteraction/GetLogicalAddresseesByServiceContractInteraction_2.0_RIVTABP21.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${schema.path}/INFRASTRUCTURE_ITINTEGRATION_REG_2/interactions/GetSupportedServiceContractsInteraction/GetSupportedServiceContractsInteraction_2.0_RIVTABP21.wsdl</wsdl>
+                </wsdlOption>
               </wsdlOptions>
             </configuration>
             <goals>
@@ -52,15 +58,6 @@
   </build>
 
   <dependencies>
-    <!--
-        Until rivta itintegration infrastructure schemas 2.0 is published in central maven a
-        local se.skltp release of schemas us used.
-    -->
-    <dependency>
-      <groupId>se.skltp.infrastructure.itintegration</groupId>
-      <artifactId>ServiceContracts_infrastructure_itintegration_registry</artifactId>
-      <version>2.0-RC1</version>
-    </dependency>
 
     <!-- JAX-WS Runtime, needed for javax.xml.* with Java 11 or newer -->
     <dependency>

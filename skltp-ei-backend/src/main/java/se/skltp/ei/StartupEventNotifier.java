@@ -13,11 +13,8 @@ import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.logging.log4j.ThreadContext;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import se.skltp.ei.subscriber.SubscriberCacheEventListener;
 import se.skltp.ei.subscriber.SubscriberService;
 
 
@@ -25,20 +22,12 @@ import se.skltp.ei.subscriber.SubscriberService;
 @Component
 public class StartupEventNotifier extends EventNotifierSupport {
 
-    @Value("${activemq.broker.notification.maximum-redeliveries}")
-    private Integer maximumRedeliveries;
+    SubscriberCacheConfiguration subscriberCacheConfiguration;
 
-    @Value("${activemq.broker.notification.redelivery-delay:0}")
-    private Integer redeliveryDelay;
-
-    @Value("${activemq.broker.notification.use-exponential-backoff:false}")
-    private Boolean useExponentialBackoff;
-
-    @Value("${activemq.broker.notification.backoff-multiplier:0.0}")
-    private Double backOffMultiplier;
-
-    @Value("${activemq.broker.notification.maximum-redelivery-delay:0}")
-    private int maximumRedeliveryDelay;
+    @Autowired
+    public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
+        this.subscriberCacheConfiguration = subscriberCacheConfiguration;
+    }
 
     @Override
     protected void doStart() {
@@ -56,12 +45,16 @@ public class StartupEventNotifier extends EventNotifierSupport {
     @Override
     public void notify(CamelEvent event) throws IOException {
         if (event instanceof CamelContextStartedEvent) {
-            initializeSubscribers((CamelContext) event.getSource());
+
+            CamelContext camelEventContext = (CamelContext) event.getSource();
+            subscriberCacheConfiguration.setCamelContextOnce(camelEventContext); // Record Camel Context within configuration body for future usage.
+            initializeSubscribers(camelEventContext);
+
         } else if (event instanceof ExchangeCreatedEvent ||
                 event instanceof ExchangeSentEvent) {
             final Object source = event.getSource();
-            if (source instanceof Exchange) {
-                final String correlationId = ((Exchange) source).getIn().getHeader(X_SKLTP_CORRELATION_ID, String.class);
+            if (source instanceof Exchange exchange) {
+                final String correlationId = exchange.getIn().getHeader(X_SKLTP_CORRELATION_ID, String.class);
                 if (correlationId != null) {
                     ThreadContext.put("corr.id", String.format("[%s]", correlationId));
                 }
@@ -70,19 +63,13 @@ public class StartupEventNotifier extends EventNotifierSupport {
     }
 
     private void initializeSubscribers(CamelContext camelContext) {
-        final CacheManager cacheManager = camelContext.getRegistry().lookupByNameAndType("cacheManager", CacheManager.class);
-        final SubscriberService subscriberService = camelContext.getRegistry()
-                .lookupByNameAndType("subscriberCachableService", SubscriberService.class);
 
-        // Register a eventlistener for SubscriberCacheService. The eventlistener will create dynamic rotues that poll the
-        // ProcessNotification amq queues when the Subscriber cache is updated
-        net.sf.ehcache.CacheManager ehCacheManager = ((EhCacheCacheManager) cacheManager).getCacheManager();
-        final SubscriberCacheEventListener subscriberCacheEventListener =
-                SubscriberCacheEventListener.createInstance(camelContext, maximumRedeliveries, redeliveryDelay, useExponentialBackoff, backOffMultiplier, maximumRedeliveryDelay);
-        ehCacheManager.getCache("subscriber-cache").getCacheEventNotificationService().registerListener(subscriberCacheEventListener);
+        final SubscriberService subscriberService =
+            camelContext.getRegistry().lookupByNameAndType("subscriberCachableService", SubscriberService.class);
+
+        // A CacheEventListener should already be registered for the 'subscriberCachableService'.
 
         // This will initially update the cache and trigger creation of routes in the eventlistener
         subscriberService.getSubscribers();
     }
-
 }

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import se.rivta.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder.v2.GetLogicalAddresseesByServiceContractResponseType;
+import riv.infrastructure.itintegration.registry.getlogicaladdresseesbyservicecontractresponder._2.GetLogicalAddresseesByServiceContractResponseType;
 import se.skltp.ei.service.GetLogicalAddresseesServiceClient;
 import se.skltp.ei.subscriber.util.SubscriberFileTool;
 
@@ -16,10 +16,8 @@ import se.skltp.ei.subscriber.util.SubscriberFileTool;
 @Log4j2
 public class SubscriberCachableService implements SubscriberService {
 
-  @Autowired
   GetLogicalAddresseesServiceClient logicalAddresseesServiceClient;
 
-  @Autowired
   CamelContext camelContext;
 
   @Value("${subscriber.cache.file.name:#{null}}")
@@ -27,6 +25,13 @@ public class SubscriberCachableService implements SubscriberService {
 
   @Value("${notification.queue.prefix:notification.}")
   private String notificationQueuePrefix;
+
+  @Autowired
+  public SubscriberCachableService(GetLogicalAddresseesServiceClient logicalAddresseesServiceClient,
+                                   CamelContext camelContext) {
+    this.logicalAddresseesServiceClient = logicalAddresseesServiceClient;
+    this.camelContext = camelContext;
+  }
 
   @Override
   @Cacheable(value = "subscriber-cache", key = "'subscribers'",  sync = true)
@@ -36,7 +41,7 @@ public class SubscriberCachableService implements SubscriberService {
     try {
       GetLogicalAddresseesByServiceContractResponseType logicalAddressesResponse = logicalAddresseesServiceClient.callService();
       List<Subscriber> subscribers = logicalAddressesResponse.getLogicalAddressRecord().stream()
-          .map(record -> new Subscriber(record.getLogicalAddress(), record.getFilter(), notificationQueuePrefix))
+          .map(entry -> new Subscriber(entry.getLogicalAddress(), entry.getFilter(), notificationQueuePrefix))
           .collect(Collectors.toList());
 
       SubscriberFileTool.saveToLocalCopy(subscribers, subscriberCachefilePath);
