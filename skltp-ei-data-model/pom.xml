@@ -1,43 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>skltp-ei-parent</artifactId>
-    <groupId>se.skltp.ei</groupId>
-    <version>3.3.0-SNAPSHOT</version>
-  </parent>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
+  <parent>
+    <groupId>se.skltp.ei</groupId>
+    <artifactId>skltp-ei-parent</artifactId>
+    <version>3.4.0-SNAPSHOT</version>
+  </parent>
   <artifactId>skltp-ei-data-model</artifactId>
-
   <dependencies>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
       <scope>provided</scope>
     </dependency>
-
-
-    <!--  Hibernate JPA Metamodel Generator -->
-    <!--  Used to generate a metamodel of the Engagement entity -->
-    <!--  The generated class is named Engagement_ -->
     <dependency>
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-jpamodelgen</artifactId>
     </dependency>
-
-    <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
     </dependency>
-
     <dependency>
       <groupId>jakarta.persistence</groupId>
       <artifactId>jakarta.persistence-api</artifactId>
     </dependency>
-
-    <!-- Test dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -59,6 +47,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
 </project>
