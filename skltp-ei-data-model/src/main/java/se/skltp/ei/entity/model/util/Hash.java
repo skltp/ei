@@ -32,9 +32,9 @@ import se.skltp.ei.entity.model.BusinessKey;
 public class Hash {
 
   /**
-   * Makes sure multi-threaded access can be supported, i.e. MesssageDigest is not thread safe.
+   * Makes sure multithreaded access can be supported, i.e. MessageDigest is not thread safe.
    */
-  private static ThreadLocal<MessageDigest> digesters = ThreadLocal.withInitial(() -> {
+  private static final ThreadLocal<MessageDigest> digesters = ThreadLocal.withInitial(() -> {
     try {
       return MessageDigest.getInstance("SHA-256");
     } catch (NoSuchAlgorithmException e) {
@@ -49,6 +49,9 @@ public class Hash {
     // Static utility
   }
 
+  public void unload() {
+    digesters.remove();
+  }
 
   /**
    * Returns a SHA-2 hashed value

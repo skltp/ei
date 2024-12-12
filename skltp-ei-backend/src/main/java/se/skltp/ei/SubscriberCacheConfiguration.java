@@ -25,9 +25,9 @@ public class SubscriberCacheConfiguration {
   @Value("${subscriber.cache.timeToLiveSeconds}")
   Long subscriberCacheTTLSeconds;
 
-  private final String subscriberCacheName = "subscriber-cache";
+  private static final String SUBSCRIBER_CACHE_NAME = "subscriber-cache";
 
-  private final long maxEntriesLocalHeap = 1;
+  private static final long MAX_ENTRIES_LOCAL_HEAP = 1;
 
   // EVENT LISTENER PROPERTIES
   @Getter
@@ -86,7 +86,7 @@ public class SubscriberCacheConfiguration {
         = CacheConfigurationBuilder.newCacheConfigurationBuilder(
             String.class,
             ArrayList.class,
-            ResourcePoolsBuilder.heap(maxEntriesLocalHeap))
+            ResourcePoolsBuilder.heap(MAX_ENTRIES_LOCAL_HEAP))
         .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofSeconds(subscriberCacheTTLSeconds)))
         //   Also attach the listener item we created earlier.
         .withService(cacheEventListenerConfiguration)
@@ -98,9 +98,9 @@ public class SubscriberCacheConfiguration {
         .getCacheManager();
 
     // Destroy any cache with our desired name, if one happens to exist.
-    javaxCacheManager.destroyCache(subscriberCacheName);
+    javaxCacheManager.destroyCache(SUBSCRIBER_CACHE_NAME);
     // Create a new JSR107-compatible EhCache cache, using our above config.
-    javaxCacheManager.createCache(subscriberCacheName, Eh107Configuration.fromEhcacheCacheConfiguration(cacheConfiguration));
+    javaxCacheManager.createCache(SUBSCRIBER_CACHE_NAME, Eh107Configuration.fromEhcacheCacheConfiguration(cacheConfiguration));
 
     return new JCacheCacheManager(javaxCacheManager);
   }
