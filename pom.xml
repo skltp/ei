@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
+        <version>3.4.0</version>
         <relativePath />
         <!-- lookup parent from repository -->
     </parent>
@@ -57,7 +57,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <camel.version>4.8.2</camel.version>
-        <spring.boot-version>3.3.6</spring.boot-version> <!-- !! Remember the Spring Boot project parent at the top. !! -->
+        <spring.boot-version>3.4.0</spring.boot-version> <!-- !! Remember the Spring Boot project parent at the top. !! -->
         <!-- Spring Boot versions below are version-matched to the
              dependencies used within a specific Camel-version:s BOM structure. -->
         <!-- Camel v 4.9.0 (not LTS) is matched to Spring Boot v 3.4.0 -->
