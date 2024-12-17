@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.6</version>
+        <relativePath />
+        <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>se.skltp.ei</groupId>
+    <artifactId>skltp-ei-parent</artifactId>
+    <version>3.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>skltp-ei-parent</name>
+    <description>Engagement index built with Apache Camel</description>
+
     <modules>
         <module>skltp-ei-schemas</module>
         <module>skltp-ei-data-model</module>
@@ -13,18 +28,26 @@
         <module>skltp-ei-application</module>
         <module>report</module>
     </modules>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.6</version>
-        <relativePath />
-        <!-- lookup parent from repository -->
-    </parent>
-    <groupId>se.skltp.ei</groupId>
-    <artifactId>skltp-ei-parent</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
-    <name>skltp-ei-parent</name>
-    <description>Engagement index built with Apache Camel</description>
+
+    <scm>
+        <url>http://github.com/skltp/ei</url>
+        <connection>scm:git:https://github.com/skltp/ei.git</connection>
+        <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>release-nexus</id>
+            <name>Release Nexus</name>
+            <url>${releases-nexus-url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshot-nexus</id>
+            <name>Snapshot Nexus</name>
+            <url>${snapshot-nexus-url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <properties>
         <java.version>17</java.version>
@@ -65,26 +88,6 @@
         <!-- ************************-->
         <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
     </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>release-nexus</id>
-            <name>Release Nexus</name>
-            <url>${releases-nexus-url}</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshot-nexus</id>
-            <name>Snapshot Nexus</name>
-            <url>${snapshot-nexus-url}</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-    <scm>
-        <url>http://github.com/skltp/ei</url>
-        <connection>scm:git:https://github.com/skltp/ei.git</connection>
-        <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
 
     <dependencyManagement>
         <dependencies>
