@@ -11,6 +11,9 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -61,13 +64,13 @@ public class GetStatusProcessor implements Processor {
 
     String json = null;
     try {
-      ObjectMapper mapper = new ObjectMapper();
+      ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
       DefaultPrettyPrinter p = new DefaultPrettyPrinter();
       p.indentArraysWith(new DefaultIndenter().withLinefeed(System.lineSeparator()));
       mapper.setDefaultPrettyPrinter(p);
-      json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
+      json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map); // here
     } catch (JsonProcessingException e) {
-      log.error("Error parsing Map to Json in GetStatusProcessor. Sending orinary string.");
+      log.error("EI Common: Error occurred while parsing Info Map to Json in GetStatusProcessor. Sending as ordinary string instead.");
       json = map.toString();
     }
     exchange.getIn().setBody(json.replace("\\/", "/"));
