@@ -73,19 +73,13 @@
       <artifactId>camel-activemq-starter</artifactId>
     </dependency>
 
-    <!-- ACTIVE MQ OVERRIDES - Compatibility with Jakarta. Should not be needed in Spring Boot 3.4.0-RC1+ -->
-    <!-- NOTE: activemq-client below overrides to a Jakarta compatible AMQ6+ version -->
-    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-client</artifactId>
-    </dependency>
-    <!-- NOTE: activemq-broker below overrides to a Jakarta compatible AMQ6+ version -->
     <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
+    <!-- AMQ Broker needed for Spring Boot AutoConfig support for ActiveMQ. (...and to be able to set up a Broker.) -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
     </dependency>
+    <!-- activemq-jms-pool below is needed in order to support PooledConnectionFactory in the EI Broker. -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jms-pool</artifactId>
