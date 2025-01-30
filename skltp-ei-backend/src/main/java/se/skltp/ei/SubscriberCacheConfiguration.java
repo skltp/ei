@@ -55,6 +55,9 @@ public class SubscriberCacheConfiguration {
   @Getter
   CamelContext camelContext;
 
+  public SubscriberCacheConfiguration() {
+    log.info("Startup Breadcrumbs: SubscriberCacheConfiguration being constructed.");
+  }
 
   // ### Camel Context SETTER ###
   void setCamelContextOnce(CamelContext providedContext) {

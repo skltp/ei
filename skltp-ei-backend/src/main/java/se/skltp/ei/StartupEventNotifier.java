@@ -21,7 +21,7 @@ import se.skltp.ei.subscriber.SubscriberService;
 
 @Log4j2
 @Component
-@Qualifier("startupEventNotifierComponent")
+//@Qualifier("startupEventNotifierComponent")
 public class StartupEventNotifier extends EventNotifierSupport {
 
     SubscriberCacheConfiguration subscriberCacheConfiguration;
@@ -34,8 +34,11 @@ public class StartupEventNotifier extends EventNotifierSupport {
 
     @Override
     protected void doStart() {
+        log.info("Startup Breadcrumbs: StartupEventNotifier running doStart routine.");
+
         setIgnoreCamelContextEvents(false);
         setIgnoreExchangeCreatedEvent(false);
+
         // filter out unwanted events
         setIgnoreExchangeSentEvents(true);
         setIgnoreExchangeCompletedEvent(true);
@@ -43,6 +46,9 @@ public class StartupEventNotifier extends EventNotifierSupport {
         setIgnoreServiceEvents(true);
         setIgnoreRouteEvents(true);
         setIgnoreExchangeRedeliveryEvents(true);
+
+        //Add the Event Notifier to the Camel Context
+        getCamelContext().getManagementStrategy().addEventNotifier(this);
     }
 
     @Override
