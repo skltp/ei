@@ -1,4 +1,4 @@
-<Configuration status="WARN" monitorInterval="30">
+<Configuration status="INFO" monitorInterval="30">
 
   <Properties>
     <Property name="LOG_PATTERN">
@@ -17,7 +17,7 @@
     <!-- Ei application-->
     <Logger name="se.skltp.ei" level="INFO"/>
     <Logger name="se.skltp.ei.subscriber" level="INFO"/>
-    <Logger name="se.skltp.ei.service.GetLogicalAddresseesServiceClient" level="WARN"/>
+    <Logger name="se.skltp.ei.service.GetLogicalAddresseesServiceClient" level="INFO"/>
     <Logger name="se.skltp.ei.EiApplication" level="INFO"/>
 
     <!-- Ei application routes-->
@@ -30,18 +30,18 @@
     <Logger name="org.apache.camel.impl.engine.InternalRouteStartupManager" level="INFO"/>
 
     <!--Jetty-->
-    <Logger name="org.eclipse.jetty" level="WARN"/>
+    <Logger name="org.eclipse.jetty" level="INFO"/>
 
     <!--  ActiveMQ-->
-    <Logger name="org.apache.activemq" level="WARN"/>
+    <Logger name="org.apache.activemq" level="INFO"/>
 
     <!--  Hibernate -->
-    <Logger name="org.hibernate.SQL" level="WARN"/>
+    <Logger name="org.hibernate.SQL" level="INFO"/>
 
     <!--  Cxf -->
-    <Logger name="org.apache.cxf" level="WARN"/>
+    <Logger name="org.apache.cxf" level="INFO"/>
 
-    <Root level="WARN">
+    <Root level="INFO">
       <AppenderRef ref="Console"/>
     </Root>
 

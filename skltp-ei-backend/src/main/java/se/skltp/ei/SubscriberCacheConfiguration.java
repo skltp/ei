@@ -1,6 +1,7 @@
 package se.skltp.ei;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.springframework.cache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 
 @Configuration
 @EnableCaching
+@Log4j2
 public class SubscriberCacheConfiguration {
 
   @Value("${subscriber.cache.timeToLiveSeconds}")
@@ -57,6 +59,7 @@ public class SubscriberCacheConfiguration {
   // ### Camel Context SETTER ###
   void setCamelContextOnce(CamelContext providedContext) {
     if (this.camelContext == null) {
+      log.info("Startup Breadcrumbs: SubscriberCacheConfiguration recording Camel Context.");
       this.camelContext = providedContext;
     } else {
       throw new UnsupportedOperationException("It is not allowed to set a second camel context.");
@@ -65,6 +68,8 @@ public class SubscriberCacheConfiguration {
 
   @Bean("ehCacheManager")
   public CacheManager ehCacheManager() {
+
+    log.info("Startup Breadcrumbs: SubscriberCacheConfiguration CacheManager Bean being set up.");
 
     // Provide the listener a reference to this configuration item.
     SubscriberCacheEventListener listener = SubscriberCacheEventListener.createInstance(this);

@@ -20,6 +20,7 @@ public final class SubscriberCacheEventListener implements CacheEventListener<St
   private static SubscriberCacheConfiguration config;
 
   public static SubscriberCacheEventListener createInstance(SubscriberCacheConfiguration config) {
+    log.info("Startup Breadcrumbs: SubscriberCacheEventListener being instantiated.");
 
     if (instance == null) {
       // record static fields.
@@ -83,6 +84,10 @@ public final class SubscriberCacheEventListener implements CacheEventListener<St
 
       // Fetch these locally to allow faster looping below.
       CamelContext camelContext = config.getCamelContext();
+      if (camelContext == null) {
+        log.error("Startup Breadcrumbs: SubscriberCacheEventListener retrieved a null CamelContext. Start up order has likely broken.");
+      }
+
       int maximumRedeliveries = config.getMaximumRedeliveries();
       int redeliveryDelay = config.getRedeliveryDelay();
       boolean useExponentialBackoff = config.getUseExponentialBackoff();
@@ -90,6 +95,7 @@ public final class SubscriberCacheEventListener implements CacheEventListener<St
       int maximumRedeliveryDelay = config.getMaximumRedeliveryDelay();
 
       for (Subscriber subscriber : subscribers) {
+        //assert camelContext != null;
         if (camelContext.getRoute(subscriber.getNotificationRouteName()) == null) {
           camelContext.addRoutes(new EiBackendDynamicNotificationRoute(
               subscriber,

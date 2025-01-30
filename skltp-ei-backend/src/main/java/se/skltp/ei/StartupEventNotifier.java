@@ -14,18 +14,21 @@ import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import se.skltp.ei.subscriber.SubscriberService;
 
 
 @Log4j2
 @Component
+@Qualifier("startupEventNotifierComponent")
 public class StartupEventNotifier extends EventNotifierSupport {
 
     SubscriberCacheConfiguration subscriberCacheConfiguration;
 
     @Autowired
     public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
+        log.info("Startup Breadcrumbs: StartupEventNotifier being constructed.");
         this.subscriberCacheConfiguration = subscriberCacheConfiguration;
     }
 
@@ -44,14 +47,23 @@ public class StartupEventNotifier extends EventNotifierSupport {
 
     @Override
     public void notify(CamelEvent event) throws IOException {
-        if (event instanceof CamelContextStartedEvent) {
+
+      log.info("Startup Breadcrumbs: StartupEventNotifier received notification of type: {}", event.getType().name());
+
+        if (event instanceof CamelEvent.CamelContextInitializingEvent) {
+            log.info("Startup Breadcrumbs: StartupEventNotifier running CamelContextInitializingEvent routine. Will attempt to record camel context in config.");
+            log.info("Camel event meta: {}", event.toString());
 
             CamelContext camelEventContext = (CamelContext) event.getSource();
             subscriberCacheConfiguration.setCamelContextOnce(camelEventContext); // Record Camel Context within configuration body for future usage.
+
+        } else if (event instanceof CamelContextStartedEvent) {
+            log.info("Startup Breadcrumbs: StartupEventNotifier running CamelContextStartedEvent routine. Will attempt to initialize Subscribers.");
+            CamelContext camelEventContext = (CamelContext) event.getSource();
             initializeSubscribers(camelEventContext);
 
         } else if (event instanceof ExchangeCreatedEvent ||
-                event instanceof ExchangeSentEvent) {
+            event instanceof ExchangeSentEvent) {
             final Object source = event.getSource();
             if (source instanceof Exchange exchange) {
                 final String correlationId = exchange.getIn().getHeader(X_SKLTP_CORRELATION_ID, String.class);
