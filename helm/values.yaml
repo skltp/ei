@@ -82,8 +82,8 @@ probes_backend:
       path: actuator/health/readiness
       port: actuators
       scheme: HTTP
-    initialDelaySeconds: 20
-    periodSeconds: 5  # 20s initial + 9 failures * 5s period = 65 seconds max startup before failure and restart.
+    initialDelaySeconds: 30
+    periodSeconds: 5  # 30s initial + 9 failures * 5s period = 75 seconds max startup before failure and restart.
     timeoutSeconds: 4
     successThreshold: 1
     failureThreshold: 9
