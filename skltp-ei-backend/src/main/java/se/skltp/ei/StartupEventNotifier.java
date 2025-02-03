@@ -3,6 +3,7 @@ package se.skltp.ei;
 import static se.skltp.ei.service.constants.EiConstants.X_SKLTP_CORRELATION_ID;
 
 import java.io.IOException;
+import java.util.EventObject;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
@@ -30,6 +31,18 @@ public class StartupEventNotifier extends EventNotifierSupport {
     public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
         log.info("Startup Breadcrumbs: StartupEventNotifier being constructed.");
         this.subscriberCacheConfiguration = subscriberCacheConfiguration;
+
+        if(getCamelContext() != null) {
+            //Add the Event Notifier to the Camel Context
+            log.info("Startup Breadcrumbs: Attempting to attach event notifier during construction");
+            getCamelContext().getManagementStrategy().addEventNotifier(this);
+        } else {
+            log.info("Startup Breadcrumbs: Unable to get non-null Camel context during construction");
+        }
+    }
+
+    public boolean isEnabled(EventObject event) {
+        return true;
     }
 
     @Override
@@ -46,9 +59,6 @@ public class StartupEventNotifier extends EventNotifierSupport {
         setIgnoreServiceEvents(true);
         setIgnoreRouteEvents(true);
         setIgnoreExchangeRedeliveryEvents(true);
-
-        //Add the Event Notifier to the Camel Context
-        getCamelContext().getManagementStrategy().addEventNotifier(this);
     }
 
     @Override
