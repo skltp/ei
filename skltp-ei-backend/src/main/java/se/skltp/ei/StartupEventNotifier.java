@@ -5,6 +5,7 @@ import static se.skltp.ei.service.constants.EiConstants.X_SKLTP_CORRELATION_ID;
 import java.io.IOException;
 import java.util.EventObject;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -25,20 +26,19 @@ import se.skltp.ei.subscriber.SubscriberService;
 //@Qualifier("startupEventNotifierComponent")
 public class StartupEventNotifier extends EventNotifierSupport {
 
+    StartupEventNotifier selfRef = null;
+
     SubscriberCacheConfiguration subscriberCacheConfiguration;
 
     @Autowired
     public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
-        log.info("Startup Breadcrumbs: StartupEventNotifier being constructed.");
+        log.info("Startup Breadcrumbs: StartupEventNotifier being constructed via Autowire.");
         this.subscriberCacheConfiguration = subscriberCacheConfiguration;
+        this.selfRef = this;
+    }
 
-        if(getCamelContext() != null) {
-            //Add the Event Notifier to the Camel Context
-            log.info("Startup Breadcrumbs: Attempting to attach event notifier during construction");
-            getCamelContext().getManagementStrategy().addEventNotifier(this);
-        } else {
-            log.info("Startup Breadcrumbs: Unable to get non-null Camel context during construction");
-        }
+    public StartupEventNotifier() {
+        log.info("Startup Breadcrumbs: StartupEventNotifier being constructed via Standard constructor.");
     }
 
     public boolean isEnabled(EventObject event) {
@@ -59,6 +59,19 @@ public class StartupEventNotifier extends EventNotifierSupport {
         setIgnoreServiceEvents(true);
         setIgnoreRouteEvents(true);
         setIgnoreExchangeRedeliveryEvents(true);
+    }
+
+    @PostConstruct
+    public void init() {
+        //MyEventNotifier notifier = new MyEventNotifier();
+
+        if(getCamelContext() != null) {
+            //Add the Event Notifier to the Camel Context
+            log.info("Startup Breadcrumbs: Camel context present post construction");
+            //getCamelContext().getManagementStrategy().addEventNotifier(this);
+        } else {
+            log.info("Startup Breadcrumbs: Unable to get non-null Camel context post construction");
+        }
     }
 
     @Override
