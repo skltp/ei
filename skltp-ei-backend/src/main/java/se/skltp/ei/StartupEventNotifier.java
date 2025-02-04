@@ -16,14 +16,12 @@ import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import se.skltp.ei.subscriber.SubscriberService;
 
 
 @Log4j2
 @Component
-//@Qualifier("startupEventNotifierComponent")
 public class StartupEventNotifier extends EventNotifierSupport {
 
     StartupEventNotifier selfRef = null;
@@ -31,7 +29,7 @@ public class StartupEventNotifier extends EventNotifierSupport {
     SubscriberCacheConfiguration subscriberCacheConfiguration;
 
     @Autowired
-    public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
+    public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration, CamelContext camelContext) {
         log.info("Startup Breadcrumbs: StartupEventNotifier being constructed via Autowire.");
         this.subscriberCacheConfiguration = subscriberCacheConfiguration;
         this.selfRef = this;
@@ -63,12 +61,9 @@ public class StartupEventNotifier extends EventNotifierSupport {
 
     @PostConstruct
     public void init() {
-        //MyEventNotifier notifier = new MyEventNotifier();
-
         if(getCamelContext() != null) {
             //Add the Event Notifier to the Camel Context
             log.info("Startup Breadcrumbs: Camel context present post construction");
-            //getCamelContext().getManagementStrategy().addEventNotifier(this);
         } else {
             log.info("Startup Breadcrumbs: Unable to get non-null Camel context post construction");
         }
