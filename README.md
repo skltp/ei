@@ -11,8 +11,21 @@ Mer information om EI: https://inera.atlassian.net/wiki/spaces/SKLTP/pages/31878
  1. Starta _EiTeststubApplication_ spring-boot applikation under _skltp-ei-teststub_ modulen.
  2. Starta _EiApplication_ spring-boot applikation under _skltp-ei-applikation_ modulen.
  3. Kör SOAP-UI tester som hittas under ./test/functional/SoapUI
+
+```
+Punkt 2:
+Menyalternativ för uppstart i IntelliJ IDEA:
+* skltp-ei-teststub    > Plugins > spring-boot > spring-boot:run 
+  // Startar en console-attached instans av teststub-appen.
+* skltp-ei-application > Plugins > spring-boot > spring-boot:run
+  // Startar en console-attached instans av application-appen i en ny run-flik.
+
+Nedstängning:
+* skltp-ei-application : Stopp-knappen i verktygsfältet.
+* skltp-ei-teststub > Plugins > spring-boot > spring-boot:stop
+```
  
-Default startar EI med en H2 inmemory databas och en embedded ActiveMQ instans.<br/>
+Default startar EI med en H2 in-memory databas och en embedded ActiveMQ instans.<br/>
  
  
  ## Moduler

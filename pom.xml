@@ -16,7 +16,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.12</version>
+        <version>3.3.7</version>
         <relativePath />
         <!-- lookup parent from repository -->
     </parent>
@@ -33,23 +33,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <camel.version>4.2.0</camel.version>
-        <spring.boot-version>3.1.12</spring.boot-version> <!-- !! Remember the Spring Boot project parent at the top. !! -->
+        <camel.version>4.8.3</camel.version>
+        <spring.boot-version>3.3.7</spring.boot-version> <!-- !! Remember the Spring Boot project parent at the top. !! -->
         <!-- Spring Boot versions below are version-matched to the
              dependencies used within a specific Camel-version:s BOM structure. -->
-        <!-- Camel v 4.9.0 is matched to Spring Boot v 3.4.0 -->
-        <!-- Camel v 4.8.1 is matched to Spring Boot v 3.3.4 -->
-        <!-- Camel v 4.8.0 is matched to Spring Boot v 3.3.3 -->
-        <!-- Camel v 4.2.0 is matched to Spring Boot v 3.1.5+ -->
+        <!-- Camel v 4.8.3 (LTS) is matched to Spring Boot v 3.3.7 -->
 
         <lombok.version>1.18.36</lombok.version>
-        <apache-cfx.version>4.0.5</apache-cfx.version>
+        <apache-cfx.version>4.1.0</apache-cfx.version>
         <jaxws.version>4.0.3</jaxws.version>
         <jakarta.jws.version>3.0.0</jakarta.jws.version>
         <jakarta.xml.version>4.0.2</jakarta.xml.version>
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
-        <cxf-rt-wsdl.version>4.0.5</cxf-rt-wsdl.version>
-        <activemq-deps-version>6.1.3</activemq-deps-version>
+        <activemq-jmspool-version>6.1.4</activemq-jmspool-version> <!-- This must match AMQ versions from other dependencies. -->
 
         <hawtio.spring.boot-version>2.17.7</hawtio.spring.boot-version>
         <lmax_disruptor-version>3.4.4</lmax_disruptor-version>
@@ -139,13 +135,6 @@
                 <version>${javax-cache.version}</version>
             </dependency>
 
-            <!-- TODO: hibernate-jpamodelgen below might not be needed after Spring Boot 3.4.0. Check. -->
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-jpamodelgen</artifactId>
-                <version>6.0.2.Final</version>
-            </dependency>
-
             <!-- Database -->
             <dependency>
                 <groupId>com.h2database</groupId>
@@ -153,37 +142,26 @@
                 <version>${h2database.version}</version>
             </dependency>
 
-            <!-- ACTIVE MQ OVERRIDES - Compatibility with Jakarta. Should not be needed in Spring Boot 3.4.0-RC1+ -->
+            <!-- ACTIVE MQ OVERRIDES - Exclude old AMQ; Include JMS Pools. -->
             <dependency>
                 <groupId>org.apache.camel.springboot</groupId>
                 <artifactId>camel-activemq-starter</artifactId>
                 <version>${camel.version}</version>
                 <exclusions>
                     <exclusion>
+                        <!-- activemq-client-jakarta is a specific branch of ActiveMQ v5.18 with interim Jakarta compatibility.
+                             ActiveMQ v6+, which is default in newer Camel/SB versions, has native Jakarta support.
+                             This submodule will likely vanish in newer releases of Camel/SB. -->
                         <groupId>org.apache.activemq</groupId>
                         <artifactId>activemq-client-jakarta</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- NOTE: activemq-client below overrides to a Jakarta compatible AMQ6+ version -->
-            <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-client</artifactId>
-                <version>${activemq-deps-version}</version>
-            </dependency>
-            <!-- NOTE: activemq-broker below overrides to a Jakarta compatible AMQ6+ version -->
-            <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>${activemq-deps-version}</version>
-            </dependency>
-            <!-- TODO: activemq-jms-pool below might not be needed after Spring Boot 3.4.0. Check. -->
+            <!-- activemq-jms-pool below is needed in order to support PooledConnectionFactory in the EI Broker. -->
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-jms-pool</artifactId>
-                <version>${activemq-deps-version}</version>
+                <version>${activemq-jmspool-version}</version>
             </dependency>
 
             <!-- Camel -->
