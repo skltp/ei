@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>se.skltp.ei</groupId>
     <artifactId>skltp-ei-parent</artifactId>
-    <version>3.6.0-SNAPSHOT</version>
+    <groupId>se.skltp.ei</groupId>
+    <version>3.5.0-SNAPSHOT</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>skltp-ei-common</artifactId>
+
   <dependencies>
+
+    <!-- EI modules-->
     <dependency>
       <groupId>se.skltp.ei</groupId>
       <artifactId>skltp-ei-schemas</artifactId>
@@ -21,6 +24,8 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -46,11 +51,13 @@
       <artifactId>camel-cxf-soap</artifactId>
       <version>${camel.version}</version>
     </dependency>
+
     <dependency>
       <groupId>jakarta.jms</groupId>
       <artifactId>jakarta.jms-api</artifactId>
       <version>3.1.0</version>
     </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
@@ -59,30 +66,44 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
+
+    <!-- START: ACTIVE MQ -->
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-activemq-starter</artifactId>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
+    <!-- AMQ Broker needed for Spring Boot AutoConfig support for ActiveMQ. (...and to be able to set up a Broker.) -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
     </dependency>
+    <!-- activemq-jms-pool below is needed in order to support PooledConnectionFactory in the EI Broker. -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jms-pool</artifactId>
     </dependency>
+    <!-- END: ACTIVE MQ -->
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
+
+    <!-- Hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
     </dependency>
+
+    <!-- logging -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-log4j2</artifactId>
     </dependency>
+
+    <!-- Test Dependencies-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -103,10 +124,13 @@
       <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
+        <!-- create test-jar files -->
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
@@ -118,4 +142,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>

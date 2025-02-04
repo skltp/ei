@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <groupId>se.skltp.ei</groupId>
     <artifactId>skltp-ei-parent</artifactId>
-    <version>3.6.0-SNAPSHOT</version>
+    <groupId>se.skltp.ei</groupId>
+    <version>3.5.0-SNAPSHOT</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
+
   <artifactId>skltp-ei-schemas</artifactId>
+
   <properties>
+    <!-- Properties for generating code from XML Schemas (JAXB) -->
     <schema.path>${basedir}/src/main/resources/schemas</schema.path>
     <schema.gen.src.dir>${project.build.directory}/generated-sources/cxf</schema.gen.src.dir>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>com.sun.xml.ws</groupId>
-      <artifactId>jaxws-rt</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-log4j2</artifactId>
-    </dependency>
-  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -32,9 +25,6 @@
           <execution>
             <id>generate-sources</id>
             <phase>generate-sources</phase>
-            <goals>
-              <goal>wsdl2java</goal>
-            </goals>
             <configuration>
               <sourceRoot>${schema.gen.src.dir}</sourceRoot>
               <wsdlOptions>
@@ -58,9 +48,30 @@
                 </wsdlOption>
               </wsdlOptions>
             </configuration>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+
+  <dependencies>
+
+    <!-- JAX-WS Runtime, needed for javax.xml.* with Java 11 or newer -->
+    <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>jaxws-rt</artifactId>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+  </dependencies>
+
 </project>
+
+

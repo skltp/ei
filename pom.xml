@@ -1,333 +1,398 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.7</version>
-    <relativePath></relativePath>
-  </parent>
-  <groupId>se.skltp.ei</groupId>
-  <artifactId>skltp-ei-parent</artifactId>
-  <version>3.6.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>skltp-ei-parent</name>
-  <description>Engagement index built with Apache Camel</description>
-  <modules>
-    <module>skltp-ei-schemas</module>
-    <module>skltp-ei-data-model</module>
-    <module>skltp-ei-common</module>
-    <module>skltp-ei-teststub</module>
-    <module>skltp-ei-frontend</module>
-    <module>skltp-ei-backend</module>
-    <module>skltp-ei-application</module>
-    <module>report</module>
-  </modules>
-  <scm>
-    <connection>scm:git:https://github.com/skltp/ei.git</connection>
-    <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
-    <url>http://github.com/skltp/ei</url>
-  </scm>
-  <distributionManagement>
-    <repository>
-      <id>release-nexus</id>
-      <name>Release Nexus</name>
-      <url>${releases-nexus-url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshot-nexus</id>
-      <name>Snapshot Nexus</name>
-      <url>${snapshot-nexus-url}</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <properties>
-    <maven.compiler.release>17</maven.compiler.release>
-    <ehcache3.version>3.10.8</ehcache3.version>
-    <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
-    <lmax_disruptor-version>3.4.4</lmax_disruptor-version>
-    <spring.boot-version>3.3.7</spring.boot-version>
-    <ecs-logging-java.version>1.5.0</ecs-logging-java.version>
-    <maven.javadoc.skip>true</maven.javadoc.skip>
-    <apache-cfx.version>4.1.0</apache-cfx.version>
-    <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <log4j.version>2.17.2</log4j.version>
-    <javax-cache.version>1.1.1</javax-cache.version>
-    <micrometer.version>1.12.3</micrometer.version>
-    <log4j2.version>2.17.2</log4j2.version>
-    <java.version>17</java.version>
-    <jakarta.xml.version>4.0.2</jakarta.xml.version>
-    <jakarta.jws.version>3.0.0</jakarta.jws.version>
-    <h2database.version>2.3.232</h2database.version>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <lombok.version>1.18.36</lombok.version>
-    <hawtio.spring.boot-version>2.17.7</hawtio.spring.boot-version>
-    <jaxws.version>4.0.3</jaxws.version>
-    <activemq-jmspool-version>6.1.4</activemq-jmspool-version>
-    <camel.version>4.8.3</camel.version>
-  </properties>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>skltp-ei-schemas</module>
+        <module>skltp-ei-data-model</module>
+        <module>skltp-ei-common</module>
+        <module>skltp-ei-teststub</module>
+        <module>skltp-ei-frontend</module>
+        <module>skltp-ei-backend</module>
+        <module>skltp-ei-application</module>
+        <module>report</module>
+    </modules>
+    <parent>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring.boot-version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel.springboot</groupId>
-        <artifactId>camel-spring-boot-bom</artifactId>
-        <version>${camel.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter</artifactId>
-        <version>${spring.boot-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-        <version>${ehcache3.version}</version>
-        <classifier>jakarta</classifier>
-      </dependency>
-      <dependency>
-        <groupId>javax.cache</groupId>
-        <artifactId>cache-api</artifactId>
-        <version>${javax-cache.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>${h2database.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel.springboot</groupId>
-        <artifactId>camel-activemq-starter</artifactId>
-        <version>${camel.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client-jakarta</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-jms-pool</artifactId>
-        <version>${activemq-jmspool-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-support</artifactId>
-        <version>${camel.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-management</artifactId>
-        <version>${camel.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-transports-http-jetty</artifactId>
-        <version>${apache-cfx.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-transports-http-hc</artifactId>
-        <version>${apache-cfx.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-features-logging</artifactId>
-        <version>${apache-cfx.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.xml.ws</groupId>
-        <artifactId>jaxws-rt</artifactId>
-        <version>${jaxws.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.jws</groupId>
-        <artifactId>jakarta.jws-api</artifactId>
-        <version>${jakarta.jws.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.xml.bind</groupId>
-        <artifactId>jakarta.xml.bind-api</artifactId>
-        <version>${jakarta.xml.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>jakarta.persistence</groupId>
-        <artifactId>jakarta.persistence-api</artifactId>
-        <version>${jakarta.persistence.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${lombok.version}</version>
-        <optional>true</optional>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
-        <artifactId>hawtio-springboot</artifactId>
-        <version>${hawtio.spring.boot-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-layout-template-json</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>co.elastic.logging</groupId>
-        <artifactId>log4j2-ecs-layout</artifactId>
-        <version>${ecs-logging-java.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.lmax</groupId>
-        <artifactId>disruptor</artifactId>
-        <version>${lmax_disruptor-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <version>${spring.boot-version}</version>
-        <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.vaadin.external.google</groupId>
-            <artifactId>android-json</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test-junit5</artifactId>
-        <version>${camel.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test-spring-junit5</artifactId>
-        <version>${camel.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel.springboot</groupId>
-        <artifactId>camel-http-starter</artifactId>
-        <version>${camel.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.micrometer</groupId>
-        <artifactId>micrometer-registry-prometheus</artifactId>
-        <version>${micrometer.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <systemPropertyVariables>
-            <com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize>true</com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize>
-          </systemPropertyVariables>
-          <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-          <runOrder>alphabetical</runOrder>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
-    <profile>
-      <id>test-coverage</id>
-      <build>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.7</version>
+        <relativePath />
+        <!-- lookup parent from repository -->
+    </parent>
+    <groupId>se.skltp.ei</groupId>
+    <artifactId>skltp-ei-parent</artifactId>
+    <version>3.5.0-SNAPSHOT</version>
+    <name>skltp-ei-parent</name>
+    <description>Engagement index built with Apache Camel</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <camel.version>4.8.3</camel.version>
+        <spring.boot-version>3.3.7</spring.boot-version> <!-- !! Remember the Spring Boot project parent at the top. !! -->
+        <!-- Spring Boot versions below are version-matched to the
+             dependencies used within a specific Camel-version:s BOM structure. -->
+        <!-- Camel v 4.8.3 (LTS) is matched to Spring Boot v 3.3.7 -->
+
+        <lombok.version>1.18.36</lombok.version>
+        <apache-cfx.version>4.1.0</apache-cfx.version>
+        <jaxws.version>4.0.3</jaxws.version>
+        <jakarta.jws.version>3.0.0</jakarta.jws.version>
+        <jakarta.xml.version>4.0.2</jakarta.xml.version>
+        <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
+        <activemq-jmspool-version>6.1.4</activemq-jmspool-version> <!-- This must match AMQ versions from other dependencies. -->
+
+        <hawtio.spring.boot-version>2.17.7</hawtio.spring.boot-version>
+        <lmax_disruptor-version>3.4.4</lmax_disruptor-version>
+        <h2database.version>2.3.232</h2database.version>
+        <ehcache3.version>3.10.8</ehcache3.version>
+        <javax-cache.version>1.1.1</javax-cache.version>
+        <log4j2.version>2.17.2</log4j2.version>
+        <log4j.version>2.17.2</log4j.version>
+        <ecs-logging-java.version>1.5.0</ecs-logging-java.version>
+        <micrometer.version>1.12.3</micrometer.version>
+
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+
+        <!-- ************************-->
+        <!-- Sonar/Reporting settings -->
+        <!-- ************************-->
+        <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>release-nexus</id>
+            <name>Release Nexus</name>
+            <url>${releases-nexus-url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshot-nexus</id>
+            <name>Snapshot Nexus</name>
+            <url>${snapshot-nexus-url}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <url>http://github.com/skltp/ei</url>
+        <connection>scm:git:https://github.com/skltp/ei.git</connection>
+        <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Bill of Materials, for Spring Boot and Camel. -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel.springboot</groupId>
+                <artifactId>camel-spring-boot-bom</artifactId>
+                <version>${camel.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring-boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring.boot-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-tomcat</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.ehcache/ehcache -->
+            <!-- Ehcache 3 -->
+            <dependency>
+                <groupId>org.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache3.version}</version>
+                <classifier>jakarta</classifier>
+            </dependency>
+            <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>${javax-cache.version}</version>
+            </dependency>
+
+            <!-- Database -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2database.version}</version>
+            </dependency>
+
+            <!-- ACTIVE MQ OVERRIDES - Exclude old AMQ; Include JMS Pools. -->
+            <dependency>
+                <groupId>org.apache.camel.springboot</groupId>
+                <artifactId>camel-activemq-starter</artifactId>
+                <version>${camel.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- activemq-client-jakarta is a specific branch of ActiveMQ v5.18 with interim Jakarta compatibility.
+                             ActiveMQ v6+, which is default in newer Camel/SB versions, has native Jakarta support.
+                             This submodule will likely vanish in newer releases of Camel/SB. -->
+                        <groupId>org.apache.activemq</groupId>
+                        <artifactId>activemq-client-jakarta</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- activemq-jms-pool below is needed in order to support PooledConnectionFactory in the EI Broker. -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-jms-pool</artifactId>
+                <version>${activemq-jmspool-version}</version>
+            </dependency>
+
+            <!-- Camel -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-support</artifactId>
+                <version>${camel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-management</artifactId>
+                <version>${camel.version}</version>
+            </dependency>
+
+            <!-- Cxf -->
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http-jetty</artifactId>
+                <version>${apache-cfx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http-hc</artifactId>
+                <version>${apache-cfx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-features-logging</artifactId>
+                <version>${apache-cfx.version}</version>
+            </dependency>
+
+            <!-- JAX-WS Runtime, needed for javax.xml.ws (Java 11) and jakarta.xml.ws (Java 17) -->
+            <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-rt</artifactId>
+                <version>${jaxws.version}</version>
+            </dependency>
+
+            <!-- Jakarta -->
+            <dependency>
+                <groupId>jakarta.jws</groupId>
+                <artifactId>jakarta.jws-api</artifactId>
+                <version>${jakarta.jws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta.persistence.version}</version>
+            </dependency>
+
+            <!-- LOMBOK -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <optional>true</optional>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!--hawt.io-->
+            <dependency>
+                <groupId>io.hawt</groupId>
+                <artifactId>hawtio-springboot</artifactId>
+                <version>${hawtio.spring.boot-version}</version>
+            </dependency>
+
+            <!-- LOGGING -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-layout-template-json</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>co.elastic.logging</groupId>
+                <artifactId>log4j2-ecs-layout</artifactId>
+                <version>${ecs-logging-java.version}</version>
+            </dependency>
+            <!-- for async logging -->
+            <dependency>
+                <groupId>com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${lmax_disruptor-version}</version>
+            </dependency>
+
+            <!-- Test Dependencies-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot-version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <!-- This is to exclude Junit4 test-->
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.vaadin.external.google</groupId>
+                        <artifactId>android-json</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-test-junit5</artifactId>
+                <scope>test</scope>
+                <version>${camel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-test-spring-junit5</artifactId>
+                <version>${camel.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel.springboot</groupId>
+                <artifactId>camel-http-starter</artifactId>
+                <version>${camel.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- MISC DEPENDENCIES -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
         <plugins>
-          <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>integration-test</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>verify</id>
-                <goals>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>${jacoco.plugin.version}</version>
-            <executions>
-              <execution>
-                <id>default-prepare-agent</id>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>pre-integration-test</id>
-                <phase>pre-integration-test</phase>
-                <goals>
-                  <goal>prepare-agent</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>post-integration-test</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>default-report</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>report</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <!-- Seems to be some kind of conflict with JAXB camel dependencies and JDK8 Jaxb impl.
+          https://stackoverflow.com/questions/42499436/classcastexception-cannot-be-cast-to-com-sun-xml-internal-bind-v2-runtime-refle -->
+                    <systemPropertyVariables>
+                        <com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize>true
+                        </com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize>
+                    </systemPropertyVariables>
+
+                    <!--Make failsafe and spring-boot repackage play nice together
+          https://github.com/spring-projects/spring-boot/issues/6254-->
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                    <runOrder>alphabetical</runOrder>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>test-coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>verify</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>default-prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>pre-integration-test</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>post-integration-test</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>default-report</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
