@@ -3,7 +3,6 @@ package se.skltp.ei;
 import static se.skltp.ei.service.constants.EiConstants.X_SKLTP_CORRELATION_ID;
 
 import java.io.IOException;
-import java.util.EventObject;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
@@ -19,12 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.skltp.ei.subscriber.SubscriberService;
 
-
 @Log4j2
 @Component
 public class StartupEventNotifier extends EventNotifierSupport {
-
-    StartupEventNotifier selfRef = null;
 
     SubscriberCacheConfiguration subscriberCacheConfiguration;
 
@@ -32,15 +28,10 @@ public class StartupEventNotifier extends EventNotifierSupport {
     public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
         log.info("Startup Breadcrumbs: StartupEventNotifier being constructed via Autowire.");
         this.subscriberCacheConfiguration = subscriberCacheConfiguration;
-        this.selfRef = this;
     }
 
-    public StartupEventNotifier() {
+    private StartupEventNotifier() {
         log.info("Startup Breadcrumbs: StartupEventNotifier being constructed via Standard constructor.");
-    }
-
-    public boolean isEnabled(EventObject event) {
-        return true;
     }
 
     @Override
