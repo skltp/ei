@@ -29,7 +29,7 @@ public class StartupEventNotifier extends EventNotifierSupport {
     SubscriberCacheConfiguration subscriberCacheConfiguration;
 
     @Autowired
-    public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration, CamelContext camelContext) {
+    public StartupEventNotifier(SubscriberCacheConfiguration subscriberCacheConfiguration) {
         log.info("Startup Breadcrumbs: StartupEventNotifier being constructed via Autowire.");
         this.subscriberCacheConfiguration = subscriberCacheConfiguration;
         this.selfRef = this;
