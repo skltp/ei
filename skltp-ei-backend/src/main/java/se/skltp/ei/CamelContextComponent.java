@@ -21,6 +21,10 @@ public class CamelContextComponent {
 
   private final CamelContext camelContext;
 
+  /**
+   * Constructor that takes a CamelContext. Will get automatically called during Spring Boot's component scan and autoconfiguration.
+   * @param camelContext This gets provided by Spring Boot automatically.
+   */
   public CamelContextComponent(CamelContext camelContext) {
     log.info("Startup Breadcrumbs: Camel Startup checker constructed.");
     this.camelContext = camelContext;
