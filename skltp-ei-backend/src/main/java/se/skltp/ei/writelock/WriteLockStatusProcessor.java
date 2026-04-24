@@ -29,8 +29,8 @@ public class WriteLockStatusProcessor implements Processor {
 
         Map<String, String> routes = new LinkedHashMap<>();
         for (String routeId : new String[]{
-                WriteLockService.PROCESS_ROUTE_ID,
-                WriteLockService.COLLECT_ROUTE_ID}) {
+                writeLockService.getProcessRouteId(),
+                writeLockService.getCollectRouteId()}) {
             ServiceStatus s = camelContext.getRouteController().getRouteStatus(routeId);
             routes.put(routeId, s != null ? s.name() : "Unknown");
         }

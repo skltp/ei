@@ -14,6 +14,9 @@ public class EiBackendCollectRoute extends RouteBuilder {
     @Value("${collect.queue.name:collect}")
     String collectQueueName;
 
+    @Value("${ei.route.id.collect:backend-collection-route}")
+    String collectRouteId;
+
     @Value("${process.queue.name:process}")
     String processQueueName;
 
@@ -64,7 +67,7 @@ public class EiBackendCollectRoute extends RouteBuilder {
 
         // Consumer: Receiving and batching messages from the SJMS queue
         fromF("sjms:queue:%s?connectionFactory=#pooledConnectionFactory", collectQueueName)
-            .id("backend-collection-route")
+            .id(collectRouteId)
             .aggregate(constant(true)) // aggregate all exchanges
             .aggregationStrategy("eiCollectionAggregationStrategy")
             .completionSize(collectQueueCompletionSize) // batch size: number of messages

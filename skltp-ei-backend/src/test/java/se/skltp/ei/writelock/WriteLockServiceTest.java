@@ -20,6 +20,9 @@ class WriteLockServiceTest {
     private CamelContext camelContext;
     private RouteController routeController;
 
+    private static final String PROCESS_ROUTE_ID = "backend-process-route";
+    private static final String COLLECT_ROUTE_ID = "backend-collection-route";
+
     @BeforeEach
     void setUp() throws Exception {
         writeLockService = new WriteLockService();
@@ -31,6 +34,15 @@ class WriteLockServiceTest {
         Field field = WriteLockService.class.getDeclaredField("camelContext");
         field.setAccessible(true);
         field.set(writeLockService, camelContext);
+
+        // Inject route IDs via reflection (fields are @Value)
+        Field processField = WriteLockService.class.getDeclaredField("processRouteId");
+        processField.setAccessible(true);
+        processField.set(writeLockService, PROCESS_ROUTE_ID);
+
+        Field collectField = WriteLockService.class.getDeclaredField("collectRouteId");
+        collectField.setAccessible(true);
+        collectField.set(writeLockService, COLLECT_ROUTE_ID);
     }
 
     @Test
@@ -43,8 +55,8 @@ class WriteLockServiceTest {
         writeLockService.enable();
 
         assertTrue(writeLockService.isEnabled());
-        verify(routeController).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
-        verify(routeController).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
+        verify(routeController).suspendRoute(COLLECT_ROUTE_ID);
+        verify(routeController).suspendRoute(PROCESS_ROUTE_ID);
     }
 
     @Test
@@ -54,8 +66,8 @@ class WriteLockServiceTest {
 
         assertTrue(writeLockService.isEnabled());
         // Routes should only be suspended once
-        verify(routeController, times(1)).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
-        verify(routeController, times(1)).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
+        verify(routeController, times(1)).suspendRoute(COLLECT_ROUTE_ID);
+        verify(routeController, times(1)).suspendRoute(PROCESS_ROUTE_ID);
     }
 
     @Test
@@ -64,8 +76,8 @@ class WriteLockServiceTest {
         writeLockService.disable();
 
         assertFalse(writeLockService.isEnabled());
-        verify(routeController).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
-        verify(routeController).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+        verify(routeController).resumeRoute(COLLECT_ROUTE_ID);
+        verify(routeController).resumeRoute(PROCESS_ROUTE_ID);
     }
 
     @Test
@@ -73,8 +85,8 @@ class WriteLockServiceTest {
         writeLockService.disable();
 
         assertFalse(writeLockService.isEnabled());
-        verify(routeController, never()).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
-        verify(routeController, never()).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+        verify(routeController, never()).resumeRoute(COLLECT_ROUTE_ID);
+        verify(routeController, never()).resumeRoute(PROCESS_ROUTE_ID);
     }
 
     @Test
@@ -88,10 +100,10 @@ class WriteLockServiceTest {
         writeLockService.enable();
         assertTrue(writeLockService.isEnabled());
 
-        verify(routeController, times(2)).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
-        verify(routeController, times(2)).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
-        verify(routeController, times(1)).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
-        verify(routeController, times(1)).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+        verify(routeController, times(2)).suspendRoute(COLLECT_ROUTE_ID);
+        verify(routeController, times(2)).suspendRoute(PROCESS_ROUTE_ID);
+        verify(routeController, times(1)).resumeRoute(COLLECT_ROUTE_ID);
+        verify(routeController, times(1)).resumeRoute(PROCESS_ROUTE_ID);
     }
 
     @Test
@@ -100,8 +112,8 @@ class WriteLockServiceTest {
 
         writeLockService.enable();
 
-        inOrder.verify(routeController).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
-        inOrder.verify(routeController).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
+        inOrder.verify(routeController).suspendRoute(COLLECT_ROUTE_ID);
+        inOrder.verify(routeController).suspendRoute(PROCESS_ROUTE_ID);
     }
 
     @Test
@@ -111,7 +123,7 @@ class WriteLockServiceTest {
 
         writeLockService.disable();
 
-        inOrder.verify(routeController).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
-        inOrder.verify(routeController).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+        inOrder.verify(routeController).resumeRoute(COLLECT_ROUTE_ID);
+        inOrder.verify(routeController).resumeRoute(PROCESS_ROUTE_ID);
     }
 }

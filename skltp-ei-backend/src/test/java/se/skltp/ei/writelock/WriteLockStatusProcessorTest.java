@@ -47,6 +47,8 @@ class WriteLockStatusProcessorTest {
         message = mock(Message.class);
         exchange = mock(Exchange.class);
         when(exchange.getIn()).thenReturn(message);
+        when(writeLockService.getProcessRouteId()).thenReturn("backend-process-route");
+        when(writeLockService.getCollectRouteId()).thenReturn("backend-collection-route");
     }
 
     private JsonNode processAndParse() throws Exception {
@@ -59,8 +61,8 @@ class WriteLockStatusProcessorTest {
     @Test
     void statusWhenDisabled() throws Exception {
         when(writeLockService.isEnabled()).thenReturn(false);
-        when(routeController.getRouteStatus(WriteLockService.PROCESS_ROUTE_ID)).thenReturn(ServiceStatus.Started);
-        when(routeController.getRouteStatus(WriteLockService.COLLECT_ROUTE_ID)).thenReturn(ServiceStatus.Started);
+        when(routeController.getRouteStatus("backend-process-route")).thenReturn(ServiceStatus.Started);
+        when(routeController.getRouteStatus("backend-collection-route")).thenReturn(ServiceStatus.Started);
 
         JsonNode json = processAndParse();
 
@@ -72,8 +74,8 @@ class WriteLockStatusProcessorTest {
     @Test
     void statusWhenEnabled() throws Exception {
         when(writeLockService.isEnabled()).thenReturn(true);
-        when(routeController.getRouteStatus(WriteLockService.PROCESS_ROUTE_ID)).thenReturn(ServiceStatus.Suspended);
-        when(routeController.getRouteStatus(WriteLockService.COLLECT_ROUTE_ID)).thenReturn(ServiceStatus.Suspended);
+        when(routeController.getRouteStatus("backend-process-route")).thenReturn(ServiceStatus.Suspended);
+        when(routeController.getRouteStatus("backend-collection-route")).thenReturn(ServiceStatus.Suspended);
 
         JsonNode json = processAndParse();
 
@@ -85,8 +87,8 @@ class WriteLockStatusProcessorTest {
     @Test
     void statusWhenRouteStatusIsNull() throws Exception {
         when(writeLockService.isEnabled()).thenReturn(false);
-        when(routeController.getRouteStatus(WriteLockService.PROCESS_ROUTE_ID)).thenReturn(null);
-        when(routeController.getRouteStatus(WriteLockService.COLLECT_ROUTE_ID)).thenReturn(null);
+        when(routeController.getRouteStatus("backend-process-route")).thenReturn(null);
+        when(routeController.getRouteStatus("backend-collection-route")).thenReturn(null);
 
         JsonNode json = processAndParse();
 
