@@ -68,8 +68,8 @@ class WriteLockIT {
     @Test
     void enableWriteLockSuspendsRoutes() throws Exception {
         // Verify routes are started initially
-        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(WriteLockService.PROCESS_ROUTE_ID));
-        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(WriteLockService.COLLECT_ROUTE_ID));
+        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(writeLockService.getProcessRouteId()));
+        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(writeLockService.getCollectRouteId()));
         assertFalse(writeLockService.isEnabled());
 
         // Enable write lock
@@ -77,8 +77,8 @@ class WriteLockIT {
 
         // Verify routes are suspended
         assertTrue(writeLockService.isEnabled());
-        assertEquals(ServiceStatus.Suspended, camelContext.getRouteController().getRouteStatus(WriteLockService.PROCESS_ROUTE_ID));
-        assertEquals(ServiceStatus.Suspended, camelContext.getRouteController().getRouteStatus(WriteLockService.COLLECT_ROUTE_ID));
+        assertEquals(ServiceStatus.Suspended, camelContext.getRouteController().getRouteStatus(writeLockService.getProcessRouteId()));
+        assertEquals(ServiceStatus.Suspended, camelContext.getRouteController().getRouteStatus(writeLockService.getCollectRouteId()));
     }
 
     @Test
@@ -89,8 +89,8 @@ class WriteLockIT {
 
         // Verify routes are started again
         assertFalse(writeLockService.isEnabled());
-        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(WriteLockService.PROCESS_ROUTE_ID));
-        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(WriteLockService.COLLECT_ROUTE_ID));
+        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(writeLockService.getProcessRouteId()));
+        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(writeLockService.getCollectRouteId()));
     }
 
     @Test
@@ -99,7 +99,7 @@ class WriteLockIT {
         writeLockService.enable(); // should be a no-op
 
         assertTrue(writeLockService.isEnabled());
-        assertEquals(ServiceStatus.Suspended, camelContext.getRouteController().getRouteStatus(WriteLockService.PROCESS_ROUTE_ID));
+        assertEquals(ServiceStatus.Suspended, camelContext.getRouteController().getRouteStatus(writeLockService.getProcessRouteId()));
     }
 
     @Test
@@ -107,7 +107,7 @@ class WriteLockIT {
         writeLockService.disable(); // already disabled, should be a no-op
 
         assertFalse(writeLockService.isEnabled());
-        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(WriteLockService.PROCESS_ROUTE_ID));
+        assertEquals(ServiceStatus.Started, camelContext.getRouteController().getRouteStatus(writeLockService.getProcessRouteId()));
     }
 
     @Test
