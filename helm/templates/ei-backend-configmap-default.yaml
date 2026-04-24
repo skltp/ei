@@ -37,6 +37,11 @@ data:
   # Status service URL
   EI_STATUS_URL: http://0.0.0.0:8083/skltp-ei-backend/status
 
+  # Write lock management endpoints (DB write suppression during cluster migration)
+  WRITELOCK_ENABLE_URL: http://0.0.0.0:8083/skltp-ei/writelock/enable
+  WRITELOCK_DISABLE_URL: http://0.0.0.0:8083/skltp-ei/writelock/disable
+  WRITELOCK_STATUS_URL: http://0.0.0.0:8083/skltp-ei/writelock/status
+
   {{ if .Values.queues.prefix }}
   # ActiveMQ queue names
   COLLECT_QUEUE_NAME: "{{ .Values.queues.prefix }}.collect"

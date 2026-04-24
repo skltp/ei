@@ -1,0 +1,117 @@
+package se.skltp.ei.writelock;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.RouteController;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import java.lang.reflect.Field;
+
+class WriteLockServiceTest {
+
+    private WriteLockService writeLockService;
+    private CamelContext camelContext;
+    private RouteController routeController;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        writeLockService = new WriteLockService();
+        camelContext = mock(CamelContext.class);
+        routeController = mock(RouteController.class);
+        when(camelContext.getRouteController()).thenReturn(routeController);
+
+        // Inject mock CamelContext via reflection (field is @Autowired)
+        Field field = WriteLockService.class.getDeclaredField("camelContext");
+        field.setAccessible(true);
+        field.set(writeLockService, camelContext);
+    }
+
+    @Test
+    void initialStateIsDisabled() {
+        assertFalse(writeLockService.isEnabled());
+    }
+
+    @Test
+    void enableSuspendsRoutes() throws Exception {
+        writeLockService.enable();
+
+        assertTrue(writeLockService.isEnabled());
+        verify(routeController).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
+        verify(routeController).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
+    }
+
+    @Test
+    void enableIsIdempotent() throws Exception {
+        writeLockService.enable();
+        writeLockService.enable();
+
+        assertTrue(writeLockService.isEnabled());
+        // Routes should only be suspended once
+        verify(routeController, times(1)).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
+        verify(routeController, times(1)).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
+    }
+
+    @Test
+    void disableResumesRoutes() throws Exception {
+        writeLockService.enable();
+        writeLockService.disable();
+
+        assertFalse(writeLockService.isEnabled());
+        verify(routeController).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
+        verify(routeController).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+    }
+
+    @Test
+    void disableIsIdempotent() throws Exception {
+        writeLockService.disable();
+
+        assertFalse(writeLockService.isEnabled());
+        verify(routeController, never()).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
+        verify(routeController, never()).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+    }
+
+    @Test
+    void enableThenDisableThenEnableAgain() throws Exception {
+        writeLockService.enable();
+        assertTrue(writeLockService.isEnabled());
+
+        writeLockService.disable();
+        assertFalse(writeLockService.isEnabled());
+
+        writeLockService.enable();
+        assertTrue(writeLockService.isEnabled());
+
+        verify(routeController, times(2)).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
+        verify(routeController, times(2)).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
+        verify(routeController, times(1)).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
+        verify(routeController, times(1)).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+    }
+
+    @Test
+    void suspendOrderIsCollectFirst() throws Exception {
+        var inOrder = org.mockito.Mockito.inOrder(routeController);
+
+        writeLockService.enable();
+
+        inOrder.verify(routeController).suspendRoute(WriteLockService.COLLECT_ROUTE_ID);
+        inOrder.verify(routeController).suspendRoute(WriteLockService.PROCESS_ROUTE_ID);
+    }
+
+    @Test
+    void resumeOrderIsCollectFirst() throws Exception {
+        writeLockService.enable();
+        var inOrder = org.mockito.Mockito.inOrder(routeController);
+
+        writeLockService.disable();
+
+        inOrder.verify(routeController).resumeRoute(WriteLockService.COLLECT_ROUTE_ID);
+        inOrder.verify(routeController).resumeRoute(WriteLockService.PROCESS_ROUTE_ID);
+    }
+}
