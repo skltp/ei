@@ -76,6 +76,14 @@ log4j:
       level: INFO
   rootLoggerLevel: WARN
 
+ingressRoute:
+  backendMgmt:
+    enabled: false
+    host: # Override per environment, e.g. qa.ntjp.se
+    allowedIPs:
+      - "0.0.0.0/32"   # placeholder — replace with Jenkins agent IP
+      # - "10.0.0.2/32" # add more Jenkins agents as needed
+
 probes_backend:
   startupProbe:
     httpGet:
