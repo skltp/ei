@@ -68,6 +68,13 @@ Modul med syfte att sammanställa en Jacoco test rapport.
  | `GET /skltp-ei/writelock/disable` | Inaktiverar skrivlåset – återupptar rutterna |
  | `GET /skltp-ei/writelock/status` | Returnerar JSON med låsstatus och ruttstatus |
  
+ ### Åtkomst
+ 
+ Managementporten (8083) exponeras **inte** utanför klustret. Använd något av följande:
+ 
+ - **`kubectl exec`** (rekommenderat): `kubectl exec -it <pod> -- wget -qO- http://localhost:8083/skltp-ei/writelock/status`
+ - **`kubectl port-forward`**: `kubectl port-forward <pod> 8083:8083` och sedan `curl http://localhost:8083/skltp-ei/writelock/status` lokalt
+ 
  ### Egenskaper
  
  - Idempotent: upprepade anrop till enable/disable är ofarliga

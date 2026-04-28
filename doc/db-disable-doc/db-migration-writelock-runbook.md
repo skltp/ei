@@ -31,7 +31,27 @@ No messages are lost. The frontend is unaffected and continues accepting updates
 | `GET /skltp-ei/writelock/disable` | Resumes both routes |
 | `GET /skltp-ei/writelock/status` | Returns JSON status of the lock and actual Camel route states |
 
-These endpoints are served on the internal management port (8083 in production, 8083 locally) — the same port as `/skltp-ei/resetcache` and `/skltp-ei/subscriber/status`. They are **not** reachable from outside the cluster.
+These endpoints are served on the internal management port (8083 in production, 8083 locally) — the same port as `/skltp-ei/resetcache` and `/skltp-ei/subscriber/status`. They are **not** exposed outside the cluster.
+
+### Accessing the endpoints
+
+The management port is a `ClusterIP` service with no ingress. Use one of:
+
+**Option A – `kubectl exec` (recommended)**
+
+The Alpine-based container includes busybox `wget`. Run commands directly inside the pod:
+```
+kubectl exec -it <pod-name> -- wget -qO- http://localhost:8083/skltp-ei/writelock/status
+```
+
+**Option B – `kubectl port-forward` + local browser/curl**
+
+Forward the management port to your workstation:
+```
+kubectl port-forward <pod-name> 8083:8083
+# Then in another terminal or browser:
+curl http://localhost:8083/skltp-ei/writelock/status
+```
 
 ## Migration Procedure
 
@@ -39,24 +59,24 @@ These endpoints are served on the internal management port (8083 in production, 
 - The new DB machine has been fully replicated from the old one and is in sync.
 - The new EI backend pod is up and healthy on the new cluster (`GET /actuator/health`).
 - Both pods are consuming from the **same** ActiveMQ broker (or the same ActiveMQ cluster).
-- You have `kubectl exec` or in-cluster `curl` access to both backend pods on port 8083.
+- You have `kubectl exec` access to both backend pods.
 
 ### Step-by-step
 
 ```
 1.  Confirm old pod is healthy and processing normally.
 
-    curl http://<old-backend-mgmt>:8083/skltp-ei/writelock/status
+    kubectl exec -it <old-pod> -- wget -qO- http://localhost:8083/skltp-ei/writelock/status
     # Expected: {"writeLockEnabled": false, "routes": {"backend-process-route": "Started", "backend-collection-route": "Started"}}
 
 2.  Enable the write lock on the OLD pod.
 
-    curl http://<old-backend-mgmt>:8083/skltp-ei/writelock/enable
+    kubectl exec -it <old-pod> -- wget -qO- http://localhost:8083/skltp-ei/writelock/enable
     # Expected: "Write lock enabled"
 
 3.  Verify the lock and route states on the old pod.
 
-    curl http://<old-backend-mgmt>:8083/skltp-ei/writelock/status
+    kubectl exec -it <old-pod> -- wget -qO- http://localhost:8083/skltp-ei/writelock/status
     # Expected: {"writeLockEnabled": true, "routes": {"backend-process-route": "Suspended", "backend-collection-route": "Suspended"}}
 
 4.  Move the VIP to the new database machine.
@@ -64,7 +84,7 @@ These endpoints are served on the internal management port (8083 in production, 
 
 5.  Verify the new pod is processing normally (queue depth should drain).
 
-    curl http://<new-backend-mgmt>:8083/skltp-ei/writelock/status
+    kubectl exec -it <new-pod> -- wget -qO- http://localhost:8083/skltp-ei/writelock/status
     # Expected: {"writeLockEnabled": false, "routes": {"backend-process-route": "Started", "backend-collection-route": "Started"}}
 
 6.  Terminate (or scale down) the old pod.
@@ -77,7 +97,7 @@ These endpoints are served on the internal management port (8083 in production, 
 If the migration fails before step 4, disable the write lock and the old pod resumes normally:
 
 ```
-curl http://<old-backend-mgmt>:8083/skltp-ei/writelock/disable
+kubectl exec -it <old-pod> -- wget -qO- http://localhost:8083/skltp-ei/writelock/disable
 ```
 
 If the migration fails after step 4 (VIP already moved):
