@@ -52,9 +52,34 @@ Modul med syfte att sammanställa en Jacoco test rapport.
 
  ## Dokumentation referenser
  - [Konfigurering]
+ - [Write Lock – Runbook för databasmigrering]
  
+ ## Write Lock (skrivlås)
+ 
+ EI backend har en write lock-funktion som tillfälligt stoppar all skrivning till databasen genom att suspendera Camel-rutterna `backend-process-route` och `backend-collection-route`. Meddelanden buffras i ActiveMQ under tiden låset är aktivt.
+ 
+ Funktionen används vid migrering av databaskluster, där man vill undvika dubbelskrivning medan VIP:en flyttas mellan gamla och nya noden.
+ 
+ ### Hanteringsendpoints (managementport 8083)
+ 
+ | Endpoint | Beskrivning |
+ |---|---|
+ | `GET /skltp-ei/writelock/enable` | Aktiverar skrivlåset – suspenderar process- och collect-rutter |
+ | `GET /skltp-ei/writelock/disable` | Inaktiverar skrivlåset – återupptar rutterna |
+ | `GET /skltp-ei/writelock/status` | Returnerar JSON med låsstatus och ruttstatus |
+ 
+ ### Egenskaper
+ 
+ - Idempotent: upprepade anrop till enable/disable är ofarliga
+ - FindContent (läsning) påverkas **inte** av skrivlåset
+ - Frontend kan fortsätta ta emot uppdateringar under tiden (JMS-buffring)
+ - Konfigurerbara route-ID:n via `ei.route.id.process` och `ei.route.id.collect`
+ 
+ Se [Write Lock – Runbook för databasmigrering] för steg-för-steg-instruktioner.
+
  [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
  
  
    [Konfigurering]: <doc/config/config.md>
+   [Write Lock – Runbook för databasmigrering]: <doc/db-disable-doc/db-migration-writelock-runbook.md>
 
