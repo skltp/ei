@@ -17,6 +17,9 @@ public class EiBackendUpdateRoute extends RouteBuilder {
     @Value("${process.queue.name:process}")
     String processQueueName;
 
+    @Value("${ei.route.id.process:backend-process-route}")
+    String processRouteId;
+
     @Autowired
     UpdatePersistentStorageProcessor updatePersistentStorageProcessor;
 
@@ -65,7 +68,7 @@ public class EiBackendUpdateRoute extends RouteBuilder {
 
         // Get from process queue
         fromF("activemq:queue:%s?transacted=true", processQueueName)
-                .id("backend-process-route")
+                .id(processRouteId)
                 .log(LoggingLevel.DEBUG, "eiBackendLog", "Got one from Process Queue:\n${body}")
                 .process(updatePersistentStorageProcessor)
                 .split(method(notificationSplitterBean, "createNotificationList"))
