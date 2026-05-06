@@ -25,22 +25,96 @@ deployments:
     replicaCount: 1
     elasticGrokFilter: camel
 
-backend_resources: #{} # Comment the no-op curly-braces if you activate below commented-out resources.
+backend_resources:
   limits:
     memory: 1Gi
   requests:
     cpu: 100m
     memory: 1Gi
 
-frontend_resources: #{} # Comment the no-op curly-braces if you activate below commented-out resources.
+frontend_resources:
   limits:
     memory: 512Mi
   requests:
     cpu: 75m
     memory: 512Mi
 
+# --- Shared configuration (used by both backend and frontend) ---
+
+paths:
+  loggingConfig: /etc/ei/log4j2.xml
+
+ei:
+  hsaId: "5565594230"
+
+vp:
+  hsaId: "5565594230"
+
 skltp:
   instanceId: -999 # placeholder to allow local chart templating.
+
+activemq:
+  broker:
+    url: "failover:(tcp://ei-amq:61616)?randomize=false&timeout=10000&jms.prefetchPolicy.queuePrefetch=5"
+    maximumRedeliveries: "5"
+    redeliveryDelay: "60000"
+    useExponentialBackoff: "false"
+
+management:
+  endpointsWebExposureInclude: "health,prometheus"
+  endpointPrometheusEnabled: "true"
+
+# --- Backend-specific configuration ---
+
+backend:
+  server:
+    port: "8881"
+  findContent:
+    webserviceUrl: "http://0.0.0.0:8082/skltp-ei/find-content-service/v1"
+  getLogicalAddresses:
+    serviceEndpointUrl: "http://vp:8080/vp/infrastructure/itintegration/registry/GetLogicalAddresseesByServiceContract/2/rivtabp21"
+    connectTimeoutMs: "5000"
+    requestTimeoutMs: "5000"
+  processNotification:
+    serviceEndpointUrl: "http://vp:8080/vp/ProcessNotification/1/rivtabp21"
+  subscriberCache:
+    fileName: /tmp/ei.localCache3
+    timeToLiveSeconds: "30000"
+    resetUrl: "http://0.0.0.0:8083/skltp-ei/resetcache"
+    statusUrl: "http://0.0.0.0:8083/skltp-ei/subscriber/status"
+  statusUrl: "http://0.0.0.0:8083/skltp-ei-backend/status"
+  writelock:
+    enableUrl: "http://0.0.0.0:8083/skltp-ei/writelock/enable"
+    disableUrl: "http://0.0.0.0:8083/skltp-ei/writelock/disable"
+    statusUrl: "http://0.0.0.0:8083/skltp-ei/writelock/status"
+  datasource:
+    url: "jdbc:mysql://localhost:3306/ei_test_amq?serverTimezone=Europe/Stockholm"
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    jpa:
+      databasePlatform: "org.hibernate.dialect.MySQL8Dialect"
+      hibernateDdlAuto: "update"
+  activemq:
+    broker:
+      notificationMaximumRedeliveries: "8"
+      notificationRedeliveryDelay: "60000"
+      notificationUseExponentialBackoff: "true"
+      notificationBackoffMultiplier: "2"
+      notificationMaximumRedeliveryDelay: "900000"
+
+# --- Frontend-specific configuration ---
+
+frontend:
+  server:
+    port: "8882"
+  update:
+    webserviceUrl: "http://0.0.0.0:8081/skltp-ei/update-service/v1"
+  processNotification:
+    webserviceUrl: "http://0.0.0.0:8081/skltp-ei/notification-service/v1"
+  statusUrl: "http://0.0.0.0:8084/skltp-ei-frontend/status"
+  updateNotification:
+    notAllowedHsaidList: "5565594230"
+
+# --- Environment variable sources ---
 
 environment:
   backend:
