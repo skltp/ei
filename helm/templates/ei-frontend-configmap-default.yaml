@@ -3,40 +3,37 @@ kind: ConfigMap
 metadata:
   name: ei-frontend-configmap-default
 data:
-  LOGGING_CONFIG: /etc/ei/log4j2.xml
+  LOGGING_CONFIG: "{{ .Values.paths.loggingConfig }}"
 
   # Actuator settings
-  SERVER_PORT: "8882"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,prometheus"
-  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
-  
+  SERVER_PORT: "{{ .Values.frontend.server.port }}"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "{{ .Values.management.endpointsWebExposureInclude }}"
+  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "{{ .Values.management.endpointPrometheusEnabled }}"
+
   # Webservices urls
-  UPDATE_WEBSERVICE_URL: http://0.0.0.0:8081/skltp-ei/update-service/v1
-  PROCESSNOTIFICATION_WEBSERVICE_URL: http://0.0.0.0:8081/skltp-ei/notification-service/v1
+  UPDATE_WEBSERVICE_URL: "{{ .Values.frontend.update.webserviceUrl }}"
+  PROCESSNOTIFICATION_WEBSERVICE_URL: "{{ .Values.frontend.processNotification.webserviceUrl }}"
 
   # Status service URL
-  EI_STATUS_URL: http://0.0.0.0:8084/skltp-ei-frontend/status
+  EI_STATUS_URL: "{{ .Values.frontend.statusUrl }}"
 
   # The engagement index own HSA ID, the same as owner
-  EI_HSA_ID: "5565594230"
-  #EI_ALTERNATIVE_HSA_ID:
+  EI_HSA_ID: "{{ .Values.ei.hsaId }}"
 
   # The HSA ID used when communicating with service platform, e.g GetLogicalAddresseesByServiceContract.
-  VP_HSA_ID: "5565594230"
+  VP_HSA_ID: "{{ .Values.vp.hsaId }}"
 
   # A list of HSA-ID known to not be allowed for usage as logical-address nor source-system in calls to the services Update and ProcessNotification.
   # This list is used to avoid the possibility to introduce looping aggregating services that is tricked to call it self without end...
-  UPDATE-NOTIFICATION_NOT_ALLOWED_HSAID_LIST: "5565594230"
+  UPDATE-NOTIFICATION_NOT_ALLOWED_HSAID_LIST: "{{ .Values.frontend.updateNotification.notAllowedHsaidList }}"
 
-  {{ if .Values.queues.prefix }}
+  {{- if .Values.queues.prefix }}
   # ActiveMQ queue names
   COLLECT_QUEUE_NAME: "{{ .Values.queues.prefix }}.collect"
   PROCESS_QUEUE_NAME: "{{ .Values.queues.prefix }}.process"
   {{- end }}
 
   # AMQ broker property
-  activemq.broker.url: failover:(tcp://ei-amq:61616)?randomize=false&timeout=10000&jms.prefetchPolicy.queuePrefetch=5
-  # ACTIVEMQ_BROKER_USER:
-  # ACTIVEMQ_BROKER_PASSWORD:
-  ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "5"
-  ACTIVEMQ_BROKER_REDELIVERY_DELAY: "60000"
+  ACTIVEMQ_BROKER_URL: "{{ .Values.activemq.broker.url }}"
+  ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "{{ .Values.activemq.broker.maximumRedeliveries }}"
+  ACTIVEMQ_BROKER_REDELIVERY_DELAY: "{{ .Values.activemq.broker.redeliveryDelay }}"

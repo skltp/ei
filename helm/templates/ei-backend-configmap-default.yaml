@@ -3,46 +3,46 @@ kind: ConfigMap
 metadata:
   name: ei-backend-configmap-default
 data:
-  LOGGING_CONFIG: /etc/ei/log4j2.xml
+  LOGGING_CONFIG: "{{ .Values.paths.loggingConfig }}"
 
   # Actuator settings
-  SERVER_PORT: "8881"
-  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,prometheus"
-  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
+  SERVER_PORT: "{{ .Values.backend.server.port }}"
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "{{ .Values.management.endpointsWebExposureInclude }}"
+  MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "{{ .Values.management.endpointPrometheusEnabled }}"
 
   # Webservices urls
-  FINDCONTENT_WEBSERVICE_URL: http://0.0.0.0:8082/skltp-ei/find-content-service/v1
+  FINDCONTENT_WEBSERVICE_URL: "{{ .Values.backend.findContent.webserviceUrl }}"
 
   # The engagement index own HSA ID, the same as owner
-  EI_HSA_ID: "5565594230"
+  EI_HSA_ID: "{{ .Values.ei.hsaId }}"
 
   # VP properties for calling VP services
-  VP_HSA_ID: "5565594230"
-  VP_INSTANCE_ID: {{ .Values.skltp.instanceId }}
+  VP_HSA_ID: "{{ .Values.vp.hsaId }}"
+  VP_INSTANCE_ID: "{{ .Values.skltp.instanceId }}"
 
   # Properties to call GetLogicalAddresseesByServiceContract
-  GETLOGICALADDRESSES_SERVICEENDPOINTURL: http://vp:8080/vp/infrastructure/itintegration/registry/GetLogicalAddresseesByServiceContract/2/rivtabp21
-  GETLOGICALADDRESSES_CONNECTTIMEOUTMS: "5000"
-  GETLOGICALADDRESSES_REQUESTTIMEOUTMS: "5000"
+  GETLOGICALADDRESSES_SERVICEENDPOINTURL: "{{ .Values.backend.getLogicalAddresses.serviceEndpointUrl }}"
+  GETLOGICALADDRESSES_CONNECTTIMEOUTMS: "{{ .Values.backend.getLogicalAddresses.connectTimeoutMs }}"
+  GETLOGICALADDRESSES_REQUESTTIMEOUTMS: "{{ .Values.backend.getLogicalAddresses.requestTimeoutMs }}"
 
   # Properties to call ProcessNotification
-  PROCESSNOTIFICATION_SERVICEENDPOINTURL: http://vp:8080/vp/ProcessNotification/1/rivtabp21
+  PROCESSNOTIFICATION_SERVICEENDPOINTURL: "{{ .Values.backend.processNotification.serviceEndpointUrl }}"
 
   # Subscriber local file cache
-  SUBSCRIBER_CACHE_FILE_NAME: /tmp/ei.localCache3
-  SUBSCRIBER_CACHE_TIMETOLIVESECONDS: "30000"
-  SUBSCRIBER_CACHE_RESET_URL: http://0.0.0.0:8083/skltp-ei/resetcache
-  SUBSCRIBER_CACHE_STATUS_URL: http://0.0.0.0:8083/skltp-ei/subscriber/status
+  SUBSCRIBER_CACHE_FILE_NAME: "{{ .Values.backend.subscriberCache.fileName }}"
+  SUBSCRIBER_CACHE_TIMETOLIVESECONDS: "{{ .Values.backend.subscriberCache.timeToLiveSeconds }}"
+  SUBSCRIBER_CACHE_RESET_URL: "{{ .Values.backend.subscriberCache.resetUrl }}"
+  SUBSCRIBER_CACHE_STATUS_URL: "{{ .Values.backend.subscriberCache.statusUrl }}"
 
   # Status service URL
-  EI_STATUS_URL: http://0.0.0.0:8083/skltp-ei-backend/status
+  EI_STATUS_URL: "{{ .Values.backend.statusUrl }}"
 
   # Write lock management endpoints (DB write suppression during cluster migration)
-  WRITELOCK_ENABLE_URL: http://0.0.0.0:8083/skltp-ei/writelock/enable
-  WRITELOCK_DISABLE_URL: http://0.0.0.0:8083/skltp-ei/writelock/disable
-  WRITELOCK_STATUS_URL: http://0.0.0.0:8083/skltp-ei/writelock/status
+  WRITELOCK_ENABLE_URL: "{{ .Values.backend.writelock.enableUrl }}"
+  WRITELOCK_DISABLE_URL: "{{ .Values.backend.writelock.disableUrl }}"
+  WRITELOCK_STATUS_URL: "{{ .Values.backend.writelock.statusUrl }}"
 
-  {{ if .Values.queues.prefix }}
+  {{- if .Values.queues.prefix }}
   # ActiveMQ queue names
   COLLECT_QUEUE_NAME: "{{ .Values.queues.prefix }}.collect"
   PROCESS_QUEUE_NAME: "{{ .Values.queues.prefix }}.process"
@@ -50,16 +50,20 @@ data:
   {{- end }}
 
   # Activemq properties
-  # K8S DevNote: This dot notation is a nicer looking format for keys.
-  activemq.broker.url: failover:(tcp://ei-amq:61616)?randomize=false&timeout=10000&jms.prefetchPolicy.queuePrefetch=5
-  # ACTIVEMQ_BROKER_USER:
-  # ACTIVEMQ_BROKER_PASSWORD:
-  ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "5"
-  ACTIVEMQ_BROKER_REDELIVERY_DELAY: "60000"
-  ACTIVEMQ_BROKER_USE_EXPONENTIAL_BACKOFF: "false"
+  ACTIVEMQ_BROKER_URL: "{{ .Values.activemq.broker.url }}"
+  ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "{{ .Values.activemq.broker.maximumRedeliveries }}"
+  ACTIVEMQ_BROKER_REDELIVERY_DELAY: "{{ .Values.activemq.broker.redeliveryDelay }}"
+  ACTIVEMQ_BROKER_USE_EXPONENTIAL_BACKOFF: "{{ .Values.activemq.broker.useExponentialBackoff }}"
+
+  # Notification-specific redelivery settings
+  ACTIVEMQ_BROKER_NOTIFICATION_MAXIMUM-REDELIVERIES: "{{ .Values.backend.activemq.broker.notificationMaximumRedeliveries }}"
+  ACTIVEMQ_BROKER_NOTIFICATION_REDELIVERY_DELAY: "{{ .Values.backend.activemq.broker.notificationRedeliveryDelay }}"
+  ACTIVEMQ_BROKER_NOTIFICATION_USE_EXPONENTIAL_BACKOFF: "{{ .Values.backend.activemq.broker.notificationUseExponentialBackoff }}"
+  ACTIVEMQ_BROKER_NOTIFICATION_BACKOFF_MULTIPLIER: "{{ .Values.backend.activemq.broker.notificationBackoffMultiplier }}"
+  ACTIVEMQ_BROKER_NOTIFICATION_MAXIMUM_REDELIVERY_DELAY: "{{ .Values.backend.activemq.broker.notificationMaximumRedeliveryDelay }}"
 
   # MySQL settings
-  spring.datasource.url: jdbc:mysql://localhost:3306/ei_test_amq?serverTimezone=Europe/Stockholm
-  SPRING_DATASOURCE_DRIVER-CLASS-NAME: com.mysql.cj.jdbc.Driver
-  SPRING_DATASOURCE_JPA_DATABASE-PLATFORM: org.hibernate.dialect.MySQL8Dialect
-  SPRING_DATASOURCE_JPA_HIBERNATE_DDL-AUTO: update
+  SPRING_DATASOURCE_URL: "{{ .Values.backend.datasource.url }}"
+  SPRING_DATASOURCE_DRIVER-CLASS-NAME: "{{ .Values.backend.datasource.driverClassName }}"
+  SPRING_DATASOURCE_JPA_DATABASE-PLATFORM: "{{ .Values.backend.datasource.jpa.databasePlatform }}"
+  SPRING_DATASOURCE_JPA_HIBERNATE_DDL-AUTO: "{{ .Values.backend.datasource.jpa.hibernateDdlAuto }}"
