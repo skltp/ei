@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+coverage-sources.zip
+coverage/
+
 ### STS ###
 .apt_generated
 .classpath
