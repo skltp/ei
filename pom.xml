@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0 </modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.14</version> <!-- APR 2026 -->
-        <relativePath />
+        <relativePath/>
         <!-- lookup parent from repository -->
     </parent>
 
@@ -67,12 +68,14 @@
         <!-- Camel v 4.18.2 (LTS) is matched to Spring Boot v 3.5.13 -->
 
         <lombok.version>1.18.36</lombok.version>
-        <apache-cfx.version>4.1.5</apache-cfx.version> <!-- FEB 2026 - 4.1.x is aligned to Spring Boot 3, and Jakarta EE10 - 4.2.x exists but is aligned to Spring Boot 4. -->
+        <apache-cfx.version>4.1.5
+        </apache-cfx.version> <!-- FEB 2026 - 4.1.x is aligned to Spring Boot 3, and Jakarta EE10 - 4.2.x exists but is aligned to Spring Boot 4. -->
         <jaxws.version>4.0.3</jaxws.version>
         <jakarta.jws.version>3.0.0</jakarta.jws.version>
         <jakarta.xml.version>4.0.2</jakarta.xml.version>
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
-        <activemq.version>6.2.5</activemq.version> <!-- ActiveMQ client/broker/jms-pool version. Must be >=6.2.5 for CVE fixes. -->
+        <activemq.version>6.2.5
+        </activemq.version> <!-- ActiveMQ client/broker/jms-pool version. Must be >=6.2.5 for CVE fixes. -->
 
         <hawtio.spring.boot-version>2.17.7</hawtio.spring.boot-version>
         <lmax_disruptor-version>3.4.4</lmax_disruptor-version>
@@ -103,7 +106,8 @@
                  and then whatever Spring Boot needs can be pulled in thereafter. -->
             <dependency>
                 <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-spring-boot-bom</artifactId> <!-- "camel-spring-boot-bom" is slimmer than "camel-spring-boot-dependencies" -->
+                <artifactId>camel-spring-boot-bom
+                </artifactId> <!-- "camel-spring-boot-bom" is slimmer than "camel-spring-boot-dependencies" -->
                 <version>${camel.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -341,7 +345,7 @@
         </dependencies>
     </dependencyManagement>
 
-    <build>
+    <build><!---->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -364,8 +368,10 @@
                                         "${spring.boot-version}".equals("${project.parent.version}")
                                     </condition>
                                     <message>
-spring.boot-version property (${spring.boot-version}) does not match the Spring Boot parent version (${project.parent.version}).
-Update BOTH the parent POM version AND the spring.boot-version property to the same value.
+                                        spring.boot-version property (${spring.boot-version}) does not match the Spring
+                                        Boot parent version (${project.parent.version}).
+                                        Update BOTH the parent POM version AND the spring.boot-version property to the
+                                        same value.
                                     </message>
                                 </evaluateBeanshell>
                             </rules>
@@ -373,7 +379,7 @@ Update BOTH the parent POM version AND the spring.boot-version property to the s
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <plugin><!---->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
@@ -401,7 +407,7 @@ Update BOTH the parent POM version AND the spring.boot-version property to the s
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin><!---->
         </plugins>
     </build>
 
@@ -466,8 +472,8 @@ Update BOTH the parent POM version AND the spring.boot-version property to the s
                             </execution>
                         </executions>
                     </plugin>
-                </plugins>
-            </build>
+                </plugins><!---->
+            </build><!---->
         </profile>
     </profiles>
-</project>
+</project><!---->
