@@ -108,23 +108,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.junit.vintage</groupId>
-          <artifactId>junit-vintage-engine</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.vaadin.external.google</groupId>
-          <artifactId>android-json</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
