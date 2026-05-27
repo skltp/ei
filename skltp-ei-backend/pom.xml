@@ -12,6 +12,7 @@
     <dependencies>
 
         <!-- EI modules-->
+        <!-- AMQ artifacts inherited through EI-Common. -->
         <dependency>
             <groupId>se.skltp.ei</groupId>
             <artifactId>skltp-ei-common</artifactId>
@@ -103,12 +104,6 @@
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-cxf-soap-starter</artifactId>
-        </dependency>
-
-        <!-- START: ACTIVE MQ -->
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-activemq-starter</artifactId>
         </dependency>
 
         <dependency>

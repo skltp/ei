@@ -4,7 +4,7 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.jms.pool.PooledConnectionFactory;
-import org.apache.camel.component.activemq.ActiveMQComponent;
+import org.apache.camel.component.activemq6.ActiveMQComponent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cache.annotation.EnableCaching;
