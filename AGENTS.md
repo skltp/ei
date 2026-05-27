@@ -2,7 +2,7 @@
 
 ## Architecture
 
-Multi-module Maven project (Java 17, Spring Boot 3.3.7, Apache Camel 4.8.3 LTS). Two deployable Spring Boot apps:
+Multi-module Maven project (Java 17, Spring Boot 3.5.14, Apache Camel 4.18.2 LTS, Apache CXF 4.1.5, ActiveMQ 6.2.5, Ehcache 3.10.9). Two deployable Spring Boot apps:
 - **Frontend** (`skltp-ei-frontend`): SOAP endpoints for Update + ProcessNotification → JMS queues
 - **Backend** (`skltp-ei-backend`): JMS consumers → DB persistence → per-subscriber notification fan-out + FindContent SOAP query
 
@@ -20,6 +20,8 @@ FindContent (8082) is a synchronous DB query, independent of the async pipeline.
 mvn clean install                        # Build + unit tests
 mvn clean verify -Ptest-coverage         # With JaCoCo (report in /report/target/)
 ```
+
+Authoritative dependency versions are declared in the top-level `pom.xml` properties (for example: `spring.boot-version`, `camel.version`, `apache-cfx.version`, `activemq.version`, `ehcache3.version`).
 
 **Local dev**: Start `EiTeststubApplication` first, then `EiApplication`. Uses H2 in-memory + embedded ActiveMQ by default.
 

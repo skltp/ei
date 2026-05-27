@@ -4,7 +4,9 @@
 
 This is the **SKLTP Engagement Index (Engagemangsindex)** – a national Swedish healthcare infrastructure service that acts as a patient index. It enables national and regional e-services to locate patient information across care providers and regional boundaries. EI holds no source data; it mirrors index attributes from source systems.
 
-- **Stack**: Java 17, Spring Boot 3.3.7, Apache Camel 4.8.3 LTS, Apache CXF 4.1.0, ActiveMQ 6.1.4, Spring Data JPA / Hibernate, EhCache 3.10.8
+- **Stack**: Java 17, Spring Boot 3.5.14, Apache Camel 4.18.2 LTS, Apache CXF 4.1.5, ActiveMQ 6.2.5, Spring Data JPA / Hibernate, Ehcache 3.10.9
+
+Authoritative dependency versions are declared in the top-level `pom.xml` properties (for example: `spring.boot-version`, `camel.version`, `apache-cfx.version`, `activemq.version`, `ehcache3.version`).
 - **Servlet container**: Jetty (not Tomcat)
 - **Build**: Maven multi-module (8 modules)
 - **Deployment**: Docker (Eclipse Temurin 17 Alpine) + Kubernetes via Helm charts
