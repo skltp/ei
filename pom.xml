@@ -66,7 +66,6 @@
 
         <!-- Supporting Deps -->
         <jaxws.version>4.0.4</jaxws.version> <!-- MAR 2026 -->
-        <jakarta.jws.version>3.0.0</jakarta.jws.version> <!-- OCT 2020 -->
         <jakarta.xml.version>4.0.5</jakarta.xml.version> <!-- FEB 2026 -->
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version> <!-- APR 2022. Newer versions exist - requires work. -->
         <lmax_disruptor-version>4.0.0</lmax_disruptor-version> <!-- SEP 2023. Latest as of APR 2026. -->
@@ -190,11 +189,6 @@
             </dependency>
 
             <!-- Jakarta -->
-            <dependency>
-                <groupId>jakarta.jws</groupId>
-                <artifactId>jakarta.jws-api</artifactId>
-                <version>${jakarta.jws.version}</version>
-            </dependency>
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>

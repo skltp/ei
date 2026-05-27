@@ -142,6 +142,7 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test Dependencies-->
