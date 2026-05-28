@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion><!-- -->
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.14</version> <!-- APR 2026 -->
+        <relativePath/>
+        <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>se.skltp.ei</groupId>
+    <artifactId>skltp-ei-parent</artifactId>
+    <version>3.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <name>skltp-ei-parent</name>
+    <description>Engagement index built with Apache Camel</description>
+
     <modules>
         <module>skltp-ei-schemas</module>
         <module>skltp-ei-data-model</module>
@@ -13,59 +29,13 @@
         <module>skltp-ei-application</module>
         <module>report</module>
     </modules>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.14</version>
-        <relativePath />
-        <!-- lookup parent from repository -->
-    </parent>
-    <groupId>se.skltp.ei</groupId>
-    <artifactId>skltp-ei-parent</artifactId>
-    <version>3.7.0-SNAPSHOT</version>
-    <name>skltp-ei-parent</name>
-    <description>Engagement index built with Apache Camel</description>
 
-    <properties>
-        <java.version>17</java.version>
-        <maven.compiler.release>17</maven.compiler.release>
-
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <camel.version>4.18.2</camel.version>
-        <spring.boot-version>3.5.14</spring.boot-version> <!-- MUST match <parent> version above. Enforced by maven-enforcer-plugin. -->
-        <!-- Spring Boot versions below are version-matched to the
-             dependencies used within a specific Camel-version:s BOM structure. -->
-        <!-- Camel v 4.18.2 (LTS) is matched to Spring Boot v 3.5.14 -->
-
-        <lombok.version>1.18.36</lombok.version>
-        <apache-cfx.version>4.2.0</apache-cfx.version>
-        <jaxws.version>4.0.3</jaxws.version>
-        <jakarta.jws.version>3.0.0</jakarta.jws.version>
-        <jakarta.xml.version>4.0.2</jakarta.xml.version>
-        <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
-        <activemq.version>6.2.5</activemq.version> <!-- ActiveMQ client/broker/jms-pool version. Must be >=6.2.5 for CVE fixes. -->
-
-        <hawtio.spring.boot-version>2.17.7</hawtio.spring.boot-version>
-        <lmax_disruptor-version>3.4.4</lmax_disruptor-version>
-        <jetty.version>12.1.7</jetty.version>
-        <h2database.version>2.3.232</h2database.version>
-        <ehcache3.version>3.10.8</ehcache3.version>
-        <javax-cache.version>1.1.1</javax-cache.version>
-        <log4j.version>2.25.4</log4j.version>
-        <commons-io.version>2.14.0</commons-io.version>
-        <ecs-logging-java.version>1.5.0</ecs-logging-java.version>
-        <micrometer.version>1.15.11</micrometer.version>
-
-        <maven.javadoc.skip>true</maven.javadoc.skip>
-
-        <!-- ************************-->
-        <!-- Sonar/Reporting settings -->
-        <!-- ************************-->
-        <jacoco.plugin.version>0.8.12</jacoco.plugin.version>
-    </properties>
-
+    <scm>
+        <url>http://github.com/skltp/ei</url>
+        <connection>scm:git:https://github.com/skltp/ei.git</connection>
+        <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <distributionManagement>
         <repository>
             <id>release-nexus</id>
@@ -79,30 +49,75 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <scm>
-        <url>http://github.com/skltp/ei</url>
-        <connection>scm:git:https://github.com/skltp/ei.git</connection>
-        <developerConnection>scm:git:https://github.com/skltp/ei.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+    <properties>
+        <!-- TODO: REGULARLY CHECK UPDATES FOR DEPS -#- DEPENDENCIES CHECKED: MAY 2026. -->
+
+        <!-- Core Dependencies and Properties-->
+        <java.version>17</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
+        <camel.version>4.18.2</camel.version> <!-- MAR 2026 -->
+        <!-- SB version here MUST match <parent> version up top. Enforced by maven-enforcer-plugin. -->
+        <!-- Spring Boot versions below are version-matched to the
+             dependencies used within a specific Camel-version:s BOM structure. -->
+        <!-- Camel v 4.18.2 (LTS) is matched to Spring Boot v 3.5.13 -->
+        <spring.boot-version>3.5.14</spring.boot-version> <!-- APR 2026 -->
+        <apache-cfx.version>4.1.5</apache-cfx.version> <!-- FEB 2026 - 4.1.x is aligned to Spring Boot 3, and Jakarta EE10 - 4.2.x exists but is aligned to Spring Boot 4. -->
+        <activemq.version>6.2.5</activemq.version> <!-- APR 2026 -->
+
+        <!-- Supporting Deps -->
+        <jaxws.version>4.0.4</jaxws.version> <!-- MAR 2026 -->
+        <jakarta.xml.version>4.0.5</jakarta.xml.version> <!-- FEB 2026 -->
+        <jakarta.persistence.version>3.1.0</jakarta.persistence.version> <!-- APR 2022. Newer versions exist - requires work. -->
+        <lmax_disruptor-version>4.0.0</lmax_disruptor-version> <!-- SEP 2023. Latest as of APR 2026. -->
+        <ehcache3.version>3.10.9</ehcache3.version> <!-- SEP 2025. Newer minors (3.11, 3.12) exist. -->
+        <log4j2.version>2.25.4</log4j2.version> <!-- MAR 2026 -->
+        <commons-io.version>2.22.0</commons-io.version> <!-- APR 2026 -->
+
+        <!-- Dev and Monitoring -->
+        <hawtio.spring.boot-version>2.17.7</hawtio.spring.boot-version> <!-- NOV 2023. Many newer majors (3.x, 4.x, 5.x) exist. -->
+        <javax-cache.version>1.1.1</javax-cache.version> <!-- MAY 2019. Latest as of MAY 2026. -->
+        <jacoco.plugin.version>0.8.14</jacoco.plugin.version> <!-- OCT 2025. Latest as of APR 2026. -->
+        <ecs-logging-java.version>1.7.0</ecs-logging-java.version> <!-- APR 2025. Latest as of APR 2026. -->
+
+        <!-- Project details -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
-
             <!-- Bill of Materials imports.
-                 Order matters: first-declared BOM wins for version conflicts.
-                 Jetty BOM is listed before Spring Boot to override SB's Jetty 12.0.x with 12.1.x. -->
+                 Order matters: first-declared BOM wins for version conflicts. -->
+
+            <!-- Override Log4j2 version to fix CVEs.
+            TODO: Remove this override once Spring Boot or Camel is in phase again. -->
             <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>${jetty.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j2.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Override AMQ version to fix CVEs.
+            TODO: Remove this override once Spring Boot or Camel is in good phase again. -->
             <dependency>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-bom</artifactId>
-                <version>${jetty.version}</version>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-bom</artifactId>
+                <version>${activemq.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Core BOM imports (manage versions for Spring Boot and Camel dependencies) -->
+            <!-- Release notes for Camel often show inconsistencies regarding whether camel-spring-boot-bom or spring-boot-dependencies should go first.
+                 Camel's documentation states that the camel-spring-boot-bom should be first, to get a consistent set of dependencies that Camel has been built and tested for...
+                 and then whatever Spring Boot needs can be pulled in thereafter. -->
+            <dependency>
+                <groupId>org.apache.camel.springboot</groupId>
+                <artifactId>camel-spring-boot-bom
+                </artifactId> <!-- "camel-spring-boot-bom" is slimmer than "camel-spring-boot-dependencies" -->
+                <version>${camel.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -113,13 +128,8 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-spring-boot-bom</artifactId>
-                <version>${camel.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+
+            <!-- CXF -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-bom</artifactId>
@@ -159,50 +169,6 @@
                 <version>${javax-cache.version}</version>
             </dependency>
 
-            <!-- Database -->
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2database.version}</version>
-            </dependency>
-
-            <!-- ACTIVE MQ OVERRIDES - Exclude old AMQ; Include JMS Pools. -->
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-activemq-starter</artifactId>
-                <version>${camel.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <!-- activemq-client-jakarta is a specific branch of ActiveMQ v5.18 with interim Jakarta compatibility.
-                             ActiveMQ v6+, which is default in newer Camel/SB versions, has native Jakarta support.
-                             This submodule will likely vanish in newer releases of Camel/SB. -->
-                        <groupId>org.apache.activemq</groupId>
-                        <artifactId>activemq-client-jakarta</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <!-- activemq-jms-pool below is needed in order to support PooledConnectionFactory in the EI Broker. -->
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-jms-pool</artifactId>
-                <version>${activemq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-client</artifactId>
-                <version>${activemq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-broker</artifactId>
-                <version>${activemq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-openwire-legacy</artifactId>
-                <version>${activemq.version}</version>
-            </dependency>
-
             <!-- Camel -->
             <dependency>
                 <groupId>org.apache.camel</groupId>
@@ -215,8 +181,6 @@
                 <version>${camel.version}</version>
             </dependency>
 
-            <!-- Cxf -->
-
             <!-- JAX-WS Runtime, needed for javax.xml.ws (Java 11) and jakarta.xml.ws (Java 17) -->
             <dependency>
                 <groupId>com.sun.xml.ws</groupId>
@@ -225,11 +189,6 @@
             </dependency>
 
             <!-- Jakarta -->
-            <dependency>
-                <groupId>jakarta.jws</groupId>
-                <artifactId>jakarta.jws-api</artifactId>
-                <version>${jakarta.jws.version}</version>
-            </dependency>
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
@@ -241,14 +200,6 @@
                 <version>${jakarta.persistence.version}</version>
             </dependency>
 
-            <!-- LOMBOK -->
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <optional>true</optional>
-                <version>${lombok.version}</version>
-            </dependency>
-
             <!--hawt.io-->
             <dependency>
                 <groupId>io.hawt</groupId>
@@ -257,31 +208,6 @@
             </dependency>
 
             <!-- LOGGING -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j2-impl</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-jul</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-layout-template-json</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
             <dependency>
                 <groupId>co.elastic.logging</groupId>
                 <artifactId>log4j2-ecs-layout</artifactId>
@@ -301,42 +227,15 @@
                 <version>${spring.boot-version}</version>
                 <scope>test</scope>
                 <exclusions>
-                    <!-- This is to exclude Junit4 test-->
-                    <exclusion>
-                        <groupId>org.junit.vintage</groupId>
-                        <artifactId>junit-vintage-engine</artifactId>
-                    </exclusion>
-                    <exclusion>
+                    <exclusion> <!-- com.vaadin.external.google has a JsonObject collision with one from Hawtio.
+                                     If Hawtio is removed or reworked, this exclusion can be removed. -->
                         <groupId>com.vaadin.external.google</groupId>
                         <artifactId>android-json</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test-junit5</artifactId>
-                <scope>test</scope>
-                <version>${camel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test-spring-junit5</artifactId>
-                <version>${camel.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel.springboot</groupId>
-                <artifactId>camel-http-starter</artifactId>
-                <version>${camel.version}</version>
-                <scope>test</scope>
-            </dependency>
 
             <!-- MISC DEPENDENCIES -->
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-registry-prometheus</artifactId>
-                <version>${micrometer.version}</version>
-            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -368,8 +267,10 @@
                                         "${spring.boot-version}".equals("${project.parent.version}")
                                     </condition>
                                     <message>
-spring.boot-version property (${spring.boot-version}) does not match the Spring Boot parent version (${project.parent.version}).
-Update BOTH the parent POM version AND the spring.boot-version property to the same value.
+                                        spring.boot-version property (${spring.boot-version}) does not match the Spring
+                                        Boot parent version (${project.parent.version}).
+                                        Update BOTH the parent POM version AND the spring.boot-version property to the
+                                        same value.
                                     </message>
                                 </evaluateBeanshell>
                             </rules>

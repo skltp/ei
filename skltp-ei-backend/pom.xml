@@ -12,6 +12,7 @@
     <dependencies>
 
         <!-- EI modules-->
+        <!-- AMQ artifacts inherited through EI-Common. -->
         <dependency>
             <groupId>se.skltp.ei</groupId>
             <artifactId>skltp-ei-common</artifactId>
@@ -105,12 +106,6 @@
             <artifactId>camel-cxf-soap-starter</artifactId>
         </dependency>
 
-        <!-- START: ACTIVE MQ -->
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-activemq-starter</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-sjms-starter</artifactId>
@@ -147,6 +142,7 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Test Dependencies-->
@@ -161,16 +157,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.vaadin.external.google</groupId>
-                    <artifactId>android-json</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

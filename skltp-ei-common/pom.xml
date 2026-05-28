@@ -68,18 +68,20 @@
     </dependency>
 
     <!-- START: ACTIVE MQ -->
+    <!-- Camel SpringBoot starter - Used by BE and FE. -->
     <dependency>
       <groupId>org.apache.camel.springboot</groupId>
-      <artifactId>camel-activemq-starter</artifactId>
+      <artifactId>camel-activemq6-starter</artifactId>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
     <!-- AMQ Broker needed for Spring Boot AutoConfig support for ActiveMQ. (...and to be able to set up a Broker.) -->
+    <!-- AMQ v6 Broker also contains a Client. -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
     </dependency>
-    <!-- activemq-jms-pool below is needed in order to support PooledConnectionFactory in the EI Broker. -->
+    <!-- activemq-jms-pool below is needed to support PooledConnectionFactory in the EI Broker. -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jms-pool</artifactId>
@@ -108,23 +110,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.junit.vintage</groupId>
-          <artifactId>junit-vintage-engine</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.vaadin.external.google</groupId>
-          <artifactId>android-json</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring-junit5</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>

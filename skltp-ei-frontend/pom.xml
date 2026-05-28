@@ -20,6 +20,8 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- AMQ artifacts inherited through EI-Common. -->
         <dependency>
             <groupId>se.skltp.ei</groupId>
             <artifactId>skltp-ei-common</artifactId>
@@ -87,28 +89,6 @@
             <artifactId>camel-cxf-soap-starter</artifactId>
         </dependency>
 
-        <!-- START: ACTIVE MQ -->
-        <dependency>
-            <groupId>org.apache.camel.springboot</groupId>
-            <artifactId>camel-activemq-starter</artifactId>
-        </dependency>
-
-        <!-- ACTIVE MQ OVERRIDES - Compatibility with Jakarta. Should not be needed in Spring Boot 3.4.0-RC1+ -->
-        <!-- NOTE: activemq-client below overrides to a Jakarta compatible AMQ6+ version -->
-        <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-client -->
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
-        </dependency>
-        <!-- NOTE: activemq-broker below overrides to a Jakarta compatible AMQ6+ version -->
-        <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-broker -->
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
-        </dependency>
-        <!-- END: ACTIVE MQ -->
-
-
         <!-- Camel -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -154,16 +134,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.vaadin.external.google</groupId>
-                    <artifactId>android-json</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
