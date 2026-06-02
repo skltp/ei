@@ -17,15 +17,15 @@ data:
   # Status service URL
   EI_STATUS_URL: "{{ .Values.frontend.statusUrl }}"
 
-  # The engagement index own HSA ID, the same as owner
+  # The engagement index's own HSA ID, the same as owner
   EI_HSA_ID: "{{ .Values.ei.hsaId }}"
 
-  # The HSA ID used when communicating with service platform, e.g GetLogicalAddresseesByServiceContract.
+  # The HSA ID used when communicating with the service platform, e.g., GetLogicalAddresseesByServiceContract.
   VP_HSA_ID: "{{ .Values.vp.hsaId }}"
 
   # A list of HSA-ID known to not be allowed for usage as logical-address nor source-system in calls to the services Update and ProcessNotification.
-  # This list is used to avoid the possibility to introduce looping aggregating services that is tricked to call it self without end...
-  UPDATE-NOTIFICATION_NOT_ALLOWED_HSAID_LIST: "{{ .Values.frontend.updateNotification.notAllowedHsaidList }}"
+  # This list is used to avoid the possibility to introduce looping aggregating services that are tricked to call itself without infinitely...
+  UPDATE_NOTIFICATION_NOT_ALLOWED_HSAID_LIST: "{{ .Values.frontend.updateNotification.notAllowedHsaidList }}"
 
   {{- if .Values.queues.prefix }}
   # ActiveMQ queue names
@@ -35,5 +35,5 @@ data:
 
   # AMQ broker property
   ACTIVEMQ_BROKER_URL: "{{ .Values.activemq.broker.url }}"
-  ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "{{ .Values.activemq.broker.maximumRedeliveries }}"
+  ACTIVEMQ_BROKER_MAXIMUM_REDELIVERIES: "{{ .Values.activemq.broker.maximumRedeliveries }}"
   ACTIVEMQ_BROKER_REDELIVERY_DELAY: "{{ .Values.activemq.broker.redeliveryDelay }}"

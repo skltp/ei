@@ -51,12 +51,12 @@ data:
 
   # Activemq properties
   ACTIVEMQ_BROKER_URL: "{{ .Values.activemq.broker.url }}"
-  ACTIVEMQ_BROKER_MAXIMUM-REDELIVERIES: "{{ .Values.activemq.broker.maximumRedeliveries }}"
+  ACTIVEMQ_BROKER_MAXIMUM_REDELIVERIES: "{{ .Values.activemq.broker.maximumRedeliveries }}"
   ACTIVEMQ_BROKER_REDELIVERY_DELAY: "{{ .Values.activemq.broker.redeliveryDelay }}"
   ACTIVEMQ_BROKER_USE_EXPONENTIAL_BACKOFF: "{{ .Values.activemq.broker.useExponentialBackoff }}"
 
   # Notification-specific redelivery settings
-  ACTIVEMQ_BROKER_NOTIFICATION_MAXIMUM-REDELIVERIES: "{{ .Values.backend.activemq.broker.notificationMaximumRedeliveries }}"
+  ACTIVEMQ_BROKER_NOTIFICATION_MAXIMUM_REDELIVERIES: "{{ .Values.backend.activemq.broker.notificationMaximumRedeliveries }}"
   ACTIVEMQ_BROKER_NOTIFICATION_REDELIVERY_DELAY: "{{ .Values.backend.activemq.broker.notificationRedeliveryDelay }}"
   ACTIVEMQ_BROKER_NOTIFICATION_USE_EXPONENTIAL_BACKOFF: "{{ .Values.backend.activemq.broker.notificationUseExponentialBackoff }}"
   ACTIVEMQ_BROKER_NOTIFICATION_BACKOFF_MULTIPLIER: "{{ .Values.backend.activemq.broker.notificationBackoffMultiplier }}"
@@ -64,6 +64,6 @@ data:
 
   # MySQL settings
   SPRING_DATASOURCE_URL: "{{ .Values.backend.datasource.url }}"
-  SPRING_DATASOURCE_DRIVER-CLASS-NAME: "{{ .Values.backend.datasource.driverClassName }}"
-  SPRING_DATASOURCE_JPA_DATABASE-PLATFORM: "{{ .Values.backend.datasource.jpa.databasePlatform }}"
-  SPRING_DATASOURCE_JPA_HIBERNATE_DDL-AUTO: "{{ .Values.backend.datasource.jpa.hibernateDdlAuto }}"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "{{ .Values.backend.datasource.driverClassName }}"
+  SPRING_DATASOURCE_JPA_DATABASE_PLATFORM: "{{ .Values.backend.datasource.jpa.databasePlatform }}"
+  SPRING_DATASOURCE_JPA_HIBERNATE_DDL_AUTO: "{{ .Values.backend.datasource.jpa.hibernateDdlAuto }}"
