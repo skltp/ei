@@ -13,7 +13,7 @@
 
     <groupId>se.skltp.ei</groupId>
     <artifactId>skltp-ei-parent</artifactId>
-    <version>3.7.1</version>
+    <version>3.7.2</version>
     <packaging>pom</packaging>
 
     <name>skltp-ei-parent</name>
