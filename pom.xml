@@ -245,7 +245,65 @@
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- User manual for license plugin in IntelliJ IDEA:
+                        -Set profile 'license' to true in your IDE and refresh the project.
+                        -Go to plugins > license on project-parent level;
+                           and run 'license:check' to control, or 'license:format' to renew file headers.
+                        -Disable the 'license' profile and commit your updated headers. -->
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>5.0.0</version> <!-- MAR 2025. Latest as of APR 2026 -->
+                    <configuration>
+                        <!-- To fail the build when deprecated configuration is used. -->
+                        <prohibitLegacyUse>true</prohibitLegacyUse>
+                        <strictCheck>true</strictCheck>
+                        <useDefaultMapping>true</useDefaultMapping>
+                        <useDefaultExcludes>true</useDefaultExcludes>
+                        <basedir>${project.basedir}</basedir>
+                        <encoding>UTF-8</encoding>
+
+                        <licenseSets>
+                            <licenseSet>
+                                <header>License_header_template.txt</header>
+
+                                <!-- Properties used in the template -->
+                                <properties>
+                                    <copyrightYears>2014-2026</copyrightYears>
+                                    <inceptionYear>2014</inceptionYear>
+                                    <product>SKLTP</product>
+                                    <owner>Inera</owner>
+                                    <owner_url>https://www.inera.se/</owner_url>
+                                    <skltp_page>https://inera.atlassian.net/wiki/spaces/SKLTP/overview</skltp_page>
+                                </properties>
+
+                                <!-- File inclusion/exclusion -->
+                                <includes>
+                                    <include>**/*.java</include>
+                                </includes>
+
+                                <excludes>
+                                    <exclude>target/**</exclude>
+                                    <exclude>**/target/**</exclude>
+                                    <exclude>**/*.xsd</exclude>
+                                    <exclude>**/*.wsdl</exclude>
+                                    <exclude>**/*.xml</exclude>
+                                    <exclude>**/*.dtd</exclude>
+                                </excludes>
+                            </licenseSet>
+                        </licenseSets>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -311,6 +369,27 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>license</id>
+            <activation />
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>check-license</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>test-coverage</id>
             <build>

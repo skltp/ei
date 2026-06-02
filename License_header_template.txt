@@ -1,0 +1,5 @@
+Copyright © ${copyrightYears} ${owner}.
+Copyright owner URL: ${owner_url}
+${product} overview page: ${skltp_page}
+This library is free software under the GNU Lesser General Public License v2.1 or later.
+Please refer to the full license files at the project root.
