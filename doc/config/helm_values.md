@@ -203,9 +203,9 @@ Database connection and JPA/Hibernate settings.
 
 | Key                                       | Description                                                                                      |
 |-------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `backend.datasource.url`                  | JDBC connection URL for the engagement index database. **Override per environment.**             |
-| `backend.datasource.driverClassName`      | Fully-qualified JDBC driver class name (e.g. `com.mysql.cj.jdbc.Driver`).                        |
-| `backend.datasource.jpa.databasePlatform` | Hibernate dialect class for the target database (e.g. `org.hibernate.dialect.MySQL8Dialect`).    |
+| `backend.datasource.url`                  | JDBC connection URL for the engagement index database (e.g. `jdbc:mysql://...`, `jdbc:sqlserver://...`, `jdbc:postgresql://...`). **Override per environment.**             |
+| `backend.datasource.driverClassName`      | Fully-qualified JDBC driver class name (e.g. `com.mysql.cj.jdbc.Driver`, `com.microsoft.sqlserver.jdbc.SQLServerDriver`, `org.postgresql.Driver`).                        |
+| `backend.datasource.jpa.databasePlatform` | Hibernate dialect class for the target database (e.g. `org.hibernate.dialect.MySQLDialect`, `org.hibernate.dialect.SQLServerDialect`, `org.hibernate.dialect.PostgreSQLDialect`).    |
 | `backend.datasource.jpa.hibernateDdlAuto` | Hibernate DDL auto mode (`none`, `validate`, `update`, `create-drop`). Use `none` in production. |
 
 ### backend.activemq

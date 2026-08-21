@@ -370,8 +370,12 @@ metadata:
   name: ei-backend-configmap
   namespace: {{ .Values.destination.namespace }}
 data:
-  # MySQL database connection
+  # Database connection (MySQL, SQL Server, or PostgreSQL)
   SPRING_DATASOURCE_URL: "jdbc:mysql://my-mysql-host:3306/ei?connectionTimeZone=LOCAL&forceConnectionTimeZoneToSession=false"  # CHANGE
+  # For Microsoft SQL Server:
+  # SPRING_DATASOURCE_URL: "jdbc:sqlserver://my-mssql-host:1433;databaseName=ei;encrypt=false"
+  # For PostgreSQL:
+  # SPRING_DATASOURCE_URL: "jdbc:postgresql://my-postgres-host:5432/ei"
 
   # ActiveMQ broker URL
   ACTIVEMQ_BROKER_URL: "failover:(tcp://my-activemq-host:61616)?randomize=false&timeout=10000&jms.prefetchPolicy.queuePrefetch=5"  # CHANGE
